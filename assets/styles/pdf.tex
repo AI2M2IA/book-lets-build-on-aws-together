@@ -1,0 +1,163 @@
+% ============================================
+% LaTeX preamble for KDP PDF (6x9 inches)
+% Let's Learn AWS Together?
+% ============================================
+
+% Page geometry: KDP 6x9 trim
+\usepackage[
+  paperwidth=6in,
+  paperheight=9in,
+  top=0.875in,
+  bottom=0.875in,
+  inner=0.875in,
+  outer=0.625in,
+  headheight=14pt,
+  headsep=0.3in,
+  footskip=0.4in
+]{geometry}
+
+% Fonts
+\usepackage{fontspec}
+\setmainfont[
+  Path=/usr/share/fonts/truetype/ebgaramond/,
+  UprightFont=EBGaramond12-Regular.ttf,
+  BoldFont=EBGaramond12-Bold.ttf,
+  ItalicFont=EBGaramond12-Italic.ttf,
+  BoldItalicFont=EBGaramond12-Italic.ttf,
+  Scale=1.05
+]{EBGaramond}
+\setmonofont[Scale=0.80]{JetBrains Mono}
+
+% Line spacing
+\usepackage{setspace}
+\setstretch{1.4}
+
+% Paragraph formatting
+\setlength{\parindent}{1.5em}
+\setlength{\parskip}{0.2em}
+
+% Colors
+\usepackage{xcolor}
+\definecolor{nimbusblue}{RGB}{26, 58, 107}
+\definecolor{nimbusOrange}{RGB}{255, 107, 53}
+\definecolor{nimbusGold}{RGB}{255, 173, 0}
+\definecolor{codebg}{RGB}{244, 244, 244}
+\definecolor{codefg}{RGB}{26, 26, 26}
+
+% Chapter and section headings via titlesec
+\usepackage{titlesec}
+
+\titleformat{\chapter}[block]
+  {\normalfont\huge\bfseries\color{nimbusblue}}
+  {}
+  {0pt}
+  {}
+  [\vspace{0.4em}{\color{nimbusOrange}\rule{\linewidth}{3pt}}\vspace{0.8em}]
+
+\titlespacing*{\chapter}{0pt}{-20pt}{30pt}
+
+\titleformat{\section}
+  {\normalfont\large\bfseries\color{nimbusblue}}
+  {}
+  {0pt}
+  {}
+
+\titleformat{\subsection}
+  {\normalfont\normalsize\bfseries}
+  {}
+  {0pt}
+  {}
+
+% Headers and footers
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\small\itshape Let's Build on AWS Together}
+\fancyhead[RO]{\small\itshape \leftmark}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyfoot[C]{\small\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+}
+
+% Code block styling
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\small\color{codefg},
+  backgroundcolor=\color{codebg},
+  frame=leftline,
+  framerule=3pt,
+  rulecolor=\color{nimbusblue},
+  breaklines=true,
+  breakatwhitespace=true,
+  keepspaces=true,
+  showstringspaces=false,
+  tabsize=2,
+  xleftmargin=1em,
+  xrightmargin=0.5em,
+  aboveskip=1em,
+  belowskip=1em
+}
+
+% Tables
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{colortbl}
+\renewcommand{\arraystretch}{1.3}
+\usepackage{etoolbox}
+\AtBeginEnvironment{longtable}{\small}
+
+% Hyperlinks
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=nimbusblue,
+  urlcolor=nimbusblue,
+  pdfauthor={AI(2)M(2)IA},
+  pdftitle={Let's Build on AWS Together},
+  pdfsubject={Amazon Web Services, Cloud Computing, SAA-C03},
+  pdfkeywords={AWS, Amazon Web Services, Cloud, SAA-C03, Solutions Architect}
+}
+
+% Widow/orphan control
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+
+% Microtype
+\usepackage{microtype}
+
+% Graphics
+\usepackage{graphicx}
+\setkeys{Gin}{width=\linewidth,keepaspectratio}
+
+% Blockquote
+\usepackage{mdframed}
+\newenvironment{quoteblock}{%
+  \begin{mdframed}[
+    leftline=true,
+    rightline=false,
+    topline=false,
+    bottomline=false,
+    linecolor=nimbusOrange,
+    linewidth=3pt,
+    backgroundcolor=yellow!5,
+    innerleftmargin=12pt,
+    innerrightmargin=8pt,
+    innertopmargin=6pt,
+    innerbottommargin=6pt
+  ]
+  \itshape
+}{%
+  \end{mdframed}
+}
+
+% List spacing
+\usepackage{enumitem}
+\setlist[itemize]{itemsep=0.2em, topsep=0.5em}
+\setlist[enumerate]{itemsep=0.2em, topsep=0.5em}

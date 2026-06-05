@@ -1,0 +1,41 @@
+# Generated build artefacts — do not commit
+build/epub/
+build/pdf/
+build/kdp/*.png
+build/manuscript.md
+build/cover-page-resolved.tex
+missfont.log
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+
+# Node (if running docx scripts locally)
+node_modules/
+
+# Editorial analysis — review reports are committed as historical record;
+# only Office temp/lock files stay ignored
+~$*.docx
+
+# Working scratch (never committed)
+scratch/
+
+# internal artifacts
+artifacts/
+EDITORIAL_REVIEW*
+FINAL_REVIEW.md
+editorial-*
+line-by-line-*
+exam-guide.pdf
+
+# internal artifacts
+artifacts/
+EDITORIAL_REVIEW*
+FINAL_REVIEW.md
+editorial-*
+line-by-line-*
+exam-guide.pdf
+build/pdf-header-resolved.tex

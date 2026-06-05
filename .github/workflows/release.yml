@@ -1,0 +1,133 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write   # required to create GitHub Releases and upload assets
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  build-and-release:
+    name: Build & Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      # ── Install build tools ────────────────────────────────────────────────
+
+      - name: Install pandoc
+        run: |
+          PANDOC_VER=3.6.4
+          curl -fsSL "https://github.com/jgm/pandoc/releases/download/${PANDOC_VER}/pandoc-${PANDOC_VER}-1-amd64.deb" \
+            -o /tmp/pandoc.deb
+          sudo dpkg -i /tmp/pandoc.deb
+          pandoc --version | head -1
+
+      - name: Install tectonic
+        run: |
+          curl -fsSL \
+            "https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%400.15.0/tectonic-0.15.0-x86_64-unknown-linux-musl.tar.gz" \
+            | sudo tar xz -C /usr/local/bin/
+          tectonic --version
+
+      - name: Install rsvg-convert and fonts
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            librsvg2-bin \
+            fonts-liberation \
+            fonts-dejavu \
+            fonts-noto \
+            fonts-noto-cjk
+          rsvg-convert --version
+          fc-list | grep -i "Noto Serif" | head -5
+
+      - name: Set up Java (EPUBCheck)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Install EPUBCheck
+        run: |
+          EC_VER=5.1.0
+          curl -fsSL "https://github.com/w3c/epubcheck/releases/download/v${EC_VER}/epubcheck-${EC_VER}.zip" \
+            -o /tmp/epubcheck.zip
+          unzip -q /tmp/epubcheck.zip -d /tmp/
+          printf '#!/bin/sh\nexec java -jar /tmp/epubcheck-%s/epubcheck.jar "$@"\n' "${EC_VER}" \
+            | sudo tee /usr/local/bin/epubcheck > /dev/null
+          sudo chmod +x /usr/local/bin/epubcheck
+
+      # ── Build all languages ────────────────────────────────────────────────
+
+      - name: Build EPUB + PDF for all languages
+        env:
+          # Georgia/Menlo not available on Ubuntu — metric-compatible substitutes
+          MAINFONT: Liberation Serif
+          MONOFONT: DejaVu Sans Mono
+        run: bash build-all.sh
+
+      # ── Version the output files ───────────────────────────────────────────
+
+      - name: Rename artifacts with version tag
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          for epub in build/epub/lets-build-on-aws-together-*.epub; do
+            lang=$(basename "$epub" .epub | sed 's/lets-build-on-aws-together-//')
+            cp "$epub" "build/epub/lets-build-on-aws-together-${lang}-${TAG}.epub"
+            echo "EPUB: lets-build-on-aws-together-${lang}-${TAG}.epub"
+          done
+          for pdf in build/pdf/lets-build-on-aws-together-*.pdf; do
+            lang=$(basename "$pdf" .pdf | sed 's/lets-build-on-aws-together-//')
+            cp "$pdf" "build/pdf/lets-build-on-aws-together-${lang}-${TAG}.pdf"
+            echo "PDF:  lets-build-on-aws-together-${lang}-${TAG}.pdf"
+          done
+
+      # ── Build release body with all language files ─────────────────────────
+
+      - name: Generate release notes
+        id: notes
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          {
+            echo "body<<RELEASE_BODY_EOF"
+            echo "## Let's Build on AWS Together — ${TAG}"
+            echo ""
+            echo "Free release. If this book helped you, support the project by purchasing it on [Amazon KDP](https://www.amazon.com/stores/AI%282%29M%282%29IA-AI%282%29M%282%29IA/author/B0GYDYRL75)."
+            echo ""
+            echo "### Downloads"
+            echo ""
+            echo "| File | Language | Format | Use |"
+            echo "|------|----------|--------|-----|"
+            for epub in build/epub/lets-build-on-aws-together-*-${TAG}.epub; do
+              lang=$(basename "$epub" "-${TAG}.epub" | sed 's/lets-build-on-aws-together-//')
+              echo "| \`lets-build-on-aws-together-${lang}-${TAG}.epub\` | ${lang} | EPUB 3 | Kindle, Apple Books, Kobo |"
+              echo "| \`lets-build-on-aws-together-${lang}-${TAG}.pdf\`  | ${lang} | PDF    | Print / desktop reading   |"
+            done
+            echo ""
+            echo "### Author"
+            echo "[ai2m2ia.github.io](https://ai2m2ia.github.io/#media) · [Amazon](https://www.amazon.com/stores/AI%282%29M%282%29IA-AI%282%29M%282%29IA/author/B0GYDYRL75) · [YouTube](https://www.youtube.com/@AI2M2IA) · [TikTok](https://www.tiktok.com/@ai2m2ia)"
+            echo "RELEASE_BODY_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      # ── GitHub Release ─────────────────────────────────────────────────────
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Let's Build on AWS Together ${{ github.ref_name }}"
+          body: ${{ steps.notes.outputs.body }}
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-rc') || contains(github.ref_name, '-beta') || contains(github.ref_name, '-alpha') }}
+          files: |
+            build/epub/lets-build-on-aws-together-*-${{ github.ref_name }}.epub
+            build/pdf/lets-build-on-aws-together-*-${{ github.ref_name }}.pdf
+            build/kdp/cover.png

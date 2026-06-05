@@ -1,0 +1,168 @@
+name: Release Gate AI Review
+
+# Two AI reviewers run in parallel on PRs targeting `main`: Claude (via Claude
+# Max subscription) and Qwen-Coder (via DashScope). The aggregator job is the
+# required status check on `main`; it passes as long as at least one reviewer
+# succeeded. Failure of one (missing secret, provider outage, rate limit) does
+# not block the merge — failure of both does.
+#
+# Codex is intentionally NOT included in this workflow. The maintainer runs
+# Codex review through OpenAI's native Codex Cloud GitHub integration,
+# configured outside this repository, using the existing integrated Codex account.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  pull-requests: write
+  contents: read
+  issues: write
+  id-token: write
+
+concurrency:
+  group: release-gate-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  claude:
+    name: Claude review
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: >
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.base.ref == 'main'
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Run Claude review
+        uses: anthropics/claude-code-action@7f37f2e37370b88fc5bd16496c0512c6e8aa2e45
+        with:
+          # Auth via the Claude Max subscription (not API tokens). Generate
+          # the token locally with `claude setup-token` and store it as the
+          # CLAUDE_CODE_AUTH_TOKEN repository secret. The action input name
+          # (claude_code_oauth_token) is unchanged and matches the action's
+          # contract; only the secret reference name diverges from the
+          # Anthropic default (CLAUDE_CODE_OAUTH_TOKEN) for cross-repo
+          # consistency in this organization. If ANTHROPIC_API_KEY is also
+          # set, the API key takes precedence — leave it unset.
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_AUTH_TOKEN }}
+          prompt: |
+            Review this pull request. Be concise and only flag concrete issues
+            you can point at file:line. Do not restate the diff.
+          claude_args: |
+            --model claude-sonnet-4-6
+            --max-turns 4
+            --append-system-prompt "You are a technical reviewer for 'Let's Learn AWS Together', a Markdown book targeting AWS SAA-C03 exam candidates. Review priorities, in order: (1) TECHNICAL ACCURACY — flag any AWS service facts that are wrong or outdated (limits, pricing figures, default behaviors, API constraints); (2) SAA-C03 COVERAGE — flag content that contradicts the official exam guide or would cause a candidate to answer exam questions incorrectly; (3) DIDACTICS — flag sections that would confuse a beginner, cognitive overload in a single chapter, or analogies that introduce misconceptions. The book uses a narrative style (Nimbus startup, characters Maya/Tom/Leo/Priya) — preserve that voice. Max 4 columns in any Markdown table (Kindle CI constraint). Always reference file paths and line numbers from the diff. If you find nothing actionable, say so in one line."
+
+  qwen:
+    name: Qwen review
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: >
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.base.ref == 'main'
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+      id-token: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Run Qwen review
+        uses: QwenLM/qwen-code-action@a08dc886c2094312d6cf2df08ba5fd0437c53339 # main 2026-01-05
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          PULL_REQUEST_NUMBER: ${{ github.event.pull_request.number }}
+        with:
+          openai_api_key: ${{ secrets.QWEN_API_KEY }}
+          openai_base_url: "https://dashscope.aliyuncs.com/compatible-mode/v1"
+          openai_model: "qwen3-coder-plus"
+          qwen_cli_version: "latest"
+          upload_artifacts: "false"
+          settings: |-
+            {
+              "model": { "maxSessionTurns": 20 },
+              "mcpServers": {
+                "github": {
+                  "command": "docker",
+                  "args": ["run","-i","--rm","-e","GITHUB_PERSONAL_ACCESS_TOKEN","ghcr.io/github/github-mcp-server:v0.18.0"],
+                  "includeTools": [
+                    "add_comment_to_pending_review",
+                    "create_pending_pull_request_review",
+                    "pull_request_read",
+                    "submit_pending_pull_request_review"
+                  ],
+                  "env": { "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}" }
+                }
+              },
+              "tools": {
+                "core": [
+                  "run_shell_command(cat)",
+                  "run_shell_command(grep)",
+                  "run_shell_command(head)",
+                  "run_shell_command(tail)"
+                ]
+              }
+            }
+          prompt: |
+            You are a technical reviewer for PR #${{ github.event.pull_request.number }}
+            in ${{ github.repository }}. This is a Markdown book ('Let's Learn AWS
+            Together') targeting AWS SAA-C03 exam candidates.
+
+            Workflow:
+              1. Load the diff via `pull_request_read` MCP tool.
+              2. Create a pending review (event="COMMENT").
+              3. Add inline comments only on lines that actually changed (+/-).
+              4. Submit the review.
+
+            Priorities, strict order:
+              1. TECHNICAL ACCURACY — any AWS service fact that is wrong or outdated
+                 (limits, pricing figures, default behaviors, API constraints).
+              2. SAA-C03 COVERAGE — content that contradicts the official exam guide
+                 or would cause a candidate to answer exam questions incorrectly.
+              3. DIDACTICS — sections that would confuse a complete beginner, cognitive
+                 overload in a single chapter, or analogies that introduce misconceptions.
+
+            Rules:
+              - Severity prefix on every comment: 🔴 critical, 🟠 high, 🟡 medium, 🟢 low.
+              - Reference file path + line number. Use `suggestion` blocks where actionable.
+              - Kindle CI constraint: Markdown tables must have ≤ 4 columns. Flag violations.
+              - Skip style nits and unchanged context.
+              - If nothing actionable, submit a single-line comment saying so.
+              - Never approve or request changes — comment only.
+
+  ai-review-gate:
+    name: AI review gate
+    needs: [claude, qwen]
+    if: >
+      always() &&
+      github.event.pull_request.draft == false &&
+      github.event.pull_request.base.ref == 'main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    permissions: {}
+
+    steps:
+      - name: At least one reviewer must have succeeded
+        env:
+          CLAUDE_RESULT: ${{ needs.claude.result }}
+          QWEN_RESULT: ${{ needs.qwen.result }}
+        run: |
+          echo "claude=$CLAUDE_RESULT qwen=$QWEN_RESULT"
+          if [ "$CLAUDE_RESULT" = "success" ] || [ "$QWEN_RESULT" = "success" ]; then
+            echo "Gate passes: at least one reviewer succeeded."
+            exit 0
+          fi
+          echo "Gate fails: both reviewers failed, were cancelled, or were skipped."
+          exit 1

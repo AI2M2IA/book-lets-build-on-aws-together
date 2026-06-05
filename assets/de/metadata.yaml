@@ -1,0 +1,12 @@
+---
+title: "Gemeinsam auf AWS bauen"
+subtitle: "AWS, das wirklich Sinn ergibt — Echte Anwendungen Schritt für Schritt aufbauen und deployen"
+author: "AI(2)M(2)IA"
+date: "2026"
+lang: de
+description: "Als Maya erkannte, dass das Familienrestaurant Bestellungen verlor, weil die Telefonleitung ständig besetzt war, wusste sie nicht, was die Cloud bedeutete. Tom, Leo und Priya auch nicht. Dieses Buch begleitet ihre Reise vom ersten EC2-Instance bis zu einer produktionsreifen AWS-Infrastruktur — jeder wichtige AWS-Dienst wird anhand einer echten Startup-Geschichte vermittelt. Es deckt den vollständigen AWS SAA-C03-Prüfungslehrplan ab, von den Cloud-Grundlagen bis hin zum architektonischen Denken auf Senior-Niveau nach dem Well-Architected Framework."
+rights: "© 2026 AI(2)M(2)IA. Alle Rechte vorbehalten."
+toc: true
+toc-depth: 2
+epub-chapter-level: 1
+---

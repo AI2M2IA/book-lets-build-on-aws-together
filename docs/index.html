@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; manifest-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#0b0f14">
+  <meta name="description" content="Free study companion for Let's Build on AWS Together (AWS SAA-C03): practice questions, exam simulation, and flashcards.">
+  <title>Let's Build on AWS Together — Study Companion</title>
+  <link rel="stylesheet" href="./app.css">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <img src="./icons/icon.svg" alt="" width="36" height="36" class="brand-icon">
+      <div class="brand-text">
+        <h1>Let's Build on AWS Together</h1>
+        <p class="subtitle">Study Companion · SAA-C03</p>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Study modes">
+      <button class="tab" id="tab-practice" role="tab" aria-selected="true" aria-controls="panel-practice" data-mode="practice">Practice</button>
+      <button class="tab" id="tab-exam" role="tab" aria-selected="false" aria-controls="panel-exam" data-mode="exam" tabindex="-1">Exam Simulation</button>
+      <button class="tab" id="tab-cards" role="tab" aria-selected="false" aria-controls="panel-cards" data-mode="cards" tabindex="-1">Flashcards</button>
+    </nav>
+  </header>
+
+  <main class="app-main">
+    <div id="loading-view" class="status-view">
+      <p>Loading study content…</p>
+    </div>
+    <div id="error-view" class="status-view" hidden>
+      <h2>Couldn't load the study content</h2>
+      <p id="error-detail">The question and flashcard data could not be fetched. If you're offline, reconnect and try again — once loaded, the app works fully offline.</p>
+      <button type="button" id="retry-load" class="btn btn-primary">Try again</button>
+    </div>
+
+    <!-- ============ PRACTICE ============ -->
+    <section id="panel-practice" class="panel" role="tabpanel" aria-labelledby="tab-practice" hidden>
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label for="practice-domain">Domain</label>
+          <select id="practice-domain">
+            <option value="all">All domains</option>
+            <option value="1">D1 · Secure Architectures</option>
+            <option value="2">D2 · Resilient Architectures</option>
+            <option value="3">D3 · High-Performing Architectures</option>
+            <option value="4">D4 · Cost-Optimized Architectures</option>
+            <option value="0">Cross-domain</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="practice-source">Source</label>
+          <select id="practice-source">
+            <option value="all">All sources</option>
+            <option value="chapter">Chapter exercises</option>
+            <option value="exam">Exam bank</option>
+          </select>
+        </div>
+        <div class="practice-stats" id="practice-stats" aria-live="polite"></div>
+        <button type="button" id="practice-reset" class="btn btn-ghost btn-small">Reset progress</button>
+      </div>
+      <div id="practice-question-area"></div>
+      <p id="practice-empty" class="muted" hidden>No questions match this filter.</p>
+    </section>
+
+    <!-- ============ EXAM ============ -->
+    <section id="panel-exam" class="panel" role="tabpanel" aria-labelledby="tab-exam" hidden>
+      <!-- Intro screen -->
+      <div id="exam-intro">
+        <div class="card exam-intro-card">
+          <h2>Exam Simulation — SAA-C03 style</h2>
+          <ul class="exam-rules">
+            <li><strong>65 questions</strong>, fixed order, drawn from the book's exam bank.</li>
+            <li><strong>130 minutes</strong> on a countdown timer. The exam auto-submits when time runs out.</li>
+            <li><strong>No feedback</strong> until you finish — just like the real exam.</li>
+            <li>Multiple-response questions (choose TWO) earn <strong>no partial credit</strong>: both answers must be correct.</li>
+            <li>Passing benchmark: about <strong>47 of 65 (~72%)</strong>.</li>
+            <li>You can <strong>flag</strong> questions and revisit them with the question grid.</li>
+            <li>Your in-progress exam is saved locally — you can close the tab and resume.</li>
+          </ul>
+          <button type="button" id="exam-start" class="btn btn-primary btn-large">Start exam</button>
+          <button type="button" id="exam-resume" class="btn btn-secondary btn-large" hidden>Resume exam in progress</button>
+        </div>
+        <div class="card" id="exam-history-card" hidden>
+          <h3>Past attempts</h3>
+          <ul id="exam-history-list" class="history-list"></ul>
+        </div>
+      </div>
+
+      <!-- Running screen -->
+      <div id="exam-running" hidden>
+        <div class="exam-topbar">
+          <div class="exam-timer" id="exam-timer" aria-live="off" aria-label="Time remaining">130:00</div>
+          <div id="exam-timer-announce" class="visually-hidden" aria-live="polite"></div>
+          <div class="exam-progress" id="exam-progress"></div>
+          <button type="button" id="exam-finish" class="btn btn-danger btn-small">Finish exam</button>
+        </div>
+        <div class="exam-layout">
+          <div id="exam-question-area"></div>
+          <aside class="exam-grid-wrap" aria-label="Question navigator">
+            <h3 class="grid-title">Questions</h3>
+            <div class="exam-grid" id="exam-grid"></div>
+            <div class="grid-legend">
+              <span class="legend-item"><span class="dot dot-answered"></span> Answered</span>
+              <span class="legend-item"><span class="dot dot-flagged"></span> Flagged</span>
+              <span class="legend-item"><span class="dot dot-current"></span> Current</span>
+            </div>
+          </aside>
+        </div>
+        <div class="exam-nav">
+          <button type="button" id="exam-prev" class="btn btn-secondary">← Previous</button>
+          <button type="button" id="exam-flag" class="btn btn-ghost">🚩 Flag</button>
+          <button type="button" id="exam-next" class="btn btn-secondary">Next →</button>
+        </div>
+      </div>
+
+      <!-- Results screen -->
+      <div id="exam-results" hidden>
+        <div class="card result-card">
+          <h2 id="result-headline"></h2>
+          <p class="result-score" id="result-score"></p>
+          <p class="muted" id="result-time"></p>
+          <h3>Breakdown by domain</h3>
+          <ul id="result-domains" class="domain-breakdown"></ul>
+          <div class="result-actions">
+            <button type="button" id="exam-review-btn" class="btn btn-primary">Review answers</button>
+            <button type="button" id="exam-again-btn" class="btn btn-secondary">Back to start</button>
+          </div>
+        </div>
+        <div id="exam-review" hidden></div>
+      </div>
+    </section>
+
+    <!-- ============ FLASHCARDS ============ -->
+    <section id="panel-cards" class="panel" role="tabpanel" aria-labelledby="tab-cards" hidden>
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label for="cards-domain">Domain</label>
+          <select id="cards-domain">
+            <option value="all">All domains</option>
+            <option value="1">D1 · Secure</option>
+            <option value="2">D2 · Resilient</option>
+            <option value="3">D3 · High-Performing</option>
+            <option value="4">D4 · Cost-Optimized</option>
+            <option value="0">Cross-domain</option>
+          </select>
+        </div>
+        <div class="cards-stats" id="cards-stats" aria-live="polite"></div>
+        <button type="button" id="cards-reset" class="btn btn-ghost btn-small">Reset boxes</button>
+      </div>
+
+      <div id="cards-home">
+        <div class="card">
+          <h2>Spaced repetition (Leitner boxes)</h2>
+          <p class="muted">New cards start in Box 1. "Got it" promotes a card; "Again" sends it back to Box 1. Box 1 is always due, Box 2 every 2 days, Box 3 every 5 days.</p>
+          <button type="button" id="cards-start" class="btn btn-primary btn-large">Start session</button>
+          <p id="cards-none-due" class="muted" hidden>No cards due right now in this filter. Come back later, or switch domains.</p>
+        </div>
+      </div>
+
+      <div id="cards-session" hidden>
+        <p class="session-progress" id="cards-progress" aria-live="polite"></p>
+        <button type="button" id="flashcard" class="flashcard" aria-live="polite"></button>
+        <p class="muted card-hint">Click the card or press Enter to flip</p>
+        <div class="card-actions" id="card-actions" hidden>
+          <button type="button" id="card-again" class="btn btn-danger btn-large">Again</button>
+          <button type="button" id="card-got" class="btn btn-primary btn-large">Got it</button>
+        </div>
+        <button type="button" id="cards-end" class="btn btn-ghost btn-small">End session</button>
+      </div>
+
+      <div id="cards-done" hidden>
+        <div class="card">
+          <h2>Session complete 🎉</h2>
+          <p id="cards-done-summary"></p>
+          <button type="button" id="cards-back" class="btn btn-primary">Back to flashcards</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p class="footer-built">Built by AI(2)M(2)IA — original author and source: <a href="https://github.com/AI2M2IA/book-lets-build-on-aws-together" target="_blank" rel="noopener">github.com/AI2M2IA/book-lets-build-on-aws-together</a>.</p>
+    <p class="footer-built">This book and app are free forever. Financial support is welcome but always <strong>optional</strong> — access is never conditioned on payment.</p>
+    <p class="footer-links">
+      <a href="https://www.amazon.com/s?k=Let%27s+Build+on+AWS+Together" target="_blank" rel="noopener">Get the book on Kindle</a>
+      <span aria-hidden="true">·</span>
+      <a href="https://github.com/AI2M2IA/book-lets-build-on-aws-together" target="_blank" rel="noopener">Source &amp; licenses</a>
+      <span aria-hidden="true">·</span>
+      <a href="https://ai2m2ia.github.io/" target="_blank" rel="noopener">Part of the AI(2)M(2)IA universe — see all works</a>
+    </p>
+    <p class="footer-license">Content: CC BY-NC-SA 4.0 · Code: AGPL-3.0 (with §7 attribution terms) · Derivatives must keep these same licenses and credit AI(2)M(2)IA. · Not affiliated with AWS.</p>
+  </footer>
+
+  <!-- ============ TEMPLATES ============ -->
+  <template id="tpl-question">
+    <article class="card question-card">
+      <div class="q-meta">
+        <span class="badge badge-domain"></span>
+        <span class="badge badge-type"></span>
+        <span class="q-counter muted"></span>
+      </div>
+      <h2 class="q-stem"></h2>
+      <fieldset class="q-options">
+        <legend class="visually-hidden">Answer options</legend>
+      </fieldset>
+      <div class="q-hint-area">
+        <button type="button" class="btn btn-ghost btn-small q-hint-btn" hidden>💡 Hint</button>
+        <ul class="q-hints"></ul>
+      </div>
+      <div class="q-actions">
+        <button type="button" class="btn btn-primary q-submit">Submit answer</button>
+        <button type="button" class="btn btn-secondary q-next" hidden>Next question →</button>
+      </div>
+      <div class="q-feedback" aria-live="polite"></div>
+    </article>
+  </template>
+
+  <template id="tpl-option">
+    <label class="option">
+      <input class="option-input" name="answer">
+      <span class="option-key"></span>
+      <span class="option-text"></span>
+    </label>
+  </template>
+
+  <template id="tpl-feedback">
+    <div class="feedback-body">
+      <p class="feedback-verdict"></p>
+      <p class="feedback-explanation"></p>
+      <ul class="feedback-whynots"></ul>
+      <p class="feedback-chapter muted"></p>
+    </div>
+  </template>
+
+  <template id="tpl-review-item">
+    <article class="card review-item">
+      <div class="q-meta">
+        <span class="review-num"></span>
+        <span class="badge badge-domain"></span>
+        <span class="review-verdict badge"></span>
+      </div>
+      <h3 class="q-stem"></h3>
+      <ul class="review-options"></ul>
+      <p class="feedback-explanation"></p>
+      <ul class="feedback-whynots"></ul>
+      <p class="feedback-chapter muted"></p>
+    </article>
+  </template>
+
+  <script src="./app.js"></script>
+</body>
+</html>

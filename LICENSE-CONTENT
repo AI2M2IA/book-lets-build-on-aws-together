@@ -1,0 +1,61 @@
+================================================================================
+CONTENT LICENSE — Creative Commons Attribution-NonCommercial-ShareAlike 4.0
+================================================================================
+
+Copyright (c) 2026 AI(2)M(2)IA
+
+This license applies to the CONTENT of this repository — the book "Let's Build
+on AWS Together" (everything under chapters/, in every language), the study
+data generated from it (docs/api/questions.json, docs/api/flashcards.json),
+the flashcards (flashcards.md, flashcards.csv), and all other prose, questions,
+analogies, and narrative material.
+
+(The CODE — the study PWA under docs/ except the api/ data, the tooling under
+tools/, and the build scripts — is licensed separately under the GNU AGPL-3.0
+with additional attribution terms; see the LICENSE file.)
+
+--------------------------------------------------------------------------------
+LICENSE GRANT
+--------------------------------------------------------------------------------
+
+This work is licensed under the Creative Commons Attribution-NonCommercial-
+ShareAlike 4.0 International License (CC BY-NC-SA 4.0).
+
+You are free to:
+  Share   — copy and redistribute the material in any medium or format
+  Adapt   — remix, transform, and build upon the material (translations,
+            expansions, study guides, course materials, summaries)
+
+Under the following terms:
+
+  Attribution     — You must give appropriate credit to the original author
+                    "AI(2)M(2)IA", provide a link to the original source
+                    repository (https://github.com/AI2M2IA/book-lets-build-on-aws-together),
+                    link to the license, and indicate if changes were made —
+                    but not in any way that suggests the licensor endorses you
+                    or your use. See "How to attribute" in the README.
+
+  NonCommercial   — You may not use the material for commercial purposes.
+                    In plain language, as intended by the author: you may not
+                    SELL this book or any derivative of it, and you may not
+                    condition access to it (or to any derivative) on payment.
+                    Asking for VOLUNTARY financial support (donations) for your
+                    copies or derivative works is welcome and is not considered
+                    a commercial use here, provided access is never conditioned
+                    on payment. The original author retains the right to sell
+                    the author's own editions (for example, the Kindle edition).
+
+  ShareAlike      — If you remix, transform, or build upon the material, you
+                    must distribute your contributions under this SAME license
+                    (CC BY-NC-SA 4.0). Derivatives must keep this license.
+
+No additional restrictions — You may not apply legal terms or technological
+measures that legally restrict others from doing anything the license permits.
+
+Full license text: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+Human-readable summary: https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+This file is the notice applying that license to this work, in the manner
+recommended by Creative Commons (a link to the legal code). Creative Commons
+is not a party to this license and makes no warranties regarding the work.
+================================================================================

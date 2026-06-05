@@ -1,0 +1,12 @@
+---
+title: "让我们一起在 AWS 上构建"
+subtitle: "真正易懂的 AWS——一步步构建并部署真实应用"
+author: "AI(2)M(2)IA"
+date: "2026"
+lang: zh-CN
+description: "当 Maya 意识到她家的餐厅因为电话一直占线而不断丢失订单时，她对云计算一无所知。Tom、Leo 和 Priya 也是如此。本书追随他们从第一个 EC2 实例到生产级 AWS 基础架构的旅程——通过一个真实的初创公司故事，讲解每一项主要的 AWS 服务。内容涵盖 AWS SAA-C03 考试的完整课程，从云计算基础到架构良好框架的高级架构思维。"
+rights: "© 2026 AI(2)M(2)IA. 保留所有权利。"
+toc: true
+toc-depth: 2
+epub-chapter-level: 1
+---

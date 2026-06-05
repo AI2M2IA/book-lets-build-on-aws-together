@@ -1,0 +1,12 @@
+---
+title: "Let's Build on AWS Together"
+subtitle: "실제로 이해되는 AWS — 단계별로 실제 애플리케이션 구축 및 배포"
+author: "AI(2)M(2)IA"
+date: "2026"
+lang: ko
+description: "Maya가 가족 식당이 전화가 항상 통화 중이어서 주문을 잃고 있다는 것을 깨달았을 때, 그녀는 클라우드가 무엇을 의미하는지 몰랐습니다. Tom, Leo, Priya도 마찬가지였습니다. 이 책은 첫 번째 EC2 인스턴스에서 시작해 프로덕션 수준의 AWS 인프라까지 이어지는 그들의 여정을 따릅니다 — 실제 스타트업 이야기를 통해 모든 주요 AWS 서비스를 가르칩니다. 클라우드 기초부터 Well-Architected 시니어 수준 아키텍처 사고까지 전체 AWS SAA-C03 시험 커리큘럼을 다룹니다."
+rights: "© 2026 AI(2)M(2)IA. All rights reserved."
+toc: true
+toc-depth: 2
+epub-chapter-level: 1
+---

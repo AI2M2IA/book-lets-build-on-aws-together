@@ -1,0 +1,12 @@
+---
+title: "Construisons sur AWS Ensemble"
+subtitle: "AWS Enfin Compréhensible — Construisez et Déployez de Vraies Applications Étape par Étape"
+author: "AI(2)M(2)IA"
+date: "2026"
+lang: fr
+description: "Quand Maya a réalisé que le restaurant familial perdait des commandes parce que la ligne téléphonique était toujours occupée, elle ne savait pas ce que signifiait le cloud. Tom, Leo et Priya non plus. Ce livre suit leur parcours, depuis la première instance EC2 jusqu'à une infrastructure AWS de niveau production — en enseignant chaque grand service AWS à travers l'histoire vraie d'une startup. Couvre l'intégralité du programme de l'examen AWS SAA-C03, des fondamentaux du cloud jusqu'à la pensée architecturale de haut niveau conforme au Well-Architected Framework."
+rights: "© 2026 AI(2)M(2)IA. Tous droits réservés."
+toc: true
+toc-depth: 2
+epub-chapter-level: 1
+---

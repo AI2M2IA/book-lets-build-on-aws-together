@@ -1,0 +1,12 @@
+---
+title: "Mari Membangun di AWS Bersama"
+subtitle: "AWS yang Benar-Benar Masuk Akal — Bangun dan Terapkan Aplikasi Nyata Langkah demi Langkah"
+author: "AI(2)M(2)IA"
+date: "2026"
+lang: id
+description: "Ketika Maya menyadari bahwa restoran keluarganya kehilangan pesanan karena telepon selalu sibuk, ia tidak tahu apa yang dimaksud dengan cloud. Begitu pula Tom, Leo, dan Priya. Buku ini mengikuti perjalanan mereka dari EC2 instance pertama hingga infrastruktur AWS berkelas produksi — mengajarkan setiap layanan AWS utama melalui kisah nyata sebuah startup. Mencakup kurikulum ujian AWS SAA-C03 secara lengkap, mulai dari dasar-dasar cloud hingga pemikiran arsitektur tingkat senior yang Well-Architected."
+rights: "© 2026 AI(2)M(2)IA. Semua hak dilindungi."
+toc: true
+toc-depth: 2
+epub-chapter-level: 1
+---

@@ -1,0 +1,170 @@
+% Premium PDF styling for Let's Build on AWS Together
+
+% Color system
+\usepackage{xcolor}
+\definecolor{nimbusink}{RGB}{28, 30, 33}
+\definecolor{nimbusblue}{RGB}{31, 59, 87}
+\definecolor{nimbusbronze}{RGB}{156, 116, 63}
+\definecolor{nimbussand}{RGB}{232, 223, 210}
+\definecolor{nimbuscodebg}{RGB}{247, 244, 239}
+\definecolor{nimbusrule}{RGB}{214, 204, 190}
+
+% Microtypography and spacing
+\usepackage{microtype}
+\usepackage{setspace}
+\setstretch{1.42}
+\setlength{\parindent}{1.35em}
+\setlength{\parskip}{0.25em}
+\setlength{\emergencystretch}{3em}
+\setlength{\hfuzz}{2pt}
+\raggedbottom
+
+% Keep chapter titles clean in running headers
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\chapter}{\thispagestyle{plain}}{\thispagestyle{plain}}{}{}
+\makeatother
+
+% Chapter and section styling
+\usepackage{titlesec}
+
+\titleformat{\chapter}[display]
+  {\normalfont\bfseries\color{nimbusblue}}
+  {}
+  {0pt}
+  {\Huge}
+  [{\vspace{0.8em}\color{nimbusbronze}\rule{\textwidth}{1.2pt}}]
+
+\titlespacing*{\chapter}{0pt}{-8pt}{26pt}
+
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{nimbusblue}}
+  {}
+  {0pt}
+  {}
+
+\titlespacing*{\section}{0pt}{2.2em}{0.8em}
+
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{nimbusink}}
+  {}
+  {0pt}
+  {}
+
+\titlespacing*{\subsection}{0pt}{1.6em}{0.55em}
+
+% TOC: ensure chapter entries don't collide with page numbers
+\usepackage{tocloft}
+\setlength{\cftbeforetoctitleskip}{0pt}
+\setlength{\cftaftertoctitleskip}{1.5em}
+\renewcommand{\cfttoctitlefont}{\Huge\bfseries\color{nimbusblue}}
+\renewcommand{\cftaftertoctitle}{\par\vspace{0.4em}\color{nimbusbronze}\rule{\textwidth}{1pt}\par\vspace{0.8em}}
+\setlength{\cftchapnumwidth}{2.8em}
+\setlength{\cftchapindent}{0em}
+\setlength{\cftbeforechapskip}{0.45em}
+\renewcommand{\cftchapfont}{\bfseries}
+\renewcommand{\cftchappagefont}{\bfseries}
+\renewcommand{\cftchapleader}{\cftdotfill{\cftdotsep}}
+\renewcommand{\cftsecfont}{\normalfont}
+\renewcommand{\cftsecpagefont}{\normalfont}
+\setlength{\cftsecindent}{1.5em}
+\setlength{\cftsecnumwidth}{2.8em}
+
+% Headers and footers
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+\fancyhead[LE]{\small\nouppercase{\leftmark}}
+\fancyhead[RO]{\small\itshape Let's Build on AWS Together}
+\fancyhead[LO,RE]{}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{nimbusrule}\leaders\hrule height \headrulewidth\hfill}}
+
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyfoot[C]{\small\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+}
+
+% Code styling
+\usepackage{listings}
+\lstset{
+  basicstyle=\ttfamily\small\color{nimbusink},
+  backgroundcolor=\color{nimbuscodebg},
+  frame=single,
+  framerule=0pt,
+  rulecolor=\color{nimbusrule},
+  xleftmargin=0.8em,
+  xrightmargin=0.4em,
+  framexleftmargin=0.8em,
+  framexrightmargin=0.4em,
+  breaklines=true,
+  breakatwhitespace=false,
+  keepspaces=true,
+  showstringspaces=false,
+  tabsize=2,
+  aboveskip=1em,
+  belowskip=1em,
+  columns=fullflexible
+}
+
+% Fix pandoc syntax-highlighted code blocks (Shaded/Highlighting):
+%   - fvextra enables breaklines inside fancyvrb Verbatim environments
+%   - Redefine Highlighting with breaklines so long code lines wrap instead of overflow
+%   - Redefine Shaded with framed's shaded* (breakable across pages) instead of snugshade
+\usepackage{fvextra}
+\usepackage{framed}
+\AtBeginDocument{%
+  \DefineVerbatimEnvironment{Highlighting}{Verbatim}{%
+    breaklines=true,%
+    breaksymbolleft={},%
+    breakanywhere=true,%
+    commandchars=\\\{\},%
+    fontsize=\small%
+  }%
+  \colorlet{shadecolor}{nimbuscodebg}%
+  \renewenvironment{Shaded}{\begin{shaded*}}{\end{shaded*}}%
+}
+
+% Tables
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{colortbl}
+\renewcommand{\arraystretch}{1.25}
+\AtBeginEnvironment{longtable}{\small}
+
+% Better links
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=nimbusblue,
+  urlcolor=nimbusblue
+}
+
+% Quotes
+\renewenvironment{quote}
+  {\list{}{\leftmargin=1.3em\rightmargin=0.6em}\item\relax\itshape\color{nimbusink}}
+  {\endlist}
+
+% Lists
+\usepackage{enumitem}
+\setlist[itemize]{itemsep=0.28em, topsep=0.55em}
+\setlist[enumerate]{itemsep=0.28em, topsep=0.55em}
+
+% Widow/orphan control
+\clubpenalty=10000
+\widowpenalty=10000
+\displaywidowpenalty=10000
+
+% Allow URL line-breaking at hyphens, slashes, and dots
+\usepackage[hyphens]{url}
+\Urlmuskip=0mu plus 2mu
+
+% Fix missing Unicode characters in Georgia font
+\usepackage{newunicodechar}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+

@@ -1,0 +1,14 @@
+{
+  "name": "book-lets-build-on-aws-together",
+  "version": "1.0.0",
+  "description": "Build tooling for Let's Build on AWS Together (AI(2)M(2)IA)",
+  "scripts": {
+    "build:kindle": "bash build-kindle.sh",
+    "build:html": "python3 build/wrap.py",
+    "build:pdf": "node build/print-pdf.js",
+    "build": "bash build-kindle.sh"
+  },
+  "dependencies": {
+    "puppeteer-core": "^25.1.0"
+  }
+}
