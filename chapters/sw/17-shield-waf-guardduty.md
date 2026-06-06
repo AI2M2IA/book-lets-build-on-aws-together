@@ -1,271 +1,584 @@
 # Sura ya 17: Walinzi
 
-Tukio hilo na IP ya Romania lilikuwa limezuiliwa. Siri zilikuwa kwenye Msimamizi wa Siri. Vitambulisho vilizungushwa. Vidhibiti vya mtandao viliimarishwa.
+Tukio na IP ya Kiromania lilikuwa limedhibitiwa. Siri zilikuwa katika Secrets Manager. Vitambulisho vilikuwa vimezungushwa. Vidhibiti vya mtandao vilikuwa vimeimarishwa.
 
-Lakini Priya alikuwa ameuliza swali ambalo lilihitimisha Sura ya 16: "Ikiwa kitu kisicho cha kawaida kilionekana kwenye CloudTrail, tungejuaje?"
+Lakini Priya alikuwa ameuliza swali lililomaliza Sura ya 16: "Ikiwa kitu kisicho cha kawaida kitatokea katika CloudTrail, tungejuaje?"
 
-Jibu la uaminifu lilikuwa: labda hawangefanya.
+Jibu la kweli lilikuwa: pengine hawangejua.
 
-CloudTrail huhifadhi maelfu ya matukio kwa siku. Hakuna mwanadamu anayesoma zote. Priya aliangalia mwenyewe kila wiki, lakini hiyo ilimaanisha kuwa jambo fulani linaweza kutokea Jumanne na lisitambuliwe hadi Jumatatu inayofuata.
+---
 
-"Tunahitaji kitu ambacho kinatuangalia magogo," alisema.
+*Kila kilichoweza kufungwa kilikuwa kimefungwa. Siri zilikuwa katika Secrets Manager. Funguo za usimbaji zilikuwa katika KMS. Trafiki ya mtandao ilidhibitiwa na vikundi vya usalama na NACL. Ulinzi wa mzunguko ulikuwa imara. Lakini ulinzi wa mzunguko huchukulia kuwa unajua shambulizi linaonekanaje kabla halijawasili. Swali ambalo Priya alikuwa akiuliza lilikuwa tofauti: vipi kuhusu mashambulizi usiyoyaona yakija?*
 
-Maya akatazama juu. "Moja kwa moja?"
+---
 
-"Moja kwa moja."
+CloudTrail huingiza kumbukumbu maelfu ya matukio kwa siku. Hakuna mwanadamu anayesoma zote. Priya alikagua kwa mkono kila wiki, lakini hilo lilimaanisha kitu kingeweza kutokea Jumanne na kisitambuliwe hadi Jumatatu inayofuata.
 
-Swali la pili la Tom la siku: "Je! hiyo inagharimu kiasi gani?"
+"Tunahitaji kitu kinachotuangalia kumbukumbu kwa niaba yetu," alisema.
 
-**Kategoria tatu za Tishio**
+Maya akaangalia juu. "Kiotomatiki?"
+
+"Kiotomatiki."
+
+"Na vipi ikiwa mtu atajaribu kuvunja?" Priya aliendelea. "Si tu kitambulisho kilichoathiriwa — vipi ikiwa mtu atazindua DDoS? Vipi ikiwa wataanza kupapasa endpoints zetu za API kwa udhaifu wa sindano? Vipi ikiwa tayari wako ndani na hatujui?"
+
+"Hayo ni matatizo matatu tofauti," Leo alisema.
+
+"Ndiyo," Priya alisema. "Na AWS ina huduma tatu tofauti za kuyashughulikia."
+
+**Kategoria Tatu za Tishio**
 
 Vitisho vya usalama dhidi ya programu ya wingu kwa ujumla huangukia katika kategoria tatu:
 
-**Mashambulizi ya sauti (DDoS)**: Mshambulizi hutuma trafiki nyingi sana hivi kwamba programu yako haiwezi kujibu watumiaji halali. Shambulio linaweza kuwa mamilioni ya maombi ya HTTP, au mafuriko ya pakiti za TCP SYN zilizoundwa ili kumaliza jedwali la muunganisho la seva yako.
+**Mashambulizi ya kiasi (DDoS)**: Mvamizi hutuma trafiki nyingi sana hivi kwamba programu yako haiwezi kuwajibu watumiaji halali. Shambulizi linaweza kuwa mamilioni ya maombi ya HTTP, au mafuriko ya pakiti za TCP SYN zilizobuniwa kumaliza jedwali la muunganisho la seva yako.
 
-**Mashambulizi ya utumaji (Mafanikio)**: Mshambulizi hutuma maombi iliyoundwa mahususi yaliyoundwa ili kutumia udhaifu katika programu yako - sindano ya SQL, uandishi wa tovuti tofauti, ingizo mbovu ambalo huvuruga kichanganuzi.
+**Mashambulizi ya programu (Exploits)**: Mvamizi hutuma maombi yaliyobuniwa mahususi kutumia udhaifu katika programu yako — sindano ya SQL, cross-site scripting, ingizo lililoharibika linaloangusha kichanganuzi.
 
-**Hitilafu za kitabia (Upelelezi na maelewano)**: Simu za API ambazo hazipaswi kufanyika (mtu anayeuliza hifadhidata yako yote ya mtumiaji saa 3 AM), shughuli isiyo ya kawaida ya IAM (vitambulisho vinatumika kutoka nchi mpya), au trafiki ya mtandao hadi mahali ambako haukutarajiwa.
+**Hitilafu za kitabia (Upelelezi na uathiriaji)**: Miito ya API isiyopaswa kutokea (mtu akiuliza hifadhidata yako yote ya watumiaji saa 9 usiku), shughuli isiyo ya kawaida ya IAM (vitambulisho vinatumika kutoka nchi mpya), au trafiki ya mtandao kwa marudio yasiyotarajiwa.
 
 AWS ina huduma iliyojitolea kwa kila moja:
 
 - **AWS Shield**: Ulinzi wa DDoS
-- **AWS WAF**: Ulinzi wa safu ya programu
-- **Amazon GuardDuty**: Utambuzi wa tishio la tabia
+- **AWS WAF**: Ulinzi wa kiwango cha programu
+- **Amazon GuardDuty**: Kugundua tishio kwa kitabia
 
-**Ngao ya AWS: Kinyonyaji cha DDoS**
+**AWS Shield: Kimeza cha DDoS**
 
-**AWS Shield Standard** imewashwa kiotomatiki kwa wateja wote wa AWS bila malipo ya ziada. Inalinda dhidi ya mashambulizi ya kawaida ya safu ya 3 (mtandao) na safu ya 4 (usafiri) ya DDoS - mafuriko ya SYN, mafuriko ya UDP, mashambulizi ya kukuza DNS.
+**AWS Shield Standard** imewashwa kiotomatiki kwa wateja wote wa AWS bila malipo ya ziada. Hulinda dhidi ya mashambulizi ya kawaida zaidi ya safu ya 3 (mtandao) na safu ya 4 (usafiri) ya DDoS — mafuriko ya SYN, mafuriko ya UDP, mashambulizi ya kukuza DNS.
 
-CloudFront, Route 53, na Usawazishaji wa Mizigo Elastic hukaa ukingoni mwa mtandao wa AWS. Shambulio la DDoS linapolenga programu yako, hugusa huduma hizi zinazodhibitiwa kwanza. Miundombinu ya mtandao ya AWS inachukua shambulio kabla ya kufikia matukio yako ya EC2.
+CloudFront, Route 53, na Elastic Load Balancing hukaa ukingoni mwa mtandao wa AWS. Shambulizi la DDoS linapolenga programu yako, hugonga huduma hizi zinazosimamiwa kwanza. Miundombinu ya mtandao ya AWS humeza shambulizi kabla halijafikia vihalisi vyako vya EC2.
 
-**AWS Shield Advanced** ndiyo daraja la kwanza ($3,000/mwezi kwa kila shirika). Inaongeza:
+**AWS Shield Advanced** ni daraja la kiwango cha juu ($3,000/mwezi kwa kila shirika, na ahadi ya mwaka mmoja). Ni usajili tofauti — *haijajumuishwa* katika mpango wowote wa AWS Support. Inaongeza:
 
 - Ulinzi kwa EC2, ELB, CloudFront, Global Accelerator, na Route 53
-- Arifa za mashambulizi ya wakati halisi
-- Ufikiaji wa Timu ya Majibu ya AWS Shield (SRT) - wahandisi wa usalama ambao wanaweza kukusaidia kujibu mashambulizi
-- Ulinzi wa gharama: ikiwa shambulio litasababisha bili yako kuongezeka, AWS hukiri gharama za upasuaji
-- Ugunduzi na upunguzaji wa DDoS ulioimarishwa kwenye safu ya 7 (safu ya maombi)
+- Arifa za shambulizi za karibu na wakati halisi
+- Ufikiaji wa AWS Shield Response Team (SRT) — wahandisi wa usalama wanaoweza kukusaidia kujibu mashambulizi (kuhusisha SRT kunahitaji zaidi mpango wa Business au Enterprise Support)
+- Ulinzi wa gharama: ikiwa shambulizi litasababisha bili yako kuongezeka, AWS hukopesha gharama za mwinuko
+- Kugundua na kupunguza DDoS kulikoimarishwa katika safu ya 7 (safu ya programu)
 
-"Dola elfu tatu kwa mwezi?" Tom alisema.
+"Hilo linagharimu kiasi gani kwa mwezi?" Tom aliuliza.
 
-"Kwa makampuni yanayoshughulikia mamilioni ya mapato, DDoS ambayo inawashusha kwa saa mbili inagharimu zaidi ya dola elfu tatu," Priya alisema.
+"Dola elfu tatu," Priya alisema. "Kwa kila shirika."
 
-Tom alifanya hesabu kimya kimya.
+Tom alikuwa kimya kwa muda.
+
+"Kwa biashara kubwa zinazoshughulikia mamilioni katika mapato, DDoS inayowashusha kwa saa mbili inagharimu zaidi ya dola elfu tatu," Priya alisema.
+
+Tom alifanya hesabu kimya.
 
 "Tutaanza na Standard," alisema hatimaye.
 
-**AWS WAF: Kichujio cha Maombi**
+---
 
-**AWS WAF (Firewall ya Maombi ya Wavuti)** hufanya kazi katika kiwango cha HTTP - hukagua maudhui ya maombi ya wavuti kabla ya kufikia programu yako.
+**Tukio la DDoS: Shield Inaonekanaje Kivitendo**
 
-WAF imesanidiwa na **Web ACLs (Orodha za Udhibiti wa Ufikiaji)** — seti za sheria zinazofafanua nini cha kuruhusu, kuzuia, au kuhesabu.
+Miezi minane baada ya uzinduzi, Nimbus ilipata shambulizi lake la kwanza halisi la DDoS.
 
-WAF inaweza kushikamana na:
+Lilianza saa 5:43 mchana Jumanne. Dashibodi ya CloudWatch ya load balancer ilionyesha maombi ya muunganisho yanayoingia yakiongezeka kutoka 3,000 ya kawaida kwa dakika hadi 180,000 kwa dakika ndani ya chini ya sekunde tisini. IP za chanzo zilisambaa katika nchi arobaini, na kiasi cha kuingia kilifikia kilele cha karibu gigabiti hamsini kwa sekunde. Mfumo ulikuwa wazi: botnet ikizindua mafuriko ya SYN.
+
+Leo aliona vipimo vya CloudFront kwanza. "Kiwango cha maombi kimepanda mara sitini. Muda wa kujibu unapanda."
+
+Priya alivuta vipimo vya CloudWatch upande kwa upande: majaribio ya muunganisho ukingoni yakipanda wima, maombi yanayofikia origin kwa kweli — bapa. "Shield Standard inaimeza," alisema. Hakukuwa na tahadhari, hakuna tukio la dashibodi, hakuna arifa. Shield Standard hufanya kazi kimya: iko hai daima, ni bure, na hukupa **uonekanaji sifuri wa shambulizi** — hakuna koni ya matukio, hakuna arifa, hakuna timu ya kujibu DDoS. (Uonekanaji huo — dashibodi za shambulizi za karibu na wakati halisi na tahadhari — ndio haswa Shield *Advanced* huuza.) Njia pekee Priya angeweza kuona shambulizi kabisa ilikuwa kupitia vipimo vyake vya CloudWatch.
+
+Shield Standard ilikuwa imegundua kiotomatiki mafuriko ya SYN na kuanzisha upunguzaji ndani ya dakika mbili za kwanza. Trafiki ya shambulizi ilikuwa ikimezwa katika nodi za ukingo za CloudFront kimataifa — pointi zilezile 750+ za uwepo zilizohudumia maudhui halali pia zilimeza kiasi cha shambulizi.
+
+Kufikia saa 5:52 mchana — dakika tisa baada ya shambulizi kuanza — upunguzaji wa Shield ulikuwa umerejesha kiwango cha maombi kwenye origin kwa kawaida. Shambulizi lilikuwa bado linaendesha katika kiwango cha mtandao, lakini upunguzaji ulikuwa ukilishughulikia. Programu ya Nimbus iliendelea kuhudumia watumiaji muda wote.
+
+"Watumiaji hawakugundua?" Leo aliuliza, akiangalia kipimo cha kiwango cha makosa.
+
+"Kiwango cha makosa kilipanda karibu asilimia mbili kwa karibu dakika nne," Priya alisema. "Baadhi ya watumiaji walipata jibu la polepole kidogo. Hakuna kukatika. Programu ilibaki hai."
+
+"Kwa sababu Shield iliimeza mafuriko ukingoni."
+
+"Kabla yajafikia load balancer yetu. Mafuriko ya SYN ya gigabiti hamsini yaligonga CloudFront. Kufikia wakati mfumo wa trafiki ulipotambuliwa na kupunguzwa, origin yetu ilikuwa imeona tu kiasi cha maombi cha kawaida."
+
+Shambulizi lilidumu dakika arobaini na saba. Kufikia saa 6:30 mchana vipimo vya ukingo vilikuwa vimerejea msingi — ishara pekee ya "imetatuliwa" ambayo Shield Standard hukupa.
+
+"Na hii ni Shield Standard," Tom alisema. "Toleo la bure."
+
+"Mashambulizi ya safu 3 na 4. Standard hulinda dhidi yake kiotomatiki. Kama shambulizi lingekuwa la kisasa zaidi — mafuriko ya HTTP ya safu 7, kwa mfano, ambapo kila ombi lilionekana halali — Standard isingetosha. Hilo linahitaji Shield Advanced pamoja na WAF."
+
+Tom aliandika "Fuatilia mifumo ya DDoS ya safu 7" katika ramani yake ya usalama.
+
+---
+
+**AWS WAF: Kichujio cha Programu**
+
+**AWS WAF (Web Application Firewall)** hufanya kazi katika kiwango cha HTTP — hukagua maudhui ya maombi ya wavuti kabla yajafikia programu yako.
+
+WAF imesanidiwa na **Web ACLs (Access Control Lists)** — seti za kanuni zinazofafanua nini cha kuruhusu, kuzuia, au kuhesabu.
+
+WAF inaweza kuambatishwa kwa:
 
 - Usambazaji wa CloudFront (kagua maombi ukingoni, kimataifa)
-- Mizani ya Mizigo ya Maombi (kagua maombi katika ngazi ya mkoa)
-- Lango la API
+- Application Load Balancers (kagua maombi katika kiwango cha kieneo)
+- API Gateway
 - AWS AppSync
 
-**Sheria Zinazosimamiwa na WAF**: AWS na wachuuzi wengine huchapisha seti za sheria zilizoundwa awali:
+**Managed Rules za WAF**: AWS na wachuuzi wa watu wa tatu huchapisha seti za kanuni zilizojengwa awali:
 
-- **Sheria Zinazodhibitiwa na AWS - Seti ya Kanuni ya Msingi**: Hulinda dhidi ya athari 10 za OWASP Kuu (sindano ya SQL, XSS, sindano ya amri, upitishaji wa njia, n.k.)
-**Sheria Zinazodhibitiwa na AWS - Ingizo Mbaya Zinazojulikana**: Huzuia maombi yanayolingana na mifumo ya mashambulizi inayojulikana
-**Sheria Zinazodhibitiwa na AWS - Orodha ya Sifa ya IP ya Amazon**: Huzuia IP zinazojulikana kuhusishwa na roboti na vichanganuzi
-- **Sheria Zinazodhibitiwa na AWS - Udhibiti wa Bot**: Hutambua na kudhibiti trafiki ya roboti
+- **AWS Managed Rules - Core Rule Set**: Pamoja na vikundi vya kanuni shirikishi (SQL database, Known Bad Inputs), hufunika udhaifu 10 Bora wa OWASP (sindano ya SQL, XSS, sindano ya amri, upitishaji wa njia, n.k.)
+- **AWS Managed Rules - Known Bad Inputs**: Huzuia maombi yanayolingana na mifumo ya shambulizi inayojulikana
+- **AWS Managed Rules - Amazon IP Reputation List**: Huzuia IP zinazojulikana kuhusishwa na botnets na vipapasaji
+- **AWS Managed Rules - Bot Control**: Hutambua na husimamia trafiki ya bot
 
-Unaweza pia kuunda sheria maalum:
+Unaweza pia kuunda kanuni maalum:
 
-- "Zuia ombi lolote kwa kichwa cha Wakala wa Mtumiaji kilicho na 'sqlmap'" (kitambazaji cha kawaida cha sindano cha SQL)
-- "Kikomo cha viwango: usiruhusu maombi zaidi ya 1000 kwa IP kwa dakika 5"
-- "Zuia maombi ambayo yana `<script>` katika thamani yoyote ya parameta"
+- "Zuia ombi lolote lenye kichwa cha User-Agent kilicho na 'sqlmap'" (kipapasaji cha kawaida cha sindano ya SQL)
+- "Kikomo cha kiwango: usiruhusu maombi zaidi ya 1000 kwa IP kwa dakika 5"
+- "Zuia maombi yenye `<script>` katika thamani yoyote ya parameta"
 
-Kwa Nimbus, usanidi wa vitendo: WAF kwenye usambazaji wa CloudFront na Core Rule Set kuwezeshwa. Hii huzuia mifumo ya kawaida ya uvamizi kabla ya maombi kufikia matukio ya EC2.
+Kwa Nimbus, usanidi wa kivitendo: WAF kwenye usambazaji wa CloudFront na Core Rule Set ikiwa imewashwa. Hii huzuia mifumo ya kawaida zaidi ya shambulizi kabla maombi hayajafikia kamwe vihalisi vya EC2.
 
-**Amazon GuardDuty: Mchambuzi wa Tabia**
+Huenda unajiuliza: ikiwa WAF inazuia mifumo ya shambulizi inayojulikana, nini hutokea wakati mfumo mpya wa shambulizi unaotokea ambao WAF haukijui? Seti za managed rules za WAF husasishwa na AWS na wachuuzi wa watu wa tatu kadiri vitisho vipya vinavyojitokeza — huhitaji kusasisha kanuni kwa mkono. Lakini uko sahihi kwamba WAF kimsingi ni ya kuitikia mifumo inayojulikana. Mbinu mpya, za riwaya za shambulizi hazitazuiwa na kanuni isiyokuwepo bado. Ndio sababu GuardDuty ipo pamoja na WAF: WAF huchuja mlango wa mbele, GuardDuty huangalia tabia isiyo ya kawaida ndani ya nyumba. Aina mpya ya shambulizi inaweza kupita WAF, lakini GuardDuty bado inaweza kuashiria shughuli isiyo ya kawaida inayosababisha — miito isiyo ya kawaida ya API, marudio yasiyotarajiwa ya mtandao, mifumo ya ufikiaji isiyolingana na msingi.
 
-GuardDuty kimsingi ni tofauti na Shield na WAF. Haizuii mashambulizi — **hutambua tabia isiyo ya kawaida**.
+**Tumefikiria kinachotokea ikiwa WAF itasababisha matokeo chanya bandia?** Priya aliuliza. "Ombi la mtumiaji halali linalozuiwa na Core Rule Set?"
 
-GuardDuty inachambua kila wakati:
+"WAF ina hali ya 'Count'," Leo alisema. "Badala ya kuzuia, inahesabu tu maombi yanayolingana. Unaiendesha katika hali ya Count kwanza, unakagua kile ingezuia, unathibitisha hakuna matokeo chanya bandia, kisha unabadilisha kuwa Block."
 
-- **Kumbukumbu za CloudTrail za AWS **: Mabadiliko ya IAM, simu za API, kuingia kwa kiweko
-- **Kumbukumbu za Mtiririko wa VPC**: mifumo ya trafiki ya mtandao ndani ya VPC yako
-- **Kumbukumbu za hoja za DNS**: matukio yako yanasuluhisha nini (programu hasidi inayojulikana mara nyingi hutatua vikoa mahususi vya C2)
+"Vizuri," Priya alisema. "Tunaanza katika hali ya Count."
 
-Miundo ya kujifunza kwa mashine hutambua ruwaza zinazokengeuka kutoka kwa msingi wako. GuardDuty hutoa **majaribio** — arifa zilizoainishwa - inapogundua hitilafu.
+---
+
+**Kuunda Kanuni ya WAF: Hadithi ya Kikomo cha Kiwango**
+
+Wiki mbili baada ya kuwasha WAF katika hali ya Count, Priya alikagua kumbukumbu. Matokeo ya Core Rule Set yalikuwa safi — hakuna matokeo chanya bandia kwenye trafiki halali, majaribio machache ya sindano ya SQL yaliyozuiwa kutoka vipapasaji vya kiotomatiki.
+
+Lakini aliona mfumo ambao Core Rule Set haukuwa ikiashiria: anwani moja ya IP ilikuwa imefanya maombi 847 kwa `/api/search` katika dakika tano. Kila ombi lilikuwa halali kimuundo. Lakini utafutaji 847 katika dakika tano haukuwa wa mwanadamu.
+
+"Mkwaruzaji wa bei," alisema. "Mtu anauliza kiotomatiki utafutaji wetu wa mikahawa kujenga hifadhidata ya bei shindani."
+
+"Tunajali?" Leo aliuliza.
+
+"Inatumia rasilimali zetu za kompyuta na ni kinyume na masharti yetu ya huduma," Tom alisema.
+
+"Tunajali," Priya alithibitisha.
+
+Aliunda kanuni maalum ya WAF inayotegemea kiwango:
+
+```
+Jina la kanuni: RateLimitSearchAPI
+Aina ya kanuni: Kanuni inayotegemea kiwango
+Kikomo cha kiwango: maombi 100 kwa kila anwani ya IP
+Dirisha la tathmini: dakika 5 (inayoweza kusanidiwa: dakika 1, 2, 5, au 10)
+Kauli ya kupunguza upeo: njia ya URI inaanza na /api/search
+Kitendo: Block
+```
+
+Kauli ya kupunguza upeo ni muhimu — kikomo cha kiwango kinatumika tu kwa `/api/search`. Trafiki halali ya API kwa endpoints nyingine haiathiriwi. Na tambua jinsi kuzuia kunavyofanya kazi: hakuna kipindi cha "adhabu" kisichobadilika — WAF hutathmini upya kiwango cha maombi cha kila IP kwa kuendelea, huizuia wakati kiwango kinabaki juu ya kikomo, na huiruhusu (kwa kawaida ndani ya sekunde) mara kiwango kinaposhuka chini.
+
+Aliiweka katika hali ya Count kwanza. Aliiendesha kwa saa 24. IP pekee iliyowasha kanuni ilikuwa mkwaruzaji. Hakuna mtumiaji halali aliyewahi kutuma zaidi ya maombi 12 kwa endpoint ya utafutaji katika dakika tano.
+
+Alibadilisha kuwa hali ya Block. Ombi linalofuata la mkwaruzaji lilipokea 403. Akabadilisha kwa IP tofauti. Kikomo cha kiwango kiliinasa hiyo pia.
+
+"Watazunguka hatimaye," Leo alisema. "Wasambaze katika IP zaidi."
+
+"Wakati huo wanatumia miundombinu zaidi, wanalipa zaidi, na wanapata data kidogo," Priya alisema. "Hatuhitaji kuwasimamisha kabisa. Tunahitaji kufanya iwe ghali ya kutosha isistahili."
+
+"Hilo linagharimu kiasi gani kwa mwezi?" Tom aliuliza.
+
+Bei ya WAF ni kwa kila Web ACL kwa mwezi, kwa kila kanuni kwa mwezi, na kwa kila milioni ya maombi. Kwa usanidi wa Nimbus — Web ACL moja, kanuni tano kwenye CloudFront — takriban $15 kwa mwezi pamoja na malipo ya maombi.
+
+Tom aliidhinisha mara moja.
+
+---
+
+**Amazon GuardDuty: Mchambuzi wa Kitabia**
+
+"Subiri — lakini *kwa nini* tungeifanya hivyo?" Maya aliuliza. "Ikiwa WAF inazuia mashambulizi na Shield inameza mafuriko, kwa nini tunahitaji huduma ya tatu? GuardDuty kwa kweli inaangalia nini?"
+
+WAF na Shield ni vichujio — hukatiza trafiki mbaya kabla haijafikia programu yako. GuardDuty huangalia kinachotokea baada ya trafiki kuwasili. Inaangalia kile miundombinu yako inafanya: vitambulisho gani vya IAM vinatumika, vikoa gani vihalisi vyako vinawasiliana navyo, miito gani ya API inatokea saa 9 usiku. Mvamizi anayepita mlango wa mbele kupitia ombi linaloonekana halali hatazuiwa na WAF — lakini GuardDuty itagundua kuwa kitambulisho kilekile ghafla kinafanya miito ya API kutoka Romania.
+
+GuardDuty ni tofauti kimsingi na Shield na WAF. Haizuii mashambulizi — **inagundua tabia isiyo ya kawaida**.
+
+GuardDuty huchambua kwa kuendelea mitiririko kadhaa ya shughuli kugundua vitisho: **matukio ya usimamizi na data ya CloudTrail** (miito ya API na vitendo), **VPC Flow Logs** (mifumo ya trafiki ya mtandao), na **kumbukumbu za hoja za DNS** (utafutaji wa vikoa). Haya ni vyanzo vitatu vya msingi ambavyo GuardDuty imekuwa ikitegemea daima:
+
+- **Kumbukumbu za AWS CloudTrail**: Mabadiliko ya IAM, miito ya API, kuingia kwa koni
+- **VPC Flow Logs**: mifumo ya trafiki ya mtandao ndani ya VPC yako
+- **Kumbukumbu za hoja za DNS**: vihalisi vyako vinafumbua nini (programu hasidi inayojulikana mara nyingi hufumbua vikoa mahususi vya C2)
+
+Lakini GuardDuty imepanuka kwa kiasi kikubwa zaidi ya hizi tatu. AWS huziita nyongeza za hiari **protection plans** — S3 Protection, EKS Protection, RDS Protection, Lambda Protection, Runtime Monitoring, na Malware Protection — kila moja ikiwashwa kibinafsi. Kutegemea unayowasha, GuardDuty inaweza pia kuchambua **matukio ya data ya S3** (mifumo isiyo ya kawaida ya ufikiaji wa ndoo zako), **kumbukumbu za ukaguzi za EKS na shughuli za runtime** (tabia hasidi ndani ya kontena zinazoendesha), **matukio ya kuingia ya RDS** (majaribio ya kuingia ya hifadhidata yasiyo ya kawaida), **trafiki ya mtandao ya Lambda** (vitendaji vinavyoita marudio ya nje yasiyotarajiwa), **tabia ya runtime ya ECS/EC2**, na **viasi vya EBS vilivyoskaniwa kwa malware**. Kwa mtihani, jua vyanzo vitatu vya msingi kwa moyo; protection plans huonekana katika hali kuhusu muktadha mahususi wa kugundua tishio — "gundua majaribio ya kuingia yasiyo ya kawaida kwa RDS" au "tambua tabia hasidi ndani ya kontena inayoendesha" ni ishara za kufikiria protection plans za hiari za GuardDuty.
+
+Miundo ya kujifunza kwa mashine hutambua mifumo inayotofautiana na msingi wako. GuardDuty huzalisha **findings** — tahadhari zilizoainishwa — inapogundua hitilafu.
 
 Mifano ya kile GuardDuty inaweza kugundua:
 
-- Mtumiaji wa IAM akiingia kutoka kwa anwani ya IP isiyotambulika (katika nchi ambayo hawajawahi kutumia hapo awali)
-- Simu za API zinapigwa kutoka kwa nodi ya kutoka ya Tor
-- Mfano wa EC2 unaowasiliana na dimbwi la uchimbaji madini la cryptocurrency
-- Sauti ya juu ya simu ya API isiyo ya kawaida (matumizi mabaya ya kitambulisho au skanning)
-- Ndoo ya S3 inafikiwa na anwani ya IP ambayo imealamishwa kwa shughuli mbaya
-- Trafiki ya nje kwa kikoa kinachojulikana kuhusishwa na amri na udhibiti wa programu hasidi
+- Mtumiaji wa IAM akiingia kutoka anwani ya IP isiyotambulika (katika nchi ambayo hawajawahi kutumia hapo awali)
+- Miito ya API ikifanywa kutoka nodi ya kutoka ya Tor
+- Kihalisi cha EC2 kinachowasiliana na dimbwi linalojulikana la uchimbaji wa cryptocurrency
+- Kiasi cha juu kisicho cha kawaida cha miito ya API (matumizi mabaya ya vitambulisho au kuskani)
+- Ndoo ya S3 inayofikiwa na anwani ya IP iliyoashiriwa kwa shughuli hasidi
+- Trafiki ya kwenda nje kwa kikoa kinachojulikana kuhusishwa na amri-na-udhibiti wa malware
 
-"Hii ndiyo ingeweza kupata IP ya Kiromania," Leo alisema kimya kimya.
+"Hii ndiyo ingeunasa IP ya Kiromania," Leo alisema kimya.
 
-"Kama tungewasha GuardDuty, ingealamisha tukio la EC2 kutengeneza miunganisho ya nje kwa IP ya nje isiyotambulika saa 2 asubuhi," Priya alithibitisha.
+"Kama tungekuwa na GuardDuty imewashwa, ingeashiria kihalisi cha EC2 kikifanya miunganisho ya kwenda nje kwa IP ya nje isiyotambulika saa 8 usiku," Priya alithibitisha.
 
-"Inagharimu kiasi gani?"
+---
 
-Bei ya GuardDuty inategemea kiasi cha kumbukumbu zilizochanganuliwa - matukio ya CloudTrail, data ya mtiririko wa VPC, hoja za DNS. Kwa programu ndogo hadi ya kati, kwa kawaida $50-150/mwezi. Kwa kiwango, bado ni sehemu ndogo ya gharama za miundombinu.
+**Aina Tano za Findings za GuardDuty na Cha Kufanya**
 
-Tom akavuta koni na kuiwezesha.
+Priya aliunda runbook kwa findings tano za kawaida zaidi za GuardDuty. Finding inapowaka, timu inajua mara moja inamaanisha nini na cha kufanya.
+
+**1. UnauthorizedAccess:IAMUser/ConsoleLoginSuccess.B**
+
+Mtumiaji wa IAM aliingia kwa mafanikio katika AWS Console kutoka anwani ya IP ambayo haijaonekana kwa akaunti hii hapo awali, au kutoka eneo la kijiografia lisilolingana na kuingia kwa awali.
+
+Jibu: Thibitisha na mtumiaji kuwa walianzisha kuingia. Ikiwa hawakuanzisha — au hawawezi kufikiwa — mara moja: zima ufunguo wa ufikiaji wa mtumiaji na nenosiri la koni, batilisha vikao amilifu, na anza ukaguzi wa CloudTrail wa kila kitu mtumiaji huyo amefanya katika saa 24 zilizopita. Finding hii mara nyingi hutangulia matumizi mabaya ya vitambulisho.
+
+**2. CryptoCurrency:EC2/BitcoinTool.B**
+
+Kihalisi cha EC2 kinauliza anwani za IP au majina ya vikoa yanayohusishwa na madimbwi ya uchimbaji wa cryptocurrency. Hili karibu daima ni matokeo ya kihalisi cha EC2 kuathiriwa na kutumika kama bot ya uchimbaji.
+
+Jibu: Tenga kihalisi mara moja — rekebisha kikundi chake cha usalama kuzuia trafiki yote ya kuingia na kwenda nje isipokuwa kwa bastion host yako. Piga picha ya uchunguzi (forensic snapshot) ya kiasi cha EBS. Kisha sitisha kihalisi na uzindue mbadala kutoka AMI safi.
+
+**3. Recon:EC2/PortProbeUnprotectedPort**
+
+Kihalisi cha EC2 kina lango wazi kwa intaneti linalopapaswa na vipapasaji vinavyojulikana au kutoka nodi ya kutoka ya Tor. GuardDuty huashiria malango yanayoonekana katika flow logs kuwa yanafikika kutoka vyanzo vya nje.
+
+Jibu: Kagua kanuni za kikundi cha usalama. Ikiwa lango limefunguliwa kwa kukusudia, weka alama finding kuwa imetatuliwa na dokezo. Ikiwa si la kukusudia, funga lango mara moja. Angalia CloudTrail kwa ufikiaji wowote ambao huenda ulitokea kupitia lango hilo.
+
+**4. Trojan:EC2/BlackholeTraffic**
+
+Kihalisi cha EC2 kinajaribu kuwasiliana na anwani ya IP iliyotambuliwa kama "black hole" — marudio yanayohusishwa na miundombinu ya amri-na-udhibiti wa malware. Trafiki kwa IP hizi inadokeza kihalisi kimeambukizwa na kinajaribu kuita nyumbani.
+
+Jibu: Sawa na findings za CryptoCurrency — tenga, piga picha, badilisha. Finding hii inaonyesha malware amilifu kwenye kihalisi. Usijaribu kusafisha kihalisi mahali pake; jenga kipya kutoka AMI safi.
+
+**5. Policy:S3/BucketBlockPublicAccessDisabled**
+
+Mtu amezima mpangilio wa Block Public Access kwenye ndoo ya S3. Hii haimaanishi ndoo ni ya umma — inamaanisha utaratibu wa usalama unaozuia ufichuzi wa umma wa bahati mbaya umezimwa kwa ndoo hiyo. Hili mara nyingi hufanywa kwa bahati mbaya au kama sehemu ya usambazaji usiosanidiwa vizuri.
+
+Jibu: Chunguza nani alifanya mabadiliko (CloudTrail itakuwa na wito wa API). Washa upya Block Public Access isipokuwa kuna sababu iliyoandikwa inapaswa kuzimwa. Zingatia kuwasha mpangilio wa Block Public Access wa kiwango cha akaunti kuzuia finding hii kutokea siku zijazo.
+
+"Jambo muhimu zaidi kuhusu findings za GuardDuty," Priya alisema, "ni kwamba si tahadhari — ni dhana. Kila finding inasema 'mfumo huu unaonekana usio wa kawaida.' Unathibitisha, unachunguza, unajibu. Baadhi zitakuwa chanya bandia. Nyingi hazitakuwa."
+
+"Tunatanguliza vipi?" Rafael aliuliza.
+
+"GuardDuty huweka viwango vya ukali: Chini, Wastani, Juu. Findings za ukali wa juu zinahitaji jibu la siku ileile. Findings za Trojan na uathiriaji wa vitambulisho daima ni za Juu. Findings za upapasaji wa lango zinaweza kuwa Wastani au Chini. Anza na za Juu, fanya kazi chini."
+
+---
+
+"Inagharimu kiasi gani?" Tom aliuliza.
+
+Bei ya GuardDuty inategemea kiasi cha kumbukumbu zilizochambuliwa — matukio ya CloudTrail, data ya flow ya VPC, hoja za DNS. Kwa programu ndogo hadi ya kati, kwa kawaida $50-150/mwezi. Kwa kiwango kikubwa, bado ni sehemu ndogo ya gharama za miundombinu.
+
+Tom alivuta koni na kuiwasha.
+
+"Itakuwa sawa," Leo alisema. "Ni kufuatilia tu. Si kama itavunja chochote."
+
+"Tayari niliisambaza," Leo aliongeza — kisha akaangalia dashibodi ya GuardDuty. "Oh. Findings za sampuli pekee. Halisi huchukua muda."
+
+"GuardDuty inahitaji muda kujenga msingi wa jinsi kawaida inavyoonekana," Priya alisema. "Ipe siku kadhaa. Finding ya kwanza halisi itawasili — daima hufanya."
+
+Aligeuka kuwa sahihi kuhusu hilo. Lakini finding ya kwanza ni hadithi ya mwisho wa sura hii.
 
 **Kuunganisha Huduma Tatu**
 
 Shield, WAF, na GuardDuty hufanya kazi katika tabaka tofauti na kukamilishana:
 
-| Huduma | Tabaka | Kinga Dhidi | Kitendo |
-|---------------------------------------------------------- ------------------------|----------------------------------|
-| Ngao ya AWS | Mtandao/Usafiri (L3/L4) | DDoS mafuriko | Hunyonya/hupunguza mashambulizi |
-| AWS WAF | Maombi (L7) | OWASP 10 Bora, roboti, vichakachuaji | Huruhusu, huzuia, au huhesabu maombi |
-| GuardDuty | Tabia (magogo yote) | Makosa, vitambulisho vilivyoathiriwa, programu hasidi | Inatambua na arifa |
+| Huduma     | Tabaka                    | Hulinda Dhidi ya                            | Kitendo                            |
+|------------|---------------------------|---------------------------------------------|------------------------------------|
+| AWS Shield | Mtandao/Usafiri (L3/L4)   | Mafuriko ya DDoS                            | Humeza/hupunguza mashambulizi      |
+| AWS WAF    | Programu (L7)             | OWASP 10 Bora, bots, wakwaruzaji            | Huruhusu, huzuia, au huhesabu maombi |
+| GuardDuty  | Kitabia (kumbukumbu zote) | Hitilafu, vitambulisho vilivyoathiriwa, malware | Hugundua na kutahadharisha     |
 
-Ngao huzuia mafuriko. WAF huchuja maji. GuardDuty hutazama mabomba kwa mifumo isiyo ya kawaida ya mtiririko.
+Shield husimamisha mafuriko. WAF huchuja maji. GuardDuty huangalia mabomba kwa mifumo isiyo ya kawaida ya mtiririko. Macie hukagua kilichohifadhiwa katika hifadhi za maji. Security Hub ni chumba cha udhibiti ambapo dashibodi zote zinaonekana kwa wakati mmoja.
+
+Hali ya kushindwa ya kila moja inaeleza kwa nini unahitaji zote:
+
+- Mafuriko ya SYN ya 50 Gbps si ombi la wavuti. WAF haiwezi kuyakagua. GuardDuty inaweza kugundua matukio yanayohusiana ya CloudTrail. Shield huyasimamisha.
+- Ombi moja la sindano ya SQL si mafuriko. Shield huipuuza. GuardDuty haijui maudhui ya maombi ya HTTP. WAF huinasa.
+- Mtumiaji halali wa AWS akitumia vitambulisho vyake kutoa data nje polepole — hakuna DDoS, hakuna sindano, HTTP halali — Shield na WAF haziona chochote kisicho cha kawaida. GuardDuty hugundua vitambulisho vinatumika kutoka nchi mpya saa 9 usiku.
+- Msanidi anayepakia kwa bahati mbaya data ya mteja kwenye ndoo inayofikika hadharani hazalishi tabia isiyo ya kawaida kabisa. GuardDuty haina cha kuashiria. Macie huskani ndoo na kupata PII.
+
+Kila huduma ina sehemu kipofu. Mchanganyiko hufunika sehemu hizo kipofu.
 
 **CloudTrail: Msingi**
 
-Huduma zote tatu zinategemea kumbukumbu. **AWS CloudTrail** ni huduma ya kukata miti inayonasa kila simu ya API katika akaunti yako ya AWS - ni nani aliyepiga simu nini, lini, kutoka wapi, na matokeo yake ni nini.
+Huduma zote tatu zinategemea kumbukumbu. **AWS CloudTrail** ni huduma ya kuingiza kumbukumbu inayonasa kila wito wa API katika akaunti yako ya AWS — nani aliita nini, lini, kutoka wapi, na matokeo gani.
 
-CloudTrail imewashwa kwa chaguomsingi kwa historia ya siku 90 kwenye kiweko. Ili kuhifadhi kumbukumbu kwa muda mrefu:
+CloudTrail imewashwa kwa chaguomsingi kwa historia ya siku 90 katika koni. Kuhifadhi kumbukumbu kwa muda mrefu:
 
-1. Unda njia inayoandika kwa ndoo ya S3
-2. Hiari, tuma kwa Kumbukumbu za CloudWatch kwa arifa za wakati halisi
-3. Washa uthibitishaji wa faili ya kumbukumbu (ili kugundua ikiwa kumbukumbu zimechezewa)
+1. Unda trail inayoandika kwa ndoo ya S3
+2. Kwa hiari, tuma kwa CloudWatch Logs kwa tahadhari za wakati halisi
+3. Washa uthibitishaji wa faili ya kumbukumbu (kugundua ikiwa kumbukumbu zimechezewa)
 
-GuardDuty, AWS Config, na Security Hub zote zimesomwa kutoka CloudTrail. Bila kumbukumbu za CloudTrail, huduma hizi hazina chochote cha kuchanganua.
+GuardDuty, AWS Config, Security Hub, na IAM Access Analyzer zote husoma kutoka CloudTrail. Bila kumbukumbu za CloudTrail, huduma hizi hazina chochote cha kuchambua.
 
-**Kitovu cha Usalama cha AWS: Dashibodi**
+"Vipi ikiwa mtu atajaribu kuzima CloudTrail?" Priya aliuliza. "Ikiwa mvamizi atapata ufikiaji wa msimamizi, kitendo chao cha kwanza kinaweza kuwa kuzima kuingiza kumbukumbu — kuficha athari zao."
 
-Iwapo unatumia akaunti nyingi za AWS au unahitaji mwonekano uliounganishwa wa matokeo ya usalama, **AWS Security Hub** hujumlisha matokeo kutoka kwa GuardDuty, Inspekta (tathmini ya kuathirika), Macie (faragha ya data), Config, na Firewall Manager kwenye dashibodi moja.
+"Hicho ndicho SCP kutoka Sura ya 14 inazuia," Leo alisema. "Hakuna mtu katika akaunti hii anayeweza kuzima CloudTrail, hata wasimamizi."
 
-Pia hukagua usanidi wako dhidi ya mbinu bora za usalama (kiwango cha Mbinu Bora za Usalama wa Msingi za AWS) na Kigezo cha Msingi cha CIS AWS.
+"Na ikiwa kwa namna fulani wangeweza?"
 
-Kwa Nimbus: Kitovu cha Usalama kilikuwa bado hakihitajiki. Zilipokua hadi akaunti tatu (dev, staging, production), ingefaa.
+"Security Hub ingezalisha finding. CloudTrail hutuma arifa kwa SNS kuhusu mabadiliko ya usanidi. Tunapata tahadhari ndani ya dakika mbili za marekebisho yoyote ya CloudTrail."
+
+"Na GuardDuty ingeashiria wito wa API," Rafael aliongeza, "kama kitendo cha IAM kisicho cha kawaida — kuzima kuingiza kumbukumbu si shughuli ya kawaida ya kiutendaji."
+
+Tabaka nyingi za kugundua kwa mojawapo ya vitendo muhimu zaidi vya usalama: kuchezea kumbukumbu. Hii haikuwa ajali. Priya alikuwa ameibuni kwa makusudi.
+
+"Ulinzi kwa kina unatumika kwa tabaka la kufuatilia pia," alisema. "Si tu tabaka la programu."
+
+**Amazon Macie: Data Nyeti katika S3**
+
+"Tumefikiria kinachotokea ikiwa mtu atapakia kwa bahati mbaya faili yenye nambari za kadi za mkopo za mteja kwenye S3?" Priya aliuliza. "Si kwa nia mbaya — msanidi tu akisafirisha data kwa kutatua na kupakia faili isiyo sahihi?"
+
+"Hatungejua kamwe," Leo alisema.
+
+"Sahihi. Isipokuwa tuwe na Macie."
+
+**Amazon Macie** ni huduma ya usalama wa data inayotumia kujifunza kwa mashine kugundua na kulinda data nyeti katika S3 kiotomatiki. Huskani ndoo za S3 kwa kuendelea na hutambua:
+
+- PII (Taarifa za Kibinafsi Zinazotambulisha): majina, anwani za barua pepe, nambari za simu, tarehe za kuzaliwa
+- Data ya kifedha: nambari za kadi za mkopo, nambari za akaunti za benki
+- Vitambulisho: manenosiri, funguo za ufikiaji, funguo za kibinafsi zilizowekwa ndani ya faili
+- Taarifa za afya: rekodi za wagonjwa, uchunguzi
+
+Macie huzalisha findings inapogundua data nyeti mahali ambapo haipaswi kuwa — au wakati ndoo za S3 zina usanidi wa ufikiaji wa kuruhusu kupita kiasi.
+
+"Je, hii ni sawa na GuardDuty?" Maya aliuliza.
+
+"Madhumuni tofauti," Priya alisema. "GuardDuty huangalia tabia — vitendo gani vinachukuliwa, kama vitendo hivyo vinaonekana visivyo vya kawaida. Macie huangalia data — maudhui gani yamehifadhiwa, kama maudhui hayo ni nyeti. GuardDuty ingeashiria kihalisi cha EC2 kikifanya miito isiyo ya kawaida ya API. Macie ingeashiria ndoo ya S3 yenye nambari za kadi za mkopo."
+
+"Kwa hivyo GuardDuty ni mchambuzi wa kitabia," Leo alisema, "na Macie ni mkaguzi wa data."
+
+"Sahihi kabisa. Unahitaji zote mbili. Mvamizi anayetoa data nje kupitia wito wa API unaoonekana halali anaweza kuashiriwa na GuardDuty kwa mfumo wa API usio wa kawaida. Lakini ikiwa mfanyakazi atapakia faili yenye rekodi 10,000 za wateja kwenye ndoo ya maendeleo, hakuna tabia isiyo ya kawaida ya kugundua — data nyeti tu mahali pasipo sahihi. Macie huinasa hiyo."
+
+Kwa Nimbus, thamani ya haraka zaidi ya Macie ilikuwa kwenye ndoo ya `nimbus-debug-exports` — ndoo ambayo wasanidi walitumia kutupa data kwa kutatua. Macie ilipata faili tatu zenye historia za maagizo zenye majina ya wateja na anwani za uwasilishaji. Si data ya malipo, bali data ya kibinafsi isiyopaswa kuwa katika ndoo ya maendeleo isiyosimbwa.
+
+Faili ziliondolewa. Sera iliongezwa: ndoo ya debug ilizuiwa kwa data ya jaribio ya bandia pekee. Data halisi ya mteja ilihitaji idhini ya Priya kuisafirisha kwa mazingira yoyote nje ya uzalishaji.
+
+"Hilo linagharimu kiasi gani kwa mwezi?" Tom aliuliza.
+
+Macie hutoza kulingana na idadi ya ndoo za S3 zilizotathminiwa kwa mwezi na kiasi cha data kilichoskaniwa. Kwa kampuni changa yenye idadi ya wastani ya ndoo, takriban $10-50 kwa mwezi. Bure kwa siku 30 za kwanza.
+
+Tom aliiwasha kabla ya chakula cha mchana.
+
+---
+
+**AWS Security Hub: Dashibodi**
+
+Ikiwa unaendesha akaunti nyingi za AWS au unahitaji mwonekano uliojumuishwa wa findings za usalama, **AWS Security Hub** hujumlisha findings kutoka GuardDuty, Inspector (tathmini ya udhaifu), Macie (faragha ya data), Config, na Firewall Manager katika dashibodi moja.
+
+Pia hukagua usanidi wako dhidi ya mazoezi bora ya usalama (kiwango cha AWS Foundational Security Best Practices) na CIS AWS Foundations Benchmark.
+
+Security Hub ndilo jibu la "ninaonaje findings zangu zote za usalama mahali pamoja bila kubadilisha kati ya koni tano tofauti?" GuardDuty inapozalisha finding, inaonekana katika GuardDuty na katika Security Hub. Macie inapopata data nyeti katika ndoo ya S3, inaonekana katika Macie na katika Security Hub. Kanuni ya Config inapogundua usanidi mbovu, inaonekana katika Config na katika Security Hub.
+
+Kwa timu ya akaunti moja, Security Hub huongeza thamani ndogo — ni koni nyingine ya kuangalia. Nguvu yake hujitokeza kwa kiwango kikubwa: akaunti tatu, akaunti kumi, akaunti hamsini. Findings zote kutoka akaunti zote hujumlika katika Security Hub ya akaunti ya usimamizi. Timu moja hufuatilia dashibodi moja. Seti moja ya tahadhari. Hakuna kuangalia kumbukumbu akaunti kwa akaunti.
+
+Kwa Nimbus: Security Hub haikuhitajika bado. Walipokua hadi akaunti tatu (dev, staging, uzalishaji), ingekuwa muhimu.
+
+"Iweke sasa," Soo-Jin alisema, katika wiki yake ya tatu. "Inachukua dakika kumi na tano kuwasha. Inachukua miezi mitatu kutamani ungeifanya mapema."
+
+Waliiwasha.
+
+**Amazon Inspector: Tathmini ya Udhaifu**
+
+Wiki moja baada ya kuwasha Macie, CVE ilichapishwa kwa toleo la OpenSSL linaloendesha katika fleet ya uzalishaji ya Nimbus. Priya alisoma ushauri huo akinywa kahawa.
+
+"Tunahitaji kujua ni vihalisi vyetu vipi vimeathiriwa," alisema.
+
+"Naweza kuendesha skani ya mkono," Leo alisema.
+
+"Kwa vihalisi tisa, ndiyo. Kwa tisini? Kwa kontena?" Priya alifungua koni ya Inspector. "Hii ndiyo Inspector ni ya nini."
+
+**Amazon Inspector** ni huduma ya tathmini ya udhaifu ya kiotomatiki. Pale ambapo GuardDuty huangalia tabia — kile miundombinu yako inafanya sasa hivi — Inspector huangalia kilichopo kinachoweza kutumiwa vibaya.
+
+- **Vihalisi vya EC2:** Inspector huskani mfumo wa uendeshaji na vifurushi vilivyosakinishwa dhidi ya NVD (National Vulnerability Database) — katalogi yenye mamlaka ya CVE zinazojulikana. Ikiwa unaendesha OpenSSL 1.1.1 na CVE inalenga toleo hilo, Inspector huiashiria.
+- **Picha za kontena za ECR:** Inspector huskani picha za kontena katika Elastic Container Registry kabla hazijasambazwa. Kifurushi chenye udhaifu katika picha ya msingi huonekana kama finding kabla kontena haijawahi kuendesha katika uzalishaji.
+- **Vifurushi vya vitendaji vya Lambda:** Inspector huchambua utegemezi uliojumuishwa katika vitendaji vyako vya Lambda — vifurushi vya Python, moduli za Node, utegemezi wa Java — kwa udhaifu unaojulikana.
+
+Tofauti muhimu kutoka skani ya mara moja: Inspector huendesha **kwa kuendelea**. Haichunguzi tu vihalisi vyako mara moja unapoiwasha na kutangaza kuwa safi. CVE mpya inapochapishwa, Inspector hutathmini upya kiotomatiki rasilimali zako zilizopo dhidi ya udhaifu mpya. Kihalisi cha EC2 kinapobadilika — kifurushi kipya kimesakinishwa, AMI imesasishwa — Inspector huskani upya. Fleet ya EC2 ya Priya iliashiriwa kwa CVE ya OpenSSL ndani ya dakika za kuwasha Inspector, si kwa sababu aliiomba iskani, bali kwa sababu hivyo ndivyo inavyofanya.
+
+Findings zina viwango vya ukali: Critical, High, Medium, Low, Informational. Hutiririka kwa Security Hub pamoja na findings za GuardDuty na Macie. Dashibodi moja. Lenzi zote tatu.
+
+"Vihalisi vitatu vimeathiriwa," Leo alisema, akisoma findings za Inspector. "Vingine sita viko kwenye toleo lililowekewa patch."
+
+"Weka patch vitatu hivyo wiki hii," Priya alisema.
+
+"Vipi kuhusu picha za kontena?"
+
+Priya aliangalia findings za Inspector za ECR. Picha mbili za msingi katika usajili wao wa kontena zilikuwa na udhaifu unaojulikana — matoleo ya zamani ya vifurushi ambayo tangu wakati huo yamewekewa patch. Aliziweka alama kwa kujengwa upya.
+
+"Jambo muhimu," Priya alisema, "ni kwamba tulipata hili kabla halijatumiwa vibaya. Si baada yake."
+
+**Muundo wa Lenzi Tatu**
+
+GuardDuty, Inspector, na Macie kila moja huangalia kitu tofauti:
+
+- **GuardDuty** ni ya kitabia. Inauliza: *nini kinachotokea sasa hivi kinachoonekana kibaya?* Miito ya API kutoka maeneo yasiyotarajiwa, vihalisi vya EC2 vinavyowasiliana na seva za amri-na-udhibiti, vitambulisho vinavyotumika saa zisizo za kawaida. Inanasa vitisho amilifu na hitilafu.
+- **Inspector** ni ya kimuundo. Inauliza: *nini kilichopo katika mazingira yetu kinachoweza kutumiwa vibaya?* Vifurushi visivyowekwa patch, utegemezi wenye udhaifu, runtime zilizopitwa na wakati. Inanasa hali zinazofanya mashambulizi yawezekane.
+- **Macie** ni kuhusu data. Inauliza: *taarifa gani nyeti ziko katika ndoo zetu za S3 zisizopaswa kuwa hapo?* PII, rekodi za kifedha, vitambulisho vilivyoachwa katika faili. Inanasa ufichuzi usiozalisha tabia yoyote isiyo ya kawaida — data tu mahali pasipo sahihi.
+
+Uathiriaji unaohusisha CVE inayojulikana unaweza kuonekana katika zote tatu: Inspector ingeashiria udhaifu kabla ya shambulizi. GuardDuty ingeashiria tabia isiyo ya kawaida wakati wa shambulizi. Macie ingeashiria data iliyotolewa nje baada ya kutua katika S3.
+
+Lenzi tatu tofauti, upeo wa muda tatu tofauti, hakuna kati yake mbadala wa nyingine.
+
+**AWS Network Firewall: Mkaguzi wa Trafiki**
+
+Mtaalamu mmoja zaidi anastahili kutajwa kabla sanduku la zana halijafungwa. Vikundi vya usalama na NACL (Sura ya 15) huchuja trafiki kwa IP, lango, na protokoli — vinaweza kusema *nani* anaweza kuzungumza na *nini*, lakini haviwezi kuangalia ndani ya mazungumzo. **AWS Network Firewall** ni firewall inayosimamiwa, yenye hali unayoisambaza katika kiwango cha VPC. Inafanya ukaguzi wa kina wa pakiti: kuchuja kwa jina la kikoa (ruhusu kwenda nje tu kwa `*.eatnimbus.com` na hifadhi zako za vifurushi), kuzuia trafiki inayolingana na saini za uvamizi (IDS/IPS, inayopatana na kanuni za Suricata), na kukagua mitiririko ambayo vikundi vya usalama vingepitisha tu kwa sababu nambari ya lango ilionekana sawa.
+
+"Kwa hivyo ni kikundi cha usalama chenye ubongo," Leo alisema.
+
+"Ni kifaa ambacho ungekinunua kutoka kwa muuzaji wa firewall," Priya alisema, "isipokuwa kinasimamiwa, kinajipanua kiotomatiki, na kimesambazwa katika subneti yake yenyewe ili trafiki yote inayoingia na kutoka VPC ipitie kupitia kwacho."
+
+Ishara za mtihani: "kagua au chuja trafiki kwa jina la kikoa au mzigo," "kugundua/kuzuia uvamizi (IDS/IPS) kwa VPC," au "kuchuja kwa pamoja kwa trafiki ya kwenda nje" → Network Firewall. Vikundi vya usalama na NACL ni jibu kwa kuruhusu/kukataa kwa kiwango cha kihalisi na kiwango cha subneti kwa lango na IP; Network Firewall ni jibu wakati swali linadai ukaguzi *ndani* ya trafiki. Na wakati swali linauliza jinsi ya kusimamia kanuni za WAF, Shield Advanced, vikundi vya usalama, *na* sera za Network Firewall kwa uthabiti katika akaunti nyingi — hiyo ni **AWS Firewall Manager**, safu ya usimamizi wa sera juu yake.
 
 ## Nguvu na Mapungufu
 
-**Ngao ya AWS**:
+**AWS Shield**:
 
-- Kawaida: bure na otomatiki - hakuna sababu ya kutoitumia
-- Advanced: bora kwa malengo ya hali ya juu; gharama kubwa kwa timu ndogo
+- Standard: bure na kiotomatiki — hakuna sababu ya kutoitumia
+- Advanced: bora kwa malengo ya hadhi ya juu; ghali kwa timu ndogo
+- Standard humeza mashambulizi ya safu 3/4 (mafuriko ya SYN, mafuriko ya UDP, kukuza DNS) kiotomatiki
+- Advanced huongeza ulinzi wa safu 7, arifa za wakati halisi, na Shield Response Team
 
 **AWS WAF**:
 
-- Vikundi vya sheria vinavyosimamiwa hurahisisha usanidi kwa kiasi kikubwa
-- Sheria maalum zinahitaji kuelewa mifumo ya mashambulizi ya HTTP
-- Kupunguza viwango ni kipengele chenye nguvu ambacho mara nyingi hupuuzwa
-- WAF si mbadala wa msimbo salama wa maombi - ni safu ya ulinzi wa kina
+- Vikundi vya managed rules hurahisisha usanidi kwa kiasi kikubwa — ulinzi wa OWASP 10 Bora kwa mibonyezo michache
+- Kanuni maalum zinahitaji kuelewa mifumo ya shambulizi ya HTTP
+- Kuweka kikomo cha kiwango ni kipengele chenye nguvu kinachopuuzwa mara nyingi — chenye ufanisi dhidi ya wakwaruzaji na brute force
+- WAF si mbadala wa msimbo salama wa programu — ni safu ya ulinzi kwa kina
+- Anza katika hali ya Count, thibitisha, kisha badilisha kuwa Block
 
-**Wajibu wa Walinzi**:
+**GuardDuty**:
 
-- Jitihada ya chini sana kuwezesha (mibofyo michache)
-- Matokeo yanahitaji ukaguzi na majibu ya kibinadamu - GuardDuty hutambua, hairekebishi
-- Chanya za uwongo hutokea - shughuli fulani halali inaonekana isiyo ya kawaida kwa miundo ya ML
-- Jaribio lisilolipishwa la siku 30 - inafaa kuwezesha mara moja
+- Juhudi ya chini sana kuwasha (mibonyezo michache, jaribio la bure la siku 30)
+- Findings zinahitaji ukaguzi na jibu la kibinadamu — GuardDuty hugundua, hairekebishi
+- Chanya bandia hutokea — baadhi ya shughuli halali huonekana isiyo ya kawaida kwa miundo ya ML
+- Viwango vya ukali (Chini/Wastani/Juu) husaidia kutanguliza jibu
+- Huunganishwa na Security Hub, EventBridge, na Lambda kwa mitiririko ya majibu ya kiotomatiki
+
+**Amazon Inspector**:
+
+- Skani ya udhaifu ya kuendelea, ya kiotomatiki — si ukaguzi wa mara moja
+- Huskani upya kiotomatiki CVE mpya zinapochapishwa au rasilimali zinapobadilika
+- Hufunika vihalisi vya EC2 (OS na vifurushi vya programu), picha za kontena za ECR, na vifurushi vya vitendaji vya Lambda
+- Findings hutiririka kwa Security Hub; viwango vya ukali husaidia kutanguliza uwekaji patch
+- Haizuii mashambulizi — huonyesha hali zinazofanya mashambulizi yawezekane
+
+**Amazon Macie**:
+
+- Hugundua kiotomatiki data nyeti (PII, vitambulisho, data ya kifedha) katika S3
+- Hunasa ufichuzi wa data usio na mfumo wa tabia isiyo ya kawaida — GuardDuty ingeukosa
+- Jaribio la bure la siku 30; lipa kwa kila ndoo kwa mwezi baada ya hapo
+- Yenye thamani zaidi kwa timu zenye ndoo nyingi za S3 na viwango tofauti vya usikivu
+
+**AWS Security Hub**:
+
+- Hujumlisha findings kutoka GuardDuty, Macie, Inspector, Config, na Firewall Manager
+- Hukagua usanidi dhidi ya viwango vya usalama (CIS, NIST, PCI-DSS)
+- Yenye thamani zaidi katika kiwango cha akaunti nyingi
+- Washa mapema, hata kama una akaunti moja tu — historia ya findings hujilundika
 
 ## Muhtasari
 
-- **AWS Shield Standard**: Ulinzi wa DDoS bila malipo na kiotomatiki kwenye safu ya 3/4. Imewashwa kila wakati.
-- **AWS Shield Advanced**: Ulinzi wa hali ya juu wa DDoS na ufikiaji wa SRT na ulinzi wa gharama. Kesi ya matumizi ya biashara.
-- **AWS WAF**: Ukuta wa safu ya maombi. Kagua na uchuje maombi ya HTTP. Ambatisha kwa CloudFront, ALB, au API Gateway. Tumia Vikundi vya Sheria Zinazodhibitiwa kwa ulinzi 10 Bora wa OWASP.
-- **Amazon GuardDuty**: Utambuzi wa tishio la tabia. Huchanganua Kumbukumbu za CloudTrail, VPC Flow, na kumbukumbu za DNS. Hutoa matokeo ya shughuli isiyo ya kawaida.
-- **CloudTrail**: Msingi wa ukataji wote wa usalama wa AWS. Washa njia ya kuandika kwa S3 kwa uhifadhi wa muda mrefu.
-- Huduma hizi hukamilishana: Ngao kwenye safu ya mtandao, WAF kwenye safu ya programu, GuardDuty kwenye safu ya tabia.
+Huduma tano, tabaka tano. Kila moja inashughulikia aina tofauti ya tishio — na hakuna kati yake mbadala wa nyingine. Shambulizi la DDoS hupita WAF na GuardDuty. Jaribio la sindano ya SQL hupita Shield. Kitambulisho kilichoathiriwa kinachotumika polepole na kwa uangalifu kinaweza kupita Shield na WAF kabisa — lakini GuardDuty itaona hitilafu. Msanidi anayepakia kwa bahati mbaya PII ya mteja kwenye ndoo ya debug ya S3 hupita zote tatu — lakini Macie huinasa.
 
-## Vidokezo vya Mitihani
+- **AWS Shield Standard**: Ulinzi wa DDoS wa bure, wa kiotomatiki katika safu 3/4. Iko hai daima. Iliimeza mafuriko ya SYN ya 50 Gbps kabla hayajafikia load balancer ya Nimbus.
+- **AWS Shield Advanced**: Ulinzi wa DDoS wa kiwango cha juu na ufikiaji wa SRT na ulinzi wa gharama. Kesi ya matumizi ya biashara kubwa.
+- **AWS WAF**: Firewall ya kiwango cha programu. Kagua na chuja maombi ya HTTP. Ambatisha kwa CloudFront, ALB, au API Gateway. Tumia Managed Rule Groups kwa ulinzi wa OWASP 10 Bora. Kanuni zinazotegemea kiwango kwa ulinzi dhidi ya wakwaruzaji.
+- **Amazon GuardDuty**: Kugundua tishio kwa kitabia. Vyanzo vya msingi vya data: matukio ya CloudTrail, VPC Flow Logs, na kumbukumbu za DNS. Ulinzi wa hiari uliopanuliwa huongeza matukio ya S3, ufuatiliaji wa runtime wa EKS/ECS, matukio ya kuingia ya RDS, na shughuli ya mtandao ya Lambda. Huzalisha findings zilizoainishwa kwa shughuli isiyo ya kawaida. Aina tano kuu za findings: UnauthorizedAccess (kuingia kwa koni), CryptoCurrency (uchimbaji), Recon (upapasaji wa lango), Trojan (trafiki ya C2), Policy (usanidi mbovu wa S3).
+- **Amazon Inspector**: Tathmini ya udhaifu ya kiotomatiki. Huskani vihalisi vya EC2, picha za kontena za ECR, na vifurushi vya vitendaji vya Lambda kwa CVE zinazojulikana. Huendesha kwa kuendelea na hutathmini upya wakati udhaifu mpya unachapishwa. Findings hutiririka kwa Security Hub.
+- **Amazon Macie**: Kugundua data nyeti katika S3. Hugundua PII, vitambulisho, na data ya kifedha. Hunasa ufichuzi usio na mfumo wa tabia isiyo ya kawaida.
+- **AWS Security Hub**: Hujumlisha findings kutoka huduma zote za usalama katika dashibodi moja. Huwezesha ufuatiliaji uliokusanywa katika akaunti nyingi.
+- **CloudTrail**: Msingi wa kuingiza kumbukumbu kwa usalama wa AWS yote. Washa trail inayoandika kwa S3 kwa uhifadhi wa muda mrefu. Kila huduma ya usalama husoma kutoka kwake.
 
-*Kikoa cha SAA-C03: Usanifu wa Usanifu Salama (Kikoa cha 1, Kazi ya 1.2)*
+## Vidokezo vya Mtihani
 
-- **Shield Standard vs Advanced**: Kiwango ni bure na kiotomatiki. Mahiri hugharimu pesa na huongeza SRT, ulinzi wa gharama na utambuzi bora. Ishara za mtihani wa Advanced: "DDoS ya kiwango kikubwa," "dhamana ya SLA wakati wa mashambulizi," "ulinzi wa kifedha dhidi ya ongezeko la gharama zinazohusiana na DDoS."
-- **Alama za kesi za WAF**: "zuia sindano ya SQL," "zuia uandishi wa tovuti mbalimbali," "kikomo cha simu za API," "zuia mawakala mahususi wa watumiaji," "OWASP Top 10 ulinzi" → WAF.
-- **Alama za GuardDuty**: "gundua shughuli isiyo ya kawaida ya API," "tambua kitambulisho kilichoathiriwa," "tia alama miunganisho ya mtandao ya EC2 isiyo ya kawaida," "akili ya tishio" → GuardDuty.
-- **Kiambatisho cha WAF**: Inaweza kuambatishwa kwa CloudFront (kimataifa), ALB (ya kikanda), API Gateway (ya kikanda), AppSync.
-- **Vyanzo vya data vya GuardDuty**: Matukio ya usimamizi wa CloudTrail, matukio ya data ya CloudTrail S3, Kumbukumbu za Mtiririko wa VPC, kumbukumbu za DNS. Mtihani unaweza kuuliza ni chanzo gani cha data kinachofaa kwa hali mahususi ya ugunduzi.
-- **Macie**: Mara nyingi huchanganyikiwa na GuardDuty. **Macie** hutumia ML kugundua data nyeti katika S3 (PII, vitambulisho, data ya fedha). **GuardDuty** hutambua vitisho na hitilafu katika tabia. Kesi za matumizi tofauti.
+*Kikoa cha SAA-C03: Buni Usanifu Salama (Kikoa cha 1, Kazi ya 1.2)*
 
-##Mazoezi
+- **Shield Standard dhidi ya Advanced**: Standard ni bure na ya kiotomatiki. Advanced inagharimu pesa na huongeza SRT, ulinzi wa gharama, na kugundua bora. Ishara za mtihani za Advanced: "DDoS ya kiwango kikubwa," "dhamana ya SLA wakati wa mashambulizi," "ulinzi wa kifedha dhidi ya mwinuko wa gharama unaohusiana na DDoS."
+- **Ishara za kesi za matumizi za WAF**: "zuia sindano ya SQL," "zuia cross-site scripting," "weka kikomo cha kiwango cha miito ya API," "zuia user-agents mahususi," "ulinzi wa OWASP 10 Bora" → WAF.
+- **Ishara za GuardDuty**: "gundua shughuli isiyo ya kawaida ya API," "tambua vitambulisho vilivyoathiriwa," "ashiria miunganisho isiyo ya kawaida ya mtandao ya EC2," "akili ya tishio" → GuardDuty.
+- **Kuambatisha WAF**: Inaweza kuambatishwa kwa CloudFront (kimataifa), ALB (kieneo), API Gateway (kieneo), AppSync.
+- **Vyanzo vya data vya GuardDuty**: Vyanzo vitatu vya msingi — matukio ya CloudTrail, VPC Flow Logs, kumbukumbu za DNS. Vyanzo vya hiari vilivyopanuliwa ni pamoja na matukio ya data ya S3, kumbukumbu za ukaguzi za EKS, matukio ya kuingia ya RDS, shughuli ya mtandao ya Lambda, na runtime ya ECS. Mtihani unaweza kuuliza ni chanzo gani cha data kinachofaa kwa hali mahususi ya kugundua: "kuingia kusiko kwa kawaida kwa RDS" → GuardDuty RDS Protection; "vitisho vya runtime vya kontena" → GuardDuty EKS/ECS Runtime Monitoring.
+- **Macie dhidi ya GuardDuty**: Huu ni kipotoshaji cha kawaida cha mtihani. **Macie** hutumia ML kugundua data nyeti katika S3 (PII, vitambulisho, data ya kifedha). **GuardDuty** hugundua vitisho na hitilafu katika tabia. Macie ni kuhusu maudhui. GuardDuty ni kuhusu tabia.
+- **Inspector dhidi ya GuardDuty dhidi ya Macie**: Lenzi tatu tofauti, hakuna inayobadilisha nyingine. **Inspector** = skani ya udhaifu — CVE kwenye vihalisi vya EC2, picha za kontena katika ECR, na vifurushi vya vitendaji vya Lambda. Huendesha kwa kuendelea na huskani upya CVE mpya zinapochapishwa. **GuardDuty** = kugundua tishio kwa kitabia — kinachotokea sasa hivi kinachoonekana kisicho cha kawaida. **Macie** = kugundua data nyeti katika S3 — PII, vitambulisho, na data ya kifedha isiyopaswa kuwepo. Kiamsha cha mtihani: "tambua udhaifu usiowekwa patch kwenye EC2" au "skani picha za kontena kwa CVE" → Inspector. "Gundua miito isiyo ya kawaida ya API au vitambulisho vilivyoathiriwa" → GuardDuty. "Pata PII au data nyeti katika S3" → Macie.
+- **Security Hub**: Hujumlisha findings za usalama kutoka huduma na akaunti nyingi. Hali ya mtihani: "kampuni ina akaunti nyingi za AWS na inataka mwonekano mmoja wa findings zote za usalama" → Security Hub.
+- **Kanuni zinazotegemea kiwango katika WAF**: Hutumika kuweka kikomo cha maombi kwa kila IP ndani ya dirisha la muda. Tofauti na Core Rule Set (inayolingana na mifumo ya shambulizi). Mtihani hutumia kanuni zinazotegemea kiwango kwa "zuia majaribio ya kuingia ya brute force" au "punguza ukwaruzaji."
+- **CloudTrail + GuardDuty + Security Hub**: Hizi tatu pamoja huunda msingi wa uonekanaji wa usalama wa AWS. Washa CloudTrail kwanza (GuardDuty na Security Hub zinaitegemea), kisha GuardDuty, kisha Security Hub kujumlisha findings.
 
-**Zoezi la 1 - Kumbuka **
+## Mazoezi
 
-Eleza tofauti kati ya AWS WAF na Amazon GuardDuty. Kila huduma inalinda dhidi ya nini, na kila safu hufanya kazi katika safu gani?
+**Zoezi la 1 — Kumbuka**
 
-*(Kidokezo: Fikiria kuhusu WAF kama kichujio cha maombi yanayoingia, na GuardDuty kama mchambuzi wa tabia anayetazama kumbukumbu zako.)*
+Eleza tofauti kati ya AWS WAF na Amazon GuardDuty. Kila huduma inalinda dhidi ya nini, na kila moja hufanya kazi katika safu gani?
 
-**Zoezi la 2 - Mazoezi ya Mtihani**
+*(Kidokezo: Fikiria kuhusu WAF kama kichujio cha maombi yanayoingia, na GuardDuty kama mchambuzi wa kitabia anayeangalia kumbukumbu zako.)*
 
-*Hali*: Tovuti ya kampuni ya reja reja inalengwa na botnet ambayo hutuma mamilioni ya maombi kwa saa kwenye API yao ya utafutaji wa bidhaa. Maombi yanaonekana kuwa halali (mifuatano halali ya Wakala wa Mtumiaji, vidakuzi halali vya kipindi) lakini hayasababishi ununuzi - yanafuta bei za bidhaa. Shambulio hilo linasababisha wateja halali kupata nyakati za polepole za kujibu.
+**Zoezi la 2 — Hali ya SAA-C03**
 
-Ni mseto upi wa huduma BORA hushughulikia tishio hili?
+*Hali*: Tovuti ya kampuni ya reja reja inalengwa na botnet inayotuma mamilioni ya maombi kwa saa kwa API yao ya utafutaji wa bidhaa. Maombi yanaonekana halali (mifuatano halali ya User-Agent, vidakuzi halali vya kipindi) lakini hayasababishi ununuzi — yanakwaruza bei za bidhaa. Shambulizi linasababisha wateja halali kupata nyakati za polepole za majibu.
 
-A) AWS Shield Advanced na CloudFront  
-B) AWS WAF yenye sheria za kupunguza viwango na CloudFront  
+Ni mchanganyiko upi wa huduma unaoshughulikia tishio hili BORA zaidi?
+
+A) AWS WAF yenye kanuni za kuweka kikomo cha kiwango na CloudFront  
+B) AWS Shield Advanced na CloudFront  
 C) Amazon GuardDuty na AWS Shield Standard  
-D) ACL za mtandao zinazozuia safu za IP za botnet
+D) Network ACLs zinazozuia masafa ya IP ya botnet
 
-**Kidokezo cha 1**: Maombi ni kiwango cha HTTP (safu ya programu). Ni huduma gani inayofanya kazi kwenye safu ya HTTP?
+**Kidokezo cha 1**: Maombi ni ya kiwango cha HTTP (safu ya programu). Ni huduma gani inayofanya kazi katika safu ya HTTP?
 
-**Kidokezo cha 2**: Boti hutumia anwani nyingi tofauti za IP - kuzuia masafa mahususi ya IP katika kiwango cha NACL hakufanyi kazi dhidi ya boti kubwa.
+**Kidokezo cha 2**: Botnets hutumia anwani nyingi tofauti za IP — kuzuia masafa mahususi ya IP katika kiwango cha NACL hakuna ufanisi dhidi ya botnets kubwa.
 
-**Kidokezo cha 3**: Kuweka kikomo kwa anwani ya IP kunaweza kupunguza kasi ya kukwarua hata kama huwezi kuizuia kabisa.
+**Kidokezo cha 3**: Kuweka kikomo cha kiwango kwa anwani ya IP kunaweza kupunguza kasi ya ukwaruzaji hata kama huwezi kuuzuia kabisa.
 
-**Jibu**: B
+**Jibu**: A
 
-**Maelezo**: AWS WAF inaweza kukadiria maombi ya kikomo kwa kila anwani ya IP, na kupunguza athari za kukwaruza kwa sauti ya juu kutoka chanzo chochote. CloudFront inasambaza trafiki inayoingia kwenye mtandao wa ukingo wa AWS, inachukua sauti na kulinda asili. Sheria za WAF pia zinaweza kulingana na mifumo ya ombi (maombi ya mfuatano wa haraka hadi mwisho wa API) ili kubaini tabia ya kukwaruza.
+**Maelezo**: AWS WAF inaweza kuweka kikomo cha kiwango cha maombi kwa kila anwani ya IP, ikipunguza athari ya ukwaruzaji wa kiasi kikubwa kutoka chanzo chochote kimoja. CloudFront husambaza trafiki inayoingia katika mtandao wa ukingo wa AWS, ikimeza kiasi na kulinda origin. Kanuni za WAF pia zinaweza kulingana na mifumo ya ombi (maombi ya mfuatano ya haraka kwa endpoint ileile ya API) kutambua tabia ya ukwaruzaji.
 
-**Kwa nini isiwe A?** Shield Advanced hulinda dhidi ya mafuriko ya DDoS (safu 3/4). Hali hii inaelezea uchakachuaji wa safu ya programu (safu ya 7 ya maombi ya HTTP), ambayo Shield haikagua.
+**Kwa nini si B?** Shield Advanced hulinda dhidi ya mafuriko ya DDoS (safu 3/4). Hali inaeleza ukwaruzaji wa kiwango cha programu (maombi ya HTTP ya safu 7), ambayo Shield haikagui.
 
-**Kwa nini si C?** GuardDuty hutambua hitilafu katika tabia ya akaunti yako ya AWS — haizuii maombi yanayoingia ya HTTP. Shield Standard haishughulikii mashambulizi ya safu ya programu.
+**Kwa nini si C?** GuardDuty hugundua hitilafu katika tabia ya akaunti yako ya AWS — haizuii maombi yanayoingia ya HTTP. Shield Standard haishughulikii mashambulizi ya kiwango cha programu.
 
-**Kwa nini isiwe D?** Boti kubwa hutumia maelfu ya anwani za IP kutoka kwa vyanzo vilivyosambazwa. Kuzuia masafa mahususi ni mbinu ya whack-a-mole ambayo inashindwa dhidi ya boti za kisasa.
+**Kwa nini si D?** Botnets kubwa hutumia maelfu ya anwani za IP kutoka vyanzo vilivyosambazwa. Kuzuia masafa mahususi ni mbinu ya whack-a-mole inayoshindwa dhidi ya botnets za kisasa.
 
-*Kikoa cha SAA-C03: Usanifu Salama wa Kubuni — Jukumu la 1.2*
+*Kikoa cha SAA-C03: Buni Usanifu Salama — Kazi ya 1.2*
 
 **Zoezi la 3 — Changamoto ya Usanifu** *(Si lazima)*
 
-Nimbus inazingatia mtindo wao wa vitisho wanapojitayarisha kushughulikia data ya kadi ya mkopo. Mapitio ya kufuata ya PCI-DSS yanahitaji:
+Nimbus inazingatia muundo wao wa tishio wanapojiandaa kushughulikia data ya kadi za mkopo. Ukaguzi wa uzingatiaji wa PCI-DSS unahitaji:
 
 - Ulinzi dhidi ya mashambulizi ya DDoS ya safu ya mtandao
-- Uchujaji wa safu ya programu kwa ushujaa unaojulikana wa wavuti
-- Kuingia kwa simu zote za API kwa duka linaloonekana kuharibika, la muda mrefu
-- Ugunduzi wa mifumo isiyo ya kawaida ya ufikiaji kwa huduma ya malipo
+- Kuchuja kwa kiwango cha programu kwa exploits za wavuti zinazojulikana
+- Kuingiza kumbukumbu za miito yote ya API kwa hifadhi inayoonyesha kuchezewa, ya muda mrefu
+- Kugundua mifumo isiyo ya kawaida ya ufikiaji kwa huduma ya malipo
 
-Weka kila hitaji kwa huduma au usanidi maalum wa AWS. Je, Shield Standard inatosha, au je, muktadha wa PCI-DSS unapendekeza Kina? Ungeambatisha wapi WAF?
+Linganisha kila hitaji na huduma au usanidi mahususi wa AWS. Je, Shield Standard inatosha, au muktadha wa PCI-DSS unadokeza Advanced? Ungeambatisha WAF wapi?
 
-*(Hakuna jibu moja sahihi. Lengo ni kufanya mazoezi ya kupanga mahitaji ya kufuata huduma za AWS.)*
+*(Hakuna jibu moja sahihi. Lengo ni kufanya mazoezi ya kulinganisha mahitaji ya uzingatiaji na huduma za AWS.)*
 
 ## Onyesho la Baada ya Mikopo
 
-GuardDuty imewezeshwa.
+GuardDuty iliwashwa.
 
-Saa arobaini na nane baadaye, ilitoa matokeo yake ya kwanza: *"EC2 Instance i-0abc123 inawasiliana na njia ya kutoka ya Tor inayojulikana."*
+Saa arobaini na nane baadaye, ilizalisha finding yake ya kwanza: *"EC2 Instance i-0abc123 inawasiliana na nodi ya kutoka ya Tor inayojulikana."*
 
-Leo aliangalia kitambulisho cha mfano.
+Leo aliangalia kitambulisho cha kihalisi.
 
-"Huo ni mfano wa ufuatiliaji wa ndani," alisema. "Ile niliyoweka ili kuendesha uchunguzi wa mtandao."
+"Hicho ni kihalisi cha ufuatiliaji cha ndani," alisema. "Kile nilichoweka kuendesha uchunguzi wa mtandao."
 
-"Inapaswa kuwasiliana na nodi za kutoka za Tor?"
+"Je, kinapaswa kuwasiliana na nodi za kutoka za Tor?"
 
-"Hapana." Akanyamaza. "Kwa nini hivyo?"
+"Hapana." Akasita. "Kwa nini kingewasiliana?"
 
-Akavuta mfano. Mtu fulani alikuwa amesakinisha chombo juu yake - skana halali ya mtandao wa chanzo-wazi ambayo, ikawa, pia iliwasiliana na miundombinu ya Tor kwa ajili ya ukusanyaji wa data usiojulikana.
+Alivuta kihalisi. Mtu fulani alikuwa amesakinisha zana juu yake — kipapasaji halali cha mtandao cha chanzo-huria ambacho, ikawa, pia kiliwasiliana na miundombinu ya Tor kwa ukusanyaji wa data usiojulikana.
 
-"Kwa hivyo chombo kilikuwa kinaita nyumbani," Priya alisema.
+"Kwa hivyo zana ilikuwa ikiita nyumbani," Priya alisema.
 
 "Bila ufahamu wangu," Leo alithibitisha.
 
-"Hiyo ni hatari ya ugavi. Utegemezi unaofanya mambo ambayo hukuidhinisha."
+"Hiyo ni hatari ya msururu wa ugavi. Utegemezi unaofanya mambo ambayo hukuyaidhinisha."
 
-Leo aliondoa zana. Alianzisha mchakato wa kukagua kila zana ya wahusika wengine kabla ya usakinishaji.
+Leo aliondoa zana. Aliweka mchakato wa kukagua kila zana ya mtu wa tatu kabla ya usakinishaji.
 
-"Je, hii ni kiwango cha paranoia tuko sasa?" Maya aliuliza.
+"Je, hiki ndicho kiwango cha hofu tulicho nacho sasa?" Maya aliuliza.
 
-“Ndiyo,” alisema Priya.
+"Ndiyo," Priya alisema.
 
-"Hiki ndicho kiwango ambacho tunapaswa kuwa nacho kila wakati?" Maya aliuliza.
+"Je, hiki ndicho kiwango ambacho tungepaswa kuwa nacho daima?" Maya aliuliza.
 
-“Naam pia,” alisema Priya.
+"Pia ndiyo," Priya alisema.
 
-Katika sura inayofuata: nini kinatokea wakati kituo cha data huko Virginia kinapotea - na kwa nini Nimbus inaendelea kufanya kazi.
+Katika sura inayofuata: nini hutokea wakati kituo cha data huko Oregon kinapotea — na kwa nini Nimbus inaendelea kufanya kazi.

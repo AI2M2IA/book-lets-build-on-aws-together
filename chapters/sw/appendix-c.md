@@ -1,361 +1,416 @@
 # Kiambatisho C: Daftari la Dhana
 
-Kila dhana muhimu iliyoanzishwa katika kitabu, inaoanishwa na sura yake, mfano uliotumika, na kikoa cha SAA-C03 inapoonekana.
+Kila dhana muhimu iliyoanzishwa katika kitabu hiki, ikioanishwa na sura yake, mfano uliotumika, na kikoa cha SAA-C03 ambapo inaonekana.
 
-Tumia hii kama faharisi ya kusomea: ukiwa na shaka kuhusu dhana kabla ya mtihani, ipate hapa na urudi sura yake kwa muktadha.
+Tumia hii kama faharasa ya kusoma: ikiwa hauna uhakika kuhusu dhana kabla ya mtihani, ipate hapa na urudi kwenye sura yake kwa muktadha.
 
 ---
 
 ## A
 
-**ACU (Aurora Capacity Unit)** — Kitengo cha kupima uwezo wa Aurora Serverless v2. Hupanua kiotomatiki. Sura ya 24. Kikoa cha 3.
+**ACM (AWS Certificate Manager)** — Vyeti vya umma vya TLS bila malipo kwa ALB, CloudFront, na API Gateway, vikiwa na kurejesha kiotomatiki kupitia uthibitishaji wa DNS. Vyeti vya CloudFront lazima viishi katika us-east-1. Sura ya 16. Kikoa cha 1.
 
-**Tahadhari (CloudWatch Alarm)** — Sheria inayowaka kipimo kinapovuka kiwango cha mwisho, kuzindua arifa au kitendo cha kupanua kiotomatiki. Sura ya 7. Kikoa cha 2.
+**ACU (Aurora Capacity Unit)** — Kitengo cha kupima uwezo wa Aurora Serverless v2. Inapanua kiotomatiki na, kwenye matoleo ya injini yanayoungwa mkono, inaweza kusimama-kiotomatiki hadi ACU 0 wakati hakuna miunganisho iliyoshikiliwa wazi. Sura ya 24. Kikoa cha 3.
 
-**ALB (Application Load Balancer)** — Kisambazaji cha mzigo cha Tabaka 7 kinachopitisha trafiki ya HTTP/HTTPS kulingana na sheria za njia na mwenyeji. Sura ya 7. Kikoa cha 2.
+**Alarm (CloudWatch)** — Sheria inayowaka wakati metriki inapovuka kizingiti, ikizindua arifa au kitendo cha kupanua kiotomatiki. Sura ya 7. Kikoa cha 2.
 
-**AMI (Amazon Machine Image)** — Templeti iliyo na OS, programu, na usanidi kwa kipengele cha EC2. Sura ya 4. Kikoa cha 3.
+**ALB (Application Load Balancer)** — Kisambazaji cha mzigo cha Layer 7 kinachopitisha trafiki ya HTTP/HTTPS kulingana na sheria za njia na mwenyeji. Sura ya 7. Kikoa cha 2.
 
-**Mtazamo wa msanifu** — Kuuliza "kinachosimama kwanza ni nini, tunajuaje, na mtu anafanya nini saa 3 asubuhi?" badala ya "hii inafanya kazi vipi tu?" Sura za 32 na 34. Msalaba wa vikoa.
+**AMI (Amazon Machine Image)** — Templeti inayobeba OS, programu, na usanidi kwa kipengele cha EC2. Sura ya 4. Kikoa cha 3.
 
-**Rekodi ya Uamuzi wa Usanifu (ADR)** — Hati fupi inayonasa uamuzi, mbadala zake, sababu yake, na kinachoweza kusababisha kuupitia upya. Sura ya 32. Msalaba wa vikoa.
+**Mtazamo wa mhandisi** — Kuuliza "ni nini kinaharibika kwanza, tunajuaje, na mtu anafanya nini saa 3 asubuhi?" badala ya tu "hii inafanya kazije?" Sura ya 32, Sura ya 34. Vikoa mbalimbali.
 
-**Mapitio ya usanifu** — Mchakato ulioandaliwa unaoshughulikia: vizuizi → yasiyojulikana → chaguo → hali za kushindwa → ufuatiliaji → vitabu vya maelekezo. Sura ya 32. Msalaba wa vikoa.
+**Architecture Decision Record (ADR)** — Hati fupi inayonasa uamuzi, mbadala wake, sababu yake, na kitu gani kingesababisha kuufikiria upya. Sura ya 32. Vikoa mbalimbali.
 
-**Athena** — Huduma ya maswali ya SQL bila seva kwa data katika S3. Lipa kwa TB inayochunguzwa. Bora na miundo ya nguzo ya Parquet/ORC. Sura ya 26. Kikoa cha 3.
+**Mapitio ya usanifu** — Mchakato uliopangwa unaofunika: vikwazo → yasiyojulikana → chaguzi → njia za hitilafu → ufuatiliaji → runbooks. Sura ya 32. Vikoa mbalimbali.
 
-**Auto Scaling Group (ASG)** — Kikundi cha vipengele vya EC2 vinavyosimamiwa pamoja, kubadilisha kiotomatiki vipengele visivyo na afya na kupanua kulingana na mzigo. Sura ya 7. Vikoa vya 2 na 3.
+**Athena** — Huduma ya hoja za SQL bila seva kwa data katika S3. Lipa kwa TB iliyochanganuliwa. Bora zaidi na fomati za safu za Parquet/ORC. Sura ya 26. Kikoa cha 3.
 
-**Availability Zone (AZ)** — Kituo kimoja au zaidi cha data kilichotengwa kimwili ndani ya mkoa, kilichounganishwa na viungo vya latency ndogo. Sura ya 2. Kikoa cha 2.
+**Auto Scaling Group (ASG)** — Kundi la vipengele vya EC2 vinavyosimamiwa pamoja, vikibadilisha kiotomatiki vipengele visivyo na afya na kupanua kulingana na mzigo. Sura ya 7. Kikoa cha 2, 3.
+
+**Availability Zone (AZ)** — Kituo kimoja au zaidi cha data kilichotenganishwa kimwili ndani ya mkoa, kilichounganishwa na viungo vya ucheleweshaji mdogo. Sura ya 2. Kikoa cha 2.
 
 ---
 
 ## B
 
-**Ndoo (S3 Bucket)** — Chombo cha vitu vya S3. Ndoo zina majina ya kipekee ya kimataifa na huishi katika mkoa maalum. Sura ya 5. Kikoa cha 3.
+**AWS Backup** — Nakala rudufu za kati, zinazotegemea sera, katika EBS, RDS, DynamoDB, EFS, na Storage Gateway. Inaunga mkono nakala za toka mkoa hadi mkoa na za toka akaunti hadi akaunti. Sura ya 18, 23. Kikoa cha 2.
 
-**Sera ya ndoo** — Sera inayotegemea rasilimali iliyoambatishwa kwa ndoo ya S3 inayodhibiti ufikiaji kwa wasingi wa IAM na akaunti za nje. Sura ya 5. Kikoa cha 1.
+**AWS Batch** — Kompyuta ya bechi inayosimamiwa kwa vyombo vya Docker. Imeundwa na ufafanuzi wa kazi (kitu cha kuendesha), foleni ya kazi (mahali kazi zinasubiri), na mazingira ya kompyuta (EC2 au Fargate, On-Demand au Spot). Kwa mzigo unaozidi kikomo cha dakika 15 cha Lambda. Sura ya 21. Kikoa cha 3.
+
+**Bucket (S3)** — Chombo cha vitu vya S3. Ndoo zina majina ya kipekee ya kimataifa na zinaishi katika mkoa maalum. Sura ya 5. Kikoa cha 3.
+
+**Bucket policy** — Sera inayotegemea rasilimali iliyoambatishwa kwa ndoo ya S3 inayodhibiti ufikiaji kwa principals za IAM na akaunti za nje. Sura ya 5. Kikoa cha 1.
 
 ---
 
 ## C
 
-**Mchakato wa kashe-pembeni** — Programu inakagua kashe kwanza; ikipoteza, inauliza hifadhidata, kisha kuhifadhi matokeo kwenye kashe. Sura ya 10. Kikoa cha 3.
+**Mfumo wa cache-aside** — Programu inakagua cache kwanza; ikikosa, inahoji hifadhidata, kisha inahifadhi matokeo katika cache. Sura ya 10. Kikoa cha 3.
 
-**Kiwango cha maombi ya kashe** — Asilimia ya maombi yanayohudumishwa kutoka kashe badala ya chanzo. Cha juu ni bora. Sura ya 13. Kikoa cha 3.
+**Cache hit rate** — Asilimia ya maombi yanayohudumiwa kutoka cache badala ya chanzo. Juu ni bora zaidi. Sura ya 13. Kikoa cha 3.
 
-**CloudFront** — CDN ya AWS. Huhifadhi maudhui kwenye maeneo ya pembeni 400+ duniani kote. Hupunguza latency na gharama za uhamishaji wa data za chanzo. Sura ya 13. Vikoa vya 3 na 4.
+**AWS Client VPN** — Endpoint ya OpenVPN inayosimamiwa. Inaunganisha vifaa binafsi (kompyuta za mkononi, vituo vya kazi) na VPC kupitia intaneti. Uthibitishaji kupitia Active Directory, ushirikiano wa SAML 2.0 na mtoa huduma wa utambulisho, au TLS ya pande zote. Inaunga mkono hali za split-tunnel na full-tunnel. Linganisha na Site-to-Site VPN (mtandao-kwa-mtandao). Sura ya 11. Kikoa cha 1.
 
-**CloudTrail** — Huandika kila wito wa API wa AWS: nani, nini, lini, kutoka wapi. Imehifadhiwa katika S3. Hutumika kwa ukaguzi na uchunguzi wa matukio. Kikoa cha 1.
+**CloudFront** — CDN ya AWS. Inahifadhi maudhui katika edge locations zaidi ya 750 duniani kote. Inapunguza ucheleweshaji na gharama za uhamishaji wa data wa chanzo. Sura ya 13. Kikoa cha 3, 4.
 
-**CloudWatch** — Vipimo, kumbukumbu, tahadhari, na dashibodi kwa rasilimali za AWS na programu za kawaida. Rejelewa kote. Vikoa vyote.
+**CloudTrail** — Inarekodi kila wito wa API wa AWS: nani, nini, lini, kutoka wapi. Inahifadhiwa katika S3. Inatumika kwa ukaguzi na uchunguzi wa matukio. Kikoa cha 1.
 
-**Kuanza baridi (Lambda)** — Ucheleweshaji kwenye uanzishaji wa kwanza (au baada ya kutokuwa na shughuli) Lambda ikianzisha mazingira ya utekelezaji. Tumia uanzishaji uliotolewa wa utekelezaji wa wakati mmoja kuuondoa. Sura ya 20. Kikoa cha 3.
+**CloudWatch** — Metriki, logi, alarms, na dashibodi kwa rasilimali za AWS na programu za kawaida. Inarejelewa katika kitabu chote. Vikoa vyote.
 
-**Mpango wa Akiba wa Kompyuta** — Kujitolea kwa kiasi cha matumizi ya kwa saa ya EC2, ukitumika kwa aina yoyote ya kipengele au ukubwa. Sura ya 27. Kikoa cha 4.
+**Amazon Cognito** — Uthibitishaji kwa watumiaji wa mwisho wa programu yako: User Pools ni saraka ya watumiaji inayosimamiwa (kujiandikisha, kuingia, MFA, kuingia kwa kijamii, JWT); Identity Pools zinatoa vitambulisho vya muda vya AWS. IAM ni kwa wahandisi wako; Cognito ni kwa wateja wako. Sura ya 14. Kikoa cha 1.
 
-**Config (AWS)** — Hufuatilia mabadiliko ya usanidi wa rasilimali za AWS kwa wakati na kukadiria uzingatifu dhidi ya sheria. Sura ya 31. Kikoa cha 1.
+**Cold start (Lambda)** — Ucheleweshaji kwenye uanzishaji wa kwanza (au baada ya kutofanya kazi) Lambda inapoanzisha mazingira ya utekelezaji. Tumia provisioned concurrency kuondoa. Sura ya 20. Kikoa cha 3.
 
-**Uhamishaji wa data wa toka AZ hadi AZ** — Trafiki kati ya Availability Zones ndani ya mkoa. Inalipwa kwa $0.01/GB kwa kila upande. Sura ya 30. Kikoa cha 4.
+**Compute Savings Plan** — Kujitolea kwa kiasi cha dola cha matumizi ya saa ya EC2, kinachotumika kwa aina au ukubwa wowote wa kipengele. Sura ya 27. Kikoa cha 4.
 
-**Upokezaji wa toka kanda hadi kanda** — Kunakili data (S3 CRR, Aurora Global, DynamoDB Global Tables) kwa mkoa tofauti. Husababisha ada za uhamishaji wa data. Sura za 18 na 30. Kikoa cha 2.
+**Config (AWS)** — Inafuatilia mabadiliko ya usanidi wa rasilimali za AWS kwa muda na kutathmini utii dhidi ya sheria. Sura ya 31. Kikoa cha 1.
+
+**AWS Control Tower** — Inafanya kiotomatiki utawala wa akaunti nyingi: inajenga landing zone (akaunti za usimamizi, kumbukumbu ya logi, na ukaguzi) yenye guardrails katika dakika — toleo la kutengeneza la kuunganisha Organizations, CloudTrail, na Config kwa mkono. Sura ya 14. Kikoa cha 1.
+
+**Cross-AZ data transfer** — Trafiki kati ya Availability Zones ndani ya mkoa. Inatozwa kwa $0.01/GB kila mwelekeo. Sura ya 30. Kikoa cha 4.
+
+**Cross-region replication** — Kunakili data (S3 CRR, Aurora Global, DynamoDB Global Tables) kwa mkoa tofauti. Inasababisha gharama za uhamishaji wa data. Sura ya 18, 23, 30. Kikoa cha 2.
 
 ---
 
 ## D
 
-**DAX (DynamoDB Accelerator)** — Kashe ya kwenye kumbukumbu maalum kwa DynamoDB. Latency ya kusomwa ya microsekunde. Sura ya 9. Kikoa cha 3.
+**AWS DataSync** — Uhamiaji na usawazishaji unaotegemea wakala wa share za faili (NFS/SMB) kuingia S3, EFS, au FSx. "rsync iliyoboreshwa, na console ya AWS." Sura ya 25. Kikoa cha 3.
 
-**Foleni ya Barua Pepe Iliyokufa (DLQ)** — Foleni ambapo ujumbe unaoshindwa usindikaji mara kwa mara unaposasishwa, kuzuia kizuizi cha foleni. Sura ya 19. Kikoa cha 2.
+**DAX (DynamoDB Accelerator)** — Cache ya kumbukumbu mahususi kwa DynamoDB. Ucheleweshaji wa usomaji wa mikrosekunde. Sura ya 9. Kikoa cha 3.
 
-**Mwenyeji Maalum** — Seva ya kimwili ya EC2 iliyohifadhiwa kwa matumizi yako peke yako. Inahitajika kwa leseni fulani za programu. Sura ya 27. Kikoa cha 4.
+**Dead Letter Queue (DLQ)** — Foleni ambapo ujumbe unaoshindwa kusindikwa mara kwa mara unatumwa, ukizuia kuziba kwa foleni. Sura ya 19. Kikoa cha 2.
 
-**Ulinzi wa kina** — Kuweka vidhibiti vingi vya usalama (IAM + vikundi vya usalama + NACL + WAF + GuardDuty) ili ukiukaji wa tabaka moja usifichua mfumo. Sura ya 33. Kikoa cha 1.
+**AWS DMS (Database Migration Service)** — Inahamisha hifadhidata kuingia AWS ikiwa na muda mdogo wa kutokufanya kazi. Full load (nakala ya awali) pamoja na CDC (Change Data Capture) inaweka chanzo na lengo vikilingana wakati wa uhamiaji. Uhamiaji wa aina ile ile (injini ile ile): tumia DMS moja kwa moja. Uhamiaji wa aina tofauti (injini tofauti, k.m. Oracle → Aurora PostgreSQL): tumia SCT (Schema Conversion Tool) kwanza, kisha DMS. Sura ya 8. Kikoa cha 3.
 
-**Direct Connect** — Muunganisho wa mtandao wa kimwili uliowekwa kutoka eneo la ndani hadi AWS. Thabiti zaidi kuliko VPN. Sura ya 25. Kikoa cha 3.
+**Dedicated Host** — Seva ya kimwili ya EC2 iliyohifadhiwa kwa matumizi yako pekee. Inahitajika kwa leseni fulani za programu. Sura ya 27. Kikoa cha 4.
 
-**DLQ** — Ona Foleni ya Barua Pepe Iliyokufa.
+**Defense in depth** — Kuweka tabaka za udhibiti wa usalama nyingi (IAM + security groups + NACL + WAF + GuardDuty) ili kuvuja kwa tabaka moja kusifichue mfumo. Sura ya 33. Kikoa cha 1.
 
-**DynamoDB** — Hifadhidata ya NoSQL inayosimamiwa kikamilifu yenye latency ya millisekunde moja kwa kiwango chochote. Mfano wa thamani-muhimu na hati. Sura ya 9. Kikoa cha 3.
+**Direct Connect** — Muunganisho wa mtandao wa faragha uliojitolea kutoka eneo la ndani hadi AWS. Thabiti zaidi kuliko VPN. Sura ya 25. Kikoa cha 3.
 
-**DynamoDB Auto Scaling** — Hurekebisha kiotomatiki uwezo uliotolewa wa kusomwa/kuandika kulingana na vipimo vya CloudWatch. Sura ya 29. Kikoa cha 4.
+**DLQ** — Ona Dead Letter Queue.
 
-**DynamoDB Streams** — Kumbukumbu ya mabadiliko yaliyoandaliwa kwa wakati ya mabadiliko yote ya kipengele katika jedwali la DynamoDB. Hutumika na Lambda kwa usindikaji unaoendelewa na matukio. Sura ya 9. Kikoa cha 2.
+**DynamoDB** — Hifadhidata ya NoSQL inayosimamiwa kikamilifu yenye ucheleweshaji wa millisekunde za tarakimu moja kwa kiwango chochote. Mfano wa ufunguo-thamani na hati. Sura ya 9. Kikoa cha 3.
+
+**DynamoDB Auto Scaling** — Inarekebisha kiotomatiki uwezo wa provisioned wa usomaji/uandishi kulingana na metriki za CloudWatch. Sura ya 29. Kikoa cha 4.
+
+**DynamoDB Streams** — Logi ya mabadiliko yenye mpangilio wa wakati ya mabadiliko yote ya vitu katika jedwali la DynamoDB. Inatumika na Lambda kwa usindikaji unaoendelewa na matukio. Sura ya 9. Kikoa cha 2.
 
 ---
 
 ## E
 
-**EBS (Elastic Block Store)** — Uhifadhi wa kuzuia uliounganishwa na kipengele kimoja cha EC2. Hudumu kwa kujitegemea. Aina: gp3, io2, st1. Sura ya 6. Kikoa cha 3.
+**EBS (Elastic Block Store)** — Uhifadhi wa block ulioambatishwa kwa kipengele kimoja cha EC2. Hudumu kwa kujitegemea. Aina: gp3, io2, st1. Sura ya 6. Kikoa cha 3.
 
 **EC2 (Elastic Compute Cloud)** — Mashine za kawaida katika wingu. Sura ya 4. Kikoa cha 3.
 
-**ECS (Elastic Container Service)** — Uratibu wa vyombo unaosimamiwa. Aina ya uzinduzi ya Fargate inaondoa usimamizi wa seva. Sura ya 21. Vikoa vya 2 na 3.
+**ECS (Elastic Container Service)** — Uratibu wa vyombo unaosimamiwa. Aina ya uzinduzi ya Fargate inaondoa usimamizi wa seva. Sura ya 21. Kikoa cha 2, 3.
 
-**EFS (Elastic File System)** — Mfumo wa faili wa NFS unaoshirikiwa unaoweza kufikiwa kutoka vipengele vingi vya EC2. Hupanua kiotomatiki. Sura ya 6. Kikoa cha 3.
+**EFS (Elastic File System)** — Mfumo wa faili wa NFS wa pamoja unaofikiwa kutoka vipengele vingi vya EC2. Inapanua kiotomatiki. Madaraja ya uhifadhi ni pamoja na Standard, Infrequent Access, na Archive, ikiwa na Intelligent-Tiering kwa uhamishaji wa kiotomatiki kati ya madaraja. Sura ya 6. Kikoa cha 3.
 
-**EKS (Elastic Kubernetes Service)** — Ndege la udhibiti la Kubernetes linayosimamiwa kwenye AWS. Sura ya 21. Kikoa cha 3.
+**EKS (Elastic Kubernetes Service)** — Ndege la udhibiti la Kubernetes linalosimamiwa kwenye AWS. Sura ya 21. Kikoa cha 3.
 
-**ElastiCache** — Kuhifadhi kwa kwenye kumbukumbu kunakosimamiwa. Redis (vipengele vya utajiri) au Memcached (rahisi zaidi). Sura ya 10. Kikoa cha 3.
+**Elastic Disaster Recovery (DRS)** — Unakili endelevu wa kiwango cha block wa seva (za ndani au EC2) kuingia eneo la maandalizi la gharama nafuu, ikiwa na vipengele vya uokoaji vinavyozinduliwa katika dakika — pilot light inayosimamiwa. Sura ya 18. Kikoa cha 2.
 
-**IP ya Elastic** — Anwani ya IP ya umma thabiti unayoweza kugawa na kuunganisha upya na vipengele vya EC2. Sura ya 11. Kikoa cha 3.
+**ElastiCache** — Uchakatishaji wa kumbukumbu unaosimamiwa. Redis (vipengele tajiri zaidi) au Memcached (rahisi zaidi). Sura ya 10. Kikoa cha 3.
 
-**Usimbaji fiche wa bahasha** — Mchakato ambapo data imefichwa na ufunguo wa data (DEK), na DEK imefichwa na ufunguo wa msingi (CMK katika KMS). Sura ya 16. Kikoa cha 1.
+**Elastic IP** — Anwani ya IP ya umma tuli unayoweza kutenga na kuunganisha tena na vipengele vya EC2. Sura ya 11. Kikoa cha 3.
 
-**EventBridge** — Basi ya matukio kwa kupitishia matukio kutoka huduma za AWS, washirika wa SaaS, na vyanzo vya kawaida hadi malengo. Inasaidia sheria za ratiba. Sura ya 22. Kikoa cha 2.
+**Usimbaji wa bahasha** — Mfumo ambapo data inasimbwa na data key (DEK), na DEK inasimbwa na master key (CMK katika KMS). Sura ya 16. Kikoa cha 1.
 
-**Kukataa wazi** — Kauli ya kukataa ya IAM isiyoweza kupitiwa na kuruhusu chochote. Inatangulia maruhusu yote. Sura ya 3. Kikoa cha 1.
+**EventBridge** — Basi la matukio kwa kupitisha matukio kutoka huduma za AWS, washirika wa SaaS, na vyanzo vya kawaida kwa malengo. Inaunga mkono sheria za ratiba. Sura ya 22. Kikoa cha 2.
+
+**Explicit deny** — Taarifa ya kukataa ya IAM ambayo haiwezi kupinduliwa na kuruhusu yoyote. Inachukua kipaumbele juu ya kuruhusu zote. Sura ya 3. Kikoa cha 1.
 
 ---
 
 ## F
 
-**Upitishaji wa kushindwa hama (Route 53)** — Hupitisha trafiki kwa sehemu ya mwisho ya sekondari sehemu ya mwisho ya msingi ikishindwa ukaguzi wa afya. Sura ya 12. Kikoa cha 2.
+**Failover routing (Route 53)** — Inapitisha trafiki kwa endpoint ya pili wakati ya kwanza inashindwa ukaguzi wa afya. Sura ya 12. Kikoa cha 2.
 
 **Fargate** — Injini ya kompyuta bila seva kwa ECS na EKS. Hakuna vipengele vya EC2 vya kusimamia. Sura ya 21. Kikoa cha 3.
 
-**Mchakato wa fan-out** — Mada moja ya SNS inatoa ujumbe ule ule kwa foleni nyingi za SQS wakati mmoja. Sura ya 19. Kikoa cha 2.
+**Mfumo wa fan-out** — Topic moja ya SNS inatoa ujumbe ule ule kwa foleni nyingi za SQS kwa wakati mmoja. Sura ya 19. Kikoa cha 2.
 
-**Foleni ya FIFO (SQS)** — Usindikaji wa mara moja haswa, mpangilio mkali. Uendeshaji wa chini kuliko foleni za kawaida. Sura ya 19. Kikoa cha 2.
+**FIFO queue (SQS)** — Usindikaji wa mara-moja-tu, mpangilio mkali. Upitishaji wa chini kuliko standard queues. Sura ya 19. Kikoa cha 2.
 
-**Hali ya kushindwa** — Njia maalum mfumo unaweza kushindwa. Kutambua hali za kushindwa kabla ya uzalishaji ni msingi wa mapitio ya usanifu. Sura ya 32. Msalaba wa vikoa.
+**Njia ya hitilafu** — Njia maalum ambayo mfumo unaweza kushindwa. Kutambua njia za hitilafu kabla ya uzalishaji ndio kiini cha mapitio ya usanifu. Sura ya 32. Vikoa mbalimbali.
 
 ---
 
 ## G
 
-**Sehemu ya Mwisho ya Lango** — Aina ya bure ya sehemu ya mwisho ya VPC kwa S3 na DynamoDB. Hupitisha trafiki kupitia mtandao wa kibinafsi wa AWS, kuondoa ada za NAT Gateway. Sura ya 30. Kikoa cha 4.
+**Gateway Endpoint** — Aina ya VPC endpoint ya bure kwa S3 na DynamoDB. Inapitisha trafiki kupitia mtandao wa faragha wa AWS, ikiondoa gharama za NAT Gateway. Sura ya 30. Kikoa cha 4.
 
-**Upitishaji wa Jiografia (Route 53)** — Hupitisha kulingana na mahali pa kijiografia pa asili ya swali la DNS. Sura ya 12. Kikoa cha 3.
+**Gateway Load Balancer (GWLB)** — Kisambazaji cha mzigo cha Layer 3 kwa kuingiza vifaa vya mtandao vya kawaida vya wahusika wengine (ngome, IDS/IPS) ndani ya mtiririko wa trafiki. Sura ya 7. Kikoa cha 1.
 
-**Global Accelerator** — Hupitisha trafiki hadi pembeni ya AWS iliyo karibu kupitia Anycast, kuboresha latency kwa programu za nguvu. Sura ya 25. Kikoa cha 3.
+**Geolocation routing (Route 53)** — Inapitisha kulingana na eneo la kijiografia la chanzo cha hoja ya DNS. Sura ya 12. Kikoa cha 3.
 
-**Glue (AWS)** — ETL bila seva. Watambazaji wa Glue hugundua mpango; Kazi za Glue hubadilisha data; Katalogi ya Data huhifadhi metadata. Sura ya 26. Kikoa cha 3.
+**Global Accelerator** — Inapitisha trafiki kwa edge ya AWS iliyo karibu zaidi kupitia Anycast, ikiboresha ucheleweshaji kwa programu za kibadiliko. Sura ya 25. Kikoa cha 3.
 
-**GSI (Global Secondary Index)** — Faharisi mbadala kwenye jedwali la DynamoDB yenye ufunguo tofauti wa sehemu na ufunguo wa kupanga wa hiari. Inaruhusu mifumo ya maswali yenye kubadilika. Sura ya 9. Kikoa cha 3.
+**Glue (AWS)** — ETL bila seva. Glue Crawlers zinagundua schema; Glue Jobs zinabadilisha data; Data Catalog inahifadhi metadata. Sura ya 26. Kikoa cha 3.
 
-**GuardDuty** — Huduma ya ugunduzi wa vitisho kwa kutumia ML kwenye CloudTrail, Kumbukumbu za Mtiririko wa VPC, na kumbukumbu za DNS kugundua shughuli zisizo za kawaida. Sura ya 17. Kikoa cha 1.
+**GSI (Global Secondary Index)** — Index mbadala kwenye jedwali la DynamoDB ikiwa na partition key tofauti na sort key ya hiari. Inawezesha mifumo rahisi ya hoja. Sura ya 9. Kikoa cha 3.
+
+**GuardDuty** — Huduma ya kugundua vitisho inayotumia ML kwenye CloudTrail, VPC Flow Logs, na logi za DNS kugundua shughuli zisizo za kawaida. Sura ya 17. Kikoa cha 1.
 
 ---
 
 ## H
 
-**Ukaguzi wa afya (Route 53)** — Hufuatilia upatikanaji wa sehemu ya mwisho. Ukaguzi wa afya uliokataliwa huanzisha upitishaji wa kushindwa hama. Sura ya 12. Kikoa cha 2.
+**Health check (Route 53)** — Inafuatilia upatikanaji wa endpoint. Ukaguzi wa afya ulioshindwa unazindua failover routing. Sura ya 12. Kikoa cha 2.
 
-**Sehemu ya moto (DynamoDB)** — Sehemu inayopokea trafiki inayozidi kwa sababu maombi mengi yanashiriki ufunguo ule ule wa sehemu. Sura ya 9. Kikoa cha 3.
+**Hot partition (DynamoDB)** — Partition inayopokea trafiki isiyo sawia kwa sababu maombi mengi yanashiriki partition key ile ile. Sura ya 9. Kikoa cha 3.
 
 ---
 
 ## I
 
-**IAM (Identity and Access Management)** — Hudhibiti uthibitisho na idhini kwa akaunti za AWS. Watumiaji, vikundi, majukumu, sera. Sura za 3 na 14. Kikoa cha 1.
+**IAM (Identity and Access Management)** — Inadhibiti uthibitishaji na uidhinishaji kwa akaunti za AWS. Watumiaji, vikundi, majukumu, sera. Sura ya 3, 14. Kikoa cha 1.
 
-**Jukumu la IAM** — Utambulisho wa IAM yenye vitambulisho vya muda, vilivyodhaniwa na huduma, watumiaji, au akaunti nyingine. Sura za 3 na 14. Kikoa cha 1.
+**IAM role** — Utambulisho wa IAM wenye vitambulisho vya muda, unaochukuliwa na huduma, watumiaji, au akaunti nyingine. Sura ya 3, 14. Kikoa cha 1.
 
-**Idempotency** — Mali ya shughuli inayozalisha matokeo yale yale iitwapo mara moja au mara nyingi. Muhimu kwa mifumo iliyosambazwa (malipo, marejesho, usindikaji wa agizo). Sura ya 32. Msalaba wa vikoa.
+**Idempotency** — Sifa ya operesheni inayozalisha matokeo yale yale ikiwa itaitwa mara moja au mara nyingi. Muhimu kwa mifumo iliyosambaa (marejesho, malipo, usindikaji wa agizo). Sura ya 32. Vikoa mbalimbali.
 
-**Ufunguo wa idempotency** — Kitambulisho cha kipekee kwa shughuli, kilichoangaliwa kabla ya utekelezaji kuzuia usindikaji wa nakala. Sura ya 32. Msalaba wa vikoa.
+**Idempotency key** — Kitambulisho cha kipekee kwa operesheni, kinachokaguliwa kabla ya utekelezaji ili kuzuia usindikaji wa nakala. Sura ya 32. Vikoa mbalimbali.
 
-**Sehemu ya Mwisho ya Kiolesura (PrivateLink)** — Sehemu ya mwisho ya VPC kwa huduma nyingi za AWS. Bei kwa saa + kwa GB. Hutoa muunganisho wa kibinafsi bila mtandao au NAT. Sura ya 30. Kikoa cha 4.
+**Interface Endpoint (PrivateLink)** — VPC endpoint kwa huduma nyingi za AWS. Inatozwa kwa saa + kwa GB. Inatoa muunganisho wa faragha bila intaneti au NAT. Sura ya 30. Kikoa cha 4.
 
-**Lango la Mtandao (IGW)** — Inaruhusu vipengele katika subnet za umma kuwasiliana na mtandao. Inahitaji jedwali la njia la subnet kuwa na njia hadi IGW. Sura ya 11. Kikoa cha 3.
+**Internet Gateway (IGW)** — Inaruhusu vipengele katika subnet za umma kuwasiliana na intaneti. Inahitaji jedwali la njia la subnet kuwa na njia kwa IGW. Sura ya 11. Kikoa cha 3.
 
-**"Inategemea"** — Jibu la uaminifu kwa maswali mengi ya usanifu, ambalo lazima daima kukamilishwe: "Inategemea mchakato wa ufikiaji / kiwango / matokeo ya kushindwa / kizuizi cha gharama." Sura ya 33. Msalaba wa vikoa.
+**"Inategemea"** — Jibu la kweli kwa maswali mengi ya usanifu, ambalo lazima daima likamilishwe: "Inategemea mfumo wa ufikiaji / kiwango / matokeo ya hitilafu / kikwazo cha gharama." Sura ya 33. Vikoa mbalimbali.
 
 ---
 
 ## K
 
-**Kinesis Data Firehose** — Utoaji unaosimamiwa wa data ya utiririko kwa S3, Redshift, OpenSearch. Hakuna usimamizi wa mlaji. Sura ya 26. Kikoa cha 3.
+**Kinesis Data Firehose** — Jina la zamani la Amazon Data Firehose: utoaji unaosimamiwa wa data ya utiririshaji kwa S3, Redshift, OpenSearch. Hakuna usimamizi wa mtumiaji. Maswali ya zamani ya mtihani yanaweza bado kutumia jina la zamani. Sura ya 26. Kikoa cha 3.
 
-**Kinesis Data Streams** — Mkondo wa tukio wa wakati halisi ulioandaliwa. Wa kudumu, unaorudiwa. Hupimwa kwa vipande. Sura ya 26. Kikoa cha 3.
+**Kinesis Data Streams** — Mtiririko wa matukio wenye mpangilio wa wakati halisi. Wa kudumu, unaoweza kurudiwa ndani ya dirisha la uhifadhi (saa 24 chaguo-msingi, hadi siku 365). Unapimwa kwa shards. Sura ya 26. Kikoa cha 3.
 
-**KMS (Key Management Service)** — Huunda, kuhifadhi, na kudhibiti vifunguo vya kriptografia kwa usimbaji fiche wakati wa mapumziko. Sura ya 16. Kikoa cha 1.
+**KMS (Key Management Service)** — Inaunda, kuhifadhi, na kudhibiti funguo za kifani kwa usimbaji ikiwa imehifadhiwa. Sura ya 16. Kikoa cha 1.
 
 ---
 
 ## L
 
-**Lambda** — Vitendo bila seva vilivyozinduliwa na matukio. Lipa kwa uanzishaji na kwa millisekunde. Muda wa juu wa dakika 15. Sura ya 20. Vikoa vya 2, 3, 4.
+**Lambda** — Vitendo bila seva vinavyozinduliwa na matukio. Lipa kwa uanzishaji na kwa ms. Muda wa juu wa dakika 15. Sura ya 20. Kikoa cha 2, 3, 4.
 
-**Lambda@Edge** — Vitendo vya Lambda vinavyofanya kazi kwenye maeneo ya pembeni ya CloudFront, kubadilisha maombi na majibu. Sura ya 13. Kikoa cha 3.
+**Lambda@Edge** — Vitendo vya Lambda vinavyoendesha kwenye edge locations za CloudFront, vikibadilisha maombi na majibu. Sura ya 13. Kikoa cha 3.
 
-**Upitishaji wa kulingana na latency (Route 53)** — Hupitisha maswali ya DNS kwa mkoa wa AWS wenye latency iliyopimwa ya chini zaidi. Sura ya 12. Kikoa cha 3.
+**AWS Lake Formation** — Tabaka la udhibiti wa ufikiaji wa ziwa la data lililounganishwa juu ya S3 na Glue Data Catalog. Inatoa ruhusa za kina katika kiwango cha jedwali, safuwima, na safu. Inarahisisha usanidi salama wa ziwa la data. Sura ya 26. Kikoa cha 3.
 
-**Templeti ya uzinduzi** — Templeti yenye toleo inayobainisha usanidi wa kipengele cha EC2 kwa Vikundi vya Kupanua Kiotomatiki. Sura ya 7. Kikoa cha 3.
+**Latency-based routing (Route 53)** — Inapitisha hoja za DNS kwa mkoa wa AWS wenye ucheleweshaji uliopimwa wa chini kabisa. Sura ya 12. Kikoa cha 3.
 
-**Upendeleo mdogo** — Mbinu bora ya IAM: toa ruhusa zinazohitajika tu, si zaidi. Sura ya 3. Kikoa cha 1.
+**Launch template** — Templeti yenye matoleo inayobainisha usanidi wa kipengele cha EC2 kwa Auto Scaling Groups. Sura ya 7. Kikoa cha 3.
 
-**Sera ya mzunguko wa maisha (S3)** — Sheria zinazohamia kiotomatiki vitu kwa madarasa ya uhifadhi bei nafuu au kuvifuta kulingana na umri. Sura ya 23. Kikoa cha 4.
+**Least privilege** — Mbinu bora ya IAM: toa tu ruhusa zinazohitajika, si zaidi. Sura ya 3. Kikoa cha 1.
 
-**LSI (Local Secondary Index)** — Faharisi mbadala kwenye jedwali la DynamoDB kwa kutumia ufunguo ule ule wa sehemu lakini ufunguo tofauti wa kupanga. Lazima uundwe wakati wa uundaji wa jedwali. Sura ya 9. Kikoa cha 3.
+**Lifecycle policy (S3)** — Sheria zinazohamisha kiotomatiki vitu kwa madaraja ya uhifadhi nafuu au kuvifuta kulingana na umri. Sura ya 23. Kikoa cha 4.
+
+**LSI (Local Secondary Index)** — Index mbadala kwenye jedwali la DynamoDB inayotumia partition key ile ile lakini sort key tofauti. Lazima iundwe wakati wa kuunda jedwali. Sura ya 9. Kikoa cha 3.
 
 ---
 
 ## M
 
-**Memcached** — Injini ya kuhifadhi kwenye kumbukumbu rahisi, yenye nyuzi-nyingi. Hakuna kudumu, hakuna miundo ya data. Tumia Redis isipokuwa unahitaji hasa nyuzi-nyingi kwa bei ya vipengele. Sura ya 10. Kikoa cha 3.
+**Amazon Macie** — Ugunduzi unaotegemea ML wa data nyeti (PII) katika S3 na kuashiria hatari za uwazi. GuardDuty inaangalia tabia; Macie inakagua kile kilichohifadhiwa. Sura ya 17. Kikoa cha 1.
 
-**Multi-AZ (RDS)** — Nakala ya hifadhi ya wakati mmoja katika AZ tofauti yenye kushindwa hama kwa kiotomatiki. RPO ~0, RTO ~sekunde 60. Kwa upatikanaji wa juu, si kupanua kusomwa. Sura za 8 na 18. Kikoa cha 2.
+**Memcached** — Injini ya uchakatishaji wa kumbukumbu rahisi, multi-threaded. Hakuna kudumu, hakuna miundo ya data. Tumia Redis isipokuwa unahitaji mahususi multi-threading kwa gharama ya vipengele. Sura ya 10. Kikoa cha 3.
 
-**Multi-Region** — Kupeleka vipengele vya programu katika mikoa mingi ya AWS kwa upungufu wa kijiografia na utendaji wa kimataifa. Ugumu na gharama ya juu zaidi. Sura ya 18. Kikoa cha 2.
+**Amazon MemoryDB for Redis** — Hifadhidata kuu ya kumbukumbu ya kudumu, inayopatana na Redis. Tofauti na ElastiCache, MemoryDB inaandika kwa logi ya miamala ya Multi-AZ, ikihakikisha kudumu kwa data. Tumia wakati upatanifu wa API ya Redis unahitajika NA upotezaji wa data haukubaliki. Sura ya 10. Kikoa cha 3.
+
+**MGN (AWS Application Migration Service)** — Kupangisha upya/kuinua-na-kuhamisha: unakili wa kiwango cha block wa seva nzima kuingia AWS, uzinduzi wa majaribio, kisha kuhamia kwa vipengele vya asili vya EC2. DataSync inahamisha faili; DMS inahamisha hifadhidata; MGN inahamisha seva. Sura ya 25. Kikoa cha 3.
+
+**Amazon MQ** — Broker inayosimamiwa ya ActiveMQ/RabbitMQ inayozungumza itifaki za kawaida (AMQP, MQTT, STOMP). Kwa kuinua-na-kuhamisha mzigo wa broker uliopo bila mabadiliko ya nambuli; ujumbe wa greenfield → SQS/SNS. Sura ya 19. Kikoa cha 2.
+
+**Multi-AZ (RDS)** — Nakala ya standby sambamba katika AZ tofauti ikiwa na kuhamia kiotomatiki. RPO ~0, RTO ~sekunde 60. Kwa upatikanaji wa juu, si kupanua usomaji. Sura ya 8, 18. Kikoa cha 2.
+
+**Multi-Region** — Kupeleka vipengele vya programu katika mikoa mingi ya AWS kwa uzazi wa kijiografia na utendaji wa kimataifa. Ugumu na gharama za juu zaidi. Sura ya 18. Kikoa cha 2.
 
 ---
 
 ## N
 
-**NACL (Network Access Control List)** — Ngome isiyo na hali kwenye kiwango cha subnet. Inahitaji sheria zote za inbound na outbound. Sheria zinakadiria kwa mpangilio wa nambari. Sura ya 15. Kikoa cha 1.
+**Network Load Balancer (NLB)** — Kisambazaji cha mzigo cha Layer 4 (TCP/UDP/TLS): mamilioni ya maombi kwa sekunde, IP tuli kwa kila AZ, inahifadhi IP chanzo. Hakuna ufahamu wa HTTP — hiyo ni kazi ya ALB. Sura ya 7. Kikoa cha 3.
 
-**NAT Gateway** — Inaruhusu vipengele katika subnet za kibinafsi kufanya miunganisho ya nje kwa mtandao. Inalipwa kwa $0.045/GB iliyoshughulikiwa. Sura za 11 na 30. Kikoa cha 4.
+**NACL (Network Access Control List)** — Ngome ya stateless katika kiwango cha subnet. Inahitaji sheria za kuingia na za kutoka. Sheria zinatathminiwa kwa mpangilio wa kinambari. Sura ya 15. Kikoa cha 1.
+
+**NAT Gateway** — Inaruhusu vipengele katika subnet za faragha kufanya miunganisho ya kutoka kwa intaneti. Inatozwa $0.045/GB iliyochakatwa. Sura ya 11, 30. Kikoa cha 4.
 
 ---
 
 ## O
 
-**Kitu (S3)** — Faili iliyohifadhiwa katika S3. Ina funguo (jina), thamani (data), na metadata. Ukubwa wa juu TB 5. Sura ya 5. Kikoa cha 3.
+**Object (S3)** — Faili iliyohifadhiwa katika S3. Imeundwa na key (jina), value (data), na metadata. Ukubwa wa juu 5TB. Sura ya 5. Kikoa cha 3.
 
-**Uwezo wa hiari (DynamoDB)** — Hali ya kulipa kwa ombi. Bei ya juu zaidi kwa ombi kuliko iliyotolewa, lakini hakuna upangaji wa uwezo unaohitajika. Sura ya 29. Kikoa cha 4.
+**On-Demand capacity (DynamoDB)** — Hali ya lipa kwa ombi. Ghali zaidi kwa ombi kuliko provisioned, lakini hakuna upangaji wa uwezo unaohitajika. Sura ya 29. Kikoa cha 4.
 
-**Vipengele vya On-Demand (EC2)** — Lipa kwa saa bila kujitolea. Kubadilika kwa juu, bei ya juu zaidi. Sura ya 27. Kikoa cha 4.
+**On-Demand instances (EC2)** — Lipa kwa saa bila kujitolea. Unyumbufu wa juu, bei ya juu. Sura ya 27. Kikoa cha 4.
+
+**AWS Outposts** — Rafu inayosimamiwa kikamilifu ya vifaa vya AWS iliyowekwa katika kituo cha data cha mteja au kituo cha pamoja cha eneo. Inaendesha huduma, API, na zana zile zile za AWS kama wingu la umma katika eneo lako. AWS inasimamia usakinishaji na uwekaji viraka; mteja anatoa nafasi ya rafu na umeme. Kwa ukaaji wa data, mzigo wa ndani wa ucheleweshaji mdogo, au senario zilizotenganishwa. Sura ya 2. Kikoa cha 4.
 
 ---
 
 ## P
 
-**Ufunguo wa sehemu (DynamoDB)** — Sehemu ya msingi ya ufunguo inayobainisha sehemu gani huhifadhi kipengele. Chagua ufunguo wenye hali nyingi kwa usambazaji sawa. Sura ya 9. Kikoa cha 3.
+**Partition key (DynamoDB)** — Kipengele cha ufunguo wa msingi kinachoamua ni partition gani inahifadhi kitu. Chagua ufunguo wa cardinality ya juu kwa usambazaji sawa. Sura ya 9. Kikoa cha 3.
 
-**Mpaka wa ruhusa** — Sera ya IAM inayoweka ruhusa za juu zaidi ambazo utambulisho wa IAM unaweza kuwa nazo, hata sera nyingine zikitoa zaidi. Sura ya 14. Kikoa cha 1.
+**Permission boundary** — Sera ya IAM inayoweka ruhusa za juu ambazo utambulisho wa IAM unaweza kuwa nazo, hata kama sera nyingine zinatoa zaidi. Sura ya 14. Kikoa cha 1.
 
-**Kikundi cha uwekaji** — Hudhibiti uwekaji wa kimwili wa vipengele vya EC2 kupunguza latency (nguzo) au kuimarisha upatikanaji (kusambaza). Sura ya 4. Kikoa cha 3.
+**Placement group** — Inadhibiti uwekaji wa kimwili wa vipengele vya EC2 kupunguza ucheleweshaji (cluster) au kuongeza upatikanaji (spread). Sura ya 4. Kikoa cha 3.
 
-**PrivateLink** — Huduma ya AWS ya kuunda sehemu za mwisho za kibinafsi kwa huduma zinazohifadhiwa katika AWS, zinazopatikana kupitia Sehemu za Mwisho za Kiolesura. Sura ya 30. Kikoa cha 1.
+**PrivateLink** — Huduma ya AWS kwa kuunda endpoint za faragha kwa huduma zinazohifadhiwa katika AWS, zinazofikiwa kupitia Interface Endpoints. Sura ya 30. Kikoa cha 1.
 
-**Uanzishaji uliotolewa wa utekelezaji wa wakati mmoja (Lambda)** — Mazingira ya utekelezaji yaliyoanzishwa mapema yanayoondoa ucheleweshaji wa kuanza baridi. Sura ya 20. Kikoa cha 3.
+**Provisioned concurrency (Lambda)** — Mazingira ya utekelezaji yaliyoanzishwa awali yanayoondoa ucheleweshaji wa kuanza baridi. Sura ya 20. Kikoa cha 3.
 
-**Uwezo uliotolewa (DynamoDB)** — Uendeshaji wa kusomwa/kuandika uliotengwa mapema, hupimwa kwa vitengo vya uwezo kwa sekunde. Bei nafuu zaidi kuliko hiari kwa trafiki inayoweza kutabiriwa. Sura za 9 na 29. Kikoa cha 4.
+**Provisioned capacity (DynamoDB)** — Upitishaji wa usomaji na uandishi uliotengwa awali, unaopimwa kwa vitengo vya uwezo kwa sekunde. Nafuu zaidi kuliko on-demand kwa trafiki inayotabirika. Sura ya 9, 29. Kikoa cha 4.
+
+---
+
+## Q
+
+**Amazon QuickSight** — Huduma ya akili ya biashara na uonyeshaji wa data inayosimamiwa. Inatumia SPICE (Super-fast, Parallel, In-memory Calculation Engine) kuhifadhi data kwa uonyeshaji wa haraka wa dashibodi. Inaunganisha na Athena, S3, Redshift, RDS, na vyanzo vingine vya data vya AWS. Hakuna seva ya BI ya kusimamia. Sura ya 26. Kikoa cha 3.
 
 ---
 
 ## R
 
-**RDS (Relational Database Service)** — Hifadhidata ya uhusiano inayosimamiwa. Hushughulikia nakala, kupiga kiraka, kushindwa hama. Sura ya 8. Kikoa cha 3.
+**RDS (Relational Database Service)** — Hifadhidata ya uhusiano inayosimamiwa. Inashughulikia nakala rudufu, uwekaji viraka, kuhamia. Sura ya 8. Kikoa cha 3.
 
-**RDS Proxy** — Husimamia bwawa la miunganisho kati ya Lambda/programu na RDS, kuzuia mwisho wa miunganisho. Sura ya 8. Kikoa cha 3.
+**RDS Proxy** — Inasimamia bwawa la miunganisho kati ya Lambda/programu na RDS, ikizuia kuisha kwa miunganisho. Sura ya 8. Kikoa cha 3.
 
-**Nakala ya Kusomwa (RDS)** — Nakala ya ucheleweshaji ya hifadhidata kwa kupanua kusomwa. Haitoi kushindwa hama kwa kiotomatiki. Sura za 8 na 24. Kikoa cha 3.
+**Read Replica (RDS)** — Nakala asiyo sambamba ya hifadhidata kwa kupanua usomaji. HAITOI kuhamia kiotomatiki. Sura ya 8, 24. Kikoa cha 3.
 
-**Redis** — Duka la miundo ya data ya kwenye kumbukumbu linalotumika kwa kuhifadhi, usimamizi wa kikao, ubao wa nguvu wa wakati halisi, pub/sub. Sura ya 10. Kikoa cha 3.
+**Redis** — Duka la miundo ya data ya kumbukumbu linalotumika kwa uchakatishaji, usimamizi wa kipindi, mibao ya wanaoongoza ya wakati halisi, pub/sub. Sura ya 10. Kikoa cha 3.
 
-**Kipengele Kilichohifadhiwa (EC2)** — Kujitolea kutumia aina maalum ya kipengele katika mkoa maalum kwa miaka 1 au 3 kwa kubadilishana na punguzo. Sura ya 27. Kikoa cha 4.
+**Reserved Instance (EC2)** — Kujitolea kutumia aina maalum ya kipengele katika mkoa maalum kwa mwaka 1 au 3 kwa kubadilishana na punguzo. Sura ya 27. Kikoa cha 4.
 
-**Route 53** — Huduma ya DNS na msajili wa kikoa wa AWS. Inasaidia sera nyingi za upitishaji. Sura ya 12. Vikoa vya 2 na 3.
+**Route 53** — Huduma ya DNS na msajili wa kikoa ya AWS. Inaunga mkono sera nyingi za upitishaji. Sura ya 12. Kikoa cha 2, 3.
 
-**RPO (Recovery Point Objective)** — Upotezaji wa juu unaokubaliwa wa data hupimwa kwa wakati. "Tunaweza kupoteza data ngapi?" Sura ya 18. Kikoa cha 2.
+**RPO (Recovery Point Objective)** — Upotezaji wa juu unaokubalika wa data unaopimwa kwa wakati. "Tunaweza kumudu kupoteza data kiasi gani?" Sura ya 18. Kikoa cha 2.
 
-**RTO (Recovery Time Objective)** — Wakati wa juu unaokubaliwa wa kurejesha huduma baada ya kushindwa. "Tunaweza kuwa chini kwa muda gani?" Sura ya 18. Kikoa cha 2.
+**RTO (Recovery Time Objective)** — Muda wa juu unaokubalika wa kurejesha huduma baada ya hitilafu. "Tunaweza kuwa chini kwa muda gani?" Sura ya 18. Kikoa cha 2.
 
-**Kitabu cha maelekezo** — Maelekezo ya hatua kwa hatua ya kuendesha mfumo, hasa kwa majibu ya matukio. "Mtu anafanya nini saa 3 asubuhi?" Sura ya 32. Msalaba wa vikoa.
+**Runbook** — Maagizo ya hatua kwa hatua ya kuendesha mfumo, mahususi kwa kujibu matukio. "Mtu anafanya nini saa 3 asubuhi?" Sura ya 32. Vikoa mbalimbali.
 
 ---
 
 ## S
 
-**S3 Intelligent-Tiering** — Huhamisha kiotomatiki vitu vya S3 kati ya tabaka za ufikiaji kulingana na mifumo ya ufikiaji. Hakuna ada ya urejeshaji. Sura ya 23. Kikoa cha 4.
+**S3 Intelligent-Tiering** — Inahamisha kiotomatiki vitu vya S3 kati ya madaraja ya ufikiaji kulingana na mifumo ya ufikiaji. Hakuna ada ya upataji. Sura ya 23. Kikoa cha 4.
 
-**S3 Select** — Hurejesha sehemu ya maudhui ya kitu cha S3 kwa kutumia maelezo ya SQL, kupunguza uhamishaji wa data. Sura ya 30. Kikoa cha 4.
+**S3 Select** — Inapata sehemu ndogo ya maudhui ya kitu cha S3 kwa kutumia maneno ya SQL, ikipunguza uhamishaji wa data. Urithi: haipatikani kwa wateja wapya tangu katikati ya 2024 — Athena sasa ni njia kuu ya kuchuja na kuhoji data katika S3. S3 Object Lambda, ambayo zamani ilikuwa mbadala uliopendekezwa, yenyewe ni urithi (ilifungwa kwa wateja wapya mnamo Novemba 2025; mzigo uliopo unaendelea kufanya kazi). Sura ya 30. Kikoa cha 4.
 
-**Mpango wa Akiba** — Mfano wa bei wa kubadilika unaojitolea kwa kiasi cha matumizi ya kwa saa kwa kubadilishana na punguzo. Yenye kubadilika zaidi kuliko Vipengele Vilivyohifadhiwa. Sura ya 27. Kikoa cha 4.
+**Savings Plan** — Mfano wa bei rahisi unaojitolea kwa kiasi cha dola cha matumizi ya saa kwa kubadilishana na punguzo. Rahisi zaidi kuliko Reserved Instances. Sura ya 27. Kikoa cha 4.
 
-**SCP (Service Control Policy)** — Sera ya AWS Organizations inayozuia ruhusa za juu zaidi zinazopatikana kwa akaunti katika OU. Sura ya 14. Kikoa cha 1.
+**SCP (Service Control Policy)** — Sera ya AWS Organizations inayozuia ruhusa za juu zinazopatikana kwa akaunti katika OU. Sura ya 14. Kikoa cha 1.
 
-**Secrets Manager** — Huhifadhi na kuzungusha kiotomatiki siri (nywila za hifadhidata, funguo za API). Sura ya 16. Kikoa cha 1.
+**Secrets Manager** — Inahifadhi na kuzungusha kiotomatiki siri (manenosiri ya hifadhidata, funguo za API). Sura ya 16. Kikoa cha 1.
 
-**Kikundi cha usalama** — Ngome ya kawaida ya kawaida kwenye kiwango cha kipengele. Sheria za kuruhusu tu; trafiki ya kurudi ni ya kiotomatiki. Sura ya 15. Kikoa cha 1.
+**Security group** — Ngome ya kawaida ya stateful katika kiwango cha kipengele. Sheria za kuruhusu pekee; trafiki ya kurudi ni kiotomatiki. Sura ya 15. Kikoa cha 1.
 
-**Kipande (Kinesis)** — Kitengo cha kimsingi cha uendeshaji katika Kinesis Data Streams: kuandika Mbps 1, kusomwa Mbps 2. Sura ya 26. Kikoa cha 3.
+**Shard (Kinesis)** — Kitengo cha msingi cha upitishaji katika Kinesis Data Streams: 1 MB/s kuandika, 2 MB/s kusoma. Sura ya 26. Kikoa cha 3.
 
-**Mfano wa Jukumu la Pamoja** — AWS ina jukumu la usalama *wa* wingu (miundombinu); wewe una jukumu la usalama *katika* wingu (data, usanidi, ufikiaji). Sura ya 1. Kikoa cha 1.
+**Shared Responsibility Model** — AWS inawajibika kwa usalama *wa* wingu (miundombinu); wewe unawajibika kwa usalama *ndani ya* wingu (data, usanidi, ufikiaji). Sura ya 1. Kikoa cha 1.
 
-**Shield** — Ulinzi wa DDoS. Standard: bure, wa kiotomatiki. Advanced: wa kulipa, na msaada wa DRT na ulinzi wa kifedha. Sura ya 17. Kikoa cha 1.
+**Shield** — Ulinzi wa DDoS. Standard: bila malipo, kiotomatiki. Advanced: kulipia, ikiwa na msaada wa DRT na ulinzi wa kifedha. Sura ya 17. Kikoa cha 1.
 
-**SNS (Simple Notification Service)** — Ujumbe wa pub/sub. Husukuma ujumbe kwa wajiandikishaji wote wakati mmoja. Mchakato wa fan-out. Sura ya 19. Kikoa cha 2.
+**Snow Family** — Vifaa vya kimwili kwa uhamishaji wa data wa wingi nje ya mtandao (Snowball Edge: 80 TB) — kukodisha ndege ya mizigo badala ya kuendesha barabarani. Urithi (2026): Snowmobile na Snowcone zimekomeshwa; vifaa vya Snow vilifungwa kwa wateja wapya mnamo Novemba 2025 (AWS inaelekeza kwa DataSync na Data Transfer Terminals), lakini mtihani wa SAA-C03 bado unatarajia Snowball kwa "wiki za uhamishaji, bandwidth ndogo." Sura ya 25. Kikoa cha 3.
 
-**Ufunguo wa kupanga (DynamoDB)** — Sehemu ya pili ya hiari ya ufunguo wa msingi. Inaruhusu maswali ya mwelekeo ndani ya sehemu. Sura ya 9. Kikoa cha 3.
+**SNS (Simple Notification Service)** — Ujumbe wa pub/sub. Inasukuma ujumbe kwa wajitokezaji wote kwa wakati mmoja. Mfumo wa fan-out. Sura ya 19. Kikoa cha 2.
 
-**Vipengele vya Nafasi** — Vipengele vya EC2 vinavyotumia uwezo wa ziada kwa punguzo la 60-90%. Vinaweza kukatizwa na notisi ya dakika 2. Kwa mzigo wa ustahimilivu wa hitilafu tu. Sura ya 27. Kikoa cha 4.
+**Sort key (DynamoDB)** — Kipengele cha pili cha hiari cha ufunguo wa msingi. Inawezesha hoja za masafa ndani ya partition. Sura ya 9. Kikoa cha 3.
 
-**SQS (Simple Queue Service)** — Foleni ya ujumbe inayosimamiwa. Hutenganisha wazalishaji kutoka walaji. Foleni za Kawaida (angalau mara moja) na za FIFO (mara moja haswa). Sura ya 19. Kikoa cha 2.
+**Spot Instances** — Vipengele vya EC2 vinavyotumia uwezo wa ziada kwa punguzo la 60-90%. Vinaweza kukatizwa na taarifa ya dakika 2. Kwa mzigo unaovumilia hitilafu pekee. Sura ya 27. Kikoa cha 4.
 
-**Step Functions** — Huduma ya uratibu wa mtiririko wa kazi bila seva. Mashine za hali za kuratibu huduma za AWS. Sura ya 22. Kikoa cha 2.
+**SQS (Simple Queue Service)** — Foleni ya ujumbe inayosimamiwa. Inatenganisha watayarishaji na watumiaji. Standard (angalau-mara-moja) na FIFO (mara-moja-tu) queues. Sura ya 19. Kikoa cha 2.
+
+**Step Functions** — Huduma ya uratibu wa mtiririko wa kazi bila seva. Mashine za hali kwa kuratibu huduma za AWS. Sura ya 22. Kikoa cha 2.
+
+**AWS Storage Gateway** — Daraja kati ya uhifadhi wa ndani na wa wingu: inawasilisha miingiliano ya NFS/SMB (File), iSCSI (Volume), au tepi ya kawaida (Tape) kwa ndani huku ikidumisha data katika S3, Glacier, au picha za papo hapo za EBS. Sura ya 6. Kikoa cha 3.
 
 ---
 
 ## T
 
-**Kupanua kwa ufuatiliaji wa lengo** — Sera ya Kupanua Kiotomatiki inayorekebisha uwezo kudumisha thamani ya lengo ya kipimo (mfano, matumizi ya CPU ya 60%). Sura ya 7. Kikoa cha 2.
+**Target tracking scaling** — Sera ya Auto Scaling inayorekebisha uwezo kudumisha thamani lengwa ya metriki (k.m. matumizi ya CPU ya 60%). Sura ya 7. Kikoa cha 2.
 
-**Transit Gateway** — Topology ya mtandao wa hub-na-bonga inayounganisha VPC nyingi na mitandao ya eneo la ndani kupitia lango kuu. Sura ya 25. Kikoa cha 3.
+**AWS Transfer Family** — Endpoint ya SFTP/FTPS/FTP inayosimamiwa ikiwa na S3 au EFS. Washirika wanaweka wateja wao waliopo wa SFTP; faili zinatua moja kwa moja katika ndoo yako. Sura ya 25. Kikoa cha 3.
 
-**TTL (Time to Live)** — Alama ya wakati baada ya DynamoDB kufuta kiotomatiki kipengele. Pia hutumika katika DNS (muda gani wasuluhishi huhifadhi rekodi) na kuhifadhi (muda gani thamani iliyohifadhiwa ni sahihi). Sura za 9 na 12. Kikoa cha 3.
+**Transit Gateway** — Topolojia ya mtandao ya kitovu-na-spoke inayounganisha VPC nyingi na mitandao ya ndani kupitia gateway ya kati. Sura ya 25. Kikoa cha 3.
+
+**TTL (Time to Live)** — Alama ya wakati ambayo baada yake DynamoDB inafuta kiotomatiki kitu. Pia inatumika katika DNS (muda gani resolvers zinahifadhi rekodi) na uchakatishaji (muda gani thamani iliyohifadhiwa ni halali). Sura ya 9, 12. Kikoa cha 3.
 
 ---
 
 ## V
 
-**VIF (Virtual Interface)** — Muunganisho wa kimantiki uliotumiwa na AWS Direct Connect. VIF ya umma inafikia sehemu za mwisho za umma za AWS; VIF ya Kibinafsi inafikia rasilimali za VPC. Sura ya 25. Kikoa cha 3.
+**VIF (Virtual Interface)** — Muunganisho wa kimantiki unaotumika na AWS Direct Connect. Public VIF inafikia endpoint za umma za AWS; Private VIF inafikia rasilimali za VPC. Sura ya 25. Kikoa cha 3.
 
-**Muda wa kutoweka (SQS)** — Kipindi ambacho ujumbe uliopo unaficha kutoka walaji wengine. Inaruhusu usindikaji bila walaji wengine kuona ujumbe ule ule. Sura ya 19. Kikoa cha 2.
+**Visibility timeout (SQS)** — Kipindi ambacho ujumbe uliopokewa umefichwa kutoka kwa watumiaji wengine. Inaruhusu usindikaji bila watumiaji wengine kuona ujumbe ule ule. Sura ya 19. Kikoa cha 2.
 
-**VPC (Virtual Private Cloud)** — Mtandao wa kawaida uliotengwa katika AWS. Una subnet, meza za njia, na malango. Sura ya 11. Kikoa cha 1.
+**VPC (Virtual Private Cloud)** — Mtandao wa kawaida uliotengwa katika AWS. Una subnet, jedwali za njia, na gateways. Sura ya 11. Kikoa cha 1.
 
-**Sehemu ya Mwisho ya VPC** — Huunganisha rasilimali za VPC kwa huduma za AWS kupitia mtandao wa kibinafsi wa AWS. Lango (bure, S3/DynamoDB) na Kiolesura (bei, huduma nyingi zingine). Sura ya 30. Vikoa vya 1 na 4.
+**VPC Endpoint** — Inaunganisha rasilimali za VPC na huduma za AWS kupitia mtandao wa faragha wa AWS. Gateway (bila malipo, S3/DynamoDB) na Interface (inatozwa, huduma nyingine nyingi). Sura ya 30. Kikoa cha 1, 4.
 
-**Kumbukumbu za Mtiririko wa VPC** — Hukamata taarifa kuhusu trafiki ya IP kwenda na kutoka kiolesura cha mtandao katika VPC. Hutumika na GuardDuty na kwa utatuzi wa mtandao. Sura ya 17. Kikoa cha 1.
+**VPC Flow Logs** — Inanasa taarifa kuhusu trafiki ya IP inayoenda kwa na kutoka kwa miingiliano ya mtandao katika VPC. Inatumika na GuardDuty na kwa utatuzi wa matatizo ya mtandao. Sura ya 17. Kikoa cha 1.
 
-**Muunganisho wa VPC** — Muunganisho wa mtandao kati ya VPC mbili unaruhusu trafiki kupita kati yake kwa kutumia anwani za IP za kibinafsi. Sura ya 11. Kikoa cha 3.
+**VPC Peering** — Muunganisho wa mtandao kati ya VPC mbili unaowezesha trafiki kupita kati yao kwa kutumia anwani za IP za faragha. Sura ya 11. Kikoa cha 3.
 
 ---
 
 ## W
 
-**WAF (Web Application Firewall)** — Huchuja trafiki ya HTTP/HTTPS kwa kutumia sheria (vizuizi vya IP, SQL injection, vikwazo vya kiwango). Huambatishwa na CloudFront, ALB, au API Gateway. Sura ya 17. Kikoa cha 1.
+**WAF (Web Application Firewall)** — Inachuja trafiki ya HTTP/HTTPS kwa kutumia sheria (vizuizi vya IP, SQL injection, mipaka ya kasi). Inaambatishwa na CloudFront, ALB, au API Gateway. Sura ya 17. Kikoa cha 1.
 
-**Mfumo wa Ujenzi Bora** — Mfumo wa nguzo sita wa tathmini wa AWS: Ubora wa Uendeshaji, Usalama, Uaminifu, Ufanisi wa Utendaji, Uimarishaji wa Gharama, na Uendelevu. Sura ya 31. Msalaba wa vikoa.
+**AWS Wavelength** — Miundombinu ya AWS iliyowekwa ndani ya mitandao ya watoa huduma za mawasiliano ya 5G kwenye ukingo wa redio. Inawezesha ucheleweshaji wa millisekunde za tarakimu moja kwa vifaa vya simu. Kwa AR/VR ya simu, michezo ya wakati halisi, telemetri ya magari ya kujiendesha, na video ya moja kwa moja kwenye ukingo wa 5G. Wavelength Zones ni viendelezi vya AWS Regions ndani ya mitandao ya mawasiliano. Sura ya 2. Kikoa cha 3.
 
-**Upitishaji wa uzito (Route 53)** — Husambaza maswali ya DNS katika sehemu za mwisho kwa uzito. Hutumika kwa usambazaji wa bluu/kijani na majaribio ya A/B. Sura ya 12. Kikoa cha 3.
+**Well-Architected Framework** — Mfumo wa tathmini wa nguzo sita wa AWS: Operational Excellence, Security, Reliability, Performance Efficiency, Cost Optimization, Sustainability. Sura ya 31. Vikoa mbalimbali.
 
-**Kuhifadhi kwa kuandika-kupitia** — Husasisha kashe kila wakati hifadhidata inasasishwa. Data daima ni thabiti lakini kashe inaweza kushikilia vipengele vingi ambavyo havisomwi tena. Sura ya 10. Kikoa cha 3.
+**Weighted routing (Route 53)** — Inasambaza hoja za DNS katika endpoint kwa uzito. Inatumika kwa upelekaji wa blue-green na upimaji wa A/B. Sura ya 12. Kikoa cha 3.
+
+**Write-through caching** — Inasasisha cache kila wakati hifadhidata inaposasishwa. Data daima inalingana lakini cache inaweza kushikilia vitu vingi ambavyo havisomwi tena. Sura ya 10. Kikoa cha 3.
 
 ---
 
 ## Rejea ya Haraka ya Mifumo ya SAA-C03
 
-| Mtihani ukisema...                               | Fikiria...                                     |
-|--------------------------------------------------|------------------------------------------------|
-| "Tenganisha huduma"                              | SQS, SNS, EventBridge                          |
-| "Fan-out kwa walaji wengi"                       | Wajiandikishaji wa SNS + SQS                   |
-| "Matukio ya wakati halisi yaliyoandaliwa"        | Kinesis Data Streams                           |
-| "Bila seva"                                      | Lambda, DynamoDB, Aurora Serverless, Fargate   |
-| "Latency ya chini ya kimataifa (nguvu)"          | Global Accelerator                             |
-| "Latency ya chini ya kimataifa (thabiti/iliyohifadhiwa)" | CloudFront                            |
-| "Ulinzi wa DDoS"                                 | Shield (Standard: bure; Advanced: wa kulipa)   |
-| "Zuia SQL injection pembezoni"                   | WAF                                            |
-| "Gundua vitambulisho vilivyoathiriwa"            | GuardDuty                                      |
-| "Kagua shughuli za API"                          | CloudTrail                                     |
-| "Zungusha vitambulisho vya hifadhidata"          | Secrets Manager                                |
-| "Ficha data wakati wa mapumziko, vifunguo vinavyosimamiwa na mteja" | KMS yenye CMK             |
-| "Hifadhi maadili ya usanidi"                     | SSM Parameter Store                            |
-| "Uhifadhi wa IOPS wa juu"                        | io2 EBS                                        |
-| "Mfumo wa faili wa pamoja kwa EC2"               | EFS                                            |
-| "Uliza data ya S3 kwa SQL"                       | Athena                                         |
-| "Mzunguko wa ETL kwa uchambuzi"                  | AWS Glue                                       |
-| "Toa data ya utiririko kwa S3"                   | Kinesis Firehose                               |
-| "Kazi za kundi za ustahimilivu wa hitilafu, punguza gharama" | Vipengele vya Nafasi          |
-| "Mzigo thabiti uliojitolea wa uzalishaji"        | Mipango ya Akiba                               |
-| "Subnet ya kibinafsi → S3 bila NAT"              | Sehemu ya Mwisho ya Lango ya S3                |
-| "Subnet ya kibinafsi → SQS bila NAT"             | Sehemu ya Mwisho ya Kiolesura ya SQS           |
-| "Multi-AZ kwa RDS"                               | Kushindwa hama kwa kiotomatiki (si kupanua kusomwa) |
-| "Nakala ya Kusomwa kwa RDS"                      | Kupanua kusomwa (si kushindwa hama kwa kiotomatiki) |
-| "Muda wa uokoaji < dakika 1, toka AZ hadi AZ"   | Multi-AZ                                       |
-| "Uokoaji katika mikoa, RTO ya dakika"            | Mwanga wa Rubani au Nakala ya Hifadhi ya Joto  |
-| "Active-Active, RTO sifuri"                      | Multi-Region Active-Active (ngumu zaidi)       |
+| Kama mtihani unasema...                       | Fikiri...                                    |
+|-----------------------------------------------|----------------------------------------------|
+| "Tenganisha huduma"                           | SQS, SNS, EventBridge                        |
+| "Fan-out kwa watumiaji wengi"                 | SNS + usajili wa SQS                         |
+| "Matukio yenye mpangilio ya wakati halisi"    | Kinesis Data Streams                         |
+| "Bila seva"                                   | Lambda, DynamoDB, Aurora Serverless, Fargate |
+| "Ucheleweshaji mdogo wa kimataifa (kibadiliko)" | Global Accelerator                         |
+| "Ucheleweshaji mdogo wa kimataifa (tuli/iliyohifadhiwa)" | CloudFront                        |
+| "Ulinzi wa DDoS"                              | Shield (Standard: bila malipo; Advanced: kulipia) |
+| "Zuia SQL injection kwenye ukingo"            | WAF                                          |
+| "Gundua vitambulisho vilivyovuja"             | GuardDuty                                    |
+| "Kagua shughuli za API"                       | CloudTrail                                   |
+| "Zungusha vitambulisho vya hifadhidata"       | Secrets Manager                              |
+| "Simba data ikiwa imehifadhiwa, funguo zinazosimamiwa na mteja" | KMS yenye CMK             |
+| "Hifadhi thamani za usanidi"                  | SSM Parameter Store                          |
+| "Uhifadhi wa hifadhidata wa IOPS ya juu"      | io2 EBS                                      |
+| "Mfumo wa faili wa pamoja kwa EC2"            | EFS                                          |
+| "Hoji data ya S3 na SQL"                      | Athena                                       |
+| "Mfumo wa ETL kwa uchambuzi"                  | AWS Glue                                     |
+| "Toa data ya utiririshaji kwa S3"             | Amazon Data Firehose                         |
+| "Kazi za bechi zinazovumilia hitilafu, punguza gharama" | Spot Instances                     |
+| "Mzigo wa uzalishaji thabiti uliojitolewa"    | Savings Plans                                |
+| "Subnet ya faragha → S3 bila NAT"             | S3 Gateway Endpoint                          |
+| "Subnet ya faragha → SQS bila NAT"            | SQS Interface Endpoint                       |
+| "Multi-AZ kwa RDS"                            | Kuhamia kiotomatiki (si kupanua usomaji)     |
+| "Read Replica kwa RDS"                        | Kupanua usomaji (si kuhamia kiotomatiki)     |
+| "Muda wa uokoaji wa dakika 1–2, toka AZ hadi AZ" | Multi-AZ (RDS failover: sekunde 60–120)   |
+| "Uokoaji katika mikoa, RTO ya dakika"         | Pilot Light au Warm Standby                  |
+| "Active-Active, RTO sifuri"                   | Multi-Region Active-Active (changamano zaidi) |
+| "Usindikaji wa bechi unaozidi muda wa Lambda" | AWS Batch                                    |
+| "Inayopatana na Redis NA ya kudumu"           | MemoryDB for Redis                           |
+| "Wahandisi wa mbali kufikia VPC kutoka nyumbani" | Client VPN                                |
+| "Hamisha hifadhidata ikiwa na muda mdogo wa kutokufanya kazi" | DMS (+ SCT kwa aina tofauti) |
+| "Dashibodi ya BI kwenye AWS"                  | QuickSight                                   |
+| "Endesha AWS katika kituo chako cha data"     | Outposts                                     |
+| "Kompyuta ya ukingo wa simu wa 5G"            | Wavelength                                   |
