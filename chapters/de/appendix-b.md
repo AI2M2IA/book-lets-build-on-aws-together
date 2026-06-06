@@ -1,342 +1,363 @@
 # Anhang B: Domänenkarte SAA-C03
 
-Die AWS Solutions Architect Associate Prüfung (SAA-C03) ist in vier Domänen organisiert. Dieser Anhang ordnet jeden Kapitel des Buches der entsprechenden Domäne und Aufgabe zu, damit Sie sich gezielt auf die Prüfungsinhalte konzentrieren können.
+Die Prüfung AWS Solutions Architect Associate (SAA-C03) ist in vier Domänen organisiert. Dieser Anhang ordnet jedes Kapitel des Buches der relevanten Domäne und Aufgabe zu, damit Sie nach Prüfungsbereich statt nach Kapitelreihenfolge lernen können.
 
 ---
 
 ## Domänenübersicht
 
-| Domäne                                         | Gewicht | Beschreibung                                            |
-|------------------------------------------------|--------|--------------------------------------------------------|
-| Domäne 1: Gestaltung sicherer Architekturen          | 30%    | IAM, Netzwerksicherheit, Datensicherheit                 |
-| Domäne 2: Gestaltung widerstandsfähiger Architekturen | 26%    | Hochverfügbarkeit, Fehlertoleranz, Disaster Recovery  |
-| Domäne 3: Gestaltung leistungsstarker Architekturen | 24%    | Compute, Storage, Datenbank, Netzwerkleistung        |
-| Domäne 4: Gestaltung kosteneffizienter Architekturen | 20%    | Preismodelle, Kostenmanagement, Ressourcenzuordnung |
+| Domäne                                              | Gewicht | Beschreibung                                            |
+|-----------------------------------------------------|---------|--------------------------------------------------------|
+| Domäne 1: Gestaltung sicherer Architekturen         | 30 %    | IAM, Netzwerksicherheit, Datenschutz                   |
+| Domäne 2: Gestaltung widerstandsfähiger Architekturen | 26 %  | Hochverfügbarkeit, Fehlertoleranz, Disaster Recovery   |
+| Domäne 3: Gestaltung leistungsstarker Architekturen | 24 %    | Compute-, Storage-, Datenbank-, Netzwerk-Performance   |
+| Domäne 4: Gestaltung kostenoptimierter Architekturen | 20 %   | Preismodelle, Kostenmanagement, Ressourcenoptimierung  |
 
 ---
 
-## Domäne 1: Gestaltung sicherer Architekturen (30%)
+## Domäne 1: Gestaltung sicherer Architekturen (30 %)
 
-**Aufgabe 1.1 — Gestaltung des Zugriffs auf AWS-Ressourcen**
+**Aufgabe 1.1 — Sicheren Zugriff auf AWS-Ressourcen gestalten**
 
-Kernkonzepte: IAM-Benutzer, -Gruppen, -Rollen, -Richtlinien. Prinzip der geringsten Privilegien. Cross-Account-Zugriff. Service-Rollen. SCP (Service Control Policies) in AWS Organizations.
+Kernkonzepte: IAM-Users, -Groups, -Roles, -Policies. Prinzip der geringsten Privilegien. Cross-Account-Zugriff. Service-Rollen. SCP (Service Control Policies) in AWS Organizations.
 
 | Kapitel    | Thema                                                                        |
 |------------|------------------------------------------------------------------------------|
-| Kapitel 3  | IAM-Grundlagen: Benutzer, Gruppen, Rollen, Richtlinien, Richtlinienbewertung          |
-| Kapitel 14 | IAM-Erweiterte Funktionen: Rollen für Services, Berechtigungsbereiche, Cross-Account-Rollen |
-| Kapitel 3  | Richtlinienbewertungslogik: Explizites Verbot > Explizites Erlauben > Implizites Verbot      |
-| Kapitel 14 | AWS Organizations und SCPs                                                   |
+| Kapitel 3  | IAM-Grundlagen: Users, Groups, Roles, Policies, Policy-Bewertung             |
+| Kapitel 14 | IAM Fortgeschritten: Rollen für Dienste, Permission Boundaries, Cross-Account-Rollen |
+| Kapitel 3  | Logik der Policy-Bewertung: explizites Deny > explizites Allow > implizites Deny |
+| Kapitel 14 | AWS Organizations, SCPs, Control Tower, Account Factory                      |
+| Kapitel 14 | Cognito: User Pools (App-Anmeldung, JWTs) und Identity Pools (temporäre AWS-Anmeldedaten) |
 
 Wichtige Prüfungsmuster:
 
-- "EC2 benötigt Zugriff auf S3 ohne hartcodierte Anmeldeinformationen" → IAM-Rolle mit S3-Richtlinie, die der EC2-Instanzprofil zugewiesen wird
-- "Verschiedene Konten benötigen den Zugriff auf Ressourcen" → IAM-Rolle mit Cross-Account-Vertrauensrichtlinie
-- "Alle IAM-Benutzer in einer OU sollen keinen Zugriff auf einen Service erhalten" → SCP in AWS Organizations
+- „EC2 muss ohne hartcodierte Anmeldedaten auf S3 zugreifen" → IAM-Rolle mit S3-Policy, an das EC2-Instanzprofil angehängt
+- „Verschiedene Konten müssen Ressourcen teilen" → IAM-Rolle mit Cross-Account-Trust-Policy
+- „Allen IAM-Users in einer OU den Zugriff auf einen Dienst verwehren" → SCP in AWS Organizations
 
 ---
 
-**Aufgabe 1.2 — Gestaltung sicherer Arbeitslasten und Anwendungen**
+**Aufgabe 1.2 — Sichere Workloads und Anwendungen gestalten**
 
-Kernkonzepte: VPC-Design, Sicherheitsgruppen vs. NACLs, Netzwerkisolierung, DDoS-Schutz, WAF, GuardDuty.
+Kernkonzepte: VPC-Design, Security Groups vs. NACLs, Netzwerkisolation, DDoS-Schutz, WAF, GuardDuty.
 
-| Kapitel    | Thema                                                                              |
-|------------|------------------------------------------------------------------------------------|
-| Kapitel 11 | VPC-Design: öffentliche/private Subnetze, NAT Gateway, Internet Gateway, Routentabellen    |
-| Kapitel 15 | Sicherheitsgruppen (zustandsbehaftet, instanzspezifisch) vs. NACLs (zustandslos, Subnetz-spezifisch)     |
-| Kapitel 17 | Shield (DDoS-Schutz), WAF (Anwendungsbrandwand), GuardDuty (Bedrohungserkennung) |
-| Kapitel 25 | Direct Connect, VPN, Transit Gateway, PrivateLink                                  |
+| Kapitel    | Thema                                                                                      |
+|------------|--------------------------------------------------------------------------------------------|
+| Kapitel 11 | VPC-Design: öffentliche/private Subnetze, NAT Gateway, Internet Gateway, Routing-Tabellen   |
+| Kapitel 15 | Security Groups (zustandsbehaftet, Instanzebene) vs. NACLs (zustandslos, Subnetzebene)      |
+| Kapitel 17 | Shield (DDoS), WAF (App-Firewall), GuardDuty (Bedrohungserkennung), Inspector (CVE-Scanning) |
+| Kapitel 17 | Macie: Erkennung sensibler Daten in S3 (PII, Anmeldedaten)                                  |
+| Kapitel 25 | Direct Connect, VPN, Transit Gateway, PrivateLink                                           |
 
 Wichtige Prüfungsmuster:
 
-- "Blockieren Sie eine bestimmte IP-Adresse aus dem Subnetz" → NACL-Verbotsvorschrift
-- "Erlauben Sie HTTP-Eingangsverkehr und erlauben Sie HTTP-Antwortverkehr automatisch" → Sicherheitsgruppe (zustandsbehaftet)
-- "Schützen Sie eine Webanwendung vor SQL-Injections" → WAF mit SQL-Injection-Regel
-- "Erkennen Sie kompromittierte IAM-Anmeldeinformationen" → GuardDuty
+- „Eine bestimmte IP vom Subnetz blockieren" → NACL-Deny-Regel
+- „HTTP eingehend erlauben, HTTP-Antwort automatisch ausgehend erlauben" → Security Group (zustandsbehaftet)
+- „Webanwendung vor SQL-Injection schützen" → WAF mit SQL-Injection-Regel
+- „Kompromittierte IAM-Anmeldedaten erkennen" → GuardDuty
 
 ---
 
-**Aufgabe 1.3 — Ermittlung geeigneter Datensicherheitskontrollen**
+**Aufgabe 1.3 — Geeignete Datensicherheitskontrollen bestimmen**
 
-Kernkonzepte: Verschlüsselung im Ruhezustand und während der Übertragung, KMS, Secrets Manager, Parameter Store, S3-Verschlüsselung mit serverseitiger Verschlüsselung.
+Kernkonzepte: Verschlüsselung im Ruhezustand und während der Übertragung, KMS, Secrets Manager, Parameter Store, S3 Server-Side Encryption.
 
 | Kapitel    | Thema                                                                    |
 |------------|--------------------------------------------------------------------------|
-| Kapitel 16 | KMS: Kundenspezifische Schlüssel, Schlüsselrotation, Umschlagverschlüsselung            |
-| Kapitel 16 | Secrets Manager: Automatische Anmeldeinformationsrotation, Laufzeit-Anmeldeinformationsabruf |
-| Kapitel 5  | S3-Verschlüsselungsoptionen: SSE-S3, SSE-KMS, SSE-C                            |
-| Kapitel 8  | RDS-Verschlüsselung im Ruhezustand (muss bei der Erstellung aktiviert werden)                     |
+| Kapitel 16 | KMS: Customer-Managed Keys, Schlüsselrotation, Envelope Encryption       |
+| Kapitel 16 | Secrets Manager: automatische Rotation von Anmeldedaten, Abruf von Secrets zur Laufzeit |
+| Kapitel 16 | ACM (AWS Certificate Manager): SSL/TLS-Zertifikate für ALB, CloudFront   |
+| Kapitel 5  | S3-Verschlüsselungsoptionen: SSE-S3, SSE-KMS, SSE-C                       |
+| Kapitel 8  | RDS-Verschlüsselung im Ruhezustand (muss bei der Erstellung aktiviert werden) |
 
 Wichtige Prüfungsmuster:
 
-- "Rotieren Sie Datenbankanmeldeinformationen automatisch" → Secrets Manager mit RDS-Integration
-- "Steuern Sie, wer die Verschlüsselungsschlüssel über Konten hinweg verwenden kann" → KMS-Schlüsselrichtlinie
-- "Speichern Sie nicht-geheime Konfigurationswerte" → SSM Parameter Store (nicht Secrets Manager)
-- "Verschlüsseln Sie S3-Objekte mit von Ihnen verwalteten Schlüsseln" → SSE-KMS mit CMK
+- „Datenbank-Anmeldedaten automatisch rotieren" → Secrets Manager mit RDS-Integration
+- „Steuern, wer Verschlüsselungsschlüssel kontoübergreifend nutzen darf" → KMS Key Policy
+- „Nicht geheime Konfigurationswerte speichern" → SSM Parameter Store (nicht Secrets Manager)
+- „S3-Objekte mit unternehmenseigenen Schlüsseln verschlüsseln" → SSE-KMS mit CMK
 
 ---
 
-## Domäne 2: Gestaltung widerstandsfähiger Architekturen (26%)
+## Domäne 2: Gestaltung widerstandsfähiger Architekturen (26 %)
 
-**Aufgabe 2.1 — Gestaltung skalierbarer und lose gekoppelter Architekturen**
+**Aufgabe 2.1 — Skalierbare und lose gekoppelte Architekturen gestalten**
 
-Kernkonzepte: Auto Scaling, Load Balancer, SQS/SNS-Entkopplung, Lambda-Ereignis-Trigger, ECS/EKS, Step Functions.
+Kernkonzepte: Auto Scaling, Load Balancer, Entkopplung mit SQS/SNS, Lambda-Ereignis-Trigger, ECS/EKS, Step Functions.
 
-| Kapitel    | Thema                                                            |
-|------------|------------------------------------------------------------------|
+| Kapitel    | Thema                                                              |
+|------------|--------------------------------------------------------------------|
 | Kapitel 7  | Auto Scaling Groups, Application Load Balancer, Skalierungsrichtlinien |
-| Kapitel 19 | SQS (Entkopplung mit Warteschlangen), SNS (Ausbreitung von Benachrichtigungen)        |
-| Kapitel 20 | Lambda: Serverless-Compute, Ereignis-Trigger, Konkurrenz          |
-| Kapitel 21 | ECS und EKS: Containerisierte Microservices                         |
-| Kapitel 22 | Step Functions: Workflow-Orchestrierung                           |
-| Kapitel 26 | Kinesis: Echtzeit-Daten-Streaming                                |
+| Kapitel 19 | SQS (Entkopplung mit Queues), SNS (Fan-out-Benachrichtigungen)     |
+| Kapitel 20 | Lambda: serverloses Compute, Ereignis-Trigger, Concurrency          |
+| Kapitel 20 | API Gateway: verwaltete REST-/HTTP-/WebSocket-APIs, eigenständig oder + Lambda |
+| Kapitel 21 | ECS und EKS: containerisierte Microservices                        |
+| Kapitel 22 | Step Functions: Workflow-Orchestrierung                            |
+| Kapitel 26 | Kinesis: Echtzeit-Daten-Streaming                                  |
 
 Wichtige Prüfungsmuster:
 
-- "Low-latency access to frequently accessed data" → DynamoDB with DAX
-- "High-performance analytics queries" → Redshift
-- "Relational data with high read/write throughput" → Aurora
-- "Caching frequently accessed data" → ElastiCache (Redis or Memcached)
-- "Simple key-value store" → DynamoDB
+- „Auftragsverarbeitung von der Bestandsaktualisierung entkoppeln" → SQS-Queue zwischen Diensten
+- „Mehrere Dienste benachrichtigen, wenn eine neue Bestellung aufgegeben wird" → SNS-Topic mit SQS-Subscriptions (Fan-out)
+- „S3-Uploads automatisch verarbeiten" → S3-Ereignisbenachrichtigung → Lambda
+- „Einen mehrstufigen Workflow mit Retry-Logik ausführen" → Step Functions
+
 ---
 
-**Aufgabe 2.2 — Entwerfen hochverfügbarer und/oder fehlertoleranter Architekturen**
+**Aufgabe 2.2 — Hochverfügbare und/oder fehlertolerante Architekturen gestalten**
 
-Kernkonzepte: Multi-AZ, Multi-Region, Route 53 Failover, RDS Read Replikate, Aurora Global Database, Backup und Wiederherstellung.
+Kernkonzepte: Multi-AZ, Multi-Region, Route 53 Failover, RDS Read Replicas, Aurora Global Database, Backup and Restore.
 
 | Kapitel    | Thema                                                                                        |
 |------------|----------------------------------------------------------------------------------------------|
-| Kapitel 2  | AWS globale Infrastruktur: Regionen, AZs, Edge Locations                                      |
-| Kapitel 7  | ALB über mehrere AZs, ASG ersetzt ungesunde Instanzen                                    |
-| Kapitel 8  | RDS Multi-AZ: synchrone Replikation, automatischer Failover                                    |
-| Kapitel 12 | Route 53: Failover Routing, Latenz Routing, Health Checks                                   |
-| Kapitel 18 | Multi-AZ vs. Multi-Region: RTO/RPO, DR Strategien (Pilot Light, Warm Standby, Active-Active) |
-| Kapitel 24 | Aurora Global Database: Cross-Region Read Replikate, < 1s Replikationsverzögerung                     |
+| Kapitel 2  | Globale AWS-Infrastruktur: Regionen, AZs, Edge Locations                                     |
+| Kapitel 7  | ALB über mehrere AZs, ASG ersetzt fehlerhafte Instanzen                                      |
+| Kapitel 8  | RDS Multi-AZ: synchrone Replikation, automatisches Failover                                  |
+| Kapitel 12 | Route 53: Failover-Routing, Latency-Routing, Health Checks                                   |
+| Kapitel 18 | Multi-AZ vs. Multi-Region: RTO/RPO, DR-Strategien (Pilot Light, Warm Standby, Active-Active) |
+| Kapitel 18 | AWS Backup (zentralisierte, kontoübergreifende Backups), Elastic Disaster Recovery (verwaltetes Pilot Light) |
+| Kapitel 24 | Aurora Global Database: regionsübergreifende Read Replicas, < 1 s Replikationslatenz         |
 
 Wichtige Prüfungsmuster:
 
-- "Automatische Failover, wenn primäre RDS fehlschlägt" → RDS Multi-AZ (nicht Read Replica)
-- "Globale Reads mit geringer Latenz bereitstellen" → Aurora Global Database
-- "Verkehr an sekundäre Region leiten, wenn primäre Region nicht verfügbar ist" → Route 53 mit Failover Routing + Health Checks
-- "RTO von 1 Minute, RPO von 0" → Multi-AZ Deployment (nicht Multi-Region)
-- "RTO von 15 Minuten, Cross-Region" → Pilot Light Strategie
+- „Automatisches Failover, wenn die primäre RDS ausfällt" → RDS Multi-AZ (nicht Read Replica)
+- „Lesevorgänge global mit niedriger Latenz bedienen" → Aurora Global Database
+- „Traffic zur sekundären Region routen, wenn die primäre nicht verfügbar ist" → Route 53 mit Failover-Routing + Health Checks
+- „RTO von 1 Minute, RPO von 0" → Multi-AZ-Deployment (nicht Multi-Region)
+- „RTO von 15 Minuten, regionsübergreifend" → Pilot-Light-Strategie
 
 ---
 
-**Aufgabe 3.1 — Bestimmen hochleistungsfähige und/oder skalierbare Speicherlösungen**
+## Domäne 3: Gestaltung leistungsstarker Architekturen (24 %)
 
-Kernkonzepte: S3 vs. EBS vs. EFS, Speicherklassenwahl, S3 Transfer Acceleration, Multipart Upload, CloudFront für Assets.
+**Aufgabe 3.1 — Leistungsstarke und/oder skalierbare Storage-Lösungen bestimmen**
 
-| Kapitel    | Thema                                                              |
-|------------|--------------------------------------------------------------------|
-| Kapitel 5  | S3: Objektspeicher, Speicherklassen, Versionierung, Lebenszyklus         |
-| Kapitel 6  | EBS: Block Speicher Typen (gp3, io2, st1), EFS: Gemeinsamer Dateispeicher |
-| Kapitel 23 | S3 Speicherklassen Übergänge, Glacier-Wiederherstellungsoptionen            |
-| Kapitel 28 | EBS Größenoptimierung, gp2→gp3 Migration, Snapshot Management           |
+Kernkonzepte: S3 vs. EBS vs. EFS, Auswahl der Speicherklasse, S3 Transfer Acceleration, Multipart-Upload, CloudFront für Assets.
+
+| Kapitel    | Thema                                                                   |
+|------------|-------------------------------------------------------------------------|
+| Kapitel 5  | S3: Objektspeicher, Speicherklassen, Versionierung, Lebenszyklus        |
+| Kapitel 6  | EBS: Block-Storage-Typen (gp3, io2, st1), EFS: gemeinsamer Dateispeicher |
+| Kapitel 6  | Storage Gateway: hybride Brücke von On-Premises zu S3 (File, Volume, Tape) |
+| Kapitel 23 | S3-Speicherklassenübergänge, Glacier-Abrufoptionen                       |
+| Kapitel 25 | DataSync (Online-Dateisynchronisation), Transfer Family (verwaltetes SFTP→S3), Snow Family (Offline-Bulk-Transfer — Altbestand: im November 2025 für Neukunden geschlossen; AWS verweist jetzt auf DataSync und Data Transfer Terminals), MGN (Server-Rehost) |
+| Kapitel 28 | EBS-Right-Sizing, gp2→gp3-Migration, Snapshot-Verwaltung                |
 
 Wichtige Prüfungsmuster:
 
-- "Gemeinsamer Dateispeicher, der von mehreren EC2 Instanzen zugänglich ist" → EFS (nicht EBS; EBS wird an eine Instanz angehängt)
-- "Hohe IOPS für Datenbanklast" → io2 EBS
-- "Kosten reduzieren für Dateien, die nicht innerhalb von 90 Tagen abgerufen werden" → S3 Lifecycle Policy → Glacier
-- "Große Dateien schneller von entfernten Standorten hochladen" → S3 Transfer Acceleration
+- „Gemeinsames Dateisystem, von mehreren EC2-Instanzen erreichbar" → EFS (nicht EBS; EBS wird an eine Instanz angehängt)
+- „Hohe IOPS für Datenbank-Workload" → io2 EBS
+- „Kosten für seit 90 Tagen nicht abgerufene Dateien senken" → S3-Lebenszyklusrichtlinie → Glacier
+- „Große Dateien aus weit entfernten Standorten schneller hochladen" → S3 Transfer Acceleration
+- „Wochenlanger Transfer über begrenzte Bandbreite" → die SAA-C03-Prüfung erwartet trotz der Schließung der Snow Family für Neukunden 2025 weiterhin Snowball
 
 ---
 
-**Aufgabe 3.2 — Bestimmen hochleistungsfähige und/oder skalierbare Compute-Lösungen**
+**Aufgabe 3.2 — Leistungsstarke und/oder skalierbare Compute-Lösungen bestimmen**
 
-Kernkonzepte: EC2 Instanzfamilien, Graviton Prozessoren, Auto Scaling, Lambda, Fargate, Spot Instanzen.
+Kernkonzepte: EC2-Instanzfamilien, Graviton-Prozessoren, Auto Scaling, Lambda, Fargate, Spot Instances.
 
 | Kapitel    | Thema                                                                                   |
 |------------|-----------------------------------------------------------------------------------------|
-| Kapitel 4  | EC2 Instanztypen: Compute-Optimiert (c), Memory-Optimiert (r), Allgemein (m, t) |
-| Kapitel 7  | Auto Scaling: Horizontale Skalierung für Web-Tier                                          |
-| Kapitel 20 | Lambda: Konkurrenz, Provisionierte Konkurrenz (für konsistente Latenz)                   |
-| Kapitel 21 | ECS Fargate: Serverlose Container                                                      |
-| Kapitel 27 | Spot Instanzen für fehlertolerante Batch-Workloads                                       |
+| Kapitel 4  | EC2-Instanztypen: Compute-optimiert (c), Memory-optimiert (r), General Purpose (m, t)    |
+| Kapitel 7  | Auto Scaling: horizontale Skalierung für Web-Tiers                                       |
+| Kapitel 20 | Lambda: Concurrency, Provisioned Concurrency (für konsistente Latenz)                    |
+| Kapitel 21 | ECS Fargate: serverlose Container                                                        |
+| Kapitel 21 | AWS Batch: verwaltetes Batch-Compute für Docker-Container, Spot-gestützt                 |
+| Kapitel 27 | Spot Instances für fehlertolerante Batch-Workloads                                       |
 
 Wichtige Prüfungsmuster:
 
-- "ML-Training-Workload, minimiere Kosten, kann unterbrochen werden" → Spot Instanzen
-- "Konsistente Sub-100ms Lambda-Antwort" → Provisionierte Konkurrenz (eliminiert Cold Starts)
-- "Containerisierte Microservice, keine Infrastrukturverwaltung" → ECS Fargate
+- „ML-Trainings-Workload, Kosten minimieren, kann unterbrochen werden" → Spot Instances
+- „Konsistente Lambda-Antwort unter 100 ms" → Provisioned Concurrency (eliminiert Cold Start)
+- „Containerisierter Microservice, keine Infrastrukturverwaltung" → ECS Fargate
 
 ---
 
-**Aufgabe 3.3 — Bestimmen hochleistungsfähige Datenbanklösungen**
+**Aufgabe 3.3 — Leistungsstarke Datenbanklösungen bestimmen**
 
-Kernkonzepte: RDS vs. DynamoDB vs. Aurora vs. Redshift vs. ElastiCache, Zugriffsmuster, Read Replikate, DAX.
+Kernkonzepte: RDS vs. DynamoDB vs. Aurora vs. Redshift vs. ElastiCache, Zugriffsmuster, Read Replicas, DAX.
 
 | Kapitel    | Thema                                                              |
 |------------|--------------------------------------------------------------------|
-| Kapitel 8  | RDS: Verwaltete relationale Datenbanken, wann RDBMS verwenden        |
-| Kapitel 9  | DynamoDB: NoSQL, Partition Keys, GSI, DAX (In-Memory Cache)        |
-| Kapitel 10 | ElastiCache: Redis vs. Memcached, Cache Strategien                 |
-| Kapitel 24 | Aurora: Performance, Serverless v2, Read Replikate, Global Database |
-| Kapitel 29 | DynamoDB On-Demand vs. Provisionierte Kapazität mit Auto Scaling      |
+| Kapitel 8  | RDS: verwaltete relationale Datenbanken, wann ein RDBMS einzusetzen ist |
+| Kapitel 9  | DynamoDB: NoSQL, Partition Keys, GSI, DAX (In-Memory-Cache)        |
+| Kapitel 10 | ElastiCache: Redis vs. Memcached, Cache-Strategien                 |
+| Kapitel 10 | MemoryDB for Redis: beständige, Redis-kompatible Primärdatenbank   |
+| Kapitel 24 | Aurora: Performance, Serverless v2, Read Replicas, Global Database |
+| Kapitel 29 | DynamoDB On-Demand vs. Provisioned Capacity mit Auto Scaling       |
 
 Wichtige Prüfungsmuster:
 
-- "Microsecond reads for a session store" → ElastiCache Redis oder DAX (falls DynamoDB Backend)
-- "High-throughput key-value access mit flexibler Schema" → DynamoDB
-- "Komplexe Joins und ACID-Transaktionen" → Aurora oder RDS
-- "Analysen auf Petabytes von strukturierten Daten" → Redshift (nicht im Detail behandelt, aber Signal: „Data Warehouse“ → Redshift)
+- „Mikrosekunden-Lesevorgänge für einen Session Store" → ElastiCache Redis oder DAX (bei DynamoDB-Backend)
+- „Schlüssel-Wert-Zugriff mit hohem Durchsatz und flexiblem Schema" → DynamoDB
+- „Komplexe Joins und ACID-Transaktionen" → Aurora oder RDS
+- „Analysen auf Petabytes strukturierter Daten" → Redshift (nicht im Detail behandelt, aber Signal: „Data Warehouse" → Redshift)
 
 ---
 
-**Aufgabe 3.4 — Bestimmte Hochleistungs- und/oder Skalierbare Netzwerkarchitekturen**
+**Aufgabe 3.4 — Leistungsstarke und/oder skalierbare Netzwerkarchitekturen bestimmen**
 
-Kernkonzepte: CloudFront, Global Accelerator, Direct Connect, VPN, Platzierungsgruppen, Enhanced Networking.
+Kernkonzepte: CloudFront, Global Accelerator, Direct Connect, VPN, Placement Groups, Enhanced Networking.
 
 | Kapitel    | Thema                                                              |
-|------------|------------------------------------------------------------------|
-| Kapitel 12 | Route 53: Routingrichtlinien: Latenzbasierend, Geolocation, Gewichtung |
-| Kapitel 13 | CloudFront: CDN, Edge-Caching, Lambda@Edge                       |
-| Kapitel 25 | Direct Connect: Dedizierte private Konnektivität                   |
-| Kapitel 25 | AWS Global Accelerator: Anycast-Routing zum nächsten AWS Edge        |
-| Kapitel 30 | VPC Endpoints: Private Konnektivität zu AWS-Diensten              |
+|------------|--------------------------------------------------------------------|
+| Kapitel 7  | NLB (Layer 4) und GWLB (Gateway Load Balancer für Netzwerk-Appliances) |
+| Kapitel 11 | Client VPN: verschlüsselter Zugriff einzelner Geräte auf die VPC   |
+| Kapitel 12 | Route 53: Routing-Richtlinien: Latency-based, Geolocation, Weighted |
+| Kapitel 13 | CloudFront: CDN, Edge Caching, Lambda@Edge                         |
+| Kapitel 25 | AWS Global Accelerator: Anycast-Routing auf das AWS-Backbone       |
+| Kapitel 25 | Direct Connect: dedizierte private Konnektivität                   |
+| Kapitel 30 | VPC Endpoints: private Konnektivität zu AWS-Diensten               |
 
-Schlüsselprüfungsmuster:
+Wichtige Prüfungsmuster:
 
-- "Reduziere die Latenz für globale Benutzer, die dynamische API-Antworten abrufen" → Global Accelerator (nicht CloudFront, das sich für cachefähigen Inhalt eignet)
-- "Reduziere die Latenz für statische Assets global" → CloudFront
-- "Konsistente private Konnektivität zu AWS von On-Premises" → Direct Connect
-- "Schneller Upload von Kunden weltweit zu deinem S3 Bucket" → S3 Transfer Acceleration
+- „Latenz für globale Nutzer beim Zugriff auf dynamische API-Antworten senken" → Global Accelerator (nicht CloudFront, das am besten für cachebare Inhalte geeignet ist)
+- „Latenz für statische Assets global senken" → CloudFront
+- „Konsistente private Konnektivität zu AWS von On-Premises" → Direct Connect
+- „Schneller Upload von Kunden weltweit in Ihren S3-Bucket" → S3 Transfer Acceleration
 
 ---
 
-**Aufgabe 3.5 — Bestimmte Hochleistungs-Daten-Ingestion und Transformationslösungen**
+**Aufgabe 3.5 — Leistungsstarke Lösungen zur Datenaufnahme und -transformation bestimmen**
 
-Kernkonzepte: Kinesis Data Streams, Kinesis Firehose, Glue, Athena, EMR.
+Kernkonzepte: Kinesis Data Streams, Amazon Data Firehose, Glue, Athena, EMR.
 
 | Kapitel    | Thema                                                               |
 |------------|---------------------------------------------------------------------|
-| Kapitel 26 | Kinesis Data Streams: Echtzeit-geordnete Ereignisverarbeitung            |
-| Kapitel 26 | Kinesis Data Firehose: Managed Delivery zu S3, Redshift, OpenSearch |
-| Kapitel 26 | AWS Glue: Serverless ETL, Data Catalog, Crawlers                    |
-| Kapitel 26 | Athena: Serverless SQL auf S3                                        |
+| Kapitel 26 | Kinesis Data Streams: geordnete Echtzeit-Ereignisverarbeitung       |
+| Kapitel 26 | Amazon Data Firehose (ehem. Kinesis Data Firehose): verwaltete Auslieferung an S3, Redshift, OpenSearch |
+| Kapitel 26 | AWS Glue: serverloses ETL, Data Catalog, Crawler                    |
+| Kapitel 26 | Athena: serverloses SQL auf S3                                      |
+| Kapitel 26 | QuickSight: verwaltete BI-Dashboards, SPICE-In-Memory-Engine        |
+| Kapitel 26 | Lake Formation: feingranulare Zugriffskontrolle für Data Lakes      |
 
-Schlüsselprüfungsmuster:
+Wichtige Prüfungsmuster:
 
-- "Verarbeite Clickstream-Daten in Echtzeit" → Kinesis Data Streams + Lambda oder KDA
-- "Liefern Streaming-Daten an S3 für spätere Analyse" → Kinesis Firehose
-- "Transformiere und katalogisiere Daten aus mehreren Quellen" → AWS Glue
-- "Frage historische Daten ab, die in S3 gespeichert sind, mit SQL" → Athena
+- „Clickstream-Daten in Echtzeit verarbeiten" → Kinesis Data Streams + Lambda oder Managed Service for Apache Flink (früher Kinesis Data Analytics)
+- „Streaming-Daten an S3 für spätere Analyse liefern" → Amazon Data Firehose
+- „Daten aus mehreren Quellen transformieren und katalogisieren" → AWS Glue
+- „In S3 gespeicherte historische Daten mit SQL abfragen" → Athena
 
 ---
 
-## Domäne 4: Gestaltung Kostenoptimierter Architekturen (20%)
+## Domäne 4: Gestaltung kostenoptimierter Architekturen (20 %)
 
-**Aufgabe 4.1 — Gestaltung Kostenoptimierter Speicherlösungen**
+**Aufgabe 4.1 — Kostenoptimierte Storage-Lösungen gestalten**
 
 | Kapitel    | Thema                                                              |
 |------------|--------------------------------------------------------------------|
-| Kapitel 23 | S3 Lifecycle Policies, Speicherklassen-Übergänge                   |
-| Kapitel 28 | EBS Right-Sizing, gp2→gp3 Migration, S3 Versioning Lifecycle Rules |
-| Kapitel 28 | EFS Intelligent-Tiering, Kostenaufteilung-Tags, AWS Budgets         |
+| Kapitel 23 | S3-Lebenszyklusrichtlinien, Speicherklassenübergänge              |
+| Kapitel 28 | EBS-Right-Sizing, gp2→gp3-Migration, S3-Versionierungs-Lebenszyklusregeln |
+| Kapitel 28 | EFS Intelligent-Tiering, Cost Allocation Tags, AWS Budgets         |
 
-Schlüsselprüfungsmuster:
+Wichtige Prüfungsmuster:
 
-- "Identifiziere, welches Team die meisten S3-Kosten verursacht" → Kostenaufteilung-Tags + Cost Explorer
-- "Reduziere die Kosten für selten genutzte Objekte automatisch" → S3 Intelligent-Tiering
-- "Benachrichtige, wenn monatliche Kosten 10.000 $ überschreiten" → AWS Budgets
+- „Identifizieren, welches Team die meisten S3-Kosten verursacht" → Cost Allocation Tags + Cost Explorer
+- „Kosten für selten genutzte Objekte automatisch senken" → S3 Intelligent-Tiering
+- „Warnen, wenn die monatlichen Kosten 10.000 $ überschreiten" → AWS Budgets
 
 ---
 
-**Aufgabe 4.2 — Gestaltung Kostenoptimierter Compute-Lösungen**
+**Aufgabe 4.2 — Kostenoptimierte Compute-Lösungen gestalten**
 
 | Kapitel    | Thema                                                                            |
 |------------|----------------------------------------------------------------------------------|
-| Kapitel 27 | EC2-Preise: On-Demand, Reservierte Instanzen, Savings Plans, Spot, Dedizierte Hosts |
-| Kapitel 20 | Lambda: Pay per Invocation (keine Leerlaufkosten)                                      |
+| Kapitel 2  | Outposts: On-Premises-AWS-Rack (Abwägung Investitionskosten vs. Cloud-OpEx)       |
+| Kapitel 2  | Wavelength: 5G-Edge-Compute (Telekommunikationspartnerschaft, latenzgetriebene Platzierung) |
+| Kapitel 27 | EC2-Preise: On-Demand, Reserved Instances, Savings Plans, Spot, Dedicated Hosts  |
+| Kapitel 20 | Lambda: Zahlung pro Aufruf (keine Leerlaufkosten)                                |
 
-Schlüsselprüfungsmuster:
+Wichtige Prüfungsmuster:
 
-- "Reduziere die Kosten für Steady-State-Produktionslasten" → Savings Plans (flexibler) oder Reservierte Instanzen
-- "Minimiere die Kosten für Batch-Jobs, die unterbrochen werden können" → Spot Instanzen
-- "Ereignisgesteuerte Verarbeitung mit keiner Leerlaufkosten" → Lambda
+- „Kosten für stabile Produktions-Workloads senken" → Savings Plans (flexibler) oder Reserved Instances
+- „Kosten für unterbrechbare Batch-Jobs minimieren" → Spot Instances
+- „Ereignisgesteuerte Verarbeitung ohne Leerlaufkosten" → Lambda
 
 ---
 
-**Aufgabe 4.3 — Gestaltung Kostenoptimierter Datenbanklösungen**
+**Aufgabe 4.3 — Kostenoptimierte Datenbanklösungen gestalten**
 
 | Kapitel    | Thema                                             |
 |------------|---------------------------------------------------|
 | Kapitel 29 | DynamoDB On-Demand vs. Provisioned + Auto Scaling |
-| Kapitel 29 | RDS und ElastiCache Reservierte Instanzen/Nodes      |
-| Kapitel 29 | RDS Snapshot Management                           |
-
-Schlüsselprüfungsmuster:
-
-- "Unvorhersehbare DynamoDB-Traffic" → On-Demand Kapazitätsmodus
-- "Konsistenter DynamoDB-Traffic mit bekannten Spitzen" → Provisioned + Auto Scaling
-- "Reduziere die RDS-Kosten für stabile Workloads" → Reservierte Instanzen (1- oder 3-Jahres-Laufzeit)
-
----
-
-**Aufgabe 4.4 — Gestaltung Kostenoptimierter Netzwerkarchitekturen**
-
-```markdown
-| Kapitel    | Thema                                                                                         |
-|------------|-----------------------------------------------------------------------------------------------|
-| Kapitel 30 | Datenübertragungskosten: eingehend (kostenlos), innerhalb derselben Availability Zone ($0,01/GB), zwischen Regionen, zum Internet ($0,09/GB) |
-| Kapitel 30 | NAT Gateway ($0,045/GB) vs. VPC Endpoints (Gateway: kostenlos; Interface: abrechenbar)                  |
-| Kapitel 30 | CloudFront als Optimierer für Datenübertragungskosten                                                    |
+| Kapitel 29 | RDS- und ElastiCache-Reserved Instances/Nodes     |
+| Kapitel 29 | RDS-Snapshot-Verwaltung                           |
 
 Wichtige Prüfungsmuster:
 
-- "EC2 in einem privaten Subnetz ruft S3 auf – eliminieren Sie die Kosten für NAT Gateway" → S3 Gateway Endpoint (kostenlos)
-- "EC2 in einem privaten Subnetz ruft SQS auf – reduzieren Sie die Kosten für NAT Gateway" → SQS Interface Endpoint
-- "Reduzieren Sie die Datenübertragungskosten für globale Content Delivery" → CloudFront (Caching reduziert Origin-Anfragen)
+- „Unvorhersehbarer DynamoDB-Traffic" → On-Demand-Kapazitätsmodus
+- „Konsistenter DynamoDB-Traffic mit bekannten Spitzen" → Provisioned + Auto Scaling
+- „RDS-Kosten für einen stabilen Workload senken" → Reserved Instances (1 oder 3 Jahre)
 
 ---
 
-## Themen über mehrere Domains
+**Aufgabe 4.4 — Kostenoptimierte Netzwerkarchitekturen gestalten**
 
-Einige Themen treten in mehreren Domains auf:
+| Kapitel    | Thema                                                                                         |
+|------------|-----------------------------------------------------------------------------------------------|
+| Kapitel 30 | Datenübertragungspreise: eingehend (kostenlos), Cross-AZ ($0.01/GB), Cross-Region, Internet ($0.09/GB) |
+| Kapitel 30 | NAT Gateway ($0.045/GB) vs. VPC Endpoints (Gateway: kostenlos; Interface: kostenpflichtig)    |
+| Kapitel 30 | CloudFront als Optimierer der Datenübertragungskosten                                          |
 
-| Thema                              | Domains | Kapitel     |
+Wichtige Prüfungsmuster:
+
+- „EC2 im privaten Subnetz ruft S3 auf — NAT-Gateway-Kosten eliminieren" → S3 Gateway Endpoint (kostenlos)
+- „EC2 im privaten Subnetz ruft SQS auf — NAT-Gateway-Kosten senken" → SQS Interface Endpoint
+- „Datenübertragungskosten für globale Content-Auslieferung senken" → CloudFront (Caching reduziert Origin-Anfragen)
+
+---
+
+## Domänenübergreifende Themen
+
+Einige Themen erscheinen über mehrere Domänen hinweg:
+
+| Thema                              | Domänen | Kapitel      |
 |------------------------------------|---------|--------------|
 | Well-Architected Framework         | Alle    | 31           |
-| Architekturprüfungen und ADRs      | Alle    | 32           |
-| Abwägungsgrundlagen ("es hängt davon ab") | Alle    | 33           |
+| Architekturreviews und ADRs        | Alle    | 32           |
+| Trade-off-Reasoning („es kommt darauf an") | Alle | 33        |
 | Multi-AZ-Design                    | 2, 3    | 7, 8, 18, 24 |
-| Überwachung und Beobachtbarkeit       | 1, 2    | Überall      |
+| Monitoring und Observability       | 1, 2    | Durchgängig  |
 | CloudFront                         | 3, 4    | 13, 30       |
 
 ---
 
-## Vorprüfliste
+## Checkliste vor der Prüfung
 
-Bevor Sie die SAA-C03-Prüfung ablegen:
+Bevor Sie die SAA-C03 ablegen:
 
-**Schwerpunktbereiche (am wahrscheinlichsten zu finden)**
+**Stark gewichtete Bereiche (am wahrscheinlichsten zu erscheinen)**
 
-- [ ] Bewertung der IAM-Richtliniologie (explizites Verbot → explizite Erlaubnis → implizites Verbot)
-- [ ] VPC-Komponenten: Subnetze, Routingtabellen, IGW, NAT Gateway, Sicherheitsgruppen, NACLs
-- [ ] S3-Speicherklassen und wann man sie verwendet
-- [ ] RDS Multi-AZ vs. Read Replica (Failover vs. Read-Skalierung)
-- [ ] SQS vs. SNS vs. EventBridge (Pull vs. Push vs. Ereignisrouting)
-- [ ] EC2-Preismodelle: Spot für fehlertolerante, Savings Plans für kommissionierte Arbeitslasten
-- [ ] Lambda-Trigger und Konkurrenz
-- [ ] DynamoDB vs. Aurora vs. Redshift (Zugriffsmodus bestimmt die Wahl)
-- [ ] CloudFront: CDN für statische Inhalte, Global Accelerator für dynamische Inhalte
+- [ ] Logik der IAM-Policy-Bewertung (explizites Deny → explizites Allow → implizites Deny)
+- [ ] VPC-Komponenten: Subnetze, Routing-Tabellen, IGW, NAT Gateway, Security Groups, NACLs
+- [ ] S3-Speicherklassen und wann welche zu verwenden ist
+- [ ] RDS Multi-AZ vs. Read Replica (Failover vs. Lese-Skalierung)
+- [ ] SQS vs. SNS vs. EventBridge (Pull vs. Push vs. Event-Routing)
+- [ ] EC2-Preismodelle: Spot für fehlertolerant, Savings Plans für zugesagte Workloads
+- [ ] Lambda-Trigger und Concurrency
+- [ ] DynamoDB vs. Aurora vs. Redshift (das Zugriffsmuster bestimmt die Wahl)
+- [ ] CloudFront: CDN für statisch, Global Accelerator für dynamisch
 
-**Häufige Stolpersteine**
+**Häufige Fallen**
 
-- [ ] EBS wird an eine einzige Instanz angehängt; EFS wird gemeinsam genutzt
-- [ ] RDS Read Replicas dienen der Read-Skalierung, NICHT der automatischen Failover (das ist Multi-AZ)
-- [ ] NACLs sind zustandsbehaftet (benötigen sowohl eingehende als auch ausgehende Regeln)
+- [ ] EBS wird an EINE Instanz angehängt; EFS ist gemeinsam genutzt
+- [ ] RDS Read Replicas dienen der Lese-Skalierung, NICHT dem automatischen Failover (das ist Multi-AZ)
+- [ ] NACLs sind zustandslos (benötigen sowohl eingehende als auch ausgehende Regeln)
 - [ ] Gateway Endpoints sind kostenlos und nur für S3 und DynamoDB
-- [ ] Kinesis speichert und spielt Ereignisse ab; SQS löscht bei Verbrauch
-- [ ] "Decouple" bedeutet nicht immer SQS – SNS Fan-Out und EventBridge sind ebenfalls Decoupling-Muster
+- [ ] Kinesis bewahrt auf und gibt wieder; SQS löscht bei Konsum
+- [ ] „Entkoppeln" bedeutet nicht immer SQS — SNS-Fan-out und EventBridge sind ebenfalls Entkopplungsmuster
 - [ ] Shield Standard ist kostenlos und automatisch; Advanced ist ein kostenpflichtiges Abonnement
+- [ ] ElastiCache vs. MemoryDB: ElastiCache = Cache (Datenverlust OK). MemoryDB = beständige Primärdatenbank.
+- [ ] Client VPN vs. Site-to-Site VPN: Client VPN = einzelne Geräte. Site-to-Site = Netzwerk-zu-Netzwerk.
+- [ ] Outposts vs. Wavelength: Outposts = On-Premises-AWS-Rack. Wavelength = 5G-Edge.
+- [ ] DMS: homogen = DMS direkt. Heterogen = zuerst SCT, dann DMS.
+- [ ] DataSync verschiebt *Dateien*; DMS verschiebt *Datenbanken*; MGN verschiebt *ganze Server*.
 
-**Die Prüfungsstruktur**
+**Der Prüfungsaufbau**
 
 - 65 Fragen, 130 Minuten (2 Stunden 10 Minuten)
-- Multiple Choice (eine korrekte Antwort) und Multiple Response (wähle N korrekte Antworten)
-- Bestehensgrenze: 720 von 1000
+- Multiple Choice (eine richtige Antwort) und Multiple Response (N richtige auswählen)
+- Bestehensschwelle: 720 von 1000
 - Unbewertete Fragen sind eingebettet; Sie können nicht erkennen, welche es sind
-- Zeitmanagement: ~2 Minuten pro Frage; markiere schwierige Fragen und kehre zu ihnen zurück
-```
+- Zeit managen: ~2 Minuten pro Frage; schwierige markieren und zurückkehren

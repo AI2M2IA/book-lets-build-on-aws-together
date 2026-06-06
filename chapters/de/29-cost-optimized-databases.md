@@ -1,290 +1,478 @@
-# Kapitel 29: Die Datenbank-Kosten
+# Kapitel 29: Die Datenbankrechnung
 
-Tom’s Storage-Audit hatte 8.800 US-Dollar an Verschwendung aufgezeigt. Er wandte sich an die Datenbank-Instanzen.
+Tom druckte die CloudWatch-Metriken aus. Vierzehn Seiten. Er breitete sie auf seinem Schreibtisch aus, bevor er sich zutraute, die Zahlen zu lesen. Besser, alles auf einmal zu sehen, als mitten auf einer Seite Überraschungen zu finden.
 
-RDS Aurora: 647 US-Dollar/Monat.
-RDS PostgreSQL (Lese-Replikate): 340 US-Dollar/Monat.
-ElastiCache: 183 US-Dollar/Monat.
+**Rückblick: Speicher erledigt, Datenbanken als Nächstes**
 
-Gesamt-Datenbank-Tier: 1.170 US-Dollar/Monat.
+Das Speicher-Audit hatte 6.700 $ an angesammelter Verschwendung zutage gefördert – nicht durch schlechte Entscheidungen, sondern durch Unaufmerksamkeit. Nicht angeschlossene Volumes, alte Snapshots, Versionshistorien, die niemand S3 zum Aufräumen aufgetragen hatte, unvollständige Multipart-Uploads, die sich monatelang still angesammelt hatten. Tom hatte alles behoben, automatische Bereinigungsregeln implementiert und war zum nächsten Tab in der Tabelle gewechselt. Die Datenebene war die größte verbleibende Unbekannte: relationale Datenbanken, NoSQL-Tabellen, Cache-Knoten, Backup-Speicher und ein Posten, der ihn seit Wochen nicht losließ.
 
-„Ich muss jedes einzelne verstehen, bevor ich etwas entscheide“, sagte er. „Denn beim Datenbank-Bereich geht es nicht darum, Geld zu sparen, indem man Kompromisse eingeht.“
+Die zu prüfenden Posten der Datenebene:
 
-Das war weise. Datenbank-Konfigurationen, die zu Datenverlust oder Leistungseinbußen führen, kosten deutlich mehr als die Einsparungen.
+Aurora-Cluster: 647 $/Monat.
+Legacy-RDS-PostgreSQL-Read-Replicas: 340 $/Monat.
+DynamoDB-Tabellen: 340 $/Monat.
+ElastiCache: 185 $/Monat.
+Aurora-manuelle-Snapshots: 87 $/Monat.
 
-Man kann sich eine Datenbank wie den Motor eines Autos vorstellen. Man kann Geld für ein Auto sparen, indem man billigeren Kraftstoff verwendet, den Reifendruck einstellt und unnötiges Gewicht aus dem Kofferraum entfernt. Aber wenn man versucht, Geld zu sparen, indem man die Ölwechsel auslässt, riskiert man, den Motor zu beschädigen – und ein beschädigter Motor kostet viel mehr als jede Kraftstoffersparnis. Das Audit, das Tom durchführen wird, folgt der gleichen Logik: Finden Sie die Verschwendung im Kofferraum und im Tank, und lassen Sie den Motor, bis Sie genau wissen, was Sie tun.
+Gesamte zu prüfende Datenebene: 1.599 $/Monat.
 
-**Verständnis Ihrer Datenbank-Workload Zuerst**
+„Lass mich jede einzelne verstehen, bevor ich etwas entscheide“, sagte er. „Denn die Datenbank ist nicht der Ort, an dem man Geld spart, indem man Kompromisse eingeht.“
 
-Die Kostenoptimierung in Datenbanken erfordert das Verständnis der Workload, bevor man irgendetwas verändert.
+Das war klug. Eine Datenbank-Fehlkonfiguration, die Datenverlust oder Leistungseinbußen verursacht, kostet weit mehr als die Einsparungen.
 
-Wichtige Fragen:
+Stellen Sie sich eine Datenbank wie den Motor eines Autos vor. Sie können bei einem Auto Geld sparen, indem Sie auf günstigeren Kraftstoff umsteigen, den Reifendruck anpassen und unnötiges Gewicht aus dem Kofferraum entfernen. Aber wenn Sie versuchen, Geld zu sparen, indem Sie einen Ölwechsel auslassen, riskieren Sie einen Motorschaden – und ein kaputter Motor kostet weit mehr als jede Kraftstoffersparnis. Das Audit, das Tom gleich durchführen wird, folgt derselben Logik: Finden Sie die Verschwendung im Kofferraum und im Tank, und lassen Sie den Motor in Ruhe, bis Sie genau wissen, was Sie tun.
 
-- Wie hoch ist die durchschnittliche und Spitzen-CPU-Auslastung?
-- Wie hoch ist das Verhältnis von Lese- zu Schreiboperationen?
-- Steigt, stabilisiert sich oder sinkt der Speicherplatz?
-- Werden Lese-Replikate genutzt?
-- Ist die Instanz unter- oder überdimensioniert (führt dies zu Verzögerungen oder unnötigen Kosten)?
+**Verstehen Sie zuerst Ihre Datenbank-Arbeitslast**
 
-Tom öffnete CloudWatch-Metriken für alle drei Datenbankdienste der letzten 30 Tage:
+Kostenoptimierung bei Datenbanken erfordert, die Arbeitslast zu verstehen, bevor man etwas anfasst. Tom hatte das aus einem Beinahe-Fehler sechs Monate zuvor gelernt: Er hatte begonnen, die Datenbank-Instanzgröße auf Basis der durchschnittlichen CPU-Auslastung zu reduzieren – 18 % –, ohne zuerst die p95-Werte zu betrachten. Ein Kollege hatte ihn gebeten, die CloudWatch-Metriken genauer zu prüfen. Die p95-CPU lag bei 61 %, und während eines besonders heftigen Freitagabend-Andrangs hatte sie 84 % erreicht.
 
-**Aurora Cluster:**
+„Der Durchschnitt sagt einem nicht, was zu Spitzenzeiten passiert“, sagte Tom, als er Priya davon erzählte. „Wenn ich auf den Durchschnitt right-sized hätte, wären wir an Freitagabenden gedrosselt worden.“
 
-- Durchschnittliche CPU: 18 % (Spitze: 67 % am Freitagabend)
-- Lese-/Schreib-Verhältnis: 14:1 (Lese-lastig)
-- Speicherplatz: 180 GB (wächst um ca. 5 GB/Monat)
+„Deshalb schaut man auf p95, nicht auf den Durchschnitt“, sagte Priya. „Immer.“
 
-**Lese-Replikate (RDS PostgreSQL, getrennt von Aurora):**
+Dieses Prinzip ging über die CPU hinaus. Tom hatte jetzt eine standardisierte Pre-Audit-Checkliste:
 
-- Dies waren zwei Legacy RDS Lese-Replikate, die vor der Aurora-Migration erstellt wurden und noch liefen.
-- Durchschnittliche Verbindungen pro Tag: 2 pro Tag. Durchschnittliche CPU: 3 %.
+- CPU: p95, nicht Durchschnitt
+- Speicher: FreeableMemory (in absoluten Bytes, nicht in Prozent) – wie nah sind wir am Limit?
+- Verbindungen: DatabaseConnections-Maximum über die letzten 30 Tage – wie nah sind wir an das Verbindungslimit gekommen?
+- Lese-/Schreibverhältnis: Bestimmt, ob Read Replicas ihre Kosten verdienen
+- Speicherwachstumsrate: Wie viele GB pro Monat kommen hinzu?
+- Replikationsverzögerung (bei Replicas): Kommt das Replica mit?
 
-„Warum laufen diese noch?“, fragte Tom.
+Schlüsselfragen:
 
-Leo schaute sich die Erstellungsdaten der Instanzen an. „Sie wurden während der Aurora-Migration als Fallback erstellt. Wir haben sie nicht gelöscht.“
+- Wie hoch ist die durchschnittliche und die Spitzen-CPU-Auslastung?
+- Wie ist das Lese-/Schreibverhältnis?
+- Wächst, stabilisiert sich oder sinkt der Speicher?
+- Werden Read Replicas genutzt?
+- Ist die Instanz unterdimensioniert (verursacht Verlangsamungen) oder überdimensioniert (zahlt für ungenutzte Kapazität)?
 
-Der Moment, in dem eine teure Sache monatelang ohne Nutzung läuft – ist eine vertraute Situation in Cloud-Umgebungen.
+Tom rief die CloudWatch-Metriken für alle drei Datenbankdienste über die letzten 30 Tage auf:
 
-Die Replikate wurden beendet. Monatsersparnis: 340 US-Dollar.
+**Aurora-Cluster**:
 
-**RDS Reserved Instances: Die Datenbank-Version**
+- Durchschnittliche CPU: 18 % (p95: 61 %; Spitze: 84 % an Freitagabenden)
+- FreeableMemory: konstant über 4 GB von 8 GB verfügbar. Kein Problem.
+- Lese-/Schreibverhältnis: 14:1 (leselastig)
+- Speicher: 180 GB (wächst ~5 GB/Monat)
+- DatabaseConnections-Maximum: 312 von 1.000 verfügbar. Komfortabel.
 
-Wie EC2 bietet RDS Reserved Instances für kommissionierte Nutzung.
+**Read Replicas (RDS PostgreSQL, getrennt von Aurora)**:
 
-Für Aurora mit Serverless v2 gelten Reserved Instances nicht direkt – Serverless v2 skaliert dynamisch und Sie zahlen pro ACU-Stunde. Wenn Sie jedoch eine feste Aurora-Instanzkonfiguration (nicht Serverless) verwenden, können Reserved Instances 30-60 % sparen.
+- Dies waren zwei Legacy-RDS-Read-Replicas, die vor der Aurora-Migration erstellt wurden und noch liefen.
+- Durchschnittliche Verbindungen zu jedem: 2 pro Tag. Durchschnittliche CPU: 3 %.
+- FreeableMemory: 7,2 GB von 8 GB verfügbar. Die Instanzen waren nahezu ungenutzt.
 
-Tom überprüfte die Aurora provisionierten Instanzen (den Writer und einen Reader):
+„Warum laufen die noch?“, fragte Tom.
 
-- Writer Instanz: db.r6g.large, On-Demand = 0,26 US-Dollar/Stunde = 190 US-Dollar/Monat
-- Reader Instanz: db.r6g.large, On-Demand = 0,26 US-Dollar/Stunde = 190 US-Dollar/Monat
+„Ich hatte sie schon deployt – oh“, sagte Leo. Er sah sich die Erstellungsdaten der Instanzen an. „Sie waren für den Fallback während der Aurora-Migration. Ich habe sie nie gelöscht.“
 
-1-Jahres Reserved Instances für beide: ca. 108 US-Dollar/Monat. Jährliche Einsparung: 984 US-Dollar.
+Dieser Moment – wenn etwas Teures seit Monaten läuft, ohne genutzt zu werden – ist in Cloud-Umgebungen ein vertrauter. Leo hatte die Replicas als Sicherheitsnetz erstellt. Das Sicherheitsnetz war nie gebraucht worden. Aber niemand hatte die Frage gestellt, bis jetzt.
 
-„Wartet“, sagte Leo. „Wir haben in Kapitel 24 auf Aurora Serverless v2 migriert. Warum schaut Tom nach On-Demand für provisionierte Instanzen?“
+„Wie ist die Situation beim Connection Pool?“, fragte Priya und beugte sich vor. „Bevor wir sie löschen, leiten irgendwelche Anwendungskomponenten noch Leseanfragen dorthin?“
 
-Ein guter Hinweis. Lassen Sie uns präzise sein: Nimbuss’ primärer Aurora-Writer verwendet Serverless v2. Der Reader (für Lese-Replikate) verwendet ebenfalls Serverless v2. Serverless v2 hat keine traditionellen Reserved Instances – Sie zahlen pro ACU-Stunde.
+Tom prüfte die Verbindungsprotokolle. Die zwei Verbindungen pro Tag kamen von einem Überwachungsskript, das Priya vor vierzehn Monaten geschrieben hatte – es fragte alle bekannten Datenbank-Endpunkte ab, um zu überprüfen, ob sie antworteten. Die Replicas wurden nur vom Health Checker abgefragt, nicht von tatsächlichem Anwendungs-Traffic.
 
-Für Teams, die feste Aurora-Instanzen (nicht Serverless) betreiben, sind Reserved Instances erhebliche Einsparungen. Für Serverless v2-Workloads entstehen die Einsparungen durch die Auto-Scaling-Natur des Dienstes – Sie zahlen nicht für ungenutzte Kapazität.
+„Lösch sie“, sagte Maya.
 
-**DynamoDB: On-Demand vs Provisioned**
+Die Replicas wurden beendet. Monatliche Einsparung: 340 $.
 
-In Kapitel 9 haben wir DynamoDB’s zwei Kapazitätsmodi: On-Demand und Provisioned eingeführt.
+**Beinahe-Fehler beim Connection Pool**
 
-Nimbus hatte DynamoDB seit Beginn der Nutzung im On-Demand-Modus betrieben. Bei geringem Datenverkehr war dies korrekt – On-Demand ist teurer pro Anfrage, aber hat keine Mindestgebühr.
+Während er die Verbindungsmetriken offen hatte, führte Tom eine umfassendere Prüfung über alle Datenbank-Endpunkte durch. Was er fand, ließ ihn innehalten.
 
-Nun, mit 18 Monaten Datenverkehrsdaten in CloudWatch konnte Tom Muster erkennen.
+Der Aurora-Writer-Endpunkt zeigte ein DatabaseConnections-Maximum von 312. Komfortabel. Aber der Reader-Endpunkt erzählte eine andere Geschichte.
 
-Durchschnittliche Einheiten für die Lese-Kapazität pro Tag: 45.000
-Durchschnittliche Einheiten für die Schreib-Kapazität pro Tag: 12.000
-Spitzen-Tag (Freitag): 180 % der durchschnittlichen DynamoDB-Anfragen (ElastiCache absorbiert ca. 95 % des gesamten 25-fachen Bestellvolumens Spikes, sodass DynamoDB nur einen Bruchteil des Gesamtvolumens sieht)
+„Der Reader-Endpunkt erreichte an drei aufeinanderfolgenden Freitagabenden 847 Verbindungen“, sagte Tom.
 
-**On-Demand-Preisgestaltung:** 1,25 US-Dollar pro Million Schreibanfragen, 0,25 US-Dollar pro Million Leseanfragen.
-**Provisioned-Preisgestaltung:** 0,00065 US-Dollar pro Schreib-Kapazitätseinheit pro Stunde, 0,00013 US-Dollar pro Lese-Kapazitätseinheit pro Stunde.
+„Wie hoch ist das Limit?“, fragte Priya.
 
-Tom berechnete den Break-Even-Punkt: Die provisionierte Kapazität wird billiger, wenn Sie sie konsistent genug nutzen, dass Sie während Leerlaufperioden nicht den On-Demand-Bonus zahlen.
+„Das Limit für unsere aktuelle Instanzklasse ist 1.000. Wir kamen auf 847. Das sind 85 % des Limits.“
 
-Mit 18 Monaten Daten, die konsistente tägliche Muster zeigten, war die provisionierte Kapazität mit **DynamoDB Auto Scaling** die richtige Wahl:
+„Und wir haben es nicht bemerkt, weil wir erst bei 90 % alarmiert wurden?“, fragte Maya.
+
+„Wir wurden überhaupt nicht alarmiert“, sagte Tom. „Es gibt keinen CloudWatch-Alarm auf den Verbindungen des Reader-Endpunkts. Ich habe das nur gefunden, weil ich mir die Rohmetriken angesehen habe.“
+
+Bei 1.000 Verbindungen verweigert die Datenbank neue Verbindungen. Jeder Anwendungs-Thread, der in diesem Moment versucht, eine Datenbankverbindung zu erhalten, wirft eine Exception. Wenn diese Exception nicht elegant behandelt wird, sieht der Benutzer einen 500-Fehler.
+
+„Wir waren dreißig Sekunden von einem Freitagabend-Vorfall entfernt“, sagte Leo. „Drei Mal hintereinander.“
+
+„Haben wir bedacht, was passiert, wenn dieser Schwellenwert überschritten wird?“, fragte Priya.
+
+„Restaurantpartner sehen fehlgeschlagene Bestellungen während des Abend-Andrangs“, sagte Maya. „Das ist keine theoretische Sorge.“
+
+Tom richtete sofort einen CloudWatch-Alarm ein: Benachrichtigung bei 750 Verbindungen (75 % des Limits), Page bei 900 (90 %). Er implementierte außerdem RDS Proxy für den Reader-Endpunkt – RDS Proxy bündelt und verwaltet Datenbankverbindungen von der Anwendungsschicht aus, was bedeutet, dass fünfzig Anwendungs-Threads sich zehn Datenbankverbindungen teilen können. Der Proxy übernimmt das Multiplexing. Die Datenbank sieht weit weniger Verbindungen, selbst wenn die Anwendung stark belastet ist.
+
+„Für Aurora Serverless v2 wird RDS Proxy mit 0,015 $ pro ACU pro Stunde berechnet, mit einer Mindestgebühr von 8 ACUs pro Proxy“, sagte Tom. „Aber wenn eine Überschreitung des Verbindungslimits auch nur einen teilweisen Ausfall an einem Freitagabend verursacht, sind die Reputationskosten für Nimbus um Größenordnungen höher.“
+
+„Wie viel kostet das pro Monat?“, fragte Tom sich selbst und rechnete die Zahl aus. Ihr Reader läuft auf Serverless v2, also rechnet der Proxy gegen das 8-ACU-Minimum ab: 0,015 $ × 8 × 730 = 87,60 $/Monat. Das war eine Kosten, die er gerne zahlte.
+
+Sie fragen sich vielleicht: Wenn wir mit dem Auto-Scaling von Serverless v2 bereits Geld sparen, warum sich überhaupt mit Reserved Instances für die provisionierte Ebene befassen? Die Antwort ist, dass das Scaling von Serverless v2 Kosten hat – man zahlt pro ACU-Stunde, ob man es geplant hat oder nicht. Für Teams, die feste Aurora-Konfigurationen betreiben, wandelt die RI-Verpflichtung variable Kosten in vorhersehbare Kosten um. Für die Teams, die provisionierte Instanzen betreiben (nicht Serverless v2), ist diese Unterscheidung erheblich wichtig.
+
+**RDS Reserved Instances: Für provisionierte Datenbankebenen**
+
+Wie EC2 bietet RDS Reserved Instances für verpflichtete Nutzung.
+
+Für Teams, die feste Aurora-Instanzkonfigurationen verwenden (nicht Serverless v2), können Reserved Instances 30–60 % sparen. So funktioniert der provisionierte RI-Ansatz: Sie verpflichten sich auf einen bestimmten Instanztyp für 1 oder 3 Jahre im Austausch für einen erheblichen Rabatt auf den Stundensatz.
+
+Zur Veranschaulichung: Eine db.r6g.large-Writer-Instanz zu 0,26 $/Stunde On-Demand kostet 190 $/Monat. Eine 1-Jahres-Reserved-Instance dafür reduziert das auf etwa 108 $/Monat – eine Einsparung von 82 $/Monat pro Instanz oder fast 1.000 $ pro Jahr pro Datenbankinstanz.
+
+**Aurora Serverless v2 vs. Standard-RI – Der Break-Even**
+
+Tom rechnete die Zahlen für ihre spezifische Aurora-Konfiguration durch. Die Frage: Bot das Auto-Scaling von Aurora Serverless v2 genug Nutzen, oder wäre eine feste provisionierte Instanz mit einer Reserved-Instance-Verpflichtung günstiger?
+
+Serverless-v2-Preisgestaltung: 0,12 $ pro ACU-Stunde. Ihr Cluster skalierte zwischen 0,5 ACU (Leerlauf) und 16 ACU (Spitzenlast). Über die letzten 30 Tage betrug der Durchschnitt 4,2 ACU.
+
+Monatliche Serverless-v2-Kosten: 4,2 ACU × 0,12 $ × 730 Stunden = 368 $/Monat für den Writer.
+
+Vergleich: eine feste db.r6g.2xlarge (ihr geschätztes provisioniertes Äquivalent, dimensioniert für die Bewältigung der p95-Last) mit einer 1-Jahres-RI: 0,48 $/Stunde × 0,60 (RI-Rabatt) × 730 = 210 $/Monat.
+
+„Die RI ist günstiger“, sagte Leo.
+
+„Für eine feste Last, ja“, sagte Tom. „Aber schau dir die Spanne an. Unsere verkehrsarme Zeit – 2 bis 7 Uhr, Montag bis Donnerstag – liegt im Schnitt bei 0,8 ACU. Auf einer festen provisionierten Instanz würden wir während dieser Stunden das 8-Fache dessen zahlen, was wir nutzen, einfach im Leerlauf.“
+
+„Und Serverless v2 skaliert entsprechend herunter?“
+
+„Auf 0,5 ACU. Die Leerlaufkosten sind ein Bruchteil dessen, was wir für eine provisionierte Instanz zahlen würden, die für die Spitze dimensioniert ist.“
+
+Die Break-Even-Berechnung: Serverless v2 ist günstiger, wenn Ihr Spitzen-/Basislast-Verhältnis über etwa 4:1 liegt. Für Nimbus, mit Freitagsspitzen bei 16 ACU und Montagmorgen-Minima bei 0,8 ACU – ein Verhältnis von 20:1 –, war Serverless v2 die richtige Wahl. Wäre ihr Traffic gleichmäßiger gewesen (sagen wir 8 ACU ± 20 %), wäre eine provisionierte RI günstiger gewesen.
+
+„Es geht nicht nur darum, welche Zahl diesen Monat kleiner ist“, sagte Tom. „Es geht darum, welches Modell unser Wachstum richtig handhabt. Wenn wir im nächsten Quartal um 50 % wachsen, skaliert Serverless v2 einfach hoch. Eine provisionierte RI bräuchte eine Neudimensionierung, und wir würden während der Umstellung für ungenutzte Reserve zahlen.“
+
+Tom zeichnete den einjährigen Vergleich explizit auf, damit das Team der Argumentation folgen konnte, nicht nur der Schlussfolgerung.
+
+**Monat-für-Monat-Aurora-Kosten: Serverless v2 vs. provisionierte RI**
+
+Die provisionierte Option: eine db.r6g.2xlarge mit einer 1-Jahres-Reserved-Instance. Kosten: 0,48 $/Stunde On-Demand × 0,60 (RI-Rabatt) × 730 Stunden = 210 $/Monat. Fix, unabhängig von der Last.
+
+Die Serverless-v2-Option: pro ACU-Stunde zu 0,12 $ zahlen. Variabel, der tatsächlichen Last folgend.
+
+Tom zog 30 Tage Aurora-Serverless-v2-ACU-Metriken aus CloudWatch und baute eine Verteilung:
+
+- 2–7 Uhr, Montag–Donnerstag (geringer Traffic): durchschnittlich 0,8 ACU → 0,096 $/Stunde
+- 7–11 Uhr, werktags (moderat): durchschnittlich 3,2 ACU → 0,384 $/Stunde  
+- 11–21 Uhr, werktags (Spitzen-Geschäftszeiten): durchschnittlich 5,8 ACU → 0,696 $/Stunde
+- Freitag 18–22 Uhr (Abend-Andrang): durchschnittlich 14,1 ACU → 1,692 $/Stunde
+- Samstag 12–20 Uhr (Wochenend-Andrang): durchschnittlich 9,3 ACU → 1,116 $/Stunde
+- Sonntag (ruhigster Tag): durchschnittlich 2,1 ACU → 0,252 $/Stunde
+
+Gewichteter Durchschnitt über den gesamten Monat: 4,2 ACU → 0,504 $/Stunde → 368 $/Monat.
+
+Auf einer provisionierten RI: 210 $/Monat. Serverless: 368 $/Monat. Die provisionierte Option sparte 158 $/Monat.
+
+„Das scheint offensichtlich“, sagte Leo. „Warum sind wir auf Serverless?“
+
+„Weil 368 $ der Durchschnitt ist“, sagte Tom. „Schau dir die Freitagabende an.“
+
+Freitag 18–22 Uhr: durchschnittlich 14,1 ACU. Für dieses vierstündige Fenster kostet Serverless 1,692 $/Stunde. Eine provisionierte db.r6g.2xlarge zu 210 $/Monat – ihre maximale Kapazität – hatte 8 vCPUs. Der Serverless-Cluster lief während dieses Fensters mit dem Äquivalent von rund 16 vCPUs.
+
+„Eine provisionierte Instanz, dimensioniert für unsere Freitagsspitze, wäre eine db.r6g.4xlarge“, sagte Tom. „Zum RI-Satz sind das 0,96 $/Stunde × 0,60 = 0,576 $/Stunde. Monatlich: 420 $/Monat.“
+
+„Das ist mehr als der Serverless-Durchschnitt von 368 $“, sagte Maya.
+
+„Richtig. Und wenn wir die provisionierte Instanz für die werktägliche Basislast dimensionieren würden – die db.r6g.2xlarge –, wären Freitagabende ein Problem. Bei Spitzenlast würden wir 14 ACU-Äquivalent auf eine 8-vCPU-Instanz drücken. Das ist CPU-Sättigung.“
+
+„Du müsstest also für die Spitze vordimensionieren“, sagte Priya.
+
+„Um den Preis, die anderen 160 Stunden der Woche für ungenutzte Kapazität zu zahlen“, sagte Tom. „Die provisionierte RI-Rechnung, die günstiger ausfällt, funktioniert nur, wenn das Spitzen-/Basislast-Verhältnis niedrig ist. Unseres ist 20:1. Das ist genau das Szenario, für das Serverless v2 entworfen wurde.“
+
+Er zeigte die Zahlen nebeneinander:
+
+| Option | Durchschnittsmonat | Ruhige Nacht (2 Uhr) | Freitags-Andrang (20 Uhr) |
+|---|---|---|---|
+| Serverless v2 | 368 $ | 0,096 $/Std. | 1,692 $/Std. |
+| Provisionierte RI (r6g.2xl) | 210 $ | 210 $/730 Std. = 0,288 $/Std. | gedeckelt – Sättigungsrisiko |
+| Provisionierte RI (r6g.4xl) | 420 $ | 0,576 $/Std. | komfortable Reserve |
+
+„Die Serverless-Option ist 368 $“, sagte Tom. „Die richtig dimensionierte provisionierte Option ist 420 $ – und das ist, bevor man die operativen Kosten der Überwachung und der manuellen Skalierung der provisionierten Instanz berücksichtigt, wenn sich unsere Verkehrsmuster im nächsten Quartal ändern.“
+
+„Und die operativen Kosten“, sagte Priya, „sind nicht nichts.“
+
+„Nein. Mit Serverless müssen wir nicht über Instanzdimensionierung nachdenken. Aurora übernimmt das. Mit provisioniert müsste ich jedes Quartal neu bewerten, ob die aktuelle Instanzklasse noch zu unserem Traffic passt. Das ist zeitlich nicht teuer, aber es ist etwas, das schiefgehen kann, wenn wir aufhören aufzupassen.“
+
+„Es wird schon klappen, solange wir nicht vergessen, sie neu zu dimensionieren“, sagte Leo, und dann ertappte er sich. „Was genau der Moment ist, in dem es nicht klappen wird.“
+
+„Genau“, sagte Tom.
+
+Die Schlussfolgerung hielt: Serverless v2 zu 368 $/Monat war die richtige Wahl für das 20:1-Spitzen-/Basislast-Verhältnis von Nimbus und die Vorliebe seines Teams für operative Einfachheit. Die provisionierte RI war nur für Teams mit Traffic überzeugend, der nicht erheblich schwankte – ein 2:1- oder 3:1-Verhältnis, bei dem die provisionierte Instanz selten im Leerlauf war.
+
+„Was würde uns zu provisioniert wechseln lassen?“, fragte Maya.
+
+„Wenn sich unser Verkehrsmuster abflachen würde“, sagte Tom. „Wenn Nimbus so weit wachsen würde, dass die verkehrsarme Basislast ebenfalls hoch wäre – sagen wir 8 ACU um 2 Uhr statt 0,8 –, würde das Verhältnis auf 2:1 sinken und provisioniert würde wirtschaftlich Sinn ergeben. Das ist ein anderes Geschäftsproblem. Eins, das wir gerne hätten.“
+
+
+Für Aurora mit Serverless v2 gelten Reserved Instances nicht direkt – Serverless v2 skaliert dynamisch und man zahlt pro ACU-Stunde. Das ist die aktuelle Konfiguration von Nimbus: Der primäre Aurora-Writer und -Reader verwenden beide Serverless v2. Die Einsparungen für Nimbus kommen aus der Auto-Scaling-Natur von Serverless v2 selbst – man zahlt nicht für ungenutzte Kapazität, wenn der Traffic gering ist.
+
+Teams, die noch feste Aurora-Instanzen betreiben, sollten die RI-Verpflichtung bewerten, sobald der Instanztyp drei oder mehr Monate stabil war.
+
+**DynamoDB: On-Demand vs. Provisioned**
+
+In Kapitel 9 haben wir die beiden Kapazitätsmodi von DynamoDB vorgestellt: On-Demand und Provisioned.
+
+Nimbus hatte DynamoDB von Anfang an im On-Demand-Modus betrieben. Bei geringem Traffic war das korrekt – On-Demand ist pro Anfrage teurer, hat aber keine Mindestgebühr.
+
+Jetzt, mit 18 Monaten Verkehrsdaten in CloudWatch, konnte Tom Muster erkennen.
+
+Durchschnittliche Leseanfragen: 225 pro Sekunde (etwa 19,4 Millionen pro Tag)
+Durchschnittliche Schreibanfragen: 60 pro Sekunde (etwa 5,2 Millionen pro Tag)
+Spitzentag (Freitag): 180 % der durchschnittlichen DynamoDB-Anfragen (ElastiCache absorbiert ~95 % der Lesevorgänge, sodass DynamoDB nur einen Bruchteil der gesamten 25-fachen Bestellvolumenspitze sieht)
+
+**On-Demand-Preisgestaltung**: 1,25 $ pro Million Schreibanfragen, 0,25 $ pro Million Leseanfragen.
+**Provisioned-Preisgestaltung**: 0,00065 $ pro Schreibkapazitätseinheit pro Stunde, 0,00013 $ pro Lesekapazitätseinheit pro Stunde.
+
+Tom berechnete den Break-Even-Punkt: Provisionierte Kapazität wird günstiger, wenn man sie konsistent genug nutzt, dass man während Leerlaufphasen nicht den On-Demand-Aufschlag zahlt.
+
+(Eine Anmerkung zu den Zahlen in diesem Abschnitt: Sie spiegeln die Rechnung des Teams zu diesem Zeitpunkt wider und sind illustrativ. Ende 2024 senkte AWS die DynamoDB-On-Demand-Preise um 50 %, was den Break-Even erheblich verschob – heute gewinnt provisionierte Kapazität nur, wenn die Auslastung konstant hoch ist. Rechnen Sie diese Rechnung immer mit aktuellen Preisen neu.)
+
+Mit 18 Monaten Daten, die konsistente tägliche Muster zeigten, war provisionierte Kapazität mit **DynamoDB Auto Scaling** die richtige Wahl:
 
 - Minimale Kapazität auf 60 % der durchschnittlichen Last einstellen
-- Maximale Kapazität auf 250 % der durchschnittlichen Last einstellen (um Freitagspitzen zu bewältigen)
+- Maximum auf 250 % des Durchschnitts (bewältigt Freitagsspitzen)
 - Auto Scaling passt die provisionierte Kapazität zwischen diesen Grenzen an
 
-Monatliche DynamoDB-Kosten: sank von 340 US-Dollar (On-Demand) auf 230 US-Dollar (provisioniert mit Auto Scaling). 32 % Reduzierung.
+Monatliche DynamoDB-Kosten: sanken von 340 $ (On-Demand) auf 230 $ (provisioniert mit Auto Scaling). 32 % Reduzierung.
 
-„Aber wenn wir zu viel dimensionieren“, fragte Leo, „bezahlen wir für ungenutzte Kapazität.“
+„Moment – aber *warum* würden wir es so machen?“, fragte Maya. „Wir sind von Anfang an auf On-Demand, weil wir unseren eigenen Verkehrsmustern nicht getraut haben. Was hat sich geändert?“
 
-„Das ist das Risiko“, sagte Tom. „Mit Auto Scaling stellen wir die minimale Höhe so hoch ein, dass wir Drosselung vermeiden, und lassen AWS innerhalb unseres Bereichs verwalten.“
+„Achtzehn Monate Daten“, sagte Tom. „Wir wissen jetzt, wie unsere Muster aussehen – konsistente werktägliche Basislast, Freitagsspitzen, ruhige Sonntagsphasen. On-Demand war die richtige Entscheidung, als wir es nicht wussten. Provisioniert mit Auto Scaling ist die richtige Entscheidung, jetzt da wir es wissen.“
 
-„Und wenn sich unser Datenverkehrsverhalten deutlich ändert?“
+„Aber wenn wir überdimensionieren“, fragte Leo, „zahlen wir für ungenutzte Kapazität.“
 
-"Dann passen wir die Grenzen an. Wir überprüfen dies vierteljährlich."
+„Das ist das Risiko“, sagte Tom. „Mit Auto Scaling setzen wir das Minimum hoch genug, um Drosselung zu vermeiden, und lassen AWS innerhalb unseres Bereichs verwalten.“
 
-**ElastiCache: Optimierung und Reservierte Knoten**
+„Und wenn sich unser Verkehrsmuster erheblich ändert?“
 
-Die ElastiCache-Rechnung: 183 $/Monat. Ein Cache.r6g.large Redis-Instanz in jeder AZ (zwei Knoten, Primär + Replika).
+„Dann passen wir die Grenzen an. Wir überprüfen das vierteljährlich.“
 
-CloudWatch-Metriken zeigten:
+**ElastiCache: Right-Sizing und die warnende Geschichte**
+
+Die ElastiCache-Rechnung: 185 $/Monat. Eine cache.r6g.large-Redis-Instanz in jeder AZ (zwei Knoten, Primär + Replica).
+
+Die CloudWatch-Metriken zeigten:
 
 - Durchschnittliche Speicherauslastung: 34 %
-- Spitzenlast: 58 %
+- Spitze: 58 %
 
-Die Instanz war überdimensioniert. Ein Cache.r6g.medium würde wahrscheinlich die Last mit Spielraum bewältigen.
+Die Instanz war überdimensioniert. Eine cache.r6g.medium würde die Last wahrscheinlich mit Reserve bewältigen.
 
-Der Wechsel von r6g.large (2 Knoten × 0,127 $/Stunde) zu r6g.medium (2 Knoten × 0,065 $/Stunde):
+Aber hier hielt Tom inne. Er erinnerte sich, was bei einem früheren Unternehmen passiert war, als er einen Cache aggressiv right-sized hatte – und er erzählte dem Team die ganze Geschichte, weil es die Art von Geschichte war, die erzählt werden musste, bevor man sich mittendrin wiederfand.
 
-- Monatsersparnis: 113 $ → warten.
+Bei seinem früheren Unternehmen – einer SaaS-Plattform für Finanzberichterstattung – war der ElastiCache-Cluster eine cache.r6g.large gewesen. Zwei Knoten, Primär und Replica. Durchschnittliche Speicherauslastung: 31 %. Beobachtete Spitze: 54 %. Der diensthabende Ingenieur, der es markierte, hatte die Rechnung gemacht: Eine cache.r6g.medium würde die Last mit 25 % Reserve über der beobachteten Spitze bewältigen. Einsparung: 60 $/Monat – Preise in der Region und Knotengeneration dieses Unternehmens zu jener Zeit, kleiner als die entsprechende Lücke bei Nimbus heute. Die Änderung wurde an einem Dienstag genehmigt.
 
-Die Mathematik dahinter: large = 2 × 0,127 × 730 Stunden = 185 $/Monat. Medium = 2 × 0,065 × 730 = 95 $/Monat. Ersparnis: 90 $/Monat.
+Im folgenden Monat, an einem Donnerstagabend um 23:47 Uhr, startete der Monatsabschluss-Abrechnungs-Batch.
 
-Tom testete die Medium-Instanz in der Staging-Umgebung für zwei Wochen unter Last. Die Speicherauslastung erreichte 71 %. Nahe der Grenze, was ihn unruhig machte.
+Der Abrechnungs-Batch lief vierteljährlich. Er zog die Transaktionsdaten jedes aktiven Kontos für die vorangegangenen drei Monate, aggregierte sie, berechnete Steuern und schrieb Abrechnungsdatensätze. Der Cache wurde verwendet, um den Zwischenzustand der Aggregation zu speichern – die laufende Summe jedes Kontos, während der Batch fortschritt. Die cache.r6g.large hatte es immer bewältigt. Niemand hatte bei der Right-Sizing-Entscheidung speziell auf die Metriken des Abrechnungs-Batch geschaut, weil der Batch vierteljährlich war und das Beobachtungsfenster vier Wochen betragen hatte.
 
-Er versuchte cache.r6g.large, aber mit Reservierten Knoten (1-Jahres-Verpflichtung): von On-Demand 185 $ auf Reserviert 120 $/Monat. Ersparnis: 65 $/Monat ohne Änderung des Instanztyps.
+Auf der Medium-Instanz war maxMemoryPolicy auf `allkeys-lru` gesetzt – wenn der Speicher voll war, würde Redis den am längsten nicht verwendeten Schlüssel entfernen, um Platz zu schaffen. Das ist die richtige Richtlinie für einen allgemeinen Cache. Aber für den Abrechnungs-Batch wurde jeder Schlüssel im Cache aktiv benötigt. Als der Speicher bei 84 % der 6,38 GB der Medium-Instanz voll war, begann Redis, Schlüssel zu entfernen. Jede Entfernung war ein Cache-Miss. Jeder Cache-Miss sendete eine Abfrage an die zugrunde liegende PostgreSQL-Datenbank, um den entfernten Wert aus den rohen Transaktionsdatensätzen neu zu berechnen.
 
-"Manchmal führt das Rechtsskalieren auf eine kleinere Instanz zu einem Leistungszwischenfall", sagte er. "Reservierte Knoten geben uns die gleichen Einsparungen mit weniger Risiko."
+Der Datenbank-Connection-Pool war für Steady-State-Traffic konfiguriert, nicht für die Last des Abrechnungs-Batch. Innerhalb von vier Minuten nach Beginn der Entfernungen hatte die Datenbank 847 aktive Verbindungen. Das Verbindungslimit war 1.000. Nach 9 Minuten begannen die ersten Anwendungs-Threads, „too many connections“-Fehler zu sehen. Nach 12 Minuten waren drei Dienste, die sich den Datenbank-Connection-Pool teilten – der Abrechnungs-Batch, der Echtzeit-Berichtsdienst und die kundenseitige API –, alle betroffen.
+
+Der diensthabende Ingenieur eskalierte um 23:59 Uhr. Die Vorfallsprüfung begann um 0:08 Uhr.
+
+Erste Reaktion: das Lambda-Timeout für die Abrechnungs-Batch-Funktion erhöhen (der Abrechnungs-Batch war teilweise Lambda-basiert). Das war falsch. Das Timeout war nicht das Problem.
+
+Zweite Reaktion: eine zweite Lambda-Funktion hinzufügen, um den Abrechnungs-Batch zu parallelisieren. Ebenfalls falsch. Mehr Parallelität bedeutete mehr gleichzeitigen Cache-Zugriff, was schnellere Entfernungen bedeutete, was die Situation verschlimmerte.
+
+Dritte Reaktion: den Abrechnungs-Batch herunterskalieren, um den Datenbankdruck zu reduzieren. Das half etwas, behob aber nicht die Grundursache.
+
+Vierte Reaktion, um 2:31 Uhr: die cache.r6g.large wiederherstellen. Der Speicherdruck sank sofort. Die Entfernungen hörten auf. Der Datenbank-Connection-Pool leerte sich. Der Abrechnungs-Batch wurde um 4:17 Uhr abgeschlossen, über vier Stunden verspätet.
+
+Vorfall insgesamt: vier Stunden beeinträchtigte API-Leistung für Kunden, die versuchten, auf Berichte zuzugreifen. Ein vollständiger Abrechnungs-Batch verzögert. Engineering-Zeit: ungefähr 22 Stunden über fünf Ingenieure. Geschätzte direkte Kosten: 40.000 $.
+
+Die Einsparung von 60 $/Monat hatte in einem einzigen Vorfall 40.000 $ gekostet.
+
+„Der Fehler war nicht die Right-Sizing-Entscheidung“, sagte Tom. „Die Entscheidung war auf Basis der verfügbaren Daten vertretbar. Der Fehler war das Beobachtungsfenster. Wir haben vier Wochen Metriken gemessen. Der Abrechnungs-Batch war vierteljährlich. Wir haben den falschen Zeitrahmen betrachtet.“
+
+„Wie vermeidet man das also?“, fragte Maya.
+
+„Man fragt: Was ist die folgenreichste Operation, die dieser Cache unterstützt? Und man findet die spezifischen Metriken dieser Operation. Nicht die durchschnittliche Woche. Die spezifische Woche – oder den Monat – oder das Quartal –, in der die Last am höchsten ist. Und man dimensioniert dafür.“
+
+„Und wenn man die Metriken nicht findet, weil die Operation selten ist?“
+
+„Das ist die Antwort“, sagte Tom. „Wenn man die Metriken für ein bestimmtes Hochlast-Szenario nicht findet, ist die richtige Reaktion, noch nicht right-zu-sizen. Auf das nächste Auftreten warten, es stark instrumentieren, dann auf Basis des Beobachteten dimensionieren.“
+
+Der ElastiCache-Cluster von Nimbus hatte seine eigene folgenreiche Operation: den Freitagabend-Andrang. Diese Daten hatte Tom – drei aufeinanderfolgende Freitagabende hatten 58 % Speicherauslastung auf der r6g.large erreicht. Wenn er auf die r6g.medium wechselte und sich etwas in der Bestellverarbeitungs-Pipeline änderte, sodass mehr Cache-Platz genutzt würde – ein neues Feature, eine andere Caching-Strategie –, könnten diese 58 % zu 80 % werden, und 80 % auf einer Medium sind Entfernungsterritorium.
+
+Er rechnete die Zahlen trotzdem durch. Wechsel von r6g.large zu r6g.medium: zwei Knoten zu 0,127 $/Stunde gegenüber zwei Knoten zu 0,065 $/Stunde, 730 Stunden pro Monat in Betrieb. Large: 185 $/Monat. Medium: 95 $/Monat. Mögliche Einsparung: 90 $/Monat. Er testete die Medium-Instanz zwei Wochen lang unter Last im Staging. Der Speicher erreichte einen Spitzenwert von 71 % – nah genug am Limit, dass es ihm unwohl war.
+
+Dann bepreiste er die Alternative: die cache.r6g.large behalten, aber Reserved Nodes kaufen (1-Jahres-Verpflichtung). Von On-Demand 185 $ auf Reserved 120 $/Monat. Einsparung: 65 $/Monat ohne Änderung des Instanztyps.
+
+„Die 65 $/Monat, die ich mit Reserved Nodes bei gleicher Instanzgröße sparen würde, sind eine echte Einsparung“, sagte Tom. „Die 90 $/Monat, die ich durch den Wechsel zur Medium sparen würde, sind eine Milchmädchenrechnung, wenn sie den Freitagabend-Andrang gefährden. Manchmal birgt Right-Sizing auf eine kleinere Instanz das Risiko eines Leistungsvorfalls – Reserved Nodes geben uns den größten Teil der Einsparungen ohne das Risiko.“
+
+Er kaufte die Reserved Nodes für die r6g.large.
+
+„Die 25 $ Unterschied bei der monatlichen Einsparung“, sagte Tom, „sind keinen Freitagabend-Vorfall wert.“
 
 **RDS-Backup-Aufbewahrung: Der Speicher-Kompromiss**
 
-RDS-automatisierte Backups werden in S3 gespeichert (ohne zusätzliche Kosten für den Speicher bis zu 100 % Ihrer Datenbankgröße). Die Standardaufbewahrungsdauer beträgt 7 Tage.
+Automatisierte RDS-Backups werden in S3 gespeichert (ohne zusätzliche Speicherkosten bis zu 100 % Ihrer Datenbankgröße). Die Standardaufbewahrung beträgt 7 Tage.
 
-Für Nimbus's 180 GB Aurora-Datenbank war eine Aufbewahrungsdauer von 7 Tagen angemessen – sie waren in Tests in diesem Zeitraum aus einem Backup wiederhergestellt worden.
+Für die 180 GB große Aurora-Datenbank von Nimbus waren 7 Tage Backups angemessen – sie hatten in Tests innerhalb dieses Fensters aus einem Backup wiederherstellen können.
 
-Aber Tom stellte fest: Sie hatten auch manuelle Snapshots von jeder bedeutenden Bereitstellung, die unbegrenzt aufbewahrt wurden.
+Aber Tom bemerkte: Sie hatten auch manuelle Snapshots von jeder bedeutenden Bereitstellung, unbegrenzt aufbewahrt.
 
-23 manuelle Snapshots, insgesamt 4,1 TB Snapshot-Speicherplatz.
-Kosten: 0,095 $/GB/Monat für Aurora-Backups = 389 $/Monat für manuellen Snapshot-Speicherplatz.
+23 manuelle Snapshots, insgesamt 4,1 TB Snapshot-Speicher.
+Kosten: 0,021 $/GB/Monat für Aurora-Backup-Speicher = etwa 87 $/Monat an manuellem Snapshot-Speicher.
 
-Sie behielten die letzten 3 manuellen Snapshots pro Umgebung (Produktion, Staging). Die anderen löschten.
-Ersparnis: 350 $/Monat.
+Sie behielten die letzten 3 manuellen Snapshots pro Umgebung (Produktion, Staging). Den Rest löschten sie – etwa 1,1 TB beibehalten.
+Einsparung: 64 $/Monat.
 
-"Wir haben 350 Dollar pro Monat für etwas bezahlt, das wir nie benutzt haben", sagte Leo.
+„Wir haben 64 $ im Monat für eine Versicherung gezahlt, die wir nie genutzt haben“, sagte Leo.
 
-"Wir haben für den Gewissheitsfall bezahlt", korrigierte Tom. "Die Frage ist: Wie viel Gewissheitsbedarf ist 350 Dollar pro Monat wert?"
+„Wir haben für Seelenfrieden gezahlt“, korrigierte Tom. „Die Frage ist: Wie viel Seelenfrieden sind 64 $ im Monat wert?“
 
-"Mit einem angemessenen Disaster-Recovery-Plan", sagte Priya, "können Sie das gleiche Gefühl der Sicherheit von 7 Tagen automatischen Backups und 3 manuellen Snapshots erhalten."
+„Mit einem ordentlichen Disaster-Recovery-Plan“, sagte Priya, „bekommt man denselben Seelenfrieden von 7 Tagen automatisierter Backups und 3 manuellen Snapshots.“
 
-"Einverstanden. Jetzt."
+„Einverstanden. Jetzt.“
 
-**Die Datenbank-Optimierungsübersicht**
+**Variante: Wenn Provisioned nach hinten losgeht**
+
+Wenn Ihr Verkehrsmuster konsistent und vorhersehbar ist, spart provisionierte Kapazität mit Auto Scaling 30 % gegenüber On-Demand. Aber wenn ein neues Feature startet und Ihr Schreibvolumen über Nacht auf das 5-Fache hochschnellt, werden Sie gedrosselt, bevor Auto Scaling aufholt – Auto Scaling reagiert auf beobachteten Traffic, was bedeutet, dass es eine Verzögerung gibt. Den On-Demand-Modus für die Wochen rund um einen großen Feature-Start beizubehalten ist ein vernünftiger Kompromiss: leicht höhere Kosten, kein Drosselungsrisiko während einer Phase, in der Sie die sich ändernden Verkehrsmuster in Echtzeit beobachten.
+
+Wenn Sie ungenutzte Read Replicas eliminieren (wie die Legacy-PostgreSQL-Replicas von Nimbus), sind die Einsparungen sofort und eindeutig – es gibt keinen Kompromiss, weil die Replicas keinen Wert lieferten. Aber wenn Sie versucht sind, ein Read Replica zu eliminieren, das nur 2 % des Traffics bewältigt, prüfen Sie, was mit der Primärdatenbank passiert, wenn diese 2 % während einer Spitze nirgendwo hingehen können. Manche Read Replicas existieren für Reserve, nicht für die aktuelle Last.
+
+**Die Zusammenfassung der Datenbankoptimierung**
 
 | Dienst                                           | Vorher     | Nachher    | Monatsersparnis |
 |---------------------------------------------------|------------|----------|----------------|
-| RDS Read Replicas (nicht genutzt)                        | 340       | 0       | 340           |
-| Aurora (Reservierte Instanzen)                       | 190       | 120     | 70            |
-| DynamoDB (On-Demand → Provisioned + Auto Scaling) | 340       | 230     | 110           |
-| ElastiCache (Reservierte Knoten)                      | 185       | 120     | 65            |
-| Aurora manuelle Snapshots                           | 389       | 39      | 350           |
-| **Gesamt**                                         | **1.444** | **509** | **935/Monat** |
+| Aurora (Serverless v2 nach Analyse beibehalten)    | 647 $       | 647 $     | 0 $ (korrektes Modell) |
+| RDS Read Replicas (ungenutzt)                        | 340 $       | 0 $       | 340 $           |
+| DynamoDB (On-Demand → Provisioned + Auto Scaling) | 340 $       | 230 $     | 110 $           |
+| ElastiCache (Reserved Nodes)                      | 185 $       | 120 $     | 65 $            |
+| Aurora manuelle Snapshots                           | 87 $        | 23 $      | 64 $            |
+| RDS Proxy (Verbindungssicherheit)                     | 0 $         | 88 $      | -88 $           |
+| **Gesamt**                                         | **1.599 $** | **1.108 $** | **491 $/Monat** |
 
-935 Dollar pro Monat in Datenbank-Einsparungen. 11.220 Dollar pro Jahr.
+491 $ pro Monat an Datenbankeinsparungen. 5.892 $ pro Jahr.
 
-Tom stellte diese Zahl neben die Einsparungen für den Speicher (6.200 Dollar pro Jahr) und die Savings Plan-Einsparungen (14.200 Dollar pro Jahr) dar.
+Tom stellte diese Zahl neben die Speicherbereinigung (6.200 $/Jahr), die S3-Lebenszyklusrichtlinien aus Kapitel 23 (7.800 $/Jahr) und die Savings-Plan-Einsparungen (14.200 $/Jahr).
 
-Gesamte Optimierungsauswirkung: 31.620 Dollar pro Jahr.
+Gesamte bisherige Optimierungswirkung: 34.092 $/Jahr.
 
-"Das sind drei Junior-Ingenieure", sagte Maya.
+„Das ist echte Runway“, sagte Maya.
 
-"Oder einer Senior", sagte Priya.
+„Oder mehrere ernsthafte Experimente“, sagte Priya.
 
-"Oder zwölf Monate Experimente", sagte Leo.
+„Oder zwölf Monate Experimente“, sagte Leo.
 
-Alle drei hatten Recht.
+Alle drei hatten recht.
 
-## Stärken und Schwächen
+## Stärken und Grenzen
 
 **DynamoDB Provisioned mit Auto Scaling**:
 
 - Günstiger als On-Demand für vorhersehbare, konsistente Arbeitslasten
-- Auto Scaling verwaltet die Variabilität ohne permanente Überdimensionierung
-- Benötigt Überwachung, um sicherzustellen, dass die Kapazitätsgrenzen angemessen bleiben
+- Auto Scaling handhabt Variabilität, ohne dauerhaft zu überdimensionieren
+- Erfordert Überwachung, um sicherzustellen, dass die Kapazitätsgrenzen angemessen bleiben
 
-**RDS Reservierte Instanzen / ElastiCache Reservierte Knoten**:
+**RDS Reserved Instances / ElastiCache Reserved Nodes**:
 
-- Deutliche Einsparungen für stabile, langlaufende Arbeitslasten
-- Verpflichtung – wenn Ihre Bedürfnisse sich ändern, haben Sie für ungenutzte Kapazität bezahlt
-- Der RI Marketplace ermöglicht den Verkauf ungenutzter RDS RIs (im Gegensatz zu Convertible, das nicht verkauft werden kann)
+- Erhebliche Einsparungen für stabile, langlaufende Arbeitslasten
+- Gebundene Verpflichtung – wenn sich Ihre Bedürfnisse ändern, haben Sie für ungenutzte Kapazität gezahlt
+- Anders als EC2 Standard RIs können RDS RIs **nicht** auf dem Reserved Instance Marketplace weiterverkauft werden – der Marketplace ist nur für EC2. Eine ungenutzte RDS RI ist versunkene Kosten, was die Dimensionierungsentscheidung wichtiger macht
 
 **Das allgemeine Prinzip**:
 
-- Verstehen Sie die Auslastung immer, bevor Sie optimieren
-- Unbenutzte Ressourcen (wie die Legacy-Read-Replicas) sind die höchste Einsparung
-
-**Rechtsdimensionierung erfordert Validierung in der Staging-Umgebung, bevor sie in der Produktion angewendet wird.**
+- Verstehen Sie die Auslastung immer, bevor Sie optimieren – verwenden Sie p95, nicht den Durchschnitt
+- Ungenutzte Ressourcen (wie die Legacy-Read-Replicas) sind die ertragreichste Optimierung
+- Right-Sizing erfordert eine Validierung im Staging, bevor es auf die Produktion angewendet wird, und die Prüfung auf saisonale Arbeitslastmuster, die in einem Standard-Beobachtungsfenster möglicherweise nicht erscheinen
+- Reservierte Preisgestaltung erfordert Vertrauen in die Stabilität der Arbeitslast
 
 ## Zusammenfassung
 
-- **Überprüfen Sie zuerst**: Ziehen Sie CloudWatch-Metriken ab, bevor Sie Datenbankänderungen vornehmen.
-- **Löschen Sie nicht genutzte Ressourcen**: Read Replicas, inaktive Datenbanken und Testinstanzen, die nicht mehr benötigt werden.
-- **DynamoDB On-Demand vs Provisioned**: On-Demand für unvorhersehbaren Traffic; Provisioned + Auto Scaling für konsistente Muster.
-- **ElastiCache Reservierte Knoten**: Wie EC2 Reserved Instances für Redis/Memcached. 30-50 % Einsparungen für stabile Arbeitslasten.
-- **RDS Snapshot-Verwaltung**: Bewahren Sie nur die Snapshots auf, die Sie benötigen. Manuelle Snapshots werden unbegrenzt aufbewahrt, es sei denn, sie werden gelöscht.
-- **Rechtsdimensionierung mit Vorsicht**: Datenbank-Rechtsdimensionierung birgt das Risiko von Leistungszwischenfällen. Testen Sie in der Staging-Umgebung, validieren Sie unter Last.
+- **Zuerst auditieren**: Ziehen Sie CloudWatch-Metriken, bevor Sie irgendwelche Datenbankänderungen vornehmen. Verwenden Sie p95-Latenz und p95-CPU – nicht Durchschnitte. Prüfen Sie FreeableMemory und Verbindungsmaxima.
+- **Ungenutzte Ressourcen löschen**: Read Replicas, ungenutzte Datenbanken und Testinstanzen, die nicht mehr benötigt werden.
+- **Behalten Sie Ihren Connection Pool im Auge**: Setzen Sie Alarme auf DatabaseConnections bei 75 % und 90 % des Limits. Erwägen Sie RDS Proxy für Verbindungs-Multiplexing.
+- **DynamoDB On-Demand vs. Provisioned**: On-Demand für unvorhersehbaren Traffic; Provisioned + Auto Scaling für konsistente Muster.
+- **ElastiCache-Right-Sizing**: Im Staging unter realistischen Spitzenlasten testen, einschließlich saisonaler Spitzen. Reserved Nodes bieten Einsparungen bei gleicher Instanzgröße, wenn aggressives Verkleinern ein Risiko birgt.
+- **RDS-Snapshot-Verwaltung**: Behalten Sie nur die Snapshots, die Sie brauchen. Manuelle Snapshots werden unbegrenzt gespeichert, es sei denn, sie werden gelöscht.
 
-## Examenstipps
+## Prüfungstipps
 
-*SAA-C03 Domain: Design Cost-Optimized Architectures (Domain 4, Task 4.3)*
+*SAA-C03-Domäne: Design Cost-Optimized Architectures (Domäne 4, Aufgabe 4.3)*
 
-- **DynamoDB Preismodelle**: On-Demand = Pay-per-Request (höhere Kosten pro Einheit, keine Mindestanzahl). Provisioniert = Pay-per-Kapazitäts-Einheit pro Stunde (niedrigere Kosten pro Einheit, muss Kapazität zugewiesen werden). **DynamoDB Auto Scaling** passt die provisionierte Kapazität automatisch an.
-- **RDS Reservierte Instanzen**: Verfügbar für alle RDS-Engine-Typen. Multi-AZ-Bereitstellungen können Reservierte Instanzen verwenden (Sie verpflichten sich zu Multi-AZ). 1- oder 3-Jahres-Laufzeit.
-- **ElastiCache Reservierte Knoten**: Gleiches Verpflichtungsmodell wie EC2 Reservierte Instanzen. Wird pro Knoten und nicht pro Cluster angewendet.
-- **RDS Snapshot-Speicher**: Automatisierte Backups sind bis zu 100 % der Datenbankgröße kostenlos. Manuelle Snapshots werden pro GB pro Monat in S3 abgerechnet. Examen-Szenario: „Reduzieren Sie RDS-Speicherkosten“ → Löschen Sie alte manuelle Snapshots.
-- **DynamoDB reservierte Kapazität**: Ebenfalls für DynamoDB verfügbar (verpflichtet für Lese-/Schreibgeschwindigkeit für 1 oder 3 Jahre mit Rabatt). Anders als die Standard-Provisionierung – Sie zahlen im Voraus für die Kapazität für alle Ihre DynamoDB-Tabellen in einer Region.
-- **Aurora Serverless v2 vs. Provisioniert**: Serverless v2 skaliert automatisch, ideal für variable Arbeitslasten. Provisioniert mit Reservierten Instanzen ist kostengünstiger für stabile, vorhersehbare Arbeitslasten.
+- **DynamoDB-Preismodi**: On-Demand = pro Anfrage zahlen (höhere Kosten pro Einheit, kein Minimum). Provisioned = pro Kapazitätseinheit pro Stunde zahlen (niedrigere Kosten pro Einheit, Kapazität muss zugewiesen werden). **DynamoDB Auto Scaling** passt die provisionierte Kapazität automatisch an.
+- **RDS Reserved Instances**: Verfügbar für alle RDS-Engine-Typen. Multi-AZ-Bereitstellungen können Reserved Instances verwenden (Sie verpflichten sich zu Multi-AZ). 1- oder 3-Jahres-Laufzeit.
+- **ElastiCache Reserved Nodes**: Gleiches Verpflichtungsmodell wie EC2 Reserved Instances. Wird pro Knoten angewendet, nicht pro Cluster.
+- **RDS-Snapshot-Speicher**: Automatisierte Backups sind bis zu 100 % der Datenbankgröße kostenlos. Manuelle Snapshots werden pro GB pro Monat in S3 berechnet. Prüfungsszenario: „RDS-Speicherkosten reduzieren“ → alte manuelle Snapshots löschen.
+- **DynamoDB Reserved Capacity**: Ebenfalls für DynamoDB verfügbar (verpflichtet auf eine bestimmte Lese-/Schreibkapazität für 1 oder 3 Jahre zu einem Rabatt). Anders als Standard-Provisioned – Sie zahlen im Voraus für Kapazität über alle Ihre DynamoDB-Tabellen in einer Region.
+- **Aurora Serverless v2 vs. provisioniert**: Serverless v2 skaliert automatisch, ideal für variable Arbeitslasten. Provisioniert mit Reserved Instances ist günstiger für stabile, vorhersehbare Arbeitslasten.
 
 ## Übungen
 
-**Übung 1 – Erinnerung**
+**Übung 1 — Wiederholung**
 
-Wann sollten Sie die On-Demand-Kapazität von DynamoDB gegenüber der provisionierten Kapazität mit Auto Scaling verwenden? Welche Informationen benötigen Sie, um diese Entscheidung zu treffen?
+Erklären Sie, wann Sie die DynamoDB-On-Demand-Kapazität gegenüber der provisionierten Kapazität mit Auto Scaling verwenden sollten. Welche Informationen benötigen Sie, um diese Entscheidung zu treffen?
 
-*(Hinweis: Denken Sie darüber nach, was „vorhersagbar“ in Bezug auf Traffic-Daten bedeutet und welchen Risiken die On-Demand-Kapazität vorstellt, die die provisionierte Kapazität einführt.)*
+*(Hinweis: Denken Sie darüber nach, was „vorhersehbar“ in Bezug auf Verkehrsdaten bedeutet und welches Risiko On-Demand beseitigt, das Provisioned einführt.)*
 
-**Übung 2 – Examenspraxis**
+**Übung 2 — SAA-C03-Szenario**
 
-*Szenario*: Ein Unternehmen betreibt eine DynamoDB-Tabelle für die Leaderboard eines mobilen Spiels. Der Traffic steigt stark während eines saisonalen Events (eine Woche pro Quartal, 10-facher Normalverkehr), ist aber sonst sehr konsistent. Außerhalb des saisonalen Events möchte das Unternehmen die Datenbankkosten minimieren und gleichzeitig die Leistung aufrechterhalten.
+*Szenario*: Ein Unternehmen betreibt eine DynamoDB-Tabelle für die Bestenliste eines Mobile-Games. Der Traffic ist das ganze Jahr über sehr konsistent, außer während eines saisonalen Events, das Monate im Voraus geplant ist (eine Woche pro Quartal, das 10-fache des normalen Traffics erreichend, während Spieler im Laufe des ersten Tages beitreten). Die Priorität des Unternehmens ist, die Datenbankkosten während der langen, vorhersehbaren Steady-State-Phasen zu minimieren und gleichzeitig die Leistung während der bekannten Event-Wochen aufrechtzuerhalten.
 
-Welche DynamoDB-Kapazitätsstrategie erfüllt diese Anforderungen am besten?
+Welche DynamoDB-Kapazitätsstrategie erfüllt diese Anforderungen am BESTEN?
 
-A) On-Demand-Kapazität, um die Spitzenzeiten ohne Drosselung zu bewältigen
-B) Provisionierte Kapazität, die auf Spitzenpegeln (immer provisioniert für 10-facher Traffic) eingestellt ist
-C) Provisionierte Kapazität mit DynamoDB Auto Scaling, mit einer maximalen Kapazität für den saisonalen Spitzenverkehr
-D) DynamoDB-Reservierungseinheiten für 3 Jahre zu normalen Traffic-Niveaus
+A) On-Demand-Kapazität, um die saisonalen Spitzen ohne Drosselung zu bewältigen  
+B) Provisionierte Kapazität, auf saisonale Spitzenniveaus eingestellt (immer für das 10-fache des Traffics provisioniert)  
+C) Provisionierte Kapazität mit DynamoDB Auto Scaling, mit einem für die saisonale Spitze eingestellten Maximum  
+D) DynamoDB Reserved Capacity Units für 3 Jahre auf normalem Verkehrsniveau
 
-*(Hinweis: „Konsistenter Traffic außer für bekannte saisonale Spitzen“ – welche Modus eignet sich dafür effizient?)*
+**Hinweis 1**: „Sehr konsistenter Traffic außer für eine geplante, bekannte saisonale Spitze“ – welcher Modus handhabt beides effizient? (Die Stärke von On-Demand ist *unvorhersehbarer* Traffic; dieser Traffic ist vorhersehbar.)
 
-*(Hinweis: „Minimieren Sie die Kosten“ während der Nebenzeiten bedeutet, dass Sie nicht für 10-facher Traffic überprovisionieren sollten.)*
+**Hinweis 2**: „Kosten minimieren“ außerhalb der Spitze bedeutet, dass man nicht ständig für das 10-fache überdimensionieren kann.
 
-*(Hinweis: DynamoDB Auto Scaling kann während des saisonalen Events hochskalieren und nach dem Event wieder herunterskalieren.)*
+**Hinweis 3**: DynamoDB Auto Scaling kann für das saisonale Event hochskalieren und danach wieder herunterskalieren.
 
 **Antwort**: C
 
-**Erläuterung**: Provisionierte Kapazität mit Auto Scaling skaliert die Tabelle basierend auf dem tatsächlichen Traffic. Während der normalen Perioden ist die Kapazität auf Normalniveau (geringe Kosten). Während des saisonalen Events erkennt Auto Scaling den Traffic-Anstieg und skaliert auf das konfigurierte Maximalniveau (bewältigt den 10-fachen Spitzenverkehr). Nach dem Event skaliert es wieder herunter. Dies ist kostengünstiger als On-Demand während normaler Perioden (On-Demand kostet mehr pro Anfrage) und kostengünstiger als die dauerhafte Provisionierung für 10-facher Traffic.
+**Erläuterung**: Provisionierte Kapazität mit Auto Scaling skaliert die Tabelle basierend auf dem tatsächlichen Traffic. Während normaler Phasen ist die Kapazität auf normalem Niveau (geringe Kosten). Während des saisonalen Events – dessen Termine im Voraus bekannt sind und dessen Traffic im Laufe des ersten Tages allmählich anwächst – verfolgt Auto Scaling den Anstieg bis zum maximal konfigurierten Niveau (bewältigt die 10-fache Spitze), und das Team kann auch das Minimum vor dem geplanten Start als zusätzliche Reserve anheben. Nach dem Event skaliert die Kapazität wieder herunter. Das ist günstiger als On-Demand während des Steady-State, der das Jahr dominiert (On-Demand kostet mehr pro Anfrage), und günstiger, als ständig für das 10-fache zu provisionieren.
 
-**Warum nicht A?** On-Demand bewältigt Spitzen ohne Drosselung, aber kostet pro Anfrage mehr als provisioniert bei vorhersehbarem, normalem Traffic.
+**Warum nicht A?** On-Demand bewältigt Spitzen ohne Drosselung, aber seine Stärke ist *unvorhersehbarer* Traffic. Hier ist der Traffic sehr konsistent und die Spitze ist geplant und allmählich – den On-Demand-Aufschlag pro Anfrage für die ~92 % des Jahres zu zahlen, die Steady-State sind, widerspricht der angegebenen Priorität, die Kosten während normaler Phasen zu minimieren.
 
-**Warum nicht B?** Die dauerhafte Provisionierung auf 10-facher Ebene bedeutet, dass 75 % der provisionierten Kapazität ungenutzt sind, 75 % der Zeit – Sie zahlen für Kapazität, die nie verwendet wird.
+**Warum nicht B?** Dauerhaft für das 10-fache zu provisionieren bedeutet, dass ~90 % der provisionierten Kapazität für ~92 % des Jahres ungenutzt bleiben – Sie zahlen für Kapazität, die nie genutzt wird.
 
-**Warum nicht D?** Reservierungseinheiten sperren Sie an normale Traffic-Niveaus. Während des 10-fachen saisonalen Events würden Sie über den reservierten Betrag hinaus gedrosselt oder Sie müssten On-Demand zusätzlich hinzufügen.
+**Warum nicht D?** Reserved Capacity Units binden Sie an normale Verkehrsniveaus. Während des 10-fachen saisonalen Events würden Sie über den reservierten Betrag hinaus gedrosselt, oder Sie müssten On-Demand obendrauf hinzufügen.
 
-*SAA-C03 Domain: Design Cost-Optimized Architectures — Task 4.3*
+*SAA-C03-Domäne: Design Cost-Optimized Architectures — Aufgabe 4.3*
 
-**Übung 3 – Architektur-Herausforderung** *(Optional)*
+**Übung 3 — Architektur-Herausforderung** *(Optional)*
 
-Nimbus evaluiert eine neue Funktion: ein Restaurant-Analysetool, das Echtzeit-Bestellzahlen, Umsatz pro Stunde und Kundendemografie anzeigt. Diese Daten würden eine Datenbank abfragen, etwa 200 Mal pro Minute (eine Abfrage pro Analyst pro Seite-Neuladen, mit 10 Analysten), und zwar mit 10 Analysten.
+Nimbus evaluiert ein neues Feature: ein Restaurant-Analyse-Dashboard, das Echtzeit-Bestellzahlen, Umsatz pro Stunde und Kundendemografie anzeigt. Diese Daten würden eine Datenbank etwa 200 Mal pro Minute abfragen (eine Abfrage pro Analyst pro Seitenaktualisierung, mit 10 Analysten).
 
-Derzeit werden die Analysedaten in Athena (S3) gespeichert. Sollten sie das Dashboard auf Athena oder in einer Datenbank erstellen? Wenn eine Datenbank, welche (Aurora, DynamoDB, Redshift)?
+Derzeit liegen die Analysedaten in Athena (S3). Sollten sie das Dashboard auf Athena bauen, oder sollten sie die Daten in eine Datenbank laden? Wenn eine Datenbank, welche (Aurora, DynamoDB, Redshift)?
 
-Berücksichtigen Sie: Abfragefrequenz, Datenfrischeanforderungen, Abfragekomplexität (Aggregationen, Joins) und Kosten pro Abfrage bei diesem Volumen.
+Berücksichtigen Sie: Abfragehäufigkeit, Anforderungen an die Datenaktualität, Abfragekomplexität (Aggregationen, Joins) und Kosten pro Abfrage bei diesem Volumen.
 
-*(Es gibt keine eindeutige richtige Antwort. Das Ziel ist es, Datenbankauswahl für Analysen zu üben.)*
+*(Es gibt keine eindeutig korrekte Antwort. Das Ziel ist, die Datenbankauswahl für Analyse-Arbeitslasten zu üben.)*
 
 ## Post-Credits-Szene
 
-Tom präsentierte die vollständige Zusammenfassung der Kostenoptimierung Maya.
+Tom präsentierte Maya die vollständige Zusammenfassung der Kostenoptimierung.
 
-Drei Monate Arbeit. 31.620 US-Dollar in jährse Sparpotenzial identifiziert. 26.400 US-Dollar in bereits umgesetzten Änderungen.
+Drei Monate Arbeit. 34.092 $ an jährlichen Einsparungen identifiziert, das meiste davon bereits umgesetzt.
 
-„Was sind die restlichen 5.220 US-Dollar?“ fragte Maya.
+„Was ist der Rest?“, fragte Maya.
 
-„Optimierungen, an denen ich noch nicht ganz sicher bin“, sagte Tom. „Die Aurora-Konfiguration könnte weiter rechtskaliert werden, aber ich möchte noch einen weiteren Quartal der Daten sammeln, bevor ich mich festlege. Und es gibt eine Datenübertragungsfrage, die ich noch nicht vollständig analysiert habe.“
+„Optimierungen, bei denen ich mir noch nicht sicher bin“, sagte Tom. „Die Aurora-Konfiguration könnte vielleicht noch weiter right-sized werden, aber ich möchte noch ein Quartal Daten, bevor ich mich festlege. Und es gibt eine Datenübertragungsfrage, die ich noch nicht vollständig analysiert habe.“
 
 „Die Netzwerkkosten.“
 
-„Ja. Das ist das nächste.“
+„Ja. Das ist als Nächstes dran.“
 
-Maya sah sich die Zahlen an. „Tom, ich möchte etwas verstehen. Diese Optimierung – Sie haben daran seit drei Monaten gearbeitet. Das ist ein erheblicher Teil Ihrer Zeit.“
+Maya betrachtete die Zahlen. „Tom, ich möchte etwas verstehen. Diese Optimierung – du bist seit drei Monaten dabei. Das ist ein erheblicher Teil deiner Zeit.“
 
 „Ungefähr 30 %.“
 
-„Und Sie haben 26.400 US-Dollar pro Jahr eingespart. Das bedeutet, dass die Optimierung sich in – was, vier Monaten Ihres Gehalts amortisiert?“
+„Und du hast etwa 34.000 $ pro Jahr gefunden. Die Optimierung amortisiert sich also in – was, ein paar Monaten deines Gehalts?“
 
-Tom sah sie an. „Ungefähr das.“
+Tom sah sie an. „Ungefähr so.“
 
-"Und jedes Jahr danach ist es reine Einsparung."
+„Und jedes Jahr danach ist es reine Einsparung.“
 
-"Oder reine Neuinvestition", sagte er. "Gleiche Wirkung."
+„Oder reine Reinvestition“, sagte er. „Gleicher Effekt.“
 
-Maya nickte. "Das ist, was ich von dir möchte. Nicht nur bei Speicher und Datenbanken – bei allem. Mache Kostenoptimierung zu einer kontinuierlichen Funktion deiner Rolle."
+Maya nickte. „Das ist es, was ich von dir möchte. Nicht nur bei Speicher und Datenbanken – bei allem. Mache Kostenoptimierung zu einer kontinuierlichen Funktion deiner Rolle.“
 
-Tom hatte noch nie seinen Job so beschrieben gehört. Er fand es sowohl genau als auch befriedigend.
+Tom hatte seinen Job noch nie so beschrieben gehört. Er fand es zugleich treffend und befriedigend.
 
-Im nächsten Kapitel: die letzte verbleibende Kostenkategorie – und die, die fast jeden überrascht.
+Im nächsten Kapitel: die letzte verbleibende Kostenkategorie – und diejenige, die fast jeden überrascht.

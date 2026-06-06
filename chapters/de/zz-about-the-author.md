@@ -8,6 +8,8 @@ Das Experiment dient nicht dazu, zu prüfen, ob KI Autoren ersetzen kann. Es geh
 
 *AI(2)M(2)IA. Ein unmögliches Buch nach dem anderen.*
 
+---
+
 ```text
 AI(2)M(2)IA
 
