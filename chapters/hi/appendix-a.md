@@ -1,386 +1,640 @@
 # परिशिष्ट A: AWS सेवाओं का त्वरित संदर्भ
 
-इस पुस्तक में प्रत्येक सेवा, जो क्रम में प्रस्तुत की गई है, उसका उपयोग करें। इसका उपयोग अध्ययन के लिए एक संदर्भ के रूप में और परीक्षा की तैयारी के दौरान त्वरित लुकअप के लिए करें।
+इस पुस्तक में शामिल हर सेवा, उसी क्रम में जिसमें उसे प्रस्तुत किया गया था। इसे अध्ययन संदर्भ के रूप में और परीक्षा की तैयारी के दौरान त्वरित लुकअप के रूप में उपयोग करें।
 
 ---
 
-## गणना
+## कंप्यूट
 
-**EC2 — एलास्टिक कंप्यूट क्लाउड** *(अध्याय 4)*
+**EC2 — Elastic Compute Cloud** *(अध्याय 4)*
 
-क्लाउड में वर्चुअल मशीनें। आप इंस्टेंस प्रकार (सीपीयू, मेमोरी, स्टोरेज), ऑपरेटिंग सिस्टम और क्षेत्र चुनते हैं। आप प्रति घंटे (ऑन-डिमांड), प्रति प्रतिबद्धता (आरक्षित उदाहरण / बचत योजनाएं), या अतिरिक्त क्षमता स्लॉट (स्पॉट) के लिए भुगतान करते हैं। यह मूलभूत गणना मूल है।
+क्लाउड में वर्चुअल मशीनें। आप इंस्टेंस प्रकार (CPU, मेमोरी, स्टोरेज), ऑपरेटिंग सिस्टम और रीजन चुनते हैं। आप प्रति घंटा (On-Demand), प्रति प्रतिबद्धता (Reserved Instances / Savings Plans), या प्रति अतिरिक्त-क्षमता स्लॉट (Spot) के हिसाब से भुगतान करते हैं। यह मूलभूत कंप्यूट प्रिमिटिव है।
 
-मुख्य अवधारणाएँ: AMI (एमेज़ॅन मशीन इमेज), इंस्टेंस प्रकार (टी3, एम6जी, आर6जी, सी6जी परिवार), कुंजी जोड़े, इंस्टेंस प्रोफाइल, प्लेसमेंट समूह।
+मुख्य अवधारणाएँ: AMI (Amazon Machine Image), इंस्टेंस प्रकार (t3, m6g, r6g, c6g परिवार), key pairs, instance profiles, placement groups।
 
-परीक्षा संकेत: जब एक परिदृश्य में लगातार, स्थितिजन्य या लंबे समय तक चलने वाली गणना की आवश्यकता होती है - EC2 या ECS। जब एक परिदृश्य में अल्पकालिक, घटना-प्रेरित या शून्य-आराम लागत वाली गणना की आवश्यकता होती है - Lambda।
+परीक्षा संकेत: जब किसी परिदृश्य में स्थायी, स्टेटफुल, या लंबे समय तक चलने वाली कंप्यूट की आवश्यकता हो — EC2 या ECS। जब किसी परिदृश्य में अल्पकालिक, इवेंट-ट्रिगर्ड, या शून्य-निष्क्रिय-लागत वाली कंप्यूट की आवश्यकता हो — Lambda।
 
 ---
 
-**ऑटो स्केलिंग + एप्लिकेशन लोड बैलेंसर** *(अध्याय 7)*
+**Auto Scaling + Application Load Balancer** *(अध्याय 7)*
 
-ऑटो स्केलिंग समूह (एएसजी) लोड के आधार पर EC2 उदाहरणों को जोड़ते और हटाते हैं। एप्लिकेशन लोड बैलेंसर (एएलबी) ट्रैफ़िक को उदाहरणों में वितरित करते हैं और पथ या होस्ट द्वारा रूट करते हैं। एक साथ वे क्षैतिज स्केलिंग परत बनाते हैं।
+Auto Scaling Groups (ASGs) लोड के आधार पर EC2 इंस्टेंस जोड़ते और हटाते हैं। Application Load Balancers (ALBs) ट्रैफ़िक को इंस्टेंसों में वितरित करते हैं और पथ या होस्ट के आधार पर रूट करते हैं। साथ मिलकर ये क्षैतिज स्केलिंग परत बनाते हैं।
 
-मुख्य अवधारणाएँ: लॉन्च टेम्पलेट, स्केलिंग नीतियाँ (लक्ष्य ट्रैकिंग, चरण, अनुसूचित), स्वास्थ्य जांच, एएलबी लक्ष्य समूह, श्रोता नियम, भारित रूटिंग।
+मुख्य अवधारणाएँ: Launch template, scaling policies (target tracking, step, scheduled), health checks, ALB target groups, listener rules, weighted routing।
 
-परीक्षा संकेत: "बदलते लोड" या "एज़ के भीतर उच्च उपलब्धता" → एएसजी + एएलबी।
+परीक्षा संकेत: "Handle variable load" या "high availability across AZs" → ASG + ALB।
 
 ---
 
 **Lambda** *(अध्याय 20)*
 
-सर्वरलेस फ़ंक्शन। आप कोड लिखते हैं; AWS इसे घटनाओं के जवाब में चलाता है। प्रबंधित करने के लिए सर्वर नहीं हैं। आप प्रति आह्वान और प्रति मिलीसेकंड के निष्पादन समय के लिए भुगतान करते हैं। यह हजारों समवर्ती निष्पादन के लिए स्वचालित रूप से स्केल करता है।
+सर्वरलेस फ़ंक्शन। आप कोड लिखते हैं; AWS उसे इवेंट्स के जवाब में चलाता है। प्रबंधित करने के लिए कोई सर्वर नहीं। आप प्रति इन्वोकेशन और निष्पादन के प्रति मिलीसेकंड भुगतान करते हैं। यह हज़ारों समवर्ती निष्पादनों तक स्वचालित रूप से स्केल करता है।
 
-मुख्य अवधारणाएँ: घटना स्रोत (API गेटवे, S3, क्यूएस, इवेंटब्रिज, कीनेस), भूमिका, संगामी सीमाएँ, आरक्षित और प्रावधानित संगामी, कोल्ड स्टार्ट, परतें, 15-मिनट की अधिकतम अवधि।
+मुख्य अवधारणाएँ: Event sources (API Gateway, S3, SQS, EventBridge, Kinesis), execution role, concurrency limits, reserved और provisioned concurrency, cold start, Layers, 15-मिनट अधिकतम अवधि।
 
-परीक्षा संकेत: "सर्वरलेस," "घटना-आधारित," "अल्प-अवधि के कार्य," "कोई निष्क्रिय लागत नहीं" → Lambda।
-
----
-
-**ECS — एलास्टिक कंटेनर सेवा** *(अध्याय 21)*
-
-AWS पर डॉकर कंटेनरों को चलाता है। दो लॉन्च प्रकार: EC2 (आप होस्ट का प्रबंधन करते हैं) और फ़गेरेट (AWS होस्ट का प्रबंधन करता है)। ECS टास्क परिभाषाओं, सेवाओं, क्लस्टर शेड्यूलिंग और लोड बैलेंसर और सेवा खोज के साथ एकीकरण का प्रबंधन करता है।
-
-मुख्य अवधारणाएँ: टास्क परिभाषा, ECS सेवा, फ़गेरेट बनाम EC2 लॉन्च प्रकार, ईसीआर (कंटेनर रजिस्ट्री), टास्क IAM भूमिका, सेवा ऑटो स्केलिंग।
-
-परीक्षा संकेत: "कंटेनरीकृत कार्यभार," "माइक्रोसेवा," "डॉकर ऑन AWS" → ECS (आमतौर पर फ़गेरेट के लिए सर्वरलेस कंटेनरों के लिए)।
+परीक्षा संकेत: "Serverless," "event-driven," "short-duration tasks," "no idle cost" → Lambda।
 
 ---
 
-**EKS — एलास्टिक कूबर्नेट्स सेवा** *(अध्याय 21)*
+**ECS — Elastic Container Service** *(अध्याय 21)*
 
-प्रबंधित कूबर्नेट्स। AWS नियंत्रण प्लेन चलाता है; आप वर्कर नोड्स (EC2 या फ़गेरेट) चलाते हैं। जब आपके टीम के पास कूबर्नेट्स का उपयोग करने का अनुभव हो या कूबर्नेट्स-विशिष्ट सुविधाओं वाले कार्यभार हों तो EKS का उपयोग करें।
+AWS पर Docker कंटेनर चलाता है। दो लॉन्च प्रकार: EC2 (आप होस्ट प्रबंधित करते हैं) और Fargate (AWS होस्ट प्रबंधित करता है)। ECS task definitions, services, cluster scheduling, और load balancers तथा service discovery के साथ एकीकरण प्रबंधित करता है।
 
-परीक्षा संकेत: "कूबर्नेट्स," "मौजूदा K8s कार्यभार को स्थानांतरित करने की आवश्यकता" → EKS। "केवल कंटेनरों की आवश्यकता है बिना K8s ओवरहेड के" → ECS।
+मुख्य अवधारणाएँ: Task definition, ECS service, Fargate बनाम EC2 launch type, ECR (container registry), task IAM role, service auto scaling।
 
----
-
-## भंडारण
-
-**S3 — सरल भंडारण सेवा** *(अध्याय 5)*
-
-ऑब्जेक्ट स्टोरेज। असीमित क्षमता, 99.999999999% (ग्यारह निन) की दृढ़ता। फ़ाइलों को बकेट में वस्तुओं के रूप में संग्रहीत करता है। बकेट क्षेत्र में रहते हैं। वस्तुएं 0 बाइट्स से 5TB तक हो सकती हैं।
-
-मुख्य अवधारणाएँ: बकेट नीति, वस्तु ACL, संस्करण, स्टेटिक वेबसाइट होस्टिंग, प्रेसिग्न्ड यूआरएल, मल्टीपार्ट अपलोड, ट्रांसफर एक्सीलरेशन, स्टोरेज क्लासेस (स्टैण्डर्ड, इंटेलिजेंट-टियरिंग, स्टैण्डर्ड-आईए, वन ज़ोन-आईए, ग्लेशियर इंस्टेंट रिट्रीवल, ग्लेशियर फ़्लेक्सिबल रिट्रीवल, ग्लेशियर डीप आर्काइव)।
-
-परीक्षा संकेत: "फ़ाइलों को स्टोर और पुनर्प्राप्त करें," "स्टैटिक एसेट्स," "बैकअप," "डेटा झील" → S3। सही स्टोरेज क्लास एक्सेस आवृत्ति और पुनर्प्राप्ति गति पर निर्भर करता है।
+परीक्षा संकेत: "Containerized workloads," "microservices," "Docker on AWS" → ECS (सर्वरलेस कंटेनरों के लिए आमतौर पर Fargate)।
 
 ---
 
-**EBS — एलास्टिक ब्लॉक स्टोर** *(अध्याय 6)*
+**EKS — Elastic Kubernetes Service** *(अध्याय 21)*
 
-एक एकल EC2 उदाहरण से जुड़े ब्लॉक स्टोरेज। यह एक हार्ड ड्राइव की तरह काम करता है। उदाहरण जीवनचक्र के स्वतंत्र रूप से बना रहता है (आप इसे अलग कर सकते हैं और फिर से संलग्न कर सकते हैं)। सबसे आम प्रकार: gp3 (सामान्य उद्देश्य SSD, डिफ़ॉल्ट), io2 (डेटाबेस के लिए प्रावधानित IOPS), st1 (अनुक्रमिक रीड के लिए थ्रूपुट-ऑप्टिमाइज़्ड HDD)।
+प्रबंधित Kubernetes। AWS control plane चलाता है; आप worker nodes (EC2 या Fargate) चलाते हैं। EKS का उपयोग तब करें जब आपकी टीम पहले से Kubernetes का उपयोग करती है या ऐसे workloads हैं जिन्हें Kubernetes-विशिष्ट सुविधाओं की आवश्यकता है।
 
-मुख्य अवधारणाएँ: स्नैपशॉट (अंशकालिक, S3 में संग्रहीत), एन्क्रिप्शन (KMS), मल्टी-अटैच (io1/io2 केवल), IOPS और थ्रूपुट प्रावधान।
-
-परीक्षा संकेत: "EC2 के लिए लगातार भंडारण," "डेटाबेस भंडारण," "कम-विलंबता ब्लॉक एक्सेस की आवश्यकता" → EBS।
+परीक्षा संकेत: "Kubernetes," "need to migrate existing K8s workloads" → EKS। "Just need containers without K8s overhead" → ECS।
 
 ---
 
-**EFS — एलास्टिक फाइल सिस्टम** *(अध्याय 6)*
+**AWS Batch** *(अध्याय 21)*
 
-एक साझा फ़ाइल सिस्टम, जो कई EC2 उदाहरणों से एक साथ एक्सेस किया जा सकता है। NFS प्रोटोकॉल। स्वचालित रूप से स्केल करता है। EBS की तुलना में प्रति GB अधिक महंगा। दो स्टोरेज क्लासेस: स्टैंडर्ड और अनियमित एक्सेस। इंटेलिजेंट-टियरिंग स्वचालित रूप से एक्सेस आवृत्ति के आधार पर फ़ाइलों को टियर के बीच ले जाता है।
+Docker कंटेनरों के लिए प्रबंधित बैच कंप्यूट। आप एक job (Docker image + command), एक job queue, और एक compute environment (EC2 या Fargate) परिभाषित करते हैं। AWS Batch कंप्यूट को स्वचालित रूप से प्रावधानित और स्केल करता है, फिर job समाप्त होने पर उसे समाप्त कर देता है। लागत कम करने के लिए Spot Instances का समर्थन करता है।
 
-परीक्षा संकेत: "कई EC2 उदाहरणों को समान फ़ाइलों की आवश्यकता है," "NFS" → EFS।
+मुख्य अवधारणाएँ: Job definition (क्या चलाना है), job queue (jobs कहाँ प्रतीक्षा करते हैं), compute environment (EC2 या Fargate, On-Demand या Spot), array jobs (एक ही job की कई समानांतर प्रतियाँ चलाना)।
+
+परीक्षा संकेत: "Batch processing that exceeds Lambda's 15-minute timeout," "finite compute jobs on containers," "HPC workloads on AWS" → AWS Batch।
 
 ---
 
-**S3 स्टोरेज क्लासेस और लाइफसाइकिल नीतियां** *(अध्याय 23)*
+**AWS Outposts** *(अध्याय 2)*
 
-S3 इंटेलिजेंट-टियरिंग एक्सेस आवृत्ति के आधार पर वस्तुओं को टियर के बीच स्वचालित रूप से ले जाता है। लाइफसाइकिल नीतियां आयु नियमों के आधार पर वस्तुओं को टियर के बीच स्थानांतरित करती हैं (स्टैण्डर्ड → स्टैण्डर्ड-आईए → ग्लेशियर)। ग्लेशियर स्टोरेज क्लासेस में पुनर्प्राप्ति विलंबता मिनट (ग्लेशियर इंस्टेंट) से 12 घंटे (ग्लेशियर डीप आर्काइव) तक होती है।
+आपके अपने डेटा सेंटर या को-लोकेशन सुविधा में स्थापित AWS हार्डवेयर का पूरी तरह प्रबंधित रैक। सार्वजनिक क्लाउड (EC2, EBS, RDS, EKS, Outposts पर S3) जैसी ही AWS सेवाएँ, APIs और टूलिंग चलाता है, लेकिन भौतिक रूप से ऑन-प्रिमाइसेस।
 
-Exam संकेत: "कम भंडारण लागत के लिए अनियमित रूप से एक्सेस किए गए डेटा को कम करें" → जीवनचक्र नीतियां, बुद्धिमान-स्तर, या ग्लेशियर।
+मुख्य अवधारणाएँ: ऑन-प्रिमाइसेस वही AWS APIs, AWS स्थापना और patching प्रबंधित करता है, ग्राहक रैक स्पेस और बिजली प्रदान करता है, Local Gateway (LGW) Outposts को ऑन-प्रिमाइसेस नेटवर्क से जोड़ता है।
+
+परीक्षा संकेत: "Run AWS in your own data center," "data residency requires compute to stay on-premises," "AWS APIs with no internet dependency" → Outposts।
+
+---
+
+**AWS Wavelength** *(अध्याय 2)*
+
+5G दूरसंचार प्रदाताओं के नेटवर्क के भीतर तैनात AWS इन्फ्रास्ट्रक्चर। Wavelength Zones 5G नेटवर्क एज पर स्थित होते हैं, जो मोबाइल डिवाइसों के लिए सिंगल-डिजिट मिलीसेकंड लेटेंसी सक्षम करते हैं।
+
+मुख्य अवधारणाएँ: Wavelength Zones दूरसंचार नेटवर्कों के भीतर AWS Regions के विस्तार हैं, ट्रैफ़िक डिवाइस और Wavelength Zone के बीच कैरियर नेटवर्क पर ही रहता है।
+
+परीक्षा संकेत: "Single-digit-millisecond latency to 5G mobile users," "mobile AR/VR," "real-time gaming on mobile," "autonomous vehicle telemetry" → Wavelength।
+
+---
+
+**AWS Application Migration Service (MGN)** *(अध्याय 25)*
+
+Rehost (lift-and-shift) माइग्रेशन सेवा। एक एजेंट स्रोत सर्वरों की डिस्क को ब्लॉक-दर-ब्लॉक AWS में एक कम-लागत वाले स्टेजिंग क्षेत्र में दोहराता है; आप माँग पर परीक्षण प्रतियाँ लॉन्च करते हैं; cutover पर, MGN दोहराए गए सर्वरों को नेटिव EC2 इंस्टेंस में बदल देता है। किसी एप्लिकेशन बदलाव की आवश्यकता नहीं।
+
+मुख्य अवधारणाएँ: ब्लॉक-स्तरीय निरंतर प्रतिकृति, स्टेजिंग क्षेत्र, cutover से पहले परीक्षण लॉन्च, "7 Rs" माइग्रेशन रणनीतियाँ (MGN = rehost)।
+
+परीक्षा संकेत: "Migrate hundreds of VMs quickly with no code changes," "lift-and-shift servers to EC2" → MGN। DataSync *files* ले जाता है; DMS *databases* ले जाता है; MGN *whole servers* ले जाता है।
+
+---
+
+## स्टोरेज
+
+**S3 — Simple Storage Service** *(अध्याय 5)*
+
+ऑब्जेक्ट स्टोरेज। असीमित क्षमता, 99.999999999% (ग्यारह नाइन) टिकाऊपन। फ़ाइलों को buckets में objects के रूप में संग्रहीत करता है। Buckets एक रीजन में रहते हैं। Objects 0 बाइट से 5TB तक हो सकते हैं।
+
+मुख्य अवधारणाएँ: Bucket policy, object ACL, versioning, static website hosting, presigned URLs, multipart upload, Transfer Acceleration, storage classes (Standard, Intelligent-Tiering, Standard-IA, One Zone-IA, Glacier Instant Retrieval, Glacier Flexible Retrieval, Glacier Deep Archive, साथ ही single-AZ, latency-critical directory-bucket workloads के लिए S3 Express One Zone)।
+
+परीक्षा संकेत: "Store and retrieve files," "static assets," "backups," "data lake" → S3। सही storage class एक्सेस आवृत्ति और retrieval गति पर निर्भर करती है।
+
+---
+
+**EBS — Elastic Block Store** *(अध्याय 6)*
+
+एकल EC2 इंस्टेंस से जुड़ा ब्लॉक स्टोरेज। एक हार्ड ड्राइव की तरह काम करता है। इंस्टेंस के जीवनचक्र से स्वतंत्र रूप से बना रहता है (आप इसे detach और re-attach कर सकते हैं)। सबसे आम प्रकार: gp3 (general purpose SSD, डिफ़ॉल्ट), io2 (databases के लिए provisioned IOPS), st1 (sequential reads के लिए throughput-optimized HDD)।
+
+मुख्य अवधारणाएँ: Snapshots (incremental, S3 में संग्रहीत), encryption (KMS), Multi-Attach (केवल io1/io2), IOPS और throughput provisioning।
+
+परीक्षा संकेत: "Persistent storage for EC2," "database storage," "requires low-latency block access" → EBS।
+
+---
+
+**EFS — Elastic File System** *(अध्याय 6)*
+
+साझा फ़ाइल सिस्टम, कई EC2 इंस्टेंसों से एक साथ सुलभ। NFS प्रोटोकॉल। स्वचालित रूप से स्केल करता है। प्रति GB EBS से अधिक महँगा। Storage classes में Standard, Infrequent Access, और Archive शामिल हैं। Intelligent-Tiering फ़ाइलों को स्वचालित रूप से स्थानांतरित करता है।
+
+परीक्षा संकेत: "Shared file system," "multiple EC2 instances need the same files," "NFS" → EFS।
+
+---
+
+**FSx परिवार** *(अध्याय 6)*
+
+नामित तकनीकों के लिए प्रबंधित फ़ाइल सर्वर। FSx for Windows File Server: SMB प्रोटोकॉल, NTFS, Active Directory एकीकरण, Multi-AZ। FSx for Lustre: HPC/ML के लिए समानांतर उच्च-प्रदर्शन फ़ाइल सिस्टम, S3 objects को फ़ाइलों के रूप में प्रस्तुत करता है (lazy loading)। FSx for NetApp ONTAP: multi-protocol (NFS + SMB + iSCSI), snapshots, SnapMirror प्रतिकृति। FSx for OpenZFS: low-latency NFS, तत्काल snapshots और writable clones।
+
+परीक्षा संकेत: "SMB/Active Directory" → FSx for Windows। "HPC/ML training on S3 data" → FSx for Lustre। "NFS and SMB to the same data / NetApp migration" → FSx for ONTAP। "ZFS migration / instant clones" → FSx for OpenZFS।
+
+---
+
+**S3 Storage Classes और Lifecycle Policies** *(अध्याय 23)*
+
+S3 Intelligent-Tiering एक्सेस आवृत्ति के आधार पर objects को access tiers के बीच स्वचालित रूप से स्थानांतरित करता है। Lifecycle policies आयु नियमों के आधार पर objects को classes के बीच (Standard → Standard-IA → Glacier) स्थानांतरित करती हैं। Glacier storage classes में retrieval विलंब मिनटों (Glacier Instant) से लेकर 12 घंटे (Glacier Deep Archive) तक होता है।
+
+परीक्षा संकेत: "Reduce storage costs for infrequently accessed data" → lifecycle policies, Intelligent-Tiering, या Glacier।
+
+---
+
+**AWS Storage Gateway** *(अध्याय 6)*
+
+हाइब्रिड स्टोरेज सेवा जो ऑन-प्रिमाइसेस वातावरण को AWS स्टोरेज से जोड़ती है। एप्लिकेशन जिन प्रोटोकॉल को पहले से समझते हैं उन्हीं पर स्टोरेज प्रस्तुत करती है, जबकि डेटा को S3, S3 Glacier, या EBS snapshots के रूप में बनाए रखती है।
+
+मुख्य अवधारणाएँ: File Gateway (NFS/SMB → S3), Volume Gateway (iSCSI, cached या stored mode), Tape Gateway (virtual tape library → Glacier)।
+
+परीक्षा संकेत: "On-premises application needs cloud storage without code changes" → Storage Gateway। "Replace tape backup" → Tape Gateway।
+
+---
+
+**AWS DataSync** *(अध्याय 25)*
+
+एजेंट-आधारित डेटा माइग्रेशन और प्रतिकृति सेवा। एक हल्का एजेंट NFS या SMB पर ऑन-प्रिमाइसेस फ़ाइल सर्वरों से जुड़ता है और shares को S3, EFS, या FSx में सिंक्रनाइज़ करता है — scheduling, bandwidth throttling, और integrity verification अंतर्निहित रूप से।
+
+मुख्य अवधारणाएँ: DataSync agent (ऑन-प्रिमाइसेस VM या EC2), NFS/SMB स्रोत, S3/EFS/FSx गंतव्य, scheduled incremental transfers।
+
+परीक्षा संकेत: "Migrate or continuously sync large numbers of files from on-premises NAS to AWS over the network" → DataSync।
+
+---
+
+**AWS Transfer Family** *(अध्याय 25)*
+
+स्टोरेज गंतव्य के रूप में S3 या EFS द्वारा समर्थित पूरी तरह प्रबंधित SFTP, FTPS, और FTP सर्वर। क्लाइंट अपने मौजूदा SFTP सॉफ़्टवेयर से जुड़ते हैं; अपलोड की गई फ़ाइलें सीधे एक bucket या फ़ाइल सिस्टम में पहुँचती हैं।
+
+मुख्य अवधारणाएँ: Managed endpoint (वैकल्पिक रूप से static IP के साथ), S3 या EFS backing storage, बाहरी भागीदारों के लिए मौजूदा-प्रोटोकॉल संगतता।
+
+परीक्षा संकेत: "Partners must keep uploading via SFTP, but files should land in S3" → Transfer Family।
+
+---
+
+**AWS Snow Family** *(अध्याय 25)*
+
+ऑफ़लाइन, थोक डेटा माइग्रेशन के लिए भौतिक डेटा स्थानांतरण उपकरण। Snowball Edge Storage Optimized: 80 TB प्रयोग योग्य, मज़बूत आवरण, आपके स्थान पर भेजा जाता है; आप स्थानीय रूप से डेटा लोड करते हैं और इसे S3 में अंतर्ग्रहण के लिए वापस भेजते हैं।
+
+मुख्य अवधारणाएँ: पहले transfer गणित करें — यदि नेटवर्क transfer में लगभग एक सप्ताह या अधिक लगेगा, तो एक भौतिक उपकरण जीतता है। *विरासत नोट (2026)*: AWS इस परिवार को सेवानिवृत्त करता रहा है — Snowmobile (2024) और Snowcone (late 2024) समाप्त हो चुके हैं, और Snow उपकरण नवंबर 2025 में नए ग्राहकों के लिए बंद हो गए (AWS अब DataSync और Data Transfer Terminals की ओर इशारा करता है)। SAA-C03 प्रश्न बैंक इससे पहले का है, इसलिए परीक्षा अभी भी उत्तर के रूप में Snowball की अपेक्षा करती है।
+
+परीक्षा संकेत: "Petabyte-scale migration," "limited bandwidth, weeks of transfer time" → Snow Family।
+
+---
+
+**AWS Backup** *(अध्याय 18 और 23)*
+
+EBS, RDS, DynamoDB, EFS, और Storage Gateway में केंद्रीकृत, नीति-आधारित backup सेवा। Backup plans schedules और retention परिभाषित करते हैं; vaults recovery points संग्रहीत करते हैं।
+
+मुख्य अवधारणाएँ: Backup plans और vaults, cross-region और cross-account प्रतियाँ, अपरिवर्तनीयता के लिए Vault Lock।
+
+परीक्षा संकेत: "Centralize and automate backups across multiple AWS services," "cross-account backup copies for ransomware/account-compromise protection" → AWS Backup।
 
 ---
 
 ## डेटाबेस
 
-**RDS — संबंधपरक डेटाबेस सेवा** *(अध्याय 8)*
+**RDS — Relational Database Service** *(अध्याय 8)*
 
-प्रबंधित संबंधपरक डेटाबेस। समर्थित इंजन: MySQL, PostgreSQL, MariaDB, Oracle, SQL सर्वर, और Aurora (AWS का मालिकाना इंजन)। AWS बैकअप, पैचिंग, विफलताओं का पुनर्प्राप्ति, और प्रतिकृति को संभालता है। आप स्कीमा डिज़ाइन, क्वेरी और उदाहरण आकार का प्रबंधन करते हैं।
+प्रबंधित रिलेशनल डेटाबेस। समर्थित engines: MySQL, PostgreSQL, MariaDB, Oracle, SQL Server, और Aurora (AWS का स्वामित्व वाला engine)। AWS backups, patching, failover, और प्रतिकृति संभालता है। आप schema design, queries, और instance sizing प्रबंधित करते हैं।
 
-प्रमुख अवधारणाएँ: मल्टी-एज़ तैनाती (स्वचालित विफलता पुनर्प्राप्ति, सिंक्रोनस प्रतिकृति), रीड रेप्लिका (असिंक्रोनस, रीड स्केलिंग के लिए), स्वचालित बैकअप (1-35 दिनों का प्रतिधारण), मैनुअल स्नैपशॉट (जब तक हटाए नहीं जाते तब तक बनाए रखा जाता है), RDS प्रॉक्सी (कनेक्शन पूलिंग)।
+मुख्य अवधारणाएँ: Multi-AZ deployment (स्वचालित failover, synchronous प्रतिकृति), Read Replicas (asynchronous, read scaling के लिए), automated backups (1-35 दिन retention), manual snapshots (हटाए जाने तक रखे जाते हैं), RDS Proxy (connection pooling)।
 
-Exam संकेत: "संबंधपरक डेटाबेस," "एसीआईडी लेनदेन," "मौजूदा एसक्यूएल वर्कलोड" → RDS या Aurora।
+परीक्षा संकेत: "Relational database," "ACID transactions," "existing SQL workload" → RDS या Aurora।
 
 ---
 
 **Aurora** *(अध्याय 24)*
 
-AWS का संबंधपरक डेटाबेस इंजन, MySQL और PostgreSQL के साथ संगत। 3 एज़ में 6 प्रतियां में डेटा को दोहराने वाला वितरित स्टोरेज इंजन। आमतौर पर MySQL से 5 गुना तेज। Aurora सर्वरलेस v2 स्वचालित रूप से क्षमता स्केल करता है (ACU - Aurora क्षमता इकाइयों में मापा जाता है)।
+AWS का रिलेशनल डेटाबेस engine, MySQL और PostgreSQL के साथ संगत। वितरित स्टोरेज engine जो डेटा को 3 AZs में 6 प्रतियों में दोहराता है। आमतौर पर MySQL से 5x तेज़। Aurora Serverless v2 क्षमता को स्वचालित रूप से स्केल करता है (ACUs में मापा जाता है — Aurora Capacity Units) और, समर्थित engine संस्करणों पर, जब कोई कनेक्शन खुला नहीं रखा जाता तब 0 ACUs तक auto-pause कर सकता है।
 
-प्रमुख अवधारणाएँ: Aurora क्लस्टर (लेखक + 15 रीड एंडपॉइंट), Aurora ग्लोबल डेटाबेस (अल्प 1 सेकंड के प्रतिकृति विलंबता के साथ क्रॉस-क्षेत्र रीड रेप्लिका), Aurora सर्वरलेस v2।
+मुख्य अवधारणाएँ: Aurora cluster (writer + एकल reader endpoint के पीछे 15 तक Aurora Replicas), Aurora Global Database (< 1 सेकंड प्रतिकृति लैग के साथ cross-region read replicas), Aurora Serverless v2, ACUs, auto-pause/resume व्यवहार।
 
-Exam संकेत: "उच्च-प्रदर्शन संबंधपरक डेटाबेस," "MySQL/PostgreSQL के साथ संगत," "वैश्विक रीड," "परिवर्तनशील वर्कलोड" → Aurora।
+परीक्षा संकेत: "High-performance relational database," "MySQL/PostgreSQL compatible," "global reads," "variable workload" → Aurora।
 
 ---
 
 **DynamoDB** *(अध्याय 9)*
 
-पूर्ण रूप से प्रबंधित NoSQL डेटाबेस। कुंजी-मूल्य और दस्तावेज़ मॉडल। एकल-अंक मिलीसेकंड प्रदर्शन के साथ किसी भी थ्रूपुट को स्केल करता है। दो क्षमता मोड: ऑन-डिमांड (प्रत्येक अनुरोध के लिए भुगतान) और प्रावधानित (प्रति घंटे क्षमता इकाई के लिए भुगतान, ऑटो स्केलिंग के साथ)।
+पूरी तरह प्रबंधित NoSQL डेटाबेस। Key-value और document मॉडल। single-digit मिलीसेकंड प्रदर्शन के साथ किसी भी throughput तक स्केल करता है। दो capacity modes: on-demand (प्रति अनुरोध भुगतान) और provisioned (प्रति capacity unit प्रति घंटा भुगतान, Auto Scaling के साथ)।
 
-प्रमुख अवधारणाएँ: विभाजन कुंजी (आवश्यक), क्रम कुंजी (वैकल्पिक), ग्लोबल सेकेंडरी इंडेक्स (GSI), लोकल सेकेंडरी इंडेक्स (LSI), DynamoDB स्ट्रीम (परिवर्तन डेटा कैप्चर), DynamoDB एक्सेलेरेटर (DAX) — मेमोरी कैश, TTL (समय-से-जीवन), लेनदेन।
+मुख्य अवधारणाएँ: Partition key (आवश्यक), sort key (वैकल्पिक), Global Secondary Index (GSI), Local Secondary Index (LSI), DynamoDB Streams (change data capture), DynamoDB Accelerator (DAX) — in-memory cache, TTL (Time to Live), transactions।
 
-Exam संकेत: "उच्च-थ्रूपुट कुंजी-आधारित एक्सेस," "लचीला स्कीमा," "सर्वरलेस NoSQL" → DynamoDB।
+परीक्षा संकेत: "High-throughput key-based access," "flexible schema," "serverless NoSQL" → DynamoDB।
 
 ---
 
-**एलास्टिक कैश** *(अध्याय 10)*
+**ElastiCache** *(अध्याय 10)*
 
-प्रबंधित इन-मेमोरी कैशिंग। दो इंजन: Redis (स्थिर, पब/सब, Lua स्क्रिप्टिंग, डेटा संरचनाएं) और Memcached (शुद्ध कैश, सरल, बहु-थ्रेडेड)। डेटाबेस लोड को कम करने और अक्सर पढ़े जाने वाले डेटा को माइक्रोसेकंड में देने के लिए उपयोग करें।
+प्रबंधित in-memory caching। दो engines: Redis (persistent, pub/sub, Lua scripting, data structures) और Memcached (शुद्ध cache, सरल, multi-threaded)। डेटाबेस लोड कम करने और अक्सर पढ़े जाने वाले डेटा को माइक्रोसेकंड में सर्व करने के लिए उपयोग करें।
 
-प्रमुख अवधारणाएँ: कैश-साइड पैटर्न, राइट-थ्रू पैटर्न, विलोपन नीतियां, TTL, क्लस्टर मोड (Redis), मल्टी-एज़ के साथ स्वचालित विफलता पुनर्प्राप्ति।
+मुख्य अवधारणाएँ: Cache-aside pattern, write-through pattern, eviction policies, TTL, cluster mode (Redis), स्वचालित failover के साथ Multi-AZ।
 
-Exam संकेत: "डेटाबेस लोड को कम करें," "सब-मिलीसेकंड रीड विलंबता," "सत्र प्रबंधन," "वास्तविक समय लीडरबोर्ड" → एलास्टिक कैश Redis।
+परीक्षा संकेत: "Reduce database load," "sub-millisecond read latency," "session management," "real-time leaderboard" → ElastiCache Redis।
+
+---
+
+**Amazon MemoryDB for Redis** *(अध्याय 10)*
+
+टिकाऊ, Redis-संगत, in-memory प्राथमिक डेटाबेस। ElastiCache के विपरीत (जो एक cache है जहाँ डेटा हानि स्वीकार्य है), MemoryDB एक Multi-AZ transaction log संग्रहीत करता है और टिकाऊपन की गारंटी देता है। आप MemoryDB को अपने प्राथमिक डेटाबेस के रूप में उपयोग कर सकते हैं — न कि केवल किसी अन्य डेटाबेस के सामने एक cache के रूप में।
+
+मुख्य अवधारणाएँ: Redis API संगतता, Multi-AZ transaction log (टिकाऊपन गारंटी), in-memory प्रदर्शन, प्राथमिक डेटाबेस (cache परत नहीं)।
+
+परीक्षा संकेत: "Redis-compatible AND data loss is not acceptable," "durable in-memory database" → MemoryDB। "Redis as cache, data loss acceptable" → ElastiCache Redis।
+
+---
+
+**Purpose-Built Databases** *(अध्याय 9, 10, और 24)*
+
+डेटा के आकार को engine से मिलाएँ। DocumentDB: MongoDB-संगत documents। Neptune: graph database (relationships, traversals — Gremlin/SPARQL)। Keyspaces: Cassandra-संगत wide-column। Timestream: time-series (वर्तमान पेशकश: Timestream for InfluxDB)। MemoryDB: टिकाऊ Redis-संगत *primary* database (बनाम ElastiCache = cache)। QLDB ("immutable cryptographic ledger") 2025 में बंद कर दिया गया — इसे एक विरासत distractor मानें।
+
+परीक्षा संकेत: "social graph / recommendations / fraud rings" → Neptune। "MongoDB" → DocumentDB। "Cassandra" → Keyspaces। "IoT telemetry over time" → Timestream।
+
+---
+
+**AWS DMS — Database Migration Service** *(अध्याय 8)*
+
+न्यूनतम डाउनटाइम के साथ डेटाबेस को AWS में माइग्रेट करता है। full load (प्रारंभिक प्रतिलिपि) के साथ-साथ CDC (Change Data Capture) का समर्थन करता है ताकि माइग्रेशन चलने के दौरान स्रोत और लक्ष्य को सिंक में रखा जा सके। समान engine प्रकार के बीच माइग्रेट करते समय (MySQL → MySQL, PostgreSQL → PostgreSQL), DMS का सीधे उपयोग करें। विभिन्न engine प्रकारों के बीच माइग्रेट करते समय (Oracle → Aurora PostgreSQL), पहले schema को बदलने के लिए AWS Schema Conversion Tool (SCT) का उपयोग करें, फिर डेटा के लिए DMS।
+
+मुख्य अवधारणाएँ: Replication instance, source और target endpoints, full load + CDC, heterogeneous migrations के लिए SCT (Schema Conversion Tool)।
+
+परीक्षा संकेत: "Migrate database with minimal downtime" → DMS। "Oracle to Aurora" या कोई भी heterogeneous माइग्रेशन → SCT + DMS। "Same engine, same type" → DMS direct।
 
 ---
 
 ## नेटवर्किंग
 
-**VPC — वर्चुअल प्राइवेट क्लाउड** *(अध्याय 11)*
+**VPC — Virtual Private Cloud** *(अध्याय 11)*
 
-AWS में एक अलग नेटवर्क। AWS में सभी एज़ में फैला है। आप आईपी एड्रेस स्पेस (CIDR ब्लॉक) को परिभाषित करते हैं, सबनेट (सार्वजनिक या निजी) बनाते हैं, रूट टेबल कॉन्फ़िगर करते हैं, और सुरक्षा समूहों और NACLs के माध्यम से एक्सेस को नियंत्रित करते हैं।
+AWS के भीतर एक पृथक नेटवर्क। रीजन में सभी AZs तक फैला हुआ। आप IP पता स्पेस (CIDR block) परिभाषित करते हैं, subnets (public या private) बनाते हैं, route tables कॉन्फ़िगर करते हैं, और security groups तथा NACLs के माध्यम से एक्सेस नियंत्रित करते हैं।
 
-प्रमुख अवधारणाएँ: सार्वजनिक सबनेट (इंटरनेट गेटवे पर रूट), निजी सबनेट (आउटबाउंड के लिए NAT गेटवे पर रूट), इंटरनेट गेटवे (इनबाउंड + इंटरनेट के लिए आउटबाउंड), NAT गेटवे (निजी उदाहरणों के लिए आउटबाउंड केवल), VPC पियरिंग (दो VPC को कनेक्ट करें), VPC एंडपॉइंट्स (AWS सेवाओं से इंटरनेट के बिना कनेक्ट करें)।
+मुख्य अवधारणाएँ: Public subnet (Internet Gateway तक route), private subnet (outbound के लिए NAT Gateway तक route), Internet Gateway (इंटरनेट से inbound + outbound), NAT Gateway (private instances के लिए केवल outbound), VPC Peering (दो VPCs जोड़ें), VPC Endpoints (इंटरनेट के बिना AWS सेवाओं से जुड़ें)।
 
-Exam संकेत: "AWS पर निजी नेटवर्क," "इंटरनेट से संसाधनों को अलग करें," "नेटवर्क ट्रैफ़िक को नियंत्रित करें" → VPC।
-
----
-
-**सुरक्षा समूह और NACL** *(अध्याय 15)*
-
-सुरक्षा समूह राज्यपूर्ण फ़ायरवॉल हैं स्तर-उदाहरण पर — अनुमति नियमों को केवल अनुमति दी जाती है, स्वचालित रूप से रिटर्न ट्रैफ़िक है। NACL (नेटवर्क एक्सेस कंट्रोल लिस्ट) राज्यहीन फ़ायरवॉल हैं स्तर-सबनेट पर — इनबाउंड और आउटबाउंड दोनों नियमों की आवश्यकता होती है, नियम संख्या के क्रम में मूल्यांकन किया जाता है।
-
-Exam संकेत: "सबनेट तक एक विशिष्ट आईपी पते को ब्लॉक करें" → NACL। "उदाहरण के लिए ट्रैफ़िक को नियंत्रित करें" → सुरक्षा समूह।
+परीक्षा संकेत: "Private network on AWS," "isolate resources from internet," "control network traffic" → VPC।
 
 ---
 
-**राउट 53** *(अध्याय 12)*
+**Security Groups और NACLs** *(अध्याय 15)*
 
-AWS का DNS सेवा और डोमेन रजिस्ट्रार। इंटरनेट ट्रैफ़िक को AWS संसाधनों और बाहरी एंडपॉइंट्स पर रूट करता है। रूटिंग नीतियां: सरल, भारित, विलंबता-आधारित, विफलता पर, भू-स्थान, भू-निकटता, बहु-मूल्य उत्तर।
+Security groups इंस्टेंस स्तर पर stateful firewalls हैं — केवल allow rules, return ट्रैफ़िक स्वचालित है। NACLs (Network Access Control Lists) subnet स्तर पर stateless firewalls हैं — inbound और outbound दोनों rules की आवश्यकता होती है, rule number के क्रम में मूल्यांकित।
 
-प्रमुख अवधारणाएँ: होस्टेड ज़ोन (सार्वजनिक और निजी), रिकॉर्ड प्रकार (A, AAAA, CNAME, एलाइस), स्वास्थ्य जांच, ट्रैफ़िक प्रवाह (दृश्य नीति संपादक)।
+परीक्षा संकेत: "Block a specific IP from accessing the subnet" → NACL। "Control traffic to/from an instance" → security group।
 
-Exam संकेत: "DNS रूटिंग," "क्षेत्रों के बीच विफलता पर," "विलंबता या स्थान के आधार पर रूट" → राउट 53 के साथ उपयुक्त रूटिंग नीति।
+---
+
+**Route 53** *(अध्याय 12)*
+
+AWS की DNS सेवा और domain registrar। इंटरनेट ट्रैफ़िक को AWS resources और बाहरी endpoints पर रूट करता है। Routing policies: Simple, Weighted, Latency-based, Failover, Geolocation, Geoproximity, Multivalue answer।
+
+मुख्य अवधारणाएँ: Hosted zones (public और private), record types (A, AAAA, CNAME, Alias), health checks, Traffic Flow (visual policy editor — ध्यान दें कि geoproximity records पर एक सीधी routing policy के रूप में भी उपलब्ध है, एक समायोज्य bias के साथ, Traffic Flow की आवश्यकता के बिना)।
+
+परीक्षा संकेत: "DNS routing," "failover between regions," "route based on latency or location" → उपयुक्त routing policy के साथ Route 53।
 
 ---
 
 **CloudFront** *(अध्याय 13)*
 
-सामग्री वितरण नेटवर्क (CDN)। एज स्थानों (400+ दुनिया भर में) पर सामग्री कैश करता है। एंड-यूजर्स के लिए विलंबता को कम करता है। S3, EC2, ALB, और API गेटवे जैसे मूल स्थानों पर स्थानांतरण लागत को कम करता है।
+Content Delivery Network (CDN)। edge locations (दुनिया भर में 750+ points of presence) पर सामग्री cache करता है। अंतिम उपयोगकर्ताओं के लिए लेटेंसी कम करता है। caching के माध्यम से origin transfer लागत कम करता है। S3, EC2, ALB, और API Gateway को origins के रूप में एकीकृत करता है।
 
-प्रमुख अवधारणाएँ: वितरण, मूल, व्यवहार (पथ-आधारित रूटिंग के लिए मूल), TTL (कैश नियंत्रण), कैश अमान्य, हस्ताक्षरित URL और कुकी (एक्सेस नियंत्रण), Lambda@Edge और CloudFront फ़ंक्शन (एज पर कोड चलाएं), मूल Shield (मूल लोड को कम करें)।
+मुख्य अवधारणाएँ: Distribution, origins, behaviors (origins तक path-based routing), TTL (cache control), cache invalidation, signed URLs और cookies (access control), Lambda@Edge और CloudFront Functions (edge पर कोड चलाएँ), Origin Shield (origin लोड कम करें)।
 
-Exam संकेत: "वैश्विक कम विलंबता," "स्थिर सामग्री कैश करें," "मूल लोड को कम करें," "Shield के साथ DDoS से सुरक्षा" → CloudFront।
+परीक्षा संकेत: "Global low latency," "cache static content," "reduce origin load," "protect against DDoS with Shield" → CloudFront।
 
 ---
 
 **Direct Connect और VPN** *(अध्याय 25)*
 
-AWS Direct Connect एक समर्पित भौतिक नेटवर्क कनेक्शन है जो आपके ऑन-प्रिमाइसेस डेटा सेंटर को AWS तक जोड़ता है। यह सार्वजनिक इंटरनेट को बायपास करता है। अधिक सुसंगत बैंडविड्थ और विलंबता। AWS Site-to-Site VPN एक एन्क्रिप्टेड टनल है जो सार्वजनिक इंटरनेट पर चलता है — सेटअप करने में तेज़, कम लागत, लेकिन चर प्रदर्शन।
+AWS Direct Connect आपके ऑन-प्रिमाइसेस डेटा सेंटर से AWS तक एक समर्पित भौतिक नेटवर्क कनेक्शन है। सार्वजनिक इंटरनेट को बायपास करता है। अधिक सुसंगत bandwidth और लेटेंसी। AWS Site-to-Site VPN सार्वजनिक इंटरनेट पर एक encrypted tunnel है — सेटअप करने में तेज़, कम लागत, लेकिन परिवर्तनशील प्रदर्शन।
 
-मुख्य अवधारणाएँ: वर्चुअल इंटरफ़ेस (VIF), Direct Connect गेटवे (कई क्षेत्रों से कनेक्ट करने के लिए), ट्रांसिट गेटवे (हब-एंड-स्पोक नेटवर्क टोपोलॉजी), VPN टनल रिडंडेंसी।
+मुख्य अवधारणाएँ: Virtual Interface (VIF), Direct Connect Gateway (कई regions से कनेक्ट करें), Transit Gateway (hub-and-spoke नेटवर्क topology), VPN tunnel redundancy।
 
-परीक्षा संकेत: "डेडिकेटेड प्राइवेट कनेक्शन टू AWS" → Direct Connect। "एन्क्रिप्टेड कनेक्शन, तेज़ सेटअप" → VPN। "कई VPC कनेक्ट करें" → ट्रांसिट गेटवे।
-
----
-
-**VPC एंडपॉइंट्स** *(अध्याय 30)*
-
-निजी संसाधनों को AWS सेवाओं से कनेक्ट करें बिना सार्वजनिक इंटरनेट या NAT गेटवे का उपयोग किए। गेटवे एंडपॉइंट्स: मुफ्त, S3 और डायनेमोडीबी के लिए उपलब्ध। इंटरफ़ेस एंडपॉइंट्स (प्राइवेटलिंक): प्रति घंटे + प्रति GB मूल्यवान, अधिकांश AWS सेवाओं के लिए उपलब्ध।
-
-परीक्षा संकेत: "EC2 प्राइवेट सबनेट में कॉल S3/डायनेमोडीबी — NAT गेटवे लागत कम करें" → गेटवे एंडपॉइंट (मुफ्त)। "प्राइवेट सबनेट से SQS, SSM, Secrets Manager से प्राइवेट कनेक्शन" → इंटरफ़ेस एंडपॉइंट।
+परीक्षा संकेत: "Dedicated private connection to AWS" → Direct Connect। "Encrypted connection, faster setup" → VPN। "Connect multiple VPCs" → Transit Gateway।
 
 ---
 
-**सुरक्षा और पहचान**
+**VPC Endpoints** *(अध्याय 30)*
 
-**IAM — पहचान और एक्सेस प्रबंधन** *(अध्याय 3 और 14)*
+सार्वजनिक इंटरनेट या NAT Gateway का उपयोग किए बिना private resources को AWS सेवाओं से जोड़ें। Gateway Endpoints: मुफ़्त, केवल S3 और DynamoDB के लिए उपलब्ध। Interface Endpoints (PrivateLink): प्रति घंटा + प्रति GB मूल्य, अधिकांश AWS सेवाओं के लिए उपलब्ध।
 
-यह नियंत्रित करता है कि आपके AWS खाते में कौन क्या कर सकता है। उपयोगकर्ता (दीर्घकालिक क्रेडेंशियल), समूह (अनुमतियों को साझा करने वाले उपयोगकर्ता), भूमिकाएँ (सेवाओं और क्रॉस-खाते एक्सेस के लिए अस्थायी क्रेडेंशियल), नीतियाँ (अनुमति/अस्वीकृति नियमों को परिभाषित करने वाले JSON दस्तावेज़)।
-
-मुख्य अवधारणाएँ: प्रिंसिपल, कार्रवाई, संसाधन, शर्त, स्पष्ट अस्वीकृति > स्पष्ट अनुमति > निहित अस्वीकृति, एस सीपी (AWS संगठनों में सर्विस कंट्रोल पॉलिसी), अनुमति सीमा, असाइनरोल।
-
-परीक्षा संकेत: IAM हर सुरक्षा प्रश्न में शामिल होता है। मुख्य पैटर्न: सेवाएं IAM भूमिकाओं का उपयोग करती हैं (उपयोगकर्ताओं के बजाय)। क्रॉस-खाते एक्सेस भूमिका असाइनमेंट का उपयोग करता है। न्यूनतम विशेषाधिकार — केवल आवश्यक चीज़ प्रदान करें।
+परीक्षा संकेत: "EC2 in private subnet calls S3/DynamoDB — reduce NAT Gateway costs" → Gateway Endpoint (मुफ़्त)। "Private connection to SQS, SSM, Secrets Manager from private subnet" → Interface Endpoint।
 
 ---
 
-**KMS — की मैनेजमेंट सर्विस** *(अध्याय 16)*
+**AWS Client VPN** *(अध्याय 11)*
 
-प्रबंधित एन्क्रिप्शन कुंजी सेवा। यह बनाता है, संग्रहीत करता है और क्रिप्टोग्राफिक कुंजियों को नियंत्रित करता है। ग्राहक-प्रबंधित कुंजियाँ (सीएमके) आपको रोटेशन, उपयोग और एक्सेस नीतियों को परिभाषित करने की अनुमति देती हैं। AWS-प्रबंधित कुंजियाँ स्वचालित रूप से प्रबंधित की जाती हैं।
+प्रबंधित OpenVPN endpoint जो व्यक्तिगत डिवाइसों (laptops, workstations) को इंटरनेट पर एक VPC से सुरक्षित रूप से कनेक्ट करने देता है। प्रमाणीकरण विकल्प: Active Directory, किसी identity provider के साथ SAML 2.0 federation, या mutual TLS (certificate-based)। split-tunnel (केवल VPC-bound ट्रैफ़िक tunnel से गुज़रता है) और full-tunnel (सभी ट्रैफ़िक AWS से रूट होता है) का समर्थन करता है।
 
-मुख्य अवधारणाएँ: कुंजी नीति (IAM नीति से अलग), एनवेलोप एन्क्रिप्शन (डेटा को एक डेटा कुंजी के साथ एन्क्रिप्ट किया जाता है; डेटा कुंजी सीएमके के साथ एन्क्रिप्ट की जाती है), स्वचालित कुंजी रोटेशन, मल्टी-क्षेत्र कुंजियाँ, अनुदान।
+मुख्य अवधारणाएँ: Client VPN endpoint, target network (VPC subnet association), authorization rules, split-tunnel बनाम full-tunnel।
 
-परीक्षा संकेत: "डेटा को आराम पर एन्क्रिप्ट करें," "ग्राहक-प्रबंधित एन्क्रिप्शन कुंजियाँ," "कुंजी रोटेशन" → KMS।
+परीक्षा संकेत: "Remote engineers need secure access to a VPC from home," "individual device to VPC connectivity" → Client VPN। तुलना: Site-to-Site VPN = network-to-network। Client VPN = device-to-network।
+
+---
+
+**Network Load Balancer (NLB) और Gateway Load Balancer (GWLB)** *(अध्याय 7)*
+
+NLB Layer 4 (TCP/UDP/TLS) पर काम करता है: कोई HTTP inspection नहीं, बस अत्यधिक गति पर packet routing — प्रति सेकंड लाखों अनुरोध, प्रति AZ एक static IP और source IP preservation के साथ। GWLB Layer 3 पर काम करता है और एक उद्देश्य के लिए मौजूद है: third-party वर्चुअल नेटवर्क appliances (firewalls, IDS/IPS, deep packet inspection) को ट्रैफ़िक प्रवाह में inline डालना।
+
+मुख्य अवधारणाएँ: NLB = Layer 4, static IPs, ultra-low latency, non-HTTP protocols। GWLB = Layer 3, GENEVE encapsulation, एकल entry point के पीछे appliance fleets। ALB = Layer 7 (path/host routing)।
+
+परीक्षा संकेत: "Millions of TCP requests per second," "static IP for the load balancer," "preserve source IP" → NLB। "Insert third-party security appliances into the traffic path" → GWLB।
+
+---
+
+**AWS Global Accelerator** *(अध्याय 25)*
+
+सार्वजनिक इंटरनेट पार करने के बजाय निकटतम edge location पर उपयोगकर्ता ट्रैफ़िक को AWS के निजी global backbone पर रूट करता है। दो static Anycast IP पते प्रदान करता है जो एक या अधिक regions में आपके ALBs, NLBs, या EC2 instances के सामने होते हैं। *dynamic* (non-cacheable) ट्रैफ़िक के लिए लेटेंसी और संगति में सुधार करता है।
+
+मुख्य अवधारणाएँ: Static Anycast IPs, AWS backbone पर edge onboarding, सेकंडों में health-check-based regional failover, traffic dials के साथ endpoint groups।
+
+परीक्षा संकेत: "Global users, dynamic/non-HTTP traffic, static IP, fast regional failover" → Global Accelerator। "Cacheable/static content" → इसके बजाय CloudFront।
+
+---
+
+## सुरक्षा और पहचान
+
+**IAM — Identity and Access Management** *(अध्याय 3 और 14)*
+
+नियंत्रित करता है कि आपके AWS खाते में कौन क्या कर सकता है। Users (दीर्घकालिक credentials), Groups (permissions साझा करने वाले users), Roles (सेवाओं और cross-account access के लिए अस्थायी credentials), Policies (allow/deny rules परिभाषित करने वाले JSON documents)।
+
+मुख्य अवधारणाएँ: Principal, Action, Resource, Condition, explicit deny > explicit allow > implicit deny, SCP (AWS Organizations में Service Control Policy), Permission boundary, AssumeRole।
+
+परीक्षा संकेत: IAM हर सुरक्षा प्रश्न में शामिल होता है। मुख्य पैटर्न: सेवाएँ IAM roles का उपयोग करती हैं (users का नहीं)। Cross-account access role assumption का उपयोग करता है। Least privilege — केवल वही दें जो आवश्यक है।
+
+---
+
+**KMS — Key Management Service** *(अध्याय 16)*
+
+प्रबंधित encryption key सेवा। cryptographic keys बनाती, संग्रहीत और नियंत्रित करती है। Customer-managed keys (CMKs) आपको rotation, उपयोग, और access policies परिभाषित करने देती हैं। AWS-managed keys स्वचालित रूप से प्रबंधित होती हैं।
+
+मुख्य अवधारणाएँ: Key policy (IAM policy से अलग), Envelope encryption (डेटा को एक data key से encrypt किया जाता है; data key को CMK से encrypt किया जाता है), स्वचालित key rotation, Multi-region keys, Grants।
+
+परीक्षा संकेत: "Encrypt data at rest," "customer-managed encryption keys," "key rotation" → KMS।
 
 ---
 
 **Secrets Manager** *(अध्याय 16)*
 
-संवेदनशील मानों को संग्रहीत और स्वचालित रूप से घुमाता है: डेटाबेस क्रेडेंशियल, API कुंजियाँ, ओथ टोकन। यह RDS के लिए स्वचालित पासवर्ड रोटेशन के साथ एकीकृत होता है। एप्लिकेशन रनटाइम पर API के माध्यम से सीक्रेट्स प्राप्त करते हैं — क्रेडेंशियल को हार्डकोड न करें।
+संवेदनशील मानों को संग्रहीत और स्वचालित रूप से rotate करता है: database credentials, API keys, OAuth tokens। स्वचालित password rotation के लिए RDS के साथ एकीकृत होता है। एप्लिकेशन रनटाइम पर API के माध्यम से secrets प्राप्त करते हैं — credentials को कभी hardcode न करें।
 
-परीक्षा संकेत: "डेटाबेस क्रेडेंशियल संग्रहीत करें और घुमाएँ," "क्रेडेंशियल को हार्डकोड न करें" → Secrets Manager। "कॉन्फ़िगरेशन वैल्यू संग्रहीत करें, सीक्रेट्स नहीं" → पैरामीटर स्टोर (एसएसएम)।
+परीक्षा संकेत: "Store and rotate database credentials," "avoid hardcoded secrets" → Secrets Manager। "Store configuration values, not secrets" → Parameter Store (SSM)।
 
 ---
 
 **AWS Shield** *(अध्याय 17)*
 
-डीडीओएस सुरक्षा। Shield स्टैंडर्ड स्वचालित और मुफ्त है — यह सामान्य मात्रात्मक और प्रोटोकॉल हमलों से बचाता है। Shield एडवांस्ड वित्तीय सुरक्षा, 24/7 डीडीओएस प्रतिक्रिया टीम और विस्तृत हमले दृश्यता जोड़ता है।
+DDoS सुरक्षा। Shield Standard स्वचालित और मुफ़्त है — सामान्य volumetric और protocol हमलों से बचाता है। Shield Advanced वित्तीय सुरक्षा, 24/7 DDoS response team, और विस्तृत हमले की दृश्यता जोड़ता है।
 
-परीक्षा संकेत: "डीडीओएस से सुरक्षा" → Shield स्टैंडर्ड (स्वचालित) या Shield एडवांस्ड (एंटरप्राइज, एसएलए के साथ)।
-
----
-
-**WAF — वेब एप्लीकेशन फ़ायरवॉल** *(अध्याय 17)*
-
-HTTP/HTTPS ट्रैफ़िक को नियमों के आधार पर फ़िल्टर करता है: आईपी ब्लॉक, दर सीमा, एसक्यूएल इंजेक्शन पैटर्न, एक्सएसएस पैटर्न, भौगोलिक प्रतिबंध, कस्टम नियम। यह CloudFront, एएलबी, API गेटवे या ऐपसिंक से जुड़ता है।
-
-परीक्षा संकेत: "विशिष्ट आईपी पते को ब्लॉक करें," "एज पर एसक्यूएल इंजेक्शन को रोकें," "API कॉल को दर सीमित करें" → WAF।
+परीक्षा संकेत: "Protect against DDoS" → Shield Standard (स्वचालित) या Shield Advanced (एंटरप्राइज़, SLA के साथ)।
 
 ---
 
-**गार्डटूट** *(अध्याय 17)*
+**WAF — Web Application Firewall** *(अध्याय 17)*
 
-खतरे का पता लगाने वाली सेवा। यह CloudTrail लॉग, VPC फ्लो लॉग और DNS लॉग का विश्लेषण करता है एमएल और खतरे की खुफिया जानकारी का उपयोग करके। यह असामान्य API गतिविधि, ज्ञात दुर्भावनापूर्ण आईपी पतों के साथ संचार, समझौता किए गए क्रेडेंशियल का पता लगाता है।
+नियमों के आधार पर HTTP/HTTPS ट्रैफ़िक फ़िल्टर करता है: IP blocks, rate limits, SQL injection patterns, XSS patterns, भौगोलिक प्रतिबंध, custom rules। CloudFront, ALB, API Gateway, या AppSync से जुड़ता है।
 
-परीक्षा संकेत: "असामान्य गतिविधि का पता लगाएं," "समझौते किए गए IAM क्रेडेंशियल की पहचान करें," "निरंतर खतरे की निगरानी" → गार्डटूट।
+परीक्षा संकेत: "Block specific IP addresses," "prevent SQL injection at the edge," "rate limit API calls" → WAF।
+
+---
+
+**GuardDuty** *(अध्याय 17)*
+
+खतरा पहचान सेवा। ML और threat intelligence का उपयोग करके CloudTrail logs, VPC Flow Logs, और DNS logs का विश्लेषण करता है। असामान्य API गतिविधि, ज्ञात दुर्भावनापूर्ण IPs के साथ संचार, समझौता किए गए credentials का पता लगाता है।
+
+परीक्षा संकेत: "Detect unusual activity," "identify compromised IAM credentials," "continuous threat monitoring" → GuardDuty।
+
+---
+
+**Amazon Inspector** *(अध्याय 17)*
+
+स्वचालित भेद्यता मूल्यांकन सेवा। software vulnerabilities (CVEs) और अनपेक्षित नेटवर्क एक्सपोज़र के लिए EC2 instances, Amazon ECR container images, और Lambda functions को लगातार स्कैन करता है। निष्कर्ष केंद्रीकृत प्रबंधन के लिए AWS Security Hub को भेजे जाते हैं।
+
+मुख्य अवधारणाएँ: CVE scanning, निरंतर (one-shot नहीं) मूल्यांकन, EC2 + ECR + Lambda coverage, Security Hub एकीकरण।
+
+परीक्षा संकेत: "Automatically scan EC2 for known vulnerabilities," "CVE scanning for container images," "continuous vulnerability assessment" → Inspector।
+
+---
+
+**Amazon Cognito** *(अध्याय 14)*
+
+आपके एप्लिकेशन के अंतिम उपयोगकर्ताओं के लिए प्रबंधित प्रमाणीकरण — एक user directory जिसे आपको बनाने की आवश्यकता नहीं। User Pools sign-up, sign-in, MFA, password reset, और social identity providers (Google, Facebook, कोई भी OIDC provider) संभालते हैं, ऐसे JWTs जारी करते हैं जिन्हें आपका एप्लिकेशन सत्यापित करता है। Identity Pools उन tokens को अस्थायी AWS credentials के लिए विनिमय करते हैं।
+
+मुख्य अवधारणाएँ: User Pool (authentication, JWTs) बनाम Identity Pool (अस्थायी AWS credentials), hosted UI, social/OIDC/SAML federation, API Gateway Cognito authorizer।
+
+परीक्षा संकेत: "Application needs user sign-up/sign-in," "social login," "give mobile app users temporary access to AWS resources" → Cognito। तुलना: IAM आपके इंजीनियरों और सेवाओं के लिए है; Cognito आपके ग्राहकों के लिए है।
+
+---
+
+**AWS Certificate Manager (ACM)** *(अध्याय 16)*
+
+AWS-प्रबंधित सेवाओं (ALB, CloudFront, API Gateway) के लिए मुफ़्त public TLS/SSL certificates प्रदान करता है और पूरे जीवनचक्र को संभालता है — कोई renewal calendar नहीं, कोई private key handling नहीं। DNS validation के माध्यम से स्वतः-नवीनीकरण करता है।
+
+मुख्य अवधारणाएँ: DNS बनाम email validation, स्वतः-नवीनीकरण, CloudFront के लिए certificates us-east-1 में होने चाहिए, मुफ़्त public certificates निर्यात नहीं किए जा सकते (2025 से एक भुगतान योग्य निर्यात विकल्प मौजूद है)।
+
+परीक्षा संकेत: "HTTPS on a load balancer or CDN," "automatic certificate renewal" → ACM।
+
+---
+
+**Amazon Macie** *(अध्याय 17)*
+
+S3 के लिए संवेदनशील डेटा खोज। buckets में PII (names, card numbers, credentials) खोजने के लिए मशीन लर्निंग और pattern matching का उपयोग करता है और public exposure जैसे access risks को flag करता है। GuardDuty का पूरक: GuardDuty व्यवहार देखता है; Macie ऑडिट करता है कि क्या संग्रहीत है।
+
+मुख्य अवधारणाएँ: Managed data identifiers (PII patterns), S3-only scope, findings को Security Hub/EventBridge में।
+
+परीक्षा संकेत: "Discover PII in S3," "identify sensitive data exposure" → Macie।
+
+---
+
+**AWS Control Tower** *(अध्याय 14)*
+
+multi-account वातावरण के सेटअप और governance को स्वचालित करता है। एक landing zone बनाता है — management, log archive, और audit accounts जो Organizations, CloudTrail, Config, और guardrails के साथ पूर्व-वायर्ड हैं — मैन्युअल वायरिंग के दिनों के बजाय मिनटों में।
+
+मुख्य अवधारणाएँ: Landing zone, guardrails (preventive = SCPs, detective = Config rules), मानकीकृत नए खातों के लिए Account Factory।
+
+परीक्षा संकेत: "Set up and govern a new multi-account environment with best practices automatically" → Control Tower। तुलना: Organizations कच्चा building block है; Control Tower स्वचालित असेंबली है।
 
 ---
 
 ## मैसेजिंग और इवेंट प्रोसेसिंग
 
-**SQS — सिंपल क्यू सर्विस** *(अध्याय 19)*
+**SQS — Simple Queue Service** *(अध्याय 19)*
 
-प्रबंधित संदेश कतार। उत्पादक संदेश भेजते हैं; उपभोक्ता पढ़ते और उन्हें हटाते हैं। यह सेवाओं को अलग करता है: प्रेषक को रिसीवर की उपलब्धता जानने की आवश्यकता नहीं है। मानक कतारें: कम से कम एक बार डिलीवरी, सर्वोत्तम प्रयास क्रम। FIFO कतारें: एक बार बिल्कुल प्रोसेसिंग, सख्त क्रम।
+प्रबंधित message queue। Producers messages भेजते हैं; consumers उन्हें पढ़ते और हटाते हैं। सेवाओं को decouple करता है: भेजने वाले को यह जानने की आवश्यकता नहीं कि प्राप्तकर्ता उपलब्ध है या नहीं। Standard queues: at-least-once delivery, best-effort ordering। FIFO queues: exactly-once processing, सख्त ordering।
 
-मुख्य अवधारणाएँ: दृश्यता टाइमआउट (संदेश को अन्य उपभोक्ताओं द्वारा संसाधित होने से छिपाया जाता है), डेडल लेटर क्यू (DLQ) उन संदेशों के लिए जो बार-बार विफल होते हैं, संदेश प्रतिधारण (4 दिन डिफ़ॉल्ट, 14 तक), लंबी पोलिंग (खाली प्रतिक्रियाओं को कम करें)।
+मुख्य अवधारणाएँ: Visibility timeout (processing के दौरान message अन्य consumers से छिपा रहता है), बार-बार विफल होने वाले messages के लिए Dead Letter Queue (DLQ), Message retention (4 दिन डिफ़ॉल्ट, 14 तक), Long polling (खाली प्रतिक्रियाएँ कम करें), डिफ़ॉल्ट रूप से अधिकतम payload 256KB (2025 से 1 MiB तक बढ़ाया जा सकता है; बड़े payloads के लिए, Extended Client Library body को S3 में संग्रहीत करता है)।
 
-परीक्षा संकेत: "सेवाओं को अलग करें," "लोड स्पाइक्स के दौरान अनुरोधों को बफर करें," "असिंक्रोनस प्रोसेसिंग" → SQS। "क्रम मायने रखता है और एक बार बिल्कुल प्रोसेसिंग की आवश्यकता है" → SQS FIFO।
-
----
-
-**SNS — सिंपल नोटिफिकेशन सर्विस** *(अध्याय 19)*
-
-प्रबंधित पब्लिश/सब्सक्राइब सेवा। प्रकाशक एक विषय पर एक संदेश भेजते हैं; सभी सब्सक्राइबर प्राप्त करते हैं एक प्रति। फैन-आउट पैटर्न: एक संदेश → कई उपभोक्ता। प्रोटोकॉल: SQS, Lambda, एचटीटीपी/एचटीटीपीएस, ईमेल, एसएमएस, मोबाइल पुश।
-
-मुख्य अवधारणाएँ: विषय, सदस्यता, फैन-आउट पैटर्न (SNS → कई SQS कतारें), संदेश फ़िल्टरिंग (सदस्य केवल मिलान संदेश प्राप्त करते हैं)।
-
-परीक्षा संकेत: "कई एंडपॉइंट्स पर सूचनाएं भेजने के लिए", "एक एकल घटना को कई उपभोक्ताओं तक फैन-आउट करें" → SNS। सामान्य पैटर्न: SNS + SQS स्थायी फैन-आउट के लिए।
+परीक्षा संकेत: "Decouple services," "buffer requests during load spikes," "async processing" → SQS। "Order matters and exactly-once is required" → SQS FIFO।
 
 ---
 
-**इवेंटब्रिज** *(अध्याय 22)*
+**SNS — Simple Notification Service** *(अध्याय 19)*
 
-घटना बस बनाने के लिए घटना-संचालित आर्किटेक्चर बनाने के लिए। AWS सेवाओं, एसएएस भागीदारों और कस्टम स्रोतों से घटनाओं को Lambda, SQS, SNS, स्टेप फंक्शन्स और अन्य लक्ष्यों तक रूट करता है। अनुसूचित नियमों (क्रॉन) और पैटर्न मिलान का समर्थन करता है।
+प्रबंधित pub/sub सेवा। Publishers एक topic पर message भेजते हैं; सभी subscribers एक प्रति प्राप्त करते हैं। Fan-out pattern: एक message → कई consumers। Protocols: SQS, Lambda, HTTP/HTTPS, email, SMS, mobile push।
 
-परीक्षा संकेत: "AWS सेवाओं से घटनाओं को लक्ष्यों तक रूट करें", "Lambda फ़ंक्शंस शेड्यूल करें", "घटना-संचालित ऑर्केस्ट्रेशन" → इवेंटब्रिज।
+मुख्य अवधारणाएँ: Topic, subscription, fan-out pattern (SNS → कई SQS queues), message filtering (subscribers केवल मिलते-जुलते messages प्राप्त करते हैं)।
 
----
-
-**स्टेप फंक्शन्स** *(अध्याय 22)*
-
-सर्वरलेस वर्कफ़्लो ऑर्केस्ट्रेशन। Lambda फ़ंक्शंस, ECS कार्यों, डायनेमोबी, SNS, SQS और अन्य सेवाओं को विज़ुअल स्टेट मशीनों में समन्वयित करता है। यह पुनः प्रयास, त्रुटि प्रबंधन, समानांतर शाखाएँ और प्रतीक्षा अवस्थाओं को संभालता है।
-
-मुख्य अवधारणाएँ: स्टेट मशीन, स्टेट प्रकार (टास्क, वेट, विकल्प, समानांतर, मैप, पास, स्यूसिड, फेल), मानक वर्कफ़्लो (एकल-सटीक, लंबी-चलने वाली) बनाम एक्सप्रेस वर्कफ़्लो (कम से कम एक बार, उच्च-मात्रा)।
-
-परीक्षा संकेत: "कई Lambda फ़ंक्शंस को ऑर्केस्ट्रेट करें", "पुनः प्रयास तर्क के साथ लंबी-चलने वाली वर्कफ़्लो", "मानवीय अनुमोदन चरण" → स्टेप फंक्शन्स।
+परीक्षा संकेत: "Send notifications to multiple endpoints simultaneously," "fan-out a single event to multiple consumers" → SNS। सामान्य पैटर्न: टिकाऊ fan-out के लिए SNS + SQS।
 
 ---
 
-**किनेसिस** *(अध्याय 26)*
+**EventBridge** *(अध्याय 22)*
 
-वास्तविक समय डेटा स्ट्रीमिंग। किनेसिस डेटा स्ट्रीम: रिकॉर्ड का स्थायी, क्रमबद्ध प्रवाह (जैसे एक वितरित प्रतिबद्ध लॉग)। उपभोक्ता रिकॉर्ड संसाधित करते हैं; डेटा 24 घंटे से 7 दिनों तक बनाए रखा जाता है। किनेसिस डेटा फायरहाउस: S3, रेडशिफ्ट, ओपनसर्च, स्प्लंक - कोई उपभोक्ता प्रबंधन की आवश्यकता नहीं है। पूर्ण रूप से प्रबंधित डिलीवरी।
+event-driven architectures बनाने के लिए event bus। AWS सेवाओं, SaaS partners, और custom स्रोतों से events को Lambda, SQS, SNS, Step Functions, और अन्य targets पर रूट करता है। scheduled rules (cron) और pattern matching का समर्थन करता है।
 
-मुख्य अवधारणाएँ: शार्ड (थ्रूपुट की इकाई: 1MB/s राइट, 2MB/s रीड), विभाजन कुंजी (शार्ड असाइनमेंट निर्धारित करता है), सीक्वेंस नंबर, चेकपॉइंटिंग (केसीएल या Lambda), फायरहाउस बनाम स्ट्रीम।
-
-परीक्षा संकेत: "वास्तविक समय स्ट्रीमिंग", "क्रमबद्ध रिकॉर्ड", "घटनाओं को फिर से प्ले करें" → किनेसिस डेटा स्ट्रीम। "स्ट्रीमिंग डेटा को S3/रेडशिफ्ट पर वितरित करें बिना उपभोक्ताओं का प्रबंधन किए" → किनेसिस फायरहाउस। SQS के साथ अंतर: किनेसिस बनाए रखता है और पुनः चलाता है; SQS खपत पर हटा दिया जाता है।
+परीक्षा संकेत: "Route events from AWS services to targets," "schedule Lambda functions," "event-driven orchestration" → EventBridge।
 
 ---
 
-## विश्लेषण
+**Step Functions** *(अध्याय 22)*
 
-**अथेना** *(अध्याय 26)*
+सर्वरलेस workflow orchestration। Lambda functions, ECS tasks, DynamoDB, SNS, SQS, और अन्य सेवाओं को visual state machines में समन्वित करता है। retries, error handling, parallel branches, और wait states संभालता है।
 
-S3 में संग्रहीत डेटा पर सर्वरलेस SQL क्वेरी। कोई बुनियादी ढांचा प्रबंधित करने की आवश्यकता नहीं है। प्रति क्वेरी भुगतान (प्रति TB स्कैन किया गया)। कॉलम प्रारूपों (पार्केट, ओआरसी) और विभाजित डेटा के साथ सबसे अच्छा काम करता है।
+मुख्य अवधारणाएँ: State machine, state types (Task, Wait, Choice, Parallel, Map, Pass, Succeed, Fail), Standard Workflows (exactly-once, long-running) बनाम Express Workflows: Asynchronous (at-least-once, high-volume — tasks को idempotent बनाने के लिए डिज़ाइन करें) और Synchronous (at-most-once, API call की तरह सीधे result लौटाता है)।
 
-परीक्षा संकेत: "S3 डेटा के साथ SQL का उपयोग करके क्वेरी करें", "डेटा झील पर एड-हॉक एनालिटिक्स", "कोई बुनियादी ढांचा प्रबंधन नहीं" → अथेना।
+परीक्षा संकेत: "Orchestrate multiple Lambda functions," "long-running workflows with retry logic," "human approval steps" → Step Functions।
+
+---
+
+**Kinesis** *(अध्याय 26)*
+
+रियल-टाइम डेटा streaming। Kinesis Data Streams: records की टिकाऊ, ordered stream (एक distributed commit log की तरह)। Consumers records प्रोसेस करते हैं; डेटा 24 घंटे (डिफ़ॉल्ट) से 365 दिन (Extended Data Retention के साथ) तक बना रहता है। Amazon Data Firehose (पूर्व में Kinesis Data Firehose): S3, Redshift, OpenSearch, Splunk में पूरी तरह प्रबंधित delivery — किसी consumer management की आवश्यकता नहीं।
+
+मुख्य अवधारणाएँ: Shard (throughput की इकाई: 1MB/s write, 2MB/s read), partition key (shard assignment निर्धारित करता है), sequence number, checkpointing (KCL या Lambda), Firehose बनाम Streams।
+
+परीक्षा संकेत: "Real-time streaming," "ordered records," "replay events" → Kinesis Data Streams। "Deliver streaming data to S3/Redshift without managing consumers" → Amazon Data Firehose (पुराने प्रश्न "Kinesis Data Firehose" कह सकते हैं)। "SQL on streaming data" → Amazon Managed Service for Apache Flink (पूर्व में Kinesis Data Analytics)। SQS से तुलना: Kinesis retain और replay करता है; SQS consumption पर हटा देता है।
+
+---
+
+**Amazon MQ** *(अध्याय 19)*
+
+Apache ActiveMQ और RabbitMQ का समर्थन करने वाली प्रबंधित message broker सेवा। उद्योग-मानक messaging protocols का समर्थन करता है: AMQP, STOMP, MQTT, OpenWire, और WebSocket। प्राथमिक उपयोग मामला ऑन-प्रिमाइसेस message broker workloads का lift-and-shift माइग्रेशन है — ऐसे एप्लिकेशन जो पहले से ActiveMQ या RabbitMQ का उपयोग करते हैं, बिना कोड बदलाव के कनेक्ट हो सकते हैं।
+
+मुख्य अवधारणाएँ: ActiveMQ बनाम RabbitMQ engine विकल्प, protocol support (AMQP/STOMP/MQTT), HA के लिए single-instance या active/standby broker configuration।
+
+परीक्षा संकेत: "Migrate on-premises ActiveMQ or RabbitMQ to AWS without changing application code" → Amazon MQ। "Greenfield AWS-native messaging" → SQS या SNS (सरल, अधिक स्केलेबल)।
+
+---
+
+## एनालिटिक्स
+
+**Athena** *(अध्याय 26)*
+
+S3 में संग्रहीत डेटा पर सर्वरलेस SQL queries। प्रबंधित करने के लिए कोई इन्फ्रास्ट्रक्चर नहीं। प्रति query भुगतान (प्रति TB स्कैन)। columnar formats (Parquet, ORC) और partitioned डेटा के साथ सर्वोत्तम।
+
+परीक्षा संकेत: "Query S3 data with SQL," "ad-hoc analytics on data lake," "no infrastructure management" → Athena।
 
 ---
 
 **Glue** *(अध्याय 26)*
 
-सर्वरलेस ईटीएल (एक्सट्रैक्ट, ट्रांसफॉर्म, लोड) सेवा। Glue क्रॉलर डेटा की खोज करते हैं और Glue डेटा कैटलॉग को अपडेट करते हैं। Glue जॉब्स स्पार्क या पायथन ट्रांसफॉर्मेशन चलाते हैं। डेटा कैटलॉग Athena, रेडशिफ्ट स्पेक्ट्रम और ईएमआर के साथ एकीकृत होता है।
+सर्वरलेस ETL (Extract, Transform, Load) सेवा। Glue Crawlers डेटा खोजते हैं और Glue Data Catalog को अपडेट करते हैं। Glue Jobs Spark या Python transformations चलाते हैं। Data Catalog Athena, Redshift Spectrum, और EMR के साथ एकीकृत होता है।
 
-परीक्षा संकेत: "विश्लेषण के लिए डेटा को ट्रांसफॉर्म और लोड करें", "S3 डेटा के स्कीमा की खोज करें", "ईटीएल पाइपलाइन" → Glue।
+परीक्षा संकेत: "Transform and load data for analytics," "discover schema of S3 data," "ETL pipeline" → Glue।
 
 ---
 
-## उच्च उपलब्धता और आपदा रिकवरी
+**Amazon QuickSight** *(अध्याय 26)*
 
-**मल्टी-एज़ और मल्टी-क्षेत्र** *(अध्याय 18)*
+प्रबंधित business intelligence और data visualization सेवा। SPICE (Super-fast, Parallel, In-memory Calculation Engine) का उपयोग करता है, एक in-memory engine जो तेज़ dashboard rendering के लिए आयातित डेटा को cache करता है। Athena, S3, Redshift, RDS, और अन्य AWS डेटा स्रोतों से जुड़ता है। प्रबंधित करने के लिए कोई BI server नहीं।
 
-मल्टी-एज़: एक क्षेत्र के भीतर सिंक्रोनस प्रतिकृति के लिए स्वचालित विफलता-सुरक्षा के लिए (RDS मल्टी-एज़, एज़ के पार लोड बैलेंसर)। आरपीओ ~0, आरटीओ ~60 सेकंड के लिए RDS। मल्टी-क्षेत्र: भौगोलिक अतिरेक और वैश्विक उपयोगकर्ताओं के लिए कम विलंबता के लिए अतुल्यकालिक प्रतिकृति।
+मुख्य अवधारणाएँ: SPICE (in-memory engine), datasets, analyses, dashboards, ML Insights (anomaly detection, forecasting), row-level और column-level security।
 
-मुख्य अवधारणाएँ: आरटीओ (रिकवरी टाइम ऑब्जेक्टिव - पुनर्प्राप्त करने में कितना समय लगता है), आरपीओ (रिकवरी पॉइंट ऑब्जेक्टिव - कितना डेटा खो सकता है)। पायलट लाइट, वार्म स्टैंडबाय, सक्रिय-सक्रिय डीआर रणनीतियाँ।
+परीक्षा संकेत: "BI dashboard on AWS without managing a server," "visualize data from Athena or Redshift" → QuickSight।
 
-परीक्षा संकेत: एज़-स्तरीय विफलता (मल्टी-एज़ द्वारा संभाला जाता है) के विपरीत मल्टी-क्षेत्र द्वारा संभाले जाने वाले विसंगतियों को अलग करें। लागत और जटिलता मल्टी-क्षेत्र के साथ काफी बढ़ जाती है।
+---
+
+**AWS Lake Formation** *(अध्याय 26)*
+
+S3 और Glue Data Catalog के ऊपर केंद्रीकृत data lake access control परत। table, column, और row स्तर पर fine-grained permissions प्रदान करता है — अकेले S3 bucket policies से अधिक granular। एक सुरक्षित data lake स्थापित करना सरल बनाता है: Lake Formation permission मॉडल संभालता है; Glue catalog संभालता है; S3 डेटा रखता है।
+
+मुख्य अवधारणाएँ: Data lake permissions (table/column/row-level), Glue Data Catalog एकीकरण, attribute-based access control के लिए LF-tags, Athena और Redshift Spectrum queries के लिए केंद्रीकृत grant/revoke।
+
+परीक्षा संकेत: "Fine-grained access control on data lake," "column-level or row-level security on S3 data" → Lake Formation।
+
+---
+
+## उच्च उपलब्धता और आपदा पुनर्प्राप्ति
+
+**Multi-AZ और Multi-Region** *(अध्याय 18)*
+
+Multi-AZ: स्वचालित failover के लिए एक region के भीतर synchronous प्रतिकृति (RDS Multi-AZ, AZs में load balancer)। RDS के लिए RPO ~0, RTO ~60s। Multi-Region: भौगोलिक अतिरेक और global उपयोगकर्ताओं के लिए कम लेटेंसी के लिए asynchronous प्रतिकृति।
+
+मुख्य अवधारणाएँ: RTO (Recovery Time Objective — पुनर्प्राप्ति में कितना समय), RPO (Recovery Point Objective — कितना डेटा खोया जा सकता है)। Pilot Light, Warm Standby, Active-Active DR रणनीतियाँ।
+
+परीक्षा संकेत: AZ-स्तरीय विफलताओं (Multi-AZ संभालता है) बनाम regional विफलताओं (Multi-Region संभालता है) के बीच अंतर करें। Multi-Region के साथ लागत और जटिलता काफी बढ़ जाती है।
+
+---
+
+**AWS Elastic Disaster Recovery (DRS)** *(अध्याय 18)*
+
+सर्वरों (ऑन-प्रिमाइसेस या EC2) के लिए प्रबंधित आपदा पुनर्प्राप्ति। स्रोत सर्वरों को ब्लॉक-दर-ब्लॉक एक कम-लागत वाले स्टेजिंग क्षेत्र में लगातार दोहराता है और आवश्यकता पड़ने पर मिनटों में पूर्ण recovery instances लॉन्च करता है — एक प्रबंधित pilot light: backup-and-restore के करीब कीमतों पर near-warm-standby पुनर्प्राप्ति समय।
+
+मुख्य अवधारणाएँ: निरंतर ब्लॉक-स्तरीय प्रतिकृति, कम-लागत वाला स्टेजिंग क्षेत्र, on-demand recovery launch, point-in-time recovery।
+
+परीक्षा संकेत: "Minimize downtime and data loss for server-based workloads with a managed DR service," "pilot light without building it yourself" → DRS।
 
 ---
 
 ## लागत अनुकूलन
 
-**EC2 मूल्य निर्धारण मॉडल** *(अध्याय 27)*
+**EC2 Pricing Models** *(अध्याय 27)*
 
-ऑन-डिमांड: पूर्ण मूल्य, कोई प्रतिबद्धता नहीं। आरक्षित उदाहरण (1 या 3 वर्ष): विशिष्ट उदाहरण प्रकार के लिए 30-72% छूट। बचत योजनाएं (कंप्यूट या EC2 उदाहरण): लचीलेपन के लिए प्रति घंटा प्रतिबद्ध व्यय। स्पॉट: बाधित कार्यभार के लिए 60-90% की छूट।
+On-Demand: पूर्ण मूल्य, कोई प्रतिबद्धता नहीं। Reserved Instances (1 या 3 वर्ष): विशिष्ट instance type के लिए 30-72% छूट। Savings Plans (Compute या EC2 Instance): लचीलेपन के लिए प्रतिबद्ध प्रति घंटा खर्च। Spot: interruptible workloads के लिए 60-90% छूट।
 
-परीक्षा संकेत: "पूर्वानुमानित कार्यभार के लिए लागत को कम करें" → बचत योजनाएं या आरक्षित उदाहरण। "विफलता-सहिष्णु बैच प्रसंस्करण" → स्पॉट। "अस्थिर या अल्पकालिक" → ऑन-डिमांड।
-
----
-
-**डेटा ट्रांसफर मूल्य निर्धारण** *(अध्याय 30)*
-
-इनबाउंड AWS: मुफ्त। समान-एज़: मुफ्त। क्रॉस-एज़: $0.01/जीबी प्रत्येक दिशा में। क्रॉस-क्षेत्र: $0.02-0.08/जीबी। इंटरनेट (आउटबाउंड): ~$0.09/जीबी। NAT गेटवे प्रोसेसिंग: $0.045/जीबी। CloudFront डेटा ट्रांसफर इंटरनेट (आउटबाउंड) से सस्ता है, और कैशिंग कुल मात्रा को कम करता है।
-
-परीक्षा संकेत: "S3/डायनेमोबी से निजी सबनेट पर डेटा ट्रांसफर लागत को कम करें" → गेटवे एंडपॉइंट्स (मुफ्त)। "अन्य सेवाओं के लिए NAT गेटवे लागत को कम करें" → इंटरफ़ेस एंडपॉइंट्स।
+परीक्षा संकेत: "Minimize cost for predictable workload" → Savings Plans या Reserved Instances। "Fault-tolerant batch processing" → Spot। "Unpredictable or short-term" → On-Demand।
 
 ---
 
-## अवलोकन क्षमता
+**Data Transfer Pricing** *(अध्याय 30)*
 
-**CloudWatch** *(संदर्भित पूरे पुस्तक में)*
+AWS में Inbound: मुफ़्त। Same-AZ: मुफ़्त। Cross-AZ: प्रत्येक दिशा में $0.01/GB। Cross-region: $0.02-0.08/GB। Internet (outbound): ~$0.09/GB। NAT Gateway processing: $0.045/GB। CloudFront data transfer सीधे EC2-to-internet से सस्ता है, और caching कुल मात्रा को कम करता है।
 
-निगरानी और अवलोकन क्षमता। CloudWatch मेट्रिक्स: AWS सेवाओं और कस्टम अनुप्रयोगों से संख्यात्मक समय-श्रृंखला डेटा। CloudWatch लॉग: लॉग डेटा एकत्र करें, खोजें और विश्लेषण करें। CloudWatch अलार्म: मेट्रिक थ्रेशोल्ड के आधार पर सूचनाएं या स्केलिंग ट्रिगर करें। CloudWatch डैशबोर्ड: मेट्रिक्स को विज़ुअलाइज़ करें।
-
-मुख्य अवधारणाएँ: मेट्रिक आयाम, प्रतिधारण अवधि, लॉग समूह और लॉग स्ट्रीम, मेट्रिक फ़िल्टर, CloudWatch एजेंट (ओएस-स्तरीय मेट्रिक्स और EC2 से लॉग के लिए), कंटेनर अंतर्दृष्टि।
+परीक्षा संकेत: "Reduce data transfer costs for S3/DynamoDB from private subnet" → Gateway Endpoints (मुफ़्त)। "Reduce NAT Gateway costs for other services" → Interface Endpoints।
 
 ---
 
-**CloudTrail** *(पूरे पुस्तक में संदर्भित)*
+## ऑब्ज़र्वेबिलिटी
 
-आपके AWS खाते में किए गए हर API कॉल का लॉग रखता है: किसने किया, कहाँ से, कब किया गया और प्रतिक्रिया क्या थी। मल्टी-रेजीन ट्रेल S3 में लॉग को अनिश्चित काल तक संग्रहीत करता है। इसका उपयोग सुरक्षा ऑडिटिंग, अनुपालन और घटना जांच के लिए किया जाता है।
+**CloudWatch** *(पूरे में संदर्भित)*
 
-परीक्षा संकेत: "उस संसाधन को किसने हटाया?" "सभी API गतिविधि का ऑडिट करें" → CloudTrail।
+Monitoring और observability। CloudWatch Metrics: AWS सेवाओं और custom एप्लिकेशनों से numeric time-series डेटा। CloudWatch Logs: log डेटा एकत्र, खोज और विश्लेषण करें। CloudWatch Alarms: metric thresholds के आधार पर notifications या auto scaling ट्रिगर करें। CloudWatch Dashboards: metrics को visualize करें।
 
----
-
-**AWS कॉन्फ़िग** *(अध्याय 31 में संदर्भित)*
-
-समय के साथ संसाधनों के कॉन्फ़िगरेशन में बदलावों को ट्रैक करता है। संसाधनों का अनुपालन नियमों के विरुद्ध मूल्यांकन करता है। हर संसाधन के लिए कॉन्फ़िगरेशन में बदलाव का इतिहास रिकॉर्ड करता है। सिस्टम मैनेजर के साथ एकीकृत होता है ताकि सुधारात्मक कार्रवाई की जा सके।
-
-परीक्षा संकेत: "क्या यह संसाधन हमारे सुरक्षा नीति के अनुरूप है?" "पिछले सप्ताह इस संसाधन का कॉन्फ़िगरेशन कैसा था?" → AWS कॉन्फ़िग।
+मुख्य अवधारणाएँ: Metric dimensions, retention periods, log groups और log streams, metric filters, CloudWatch Agent (EC2 से OS-स्तरीय metrics और logs के लिए), Container Insights।
 
 ---
 
-## अच्छी तरह से संरचित
+**CloudTrail** *(पूरे में संदर्भित)*
 
-**छह स्तंभ** *(अध्याय 31 में संदर्भित)*
+आपके AWS खाते में किए गए हर API call को log करता है: किसने किया, कहाँ से, कब, और प्रतिक्रिया क्या थी। Multi-region trail logs को S3 में अनिश्चितकाल तक संग्रहीत करता है। सुरक्षा ऑडिटिंग, अनुपालन, और घटना जाँच के लिए उपयोग किया जाता है।
 
-| स्तंभ                 | मूल प्रश्न                           | मुख्य सेवाएं                                      |
+परीक्षा संकेत: "Who deleted that resource?" "Audit all API activity" → CloudTrail।
+
+---
+
+**X-Ray** *(अध्याय 20)*
+
+Distributed tracing: सेवाओं में अलग-अलग अनुरोधों का अनुसरण करता है (traces → segments → subsegments), प्रति hop लेटेंसी और error rates के साथ एक service map बनाता है। Sampling overhead कम रखता है; annotations traces को खोजने योग्य बनाते हैं। Active tracing Lambda और API Gateway stages पर toggle होता है।
+
+परीक्षा संकेत: "Trace requests across microservices," "find the bottleneck between services" → X-Ray (CloudWatch नहीं, CloudTrail नहीं)।
+
+---
+
+**AWS Config** *(अध्याय 31 में संदर्भित)*
+
+समय के साथ resource configuration परिवर्तनों को ट्रैक करता है। अनुपालन नियमों के विरुद्ध resources का मूल्यांकन करता है। प्रत्येक resource के प्रत्येक configuration परिवर्तन का इतिहास रिकॉर्ड करता है। remediation के लिए Systems Manager के साथ एकीकृत होता है।
+
+परीक्षा संकेत: "Is this resource compliant with our security policy?" "What did this resource's configuration look like last week?" → AWS Config।
+
+---
+
+## Well-Architected
+
+**छह स्तंभ** *(अध्याय 31)*
+
+| स्तंभ                   | मूल प्रश्न                                | मुख्य सेवाएँ                                        |
 |------------------------|-----------------------------------------|---------------------------------------------------|
-| परिचालन उत्कृष्टता | क्या हम अच्छी तरह से चल रहे हैं?                    | CloudWatch, CloudTrail, एसเอएसएम, कॉन्फ़िग               |
-| सुरक्षा               | क्या हम सुरक्षित हैं?                       | IAM, KMS, GuardDuty, WAF, Shield, Secrets Manager |
-| विश्वसनीयता            | क्या हम विफलता से उबर सकते हैं?             | मल्टी-एज़, Route 53 फेलओवर, बैकअप/रिस्टोर, SQS  |
-| प्रदर्शन दक्षता | क्या हम सही संसाधनों का उपयोग कर रहे हैं?       | सही आकार देना, ऑटो स्केलिंग, CloudFront, कीनेस   |
-| लागत अनुकूलन      | क्या हम बुद्धिमानी से खर्च कर रहे हैं?                 | बचत योजनाएं, स्पॉट, S3 जीवनचक्र, VPC एंडपॉइंट्स  |
-| स्थिरता         | क्या हम पर्यावरणीय प्रभाव को कम कर रहे हैं? | सही आकार देना, ग्रेविटन, कुशल भंडारण स्तर |
+| Operational Excellence | क्या हम अच्छी तरह चल रहे हैं?              | CloudWatch, CloudTrail, SSM, Config               |
+| Security               | क्या हम सुरक्षित हैं?                      | IAM, KMS, GuardDuty, WAF, Shield, Secrets Manager |
+| Reliability            | क्या हम विफलता से उबरते हैं?               | Multi-AZ, Route 53 failover, backup/restore, SQS  |
+| Performance Efficiency | क्या हम सही संसाधनों का उपयोग कर रहे हैं?  | Right-sizing, Auto Scaling, CloudFront, Kinesis   |
+| Cost Optimization      | क्या हम समझदारी से खर्च कर रहे हैं?         | Savings Plans, Spot, S3 lifecycle, VPC Endpoints  |
+| Sustainability         | क्या हम पर्यावरणीय प्रभाव कम कर रहे हैं?    | Right-sizing, Graviton, efficient storage tiers   |
 
-AWS Well-Architected टूल: यह छह स्तंभों के विरुद्ध आपके आर्किटेक्चर का मूल्यांकन करता है। परीक्षा से पहले इसका उपयोग करने से प्रत्येक स्तंभ के प्रश्नों के पीछे के तर्क को समझने में मदद मिलेगी।
+AWS Well-Architected Tool: छह स्तंभों के विरुद्ध आपके आर्किटेक्चर का मूल्यांकन करता है। प्रत्येक स्तंभ के प्रश्नों के पीछे के तर्क को समझने के लिए इसे परीक्षा से पहले उपयोग करें।
