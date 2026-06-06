@@ -1,268 +1,468 @@
-# Bölüm 24: Büyüyenle Birlikte Büyüyen Veritabanı
+# Bölüm 24: Sizinle Birlikte Büyüyen Veritabanı
 
-Tom’un maliyet incelemesi, veritabanı katmanında beklenmedik bir şey bulmuştu.
+İki rafla ve bir kütüphaneciyle başlayan bir kütüphane hayal edin. Bu, bir süre için yeterliydi. Kütüphaneci her şeyin nerede olduğunu biliyordu. İsteklere hızlı yanıt veriliyordu. Sonra kütüphane büyüdü: on raf, yirmi, kırk. Aynı kütüphaneci, aynı masa, aynı kart kataloğu. Şimdi herhangi bir şey bulmak beklemeyi gerektiriyor. Kütüphaneci yavaş değil—sadece bir kişinin orijinal hızda hizmet verebileceğinden daha fazla kütüphane var.
 
-Nimbus, RDS PostgreSQL’i kullanıyordu: Çoklu-Bölge, db.r6g.large örneği. 340$/ay.
+Çözüm daha hızlı bir kütüphaneci değil. Farklı türde bir kütüphane.
 
-“Bu biraz yüksek gibi,” dedi Tom. “Ama neye göre karşılaştırmam gerektiğini bilmiyorum.”
+---
 
-Leo, performans metriklerini çekti. Veritabanı CPU, Cuma akşamı yoğun saatlerde %85’e yükseliyordu. Okuma sorguları kuyruklanıyordu. P95 sorgu gecikmesi altı aydır ikiye katlanmıştı.
+S3 maliyet azaltmasından sonra, Tom incelemesine devam etti. Veritabanı katmanı farklı türde bir sorundu—yanlış depolama sınıfındaki boşta veri değil, altı aylık trafik büyümesinin yükü altında aktif olarak mücadele eden bir sistem.
 
-“Veritabanı darboğaz,” dedi. “Trafik arttı. Veritabanı buna göre ölçeklenemedi.”
+---
 
-“Sadece örneği daha büyük yapabilir miyiz?” diye sordu Maya.
+Sayılar rahat değildi.
 
-“Evet,” dedi Leo. “Bu dikey ölçeklendirme. r6g.large’den r6g.xlarge’a geçiyoruz. Daha fazla CPU, daha fazla bellek. Daha pahalı olacak ve bize zaman kazandıracak.”
+Nimbus RDS PostgreSQL çalıştırıyordu: Multi-AZ, db.r6g.large örneği. Ayda 340 dolar.
 
-“Ama temel sorunu çözmüyor,” dedi Priya. “Sonunda en büyük örneğe ulaşacak ve farklı bir yaklaşım ihtiyacımız olacak.”
+Leo CloudWatch metrik panosunu açtı. Sayıların bir kalıbı vardı.
 
-“İki yaklaşım var,” dedi Leo. “Okuma replikaları veya Aurora.”
+**DatabaseConnections**: Cuma zirvesinde maksimum 200'ün 198'i. Doygunluktan iki bağlantı uzakta. 200'de, yeni bağlantı girişimleri "çok fazla bağlantı" hatasıyla başarısız olurdu—akşam yemeği sipariş eden müşterilere HTTP 500 olarak yüzeye çıkacak bir hata.
 
-“Bunlar arasındaki fark nedir?”
+**CPUUtilization**: Cuma akşam yemeği yoğunluğu sırasında %89 zirve. Örnek sıçramaları yönetmek için tasarlanmıştı—bir db.r6g.large 2 vCPU ve 16 GB belleğe sahiptir—ama sürekli %89 CPU, veritabanının zirve saati daha gelmeden kapasitede olduğu anlamına geliyordu.
 
-İyi bir soru. Bu bölümün geri kalanı bu cevabın cevabı.
+**ReadLatency**: 840 milisaniye P95. Altı ay önce 180ms'ydi. Bozulma kademeliydi—haftada 10 ila 20ms—felaket olana kadar görünmezdi. Tom'un incelemesinden önceki hafta, P99 gecikmesi tam bir saniyeyi geçmişti. Bir restoran menüsüne tıklayan müşteriler sayfanın yüklenmesi için bir saniyeden fazla bekliyordu.
 
-Yoğun bir kütüphane düşünün, bir kütüphaneci hem kitapları içeriye giriyor hem de okuyucuların sorularını yanıtlıyor. Kütüphane popüler hale geldiğinde bir kuyruk oluşuyor. Çözüm: sadece soruları yanıtlayan daha fazla kütüphaneci işe alın – kitapların girişi orijinal masaya bağlı kalır. Bu okuma replikasıdır: okuma işlemlerini yöneten ek kapasite, tüm yazma işlemleri tek yetkili kaynağa gönderilir. Aurora ise raf sisteminin kendisini yeniden tasarlayarak her kütüphanecinin aynı raflarda olduğunu ve hiçbir gecikme olmadan aynı kitapları gördüğünü sağlar.
+**FreeStorageSpace**: Sağlanan depolamanın %18'i kaldı. Mevcut büyüme oranlarında, veritabanı yaklaşık 11 hafta içinde sağlanan depolamayı tüketirdi.
 
-**Okuma Replikaları: Okuma Trafiğini Dağıtmak**
+"Bunların her biri tek başına çözülebilir," dedi Leo, panoya bakarak. "Ama dördünü de aynı anda yaşıyoruz."
 
-Çoğu web uygulaması, yazma işlemlerinden çok okuma işlemlerini yapar. Bir müşterinin menüyü görüntülemesi onlarca SELECT sorgusunu tetikler. Bir sipariş vermesi birkaç INSERT/UPDATE sorgusunu tetikler. Oran tipik olarak 10:1 veya daha yüksektir.
+Bağlantı sayısı sıçraması, uygulamadaki bağlantı havuzlama sorunlarına işaret ediyordu—çok fazla ECS görevinin kendi veritabanı bağlantılarını açması. CPU sorunu pahalı sorgulara işaret ediyordu. Gecikme sorunu ve CPU sorunu neredeyse kesinlikle aynı sorundu: çok sık çalışan yavaş bir sorgu.
 
-Bir **okuma replikası**, ana veritabanından tüm yazma işlemlerini alan ve bu yazma işlemlerini SELECT sorguları için sunan ek bir RDS örneğidir.
+"Bekle—ama *neden* 198 bağlantıdayız?" diye sordu Maya. "Üç ECS görevimiz var. Nasıl neredeyse 200 veritabanı bağlantımız var?"
+
+Her ECS görevi, varsayılan 5 bağlantı havuzu boyutu artı 10 taşma ile SQLAlchemy kullanıyordu. Üç görev × 15 potansiyel bağlantı = uygulamadan 45 bağlantı. Diğer 153'ü analiz Lambda fonksiyonlarından, arka plan iş işçilerinden, Glue ETL işinden, geliştirme ekibinin bastion ana bilgisayar aracılığıyla yerel bağlantılarından ve kodun eski bir sürümü tarafından açılmış ama düzgün kapatılmamış birkaç bağlantıdandı.
+
+"Bağlantı sayısı sorunu," dedi Leo, "aslında bir veritabanı sorunu gibi görünen bir uygulama sorunu." Görev listesine PgBouncer (bir bağlantı havuzlayıcı) ekledi—ama acil darboğaz yavaş sorguydu.
+
+Veritabanı CPU'su Cuma akşam yemeği yoğunluğu sırasında %89'a fırlıyordu. Okuma sorguları kuyruklanıyordu. P95 sorgu gecikmesi altı ayda ikiye katlanmıştı.
+
+"Veritabanı darboğaz," dedi. "Trafik büyüdü. Veritabanı onunla ölçeklenmedi."
+
+"Sadece örneği daha büyük yapabilir miyiz?" diye sordu Maya. "Bekle—ama *neden* tüm okumaları ve yazmaları ele alan tek bir veritabanımız var? Bunu neden baştan dağıtmadık?"
+
+"Evet," dedi Leo. "Bu dikey ölçeklendirme. r6g.large'den r6g.xlarge'a geçeriz. Daha fazla CPU, daha fazla bellek. Daha pahalıya mal olur ve bize zaman kazandırır."
+
+"Ama temel sorunu çözmez," dedi Priya. "Sonunda en büyük örneğe ulaşırız ve farklı bir yaklaşıma ihtiyacımız olur. Ve yanlışlıkla bir okuma replikasına bir yazma giderse ne olacağını düşündük mü? Replika onu reddeder ve sipariş sessizce başarısız olur."
+
+"İki yaklaşım var," dedi Leo. "Okuma replikaları veya Aurora."
+
+"Fark ne?"
+
+"Bir kütüphane gibi düşünün," dedi Leo, bir kalem alarak. "Hem kitapları teslim alan hem de okuyucu sorularını yanıtlayan bir kütüphaneci. Kütüphane popüler olduğunda, bir kuyruk oluşur. Çözüm: daha fazla kütüphaneci işe al—ama yalnızca soruları yanıtlamak için. Teslim alma hâlâ orijinal masadan geçer."
+
+"Bu bir okuma replikası," dedi Priya.
+
+"Aynen. Aurora bir adım daha ileri gider—raf sisteminin kendisini yeniden tasarlar, böylece her kütüphaneci aynı rafları paylaşır ve her zaman aynı kitapları görür, gecikme olmadan. Güncellemelerin bir masadan diğerine sızmasını beklemek yok."
+
+**Okuma Replikaları: Okuma Trafiğini Dağıtma**
+
+Çoğu web uygulaması veriyi yazdığından çok daha sık okur. Menüye göz atan bir müşteri düzinelerce SELECT sorgusu yapar. Bir sipariş vermek birkaç INSERT/UPDATE sorgusu yapar. Oran tipik olarak 10:1 veya daha yüksektir.
+
+Bir **okuma replikası (read replica)**, birincilden tüm yazmaların bir kopyasını alan ve o yazmaları SELECT sorguları için kullanılabilir kılan ek bir RDS örneğidir.
 
 Nasıl çalışır:
 
-1. Uygulama yazma (INSERT, UPDATE, DELETE) işlemlerini ana veritabanına gönderir.
-2. Ana veritabanı bu değişiklikleri asenkron olarak okuma replikalarına çoğaltır.
-3. Uygulama okuma (SELECT) işlemlerini okuma replikalarına dağıtır.
-4. Okuma replikaları yükü paylaşır – her biri toplam okuma trafiğinin bir kısmını yönetir.
+1. Uygulama yazmaları (INSERT, UPDATE, DELETE) birincil veritabanına gider
+2. Birincil bu değişiklikleri okuma replikalarına asenkron olarak replike eder
+3. Uygulama okumaları (SELECT) okuma replikaları arasında dağıtılır
+4. Okuma replikaları yükü paylaşır—her biri toplam okuma trafiğinin bir kesrini ele alır
 
-Sonuç: Ana veritabanı yalnızca yazma işlemlerini (ve isteğe bağlı olarak bazı okuma işlemlerini) yönetir. Okuma replikaları okuma yükünü yönetir. 10:1 bir okuma/yazma oranı için, bir okuma replikası eklemek yaklaşık olarak ana veritabanının toplam yükünü yarıya indirir.
+Sonuç: birincil veritabanı yalnızca yazmaları ele alır (ve isteğe bağlı olarak bazı okumaları). Okuma replikaları okuma yükünü ele alır. 10:1 okuma/yazma oranı için, bir okuma replikası eklemek birincilin toplam yükünü kabaca yarıya indirir.
 
-**Önemli Sınırlama**: Çoğaltma **asenkron**dur. Çoğaltma gecikmesi vardır – tipik olarak milisaniyeler, ancak yük altında saniyeler olabilir. Bir replikadan yapılan okuma, ana veritabanındaki verilere biraz geride olabilir. Menüyü görüntüleme, sipariş geçmişini görüntüleme gibi çoğu okuma için bu kabul edilebilir. “Siparişim henüz tamamlandı mı?” – ana veritabanından okuyun.
+**Önemli sınırlama**: Replikasyon **asenkrondur**. Replikasyon gecikmesi vardır—tipik olarak milisaniyeler, ama yük altında saniyeler olabilir. Bir replikadan okuma, birincilin biraz gerisinde olan veriyi görebilir. Çoğu okuma için (menüye göz atma, sipariş geçmişini görüntüleme), bu kabul edilebilir. "Siparişim az önce geçti mi?" için—birincilden okuyun.
 
-**Okuma Replikaları: Detaylar**
+**Okuma Replikaları: Ayrıntılar**
 
-- Bir ana RDS örneğine 5 okuma replikası yapılabilir.
-- Okuma replikaları aynı bölgede veya farklı bir bölgede olabilir (çapraz bölge replikaları).
-- Okuma replikaları kendilerine okuma replikaları (zincirleme) ekleyebilirler.
-- Okuma replikaları ayrı uç noktalar – uygulamanız okuma işlemlerini replikaya yönlendirmelidir.
-- Okuma replikaları tekli veritabanlarına yükseltilebilir (DR için kullanışlı).
+- Birincil RDS örneği başına 15 okuma replikasına kadar sahip olabilirsiniz (MySQL, PostgreSQL, MariaDB)
+- Okuma replikaları aynı bölgede veya farklı bir bölgede olabilir (bölgeler arası replikalar)
+- Okuma replikalarının kendileri okuma replikalarına sahip olabilir (zincirleme)
+- Okuma replikaları ayrı uç noktalardır—uygulamanız okumaları replika uç noktasına yönlendirmelidir
+- Okuma replikaları bağımsız veritabanlarına terfi ettirilebilir (DR için yararlı)
 
-Nimbus için Leo, bir okuma replikası ekledi. Uygulamayı şu şekilde güncelledi:
+Nimbus için, Leo bir okuma replikası ekledi. "İyi olacak," dedi Priya, trafiği değiştirmeden önce uygulamanın okuma/yazma yönlendirme mantığını test edip etmediğini sorduğunda. Test etmemişti. Sonraki kırk dakikayı yazmaların okuma replikası uç noktasına gitmediğini doğrulayarak geçirdi.
 
-- Yazma işlemleri → ana uç nokta
-- Menü görüntüleme, sipariş geçmişi → replika uç noktası
+Uygulamayı şu şekilde güncelledi:
 
-Ana veritabanındaki CPU, zirvede %85’ten %41’e düştü.
+- Yazma işlemleri → birincil uç nokta
+- Menüye göz atma, sipariş geçmişi → replika uç noktası
 
-Tom maliyeti inceledi: Aynı örnek türündeki bir okuma replikası, ana veritabanına olan maliyetle aynıdır. 340$/ay’dan 680$/ay’a yükseldi.
+Birincildeki CPU zirvede %89'dan %41'e düştü.
 
-“Okuma replikası ekleyerek yaklaşık olarak yükü yarıya indirdik,” dedi Tom.
+**Yazma Sonrası Okuma Tutarlılığı Sorunu**
 
-“Evet. Ancak alternatif, daha büyük bir örnek türüne geçmek olurdu, bu da daha fazla maliyet anlamına gelirdi ve okuma yükünü dağıtmayacaktı.”
+Okuma replikası etkinleştirildikten üç gün sonra, bir destek talebi geldi. Bir restoran ortağı menüsünü güncellemişti—durdurulmuş bir öğeyi kaldırmış—ve sonra kaldırıldığını doğrulamak için aramıştı. Müşteri hizmetleri temsilcisi menüyü Nimbus arayüzünden açtı. Öğe hâlâ oradaydı.
 
-Tom hesapladı. Kararsız bir şekilde başını salladı.
+Yirmi saniye sonra, gitmişti.
 
-“Aurora nedir?” diye sordu.
+Asenkron replikasyon gecikmesi. Yazma (DELETE menü öğesi) birincile gitti. Müşteri hizmetleri temsilcisinin okuması, değişikliği henüz almamış olan replikaya gitti. Replika o anda 15 saniye geride kalmıştı—olağandışı değil, ama görünür.
+
+"Peki birisi sonunda tutarlılık penceresinden içeri girmeye çalışırsa?" diye sordu Priya. "Ya da sadece—az önce silinmiş bir menü öğesi için bir sipariş verilirse ne olur? Müşteriyi ücretlendiririz ve restoranın öğesi olmaz."
+
+Bu sadece bir UX rahatsızlığı değil, gerçek bir tutarlılık endişesiydi.
+
+Çözüm: hangi okumaların tutarlılık gereksinimleri olduğunu belirleyin ve onları birincile yönlendirin.
+
+**Replikaya gidebilen okumalar** (sonunda tutarlılık iyidir):
+- Müşterinin bir restoranın menüsüne göz atması (1-2 saniye bayat fark edilmez)
+- Sipariş geçmişi sorguları (bir dakika önceki sipariş geçmişini görüntüleyen bir kullanıcı)
+- Analiz türü okumalar (bu haftanın en iyi restoranları)
+
+**Birincile gitmesi gereken okumalar** (yazma sonrası okuma tutarlılığı gerekli):
+- Bir yazmadan hemen sonra, uygulamanın yazmanın başarılı olduğunu doğrulaması gerektiğinde
+- Sipariş verildikten hemen sonra sipariş durumu okumaları
+- Restoran yönetim arayüzü tarafından tetiklenen menü okumaları (restoran az önce menüyü değiştirdi)
+
+Uygulama veritabanı bağlantı katmanına bir yönlendirme ipucu ekledi: istek restoran yönetim panosundan geldiyse, birincile yönlendir. Bir müşterinin göz atmasından geldiyse, replikaya yönlendir. `X-Read-Consistency: strong` HTTP başlığı sinyal olarak hizmet etti.
+
+"Çok zor değil," dedi Leo. "Sadece hangi okumaların onu gerektirdiğini bilmeniz gerekir."
+
+"Ve belgelemek," dedi Priya. "Böylece yeni bir uç nokta ekleyen bir sonraki kişi hangi havuzu kullanacağını bilir."
+
+"Bu ayda ne kadara mal oluyor?" diye sordu Tom. Bu, herhangi bir yeni hizmet için standart açılış sorusuydu.
+
+Aynı örnek türünün bir okuma replikası, birincil ile aynı maliyetlidir. Ayda 340 dolardan 680 dolara.
+
+"Yükü kabaca yarıya indirmek için maliyeti iki katına çıkardık," dedi Tom.
+
+"Evet. Ama alternatif daha büyük bir örnek türüne geçmekti, ki bu da daha pahalıya mal olur ve okuma yükünü dağıtmazdı."
+
+Tom matematiği yaptı. İsteksizce başını salladı.
+
+"Birincil arızalanırsa ne olur?" diye sordu Maya, Tom Aurora'ya geçemeden önce. "Okuma replikasına ne olur?"
+
+Leo replika terfisini açıkladı.
+
+**Birincil RDS örneği arızalanırsa**, AWS Multi-AZ yapılandırmasındaki beklemedeki replikaya otomatik olarak geçiş yapar (farklı türde bir replika—senkron bir bekleme, bir okuma replikası değil). Multi-AZ beklemesi yeni birincil olur. Okuma replikaları okumaları sunmaya devam eder, şimdi yeni birincilden replike ederler. Uygulamanın perspektifinden, birincil uç nokta DNS'i eski beklemeyi gösterecek şekilde değişir ve uygulama yeniden bağlanır.
+
+Geçiş, RDS PostgreSQL için tipik olarak 60-120 saniye sürer. O pencere sırasında, yazmalar başarısız olur.
+
+**Okuma replikası terfisi** ayrı bir işlemdir—ve ayrı bir senaryo. Bir okuma replikasını alıp bağımsız, yazılabilir bir veritabanı yapmak istiyorsanız (DR için, yeni bir bölgeye göç için veya birincil gittiği ve Multi-AZ geçişini beklemek yerine terfi ettirmeniz gerektiği için), bir okuma replikasını bağımsız bir birincile terfi ettirebilirsiniz. Terfi birkaç dakika sürer, sonrasında replika artık orijinal birincilden replike etmez—kendi veritabanıdır.
+
+"us-west-2 birincili tamamen çökerse ne olacağını düşündük mü?" diye sordu Priya. "Sadece Multi-AZ beklemesine geçiş değil—tüm bölge."
+
+"Bölge arızalanırsa," dedi Leo, "Multi-AZ beklemesi de us-west-2'de. İkisi birlikte arızalanır."
+
+"Yani gerçek bir bölgesel DR senaryosu için," dedi Tom, "us-east-1'de terfi ettirebileceğimiz bir okuma replikasına ihtiyacımız olurdu."
+
+"Evet. Bir bölgeler arası okuma replikası. Henüz bir tane yok."
+
+"Bu ayda ne kadara mal oluyor?" diye sordu Tom. Cevabın bir karar içereceğini zaten biliyordu.
+
+us-east-1'de bir db.r6g.large'in bölgeler arası okuma replikası: ayda 340 dolar (aynı örnek maliyeti). Artı replikasyon için bölgeler arası veri aktarımı: Nimbus'un yazma hacminde minimal. Toplam: bir DR replikası için yaklaşık ayda 350 dolar.
+
+"Bu yılda 4.200 dolar," dedi Tom, "on yılda AWS bölgelerinin başına beş kezden az gelen bir senaryoya karşı koruma için."
+
+"Ve bölgesel bir olay sırasında Nimbus'un 24 saat kapalı olmasının maliyeti?" diye sordu Priya.
+
+Tom hesapladı. Yüksek sesle cevap vermedi. Ama DR birikim listesine "bölgeler arası okuma replikası" ekledi.
+
+"Aurora nedir?" diye sordu.
 
 **Amazon Aurora: Veritabanı Motorunu Yeniden Düşünmek**
 
-Aurora, AWS’nin kendi ticari ilişkilendirilebilir veritabanı motorudur ve MySQL ve PostgreSQL ile uyumludur. Bulut iş yükleri için, ilişkisel bir veritabanının depolama katmanının nasıl çalıştığını yeniden tasarlayarak, yerinden oluşturulmuş bir şekilde tasarlanmıştır.
+Aurora, MySQL ve PostgreSQL ile uyumlu, AWS'nin tescilli ilişkisel veritabanı motorudur. Bulut iş yükleri için sıfırdan tasarlandı ve bir ilişkisel veritabanının depolama katmanının nasıl çalıştığını yeniden hayal etti.
 
-Geleneksel bir RDS kurulumunda (MySQL, PostgreSQL), depolama ve hesaplama sıkı bir şekilde ilişkilidir. Veritabanı motoru verileri yönetir. Çoğaltma, ana veritabanından replikaya verileri kopyalar. Replikaya her yazma işlemi yeniden yapılmalıdır.
+Geleneksel bir RDS kurulumunda (MySQL, PostgreSQL), depolama ve işlem sıkı sıkıya bağlıdır. Veritabanı motoru veri dosyalarını yönetir. Replikasyon veriyi birincilden replikaya kopyalar. Replika her yazma işlemini yeniden yapmalıdır.
 
-Aurora, depolama ve hesaplamayı ayırır. Üç kullanılabilirlik bölgesinde otomatik olarak çoğaltılan veriyle birlikte, veritabanı örneklerini (örnekleri) yöneten dağıtılmış, hataya dayanıklı bir depolama katmanı kullanır.
+Bu, replikasyon hızında bir tavan yaratır: bir replika yazmaları yalnızca replikasyon günlüğünü işleyebildiği hızda uygulayabilir. Yazma ağırlıklı bir dönemde—toplu içe aktarma, bir flaş satış, bir toplu güncelleme—replika geride kalabilir. Replikasyon gecikmesi uygulamadaki bir kusur değildir; mimarinin bir sonucudur.
 
-**Bu neyi değiştiriyor**:
+Priya, Leo okuma replikalarını önerdiğinde bunu hemen işaret etmişti. "Peki Cuma yoğunluğu sırasında replikasyon gecikmesi 30 saniyeye fırlarsa ne olacağını düşündük mü? Replika 30 saniye geride. Bir müşteri sipariş verir, mutfak zaman dilimi birincilde rezerve edilir, ama replikayı sorgulayan ikinci bir müşteri rezervasyonu görmez. İki sipariş, bir dilim."
 
-**Okuma Replikaları**: Aurora replikaları veri çoğaltmasına ihtiyaç duymayan, zaten aynı depolama katmanını paylaşırlar. Bu, şu anlama gelir:
+"Bu bir envanter tutarlılığı sorunu," dedi Leo.
 
-- 5 okuma replikası (normal RDS için)
-- Okuma replikaları aynı bölgede veya farklı bir bölgede olabilir (çapraz bölge replikaları)
-- Okuma replikaları kendilerine okuma replikaları (zincirleme) ekleyebilirler.
-- Okuma replikaları ayrı uç noktalar – uygulamanız okuma işlemlerini replikaya yönlendirmelidir.
+"Bu tam olarak bir envanter tutarlılığı sorunu," diye onayladı Priya. "Bu yüzden envanter okumaları—'bu öğe hâlâ mevcut mu?'—birincile gitmeli."
 
-Tom, Nimbus için bir okuma replikası ekledi. Uygulamayı şu şekilde güncelledi:
+Aurora'nın mimarisi gecikmeyi doğrudan ele alır.
 
-- Yazma işlemleri → ana uç nokta
-- Menü görüntüleme, sipariş geçmişi → replika uç noktası
+Aurora depolamayı işlemden ayırır. Veriyi üç Erişilebilirlik Bölgesi arasında altı kopya hâlinde otomatik olarak replike eden dağıtık, hata toleranslı bir depolama katmanı kullanır. İşlem katmanı (veritabanı örnekleri) bu depolama katmanının üzerinde oturur.
 
-**Arızalı Geçiş**: Replikalar paylaştığı depolama nedeniyle, geçiş çok daha hızlıdır — yükseltme veri aktarımını içermez, sadece yazma yönlendirmesini içerir.
+**Bunun değiştirdiği şeyler**:
 
-**Depolama**: Aurora, depolama alanını 10 GB'lık artışlarla otomatik olarak ölçeklendirir, maksimum 128 TB'a kadar. Depolama alanını önceden ayarlamanız gerekmez.
+**Okuma replikaları**: Aurora replikalarının veriyi replike etmesi gerekmez—zaten aynı depolama katmanını paylaşırlar. Bu şu anlama gelir:
 
-**Performans**: Aurora, standart MySQL ve standart PostgreSQL için eşdeğer örnek türleri için 5 kat daha yüksek bir akış hızı iddia ediyor ve 3 kat daha yüksek.
+- Depolama birimini paylaşan 15 Aurora Replikasına kadar (normal RDS de 15 okuma replikasına izin verir, ama her biri tam bir veri kopyasıdır)
+- Replikasyon gecikmesi tipik olarak 100 milisaniyenin altındadır (yük altında RDS için saniyelere karşı)
+- Replikalar 30 saniyenin altında birincile terfi ettirilebilir (dakikalara karşı)
 
-**Aurora Fiyatlandırması: Tom Sorunu**
+**Geçiş**: Replikalar depolamayı paylaştığı için, geçiş çok daha hızlıdır—terfi veri aktarımı içermez, sadece yazmaları yeniden yönlendirir.
 
-"Ne kadar maliyet ediyor?" Tom sordu.
+**Depolama**: Aurora depolamayı 10GB'lık artışlarla, 128 TiB'a kadar (son motor sürümlerinde 256 TiB) otomatik olarak ölçeklendirir. Depolamayı asla önceden sağlamazsınız.
 
-Aurora fiyatlandırması, RDS'den farklıdır:
+**Performans**: Aurora, eşdeğer örnek türleri için standart MySQL'in 5 katı verim ve standart PostgreSQL'in 3 katı iddia eder.
 
-**Örnek Fiyatlandırması**: RDS örnek fiyatlandırmasına benzer şekilde türden.
+Şunu merak ediyor olabilirsiniz: tüm replikalar aynı depolamayı paylaşıyorsa, o depolama tek bir arıza noktası hâline gelmez mi? Aurora'nın depolama katmanı veriyi üç Erişilebilirlik Bölgesinde altı kopya hâlinde otomatik olarak replike eder. Depolamanın kendisi herhangi bir tek RDS Multi-AZ kurulumundan daha dayanıklıdır—sıfır veri kaybıyla ve geçiş gerekmeden tüm bir AZ kaybından sağ çıkacak şekilde tasarlanmıştır.
 
-**Depolama Fiyatlandırması**: GB başına ayda 0,10 ABD doları (depolanan her şey için ödeme yaparsınız, otomatik olarak ölçeklenir).
+İkinci yaygın bir soru: Aurora MySQL/PostgreSQL uyumluysa, RDS PostgreSQL'den Aurora PostgreSQL'e uygulama kodunu değiştirmeden geçebilir misiniz? Neredeyse. Aurora PostgreSQL uyumluluğu, Aurora'nın PostgreSQL kablo protokolünü uyguladığı ve PostgreSQL SQL sözdizimi ve özelliklerinin büyük çoğunluğunu desteklediği anlamına gelir. Çoğu uygulama sıfır kod değişikliğiyle göç eder. Uç durumlar: az sayıda PostgreSQL uzantısı Aurora'da mevcut değildir, bazı sistem kataloğu sorguları farklı değerler döndürür ve belirli yönetimsel işlemler farklıdır. Üretim göçleri için, yazmaları değiştirmeden önce paralel okuma trafiğiyle test edin.
 
-**I/O Fiyatlandırması**: Aurora, depolamaya (okuma/yazma) yapılan her I/O isteği için ücretlendirir. Yazma yoğun iş yükleri için önemli olabilir.
+Nimbus için, RDS PostgreSQL'den Aurora PostgreSQL'e göç bir öğleden sonra sürdü. Uygulama Aurora uç noktasına yönlendirildi. Menü sorgusu—Leo, Performance Insights'ın veritabanı yükünün en büyük tüketicisi olarak işaret ettiği dizini ekledikten sonra—620ms yerine 4ms'de çalıştı. Bağlantı havuzu artık 200'ün 198'ine ulaşmadı. P95 gecikmesi 28ms'ye düştü.
 
-"Bekle," Tom dedi. "I/O'yu ayrı olarak mı ödeyeceğiz?"
+"Bu, uygulamanın aynı veritabanı motoru olduğunu düşündüğü," dedi Leo, "farklı bir veritabanı motoru."
 
-"Aurora Serverless v2 ve Aurora I/O-Optimize edilmiş bu fiyatlandırma modelini değiştirir," dedi Leo. "Aurora I/O-Optimize edilmiş herhangi bir I/O ücreti almaz ancak daha yüksek bir depolama ve örnek fiyatı vardır. I/O yoğun iş yükleri için daha iyidir."
+"Peki ilginç kısmı?" diye sordu Maya.
 
-Tom, durumu değerlendirdi. Nimbus, okuma yoğun bir iş yüküydü (menü sorgularının çoğu, az sayıda yazma) ve Aurora I/O-Optimize edilmiş daha pahalı olabilir. Standart Aurora fiyatlandırması uygun olabilir.
+"Hızlı veritabanı klonlama."
 
-Bu, senior mühendisler tarafından yapılan gerçek bir maliyet kararıdır: İş yükünüzün I/O desenlerini bilmeniz gerekir.
+"Not edildi," dedi Sam sessizce odanın diğer ucundan, zaten yazıyordu. Sam, birkaç hafta önce veritabanı işinin bir kısmını Leo'nun tabağından almak için ekibe katılmış bir arka uç mühendisiydi. Kimse ne yaptığını sormadı.
 
-**Aurora Serverless: Örnekleri Düşünmeden Ölçekleme**
+**Aurora Fiyatlandırması: Tom Sorusu**
 
-**Aurora Serverless v2**, veritabanı yüküne göre otomatik olarak hesaplama kapasitesini ölçeklendiren bir konfigürasyondur. (db.r6g.large) gibi sabit bir örnek boyutu seçmek yerine, Aurora Kapasite Birimleri (ACU) cinsinden minimum ve maksimum kapasiteyi ayarlarsınız.
+Aurora fiyatlandırması RDS'den farklıdır:
+
+**Örnek fiyatlandırması**: Türe göre RDS örnek fiyatlandırmasına benzer.
+
+**Depolama fiyatlandırması**: GB başına ayda 0,10 dolar (sakladığınız şey için ödersiniz, otomatik ölçeklenir).
+
+**G/Ç fiyatlandırması**: Aurora G/Ç isteği başına (depolamaya okuma/yazma) ücret alır. Bu, yazma ağırlıklı iş yükleri için önemli olabilir.
+
+"Bekle," dedi Tom. "G/Ç için ayrı mı ödüyoruz?"
+
+"Aurora Serverless v2 ve Aurora I/O-Optimized bu fiyatlandırma modelini değiştirir," dedi Leo. "Aurora I/O-Optimized G/Ç ücreti almaz ama daha yüksek depolama ve örnek fiyatı alır. G/Ç ağırlıklı iş yükleri için daha iyi."
+
+Tom takası inceledi. Okuma ağırlıklı (çok menü sorgusu, az yazma) olan Nimbus için, Aurora I/O-Optimized daha pahalıya mal olabilirdi. Standart Aurora fiyatlandırması uygun olabilirdi.
+
+Yararlı bir kural: G/Ç ücretleriniz toplam Aurora faturanızın kabaca %25'ini aşıyorsa, I/O-Optimized muhtemelen daha ucuzdur. Nimbus'un okuma ağırlıklı iş yükü için, G/Ç ücretleri düşüktü—standart fiyatlandırma uygulanır. Bir olay günlükleme sistemi gibi yazma ağırlıklı bir iş yükü için, I/O-Optimized maliyetleri önemli ölçüde azaltabilir.
+
+Bu, kıdemli mühendislerin verdiği gerçek bir maliyet kararıdır: doğru seçim yapmak için iş yükünüzün G/Ç kalıplarını bilmeniz gerekir.
+
+İş yükünüz küçük, kararlı ve öngörülebilirse, RDS PostgreSQL daha basit ve anlamlı şekilde daha ucuzdur—ama trafiğiniz öngörülemezse, veri hacminiz önceden sağlayabileceğinizin ötesine büyüyorsa veya 30 saniyenin altında otomatik geçişe ihtiyacınız varsa, Aurora'nın paylaşılan depolama modeli daha yüksek temel maliyeti haklı çıkarır.
+
+**Aurora Serverless: Örnekleri Düşünmeden Ölçeklendirme**
+
+**Aurora Serverless v2**, işlem kapasitesini gerçek veritabanı yüküne göre otomatik olarak ölçeklendiren bir yapılandırmadır. Sabit bir örnek boyutu (db.r6g.large) seçmek yerine, Aurora Capacity Units (ACU) cinsinden minimum ve maksimum kapasite ayarlarsınız.
 
 Aurora Serverless v2:
 
-- Yük arttıkça saniyeler içinde ölçeklenir
-- Yük durgun olduğunda neredeyse sıfıra iner
-- Maliyet: 1 ACU-saat başına 0,12 ABD doları (depolama ve I/O ile birlikte)
+- Yük arttığında saniyeler içinde yukarı ölçeklenir
+- Boşta dönemlerde aşağı ölçeklenir—ve 2024 sonundan beri, hiç bağlantı olmadığında 0 ACU'ya kadar otomatik duraklatabilir (devam ~15 saniye sürer; otomatik duraklatma RDS Proxy veya diğer bağlantı-tutan proxy'lerle çalışmaz)
+- Maliyet: ACU-saat başına 0,12 dolar (artı depolama ve G/Ç)
 
-Değişken trafikli iş yükleri için — Nimbus'ın Cuma geceleri zirveleri ve Pazartesi sabahları sakinliği gibi — Serverless v2, boş zamanlarda maliyetleri azaltır ve önceden tahsis etme ihtiyacını ortadan kaldırarak zirveleri kaldırır.
+Değişken trafiğe sahip iş yükleri için—Nimbus'un Cuma sıçramaları vs Pazartesi sabahı sessizliği—Serverless v2 yoğun olmayan dönemlerde maliyetleri azaltır ve zirveleri önceden sağlamadan ele alır.
 
-"Yani Cuma gecesi zirvesinde," dedi Leo, "Aurora otomatik olarak ölçeklenir. Pazar sabahı neredeyse hiç trafik olmadığında, minimuma iner."
+"Yani Cuma sıçraması sırasında," dedi Leo, "Aurora otomatik olarak yukarı ölçeklenir. Neredeyse hiç trafiğimizin olmadığı Pazar sabahı, minimuma geri ölçeklenir."
 
-"Ve sadece kullandığımız kapasite için ödeme yaparız," dedi Tom.
+"Ve yalnızca kullandığımız kapasite için ödüyoruz," dedi Tom.
 
 "Doğru."
 
-Tom, tam olarak aradığı şeyi bulmuş gibi bir ifadeye sahipti.
+Aurora Serverless v2'de bir ay sonra, Leo önceki hafta için ACU (Aurora Capacity Unit) grafiğini açtı.
 
-**Aurora Global Database: Çok Bölgesel Okuma**
+Grafik iki belirgin kalıp gösterdi. Hafta boyunca, veritabanı 2-4 ACU'da çalıştı—arka plan sorguları, ECS sağlık kontrolleri, Glue ETL işleri ve geliştirme testinin sessiz bir uğultusu. Cuma akşamı 18:00 ile 22:00 arasında, ACU sayısı tırmandı:
 
-**Aurora Global Database**, Aurora'yı birden fazla AWS bölgesine yayar:
+```
+Cuma 18:00  → 6 ACU
+Cuma 19:00  → 14 ACU
+Cuma 19:45  → 26 ACU  (zirve — NFL başlama vuruşundan önce pizza siparişleri fırlar)
+Cuma 20:30  → 18 ACU
+Cuma 21:00  → 12 ACU
+Cuma 22:30  → 4 ACU
+Cumartesi 02:00 → 2 ACU  (minimum)
+```
 
-- **Birincil bölge** tüm yazıları işler
-- **Maksimum beş ikincil bölge** tipik olarak <1 saniye replikasyon gecikmesiyle okuma yapar
-- İkincil bölgeler, <1 dakika içinde birincil bölge olarak terfi edilebilir (ACD senaryoları için)
+Ölçeklendirme neredeyse anlıktı—Aurora Serverless v2, 0,5 ACU'luk artışlarla ölçeklenir ve yeni bir RDS örneği sağlamak için gereken dakikalar yerine saniyeler içinde kapasite ekleyebilir.
 
-Nimbus'ın küresel genişlemesi için, bir Londra restoran ortağının EU okuma replikasından yerel menüsünü sorgulamasına Aurora Global Database izin verirken, tüm siparişler (yazmalar) ABD birincil bölgeye gönderilir.
+"O Cuma zirvesi ne kadara mal oldu?" diye sordu Tom.
 
-**RDS vs Aurora: Hangi Birini Seçmeli?**
+ACU-saat başına 0,12 dolardan: Cuma zirvesi ortalama 18 ACU'da 4 saatti → zirve dönemi için 8,64 dolar. Haftanın geri kalanı ortalama 3 ACU × 164 saat × 0,12 $ = 59,04 $. Hafta için toplam: 67,68 $.
+
+Cuma zirvesini ele almak için eşdeğer sağlanan örnek (db.r6g.xlarge, 4 vCPU, 32 GB) 0,937 $/saat × 168 saat = **hafta için 157,42 $** olurdu—Cuma zirvesi gerçekleşse de gerçekleşmese de.
+
+"Serverless v2 hafta için 67 dolar. Zirve için boyutlandırılmış sağlanan bir örnek 157 dolar," dedi Tom. "Bu %57'lik bir azalma."
+
+"Cuma günü dört saat boyunca meşru olarak 26 ACU ve haftanın geri kalanında 2 ACU kullanan bir veritabanında," dedi Leo. "Veritabanınız tüm hafta tutarlı yüksek yükte çalışırsa, sağlanan bir örnek daha ucuzdur. Tasarruflar değişkenlikten gelir."
+
+Tom yavaşça başını salladı. Bunu notlarındaki bir kalıba ekliyordu: bu çeyrekteki her tasarruf hikâyesinin aynı şekli vardı. İhtiyaç duyabileceğiniz şey için değil, kullandığınız şey için ödersiniz. S3 yaşam döngüsü politikaları yalnızca her nesnenin hak ettiği depolama sınıfı için ödedi. Lambda yalnızca çağrı zamanı için ödedi. Fargate yalnızca görev CPU'su ve belleği için ödedi. Aurora Serverless v2 yalnızca veritabanının gerçekten tükettiği ACU'lar için ödedi.
+
+Tom, tam olarak aradıkları şeyi bulan birinin ifadesine sahipti.
+
+**Kötü Bir Göçten Kurtulma: Klonlar, PITR ve Geri Al Düğmesi**
+
+Aurora'ya geçtikten iki hafta sonra, Sam üretimde bir veritabanı göç komut dosyası çalıştırdı. Komut dosyasının `menu_items` tablosundan `legacy_menu_format` sütununu kaldırması gerekiyordu. Onu, dahil ettiğini düşündüğü WHERE yan tümcesi olmadan çalıştırdı.
+
+Sonuç bir sütun kaldırmak değildi. `menu_items` tablosundan 40.000 satırı temizleyen bir DELETE ifadesiydi—yaklaşık 200 restoran değerinde menü verisi, gitti.
+
+Uyarı 30 saniye içinde tetiklendi. Sipariş arızaları fırladı. Menü hizmeti 200 restoran için boş sonuçlar döndürmeye başladı.
+
+"Bir WHERE yan tümcesi olması gerekiyordu," dedi Sam, konsola bakarak.
+
+Geleneksel kurtarma yolu: en son otomatik yedek anlık görüntüsünden geri yükle. Otomatik yedekler her 24 saatte bir çalışır ve tam bir geri yükle-ve-değiştir 20-40 dakika sürerdi—bu sırada *tüm* restoranlar karanlık olurdu, sadece etkilenen 200'ü değil—ve yedekten beri verilen her sipariş kaybolurdu.
+
+Leo bunu yapmadı. Standart RDS gibi, Aurora da **noktaya-zamanda kurtarma (point-in-time recovery, PITR)** için sürekli yedekler tutar—kümeyi yedek saklama penceresi içindeki herhangi bir saniyeye geri yükleyebilirsiniz, sadece son gecelik anlık görüntüye değil. Ve kritik olarak, geri yükleme *yeni* bir küme oluşturur; siz kurtarırken üretim ayakta kalır.
+
+```bash
+aws rds restore-db-cluster-to-point-in-time \
+  --db-cluster-identifier nimbus-aurora-recovery \
+  --source-db-cluster-identifier nimbus-aurora-cluster \
+  --restore-to-time 2024-06-14T15:42:00Z
+```
+
+Zaman damgası: 15:42:00Z—Sam göç komut dosyasını çalıştırmadan dört dakika önce. Kurtarma kümesi devreye girerken, üretimin geri kalanı etkilenmeyen restoranlara hizmet etmeye devam etti. Kullanılabilir olduğunda, Leo etkilenen 200 restoran için `menu_items` satırlarını kurtarma kümesinden dışa aktardı ve onları üretime geri ekledi. Uyarıdan tamamen geri yüklenmiş menülere kadar toplam süre: 40 dakikadan biraz az—ve tüm veritabanını değiştirmek yerine satırları cerrahi olarak onardığı için, 15:42'den sonra verilen hiçbir sipariş kaybolmadı. Kurtarma kümesi sonradan silindi; amacına hizmet etmişti.
+
+"Ne kaybettik?" diye sordu Maya.
+
+Kısaca boş menülere karşı verilen altı sipariş ödeme aşamasında başarısız olmuştu—hepsi SQS kuyruğundaydı ve yeniden oynatılabilirdi. Hiçbir müşteri verisi kalıcı olarak kaybolmadı.
+
+"Ve **hızlı veritabanı klonlama** burada devreye giriyor," dedi Leo, sonradan ekibi bir araya getirerek. Aurora, veritabanı boyutundan bağımsız olarak, kopyala-yaz (copy-on-write) kullanarak dakikalar içinde bir kümenin **klonunu** oluşturabilir: klon orijinalin depolama katmanını paylaşır ve yalnızca yeni veya değişen sayfalar ek alan tüketir. Mevcut üretim veritabanının bir klonu ucuz, hızlı ve tamamen izoledir—klona yazmalar üretime asla dokunmaz.
+
+"Bu da," dedi Priya, Sam'e bakarak, "göç komut dosyasının üretimde çalışmadan önce üretim verisinin bir klonuna karşı test edilmesi demek. Yeni kural bu."
+
+Sam başını salladı. Onu zaten bir yapışkan nota yazmıştı.
+
+Bu resme bir araç daha ait. Aurora MySQL—Aurora PostgreSQL değil—**Aurora Backtrack**'e sahiptir: kümeyi belirli bir noktaya, yeni bir kümeye geri yüklemeden, *yerinde* geri saran bir özellik. Nimbus'un kümesi Aurora MySQL olsaydı, Leo onu üç dakikadan kısa sürede 15:42'ye geri sarabilirdi—tüm kümeyi geri sarmak, silmeden sonra yazılan birkaç meşru siparişi de geri alırdı, ki cerrahi PITR yaklaşımı onları korudu.
+
+"Peki birisi Backtrack—veya noktaya-zamanda geri yükleme—kullanarak içeri girmeye çalışırsa?" diye sordu Priya. "Bir saldırgan denetim günlüklerini veya uyumluluk verisini geri sarabilir mi?"
+
+Backtrack `rds:BacktrackDBCluster` API izni gerektirir ve geri yüklemeler `rds:RestoreDBClusterToPointInTime` gerektirir—normal veritabanı işlemlerinden ayrı IAM eylemleri. Standart uygulama rollerinin bu izinleri yoktur. Yalnızca operasyon ekibi, açıkça izin veren IAM politikasıyla, bunları kullanabilirdi. Bunu IAM izinleri inceleme kontrol listesine ekledi.
+
+Önemli uyarılar: Aurora Backtrack yalnızca Aurora MySQL uyumlu kümeler için kullanılabilir, PostgreSQL için değil. Backtrack penceresi küme oluşturmada yapılandırılır (1 saatten 72 saate, backtrack penceresinin her saati için ücret alınır). Ve Backtrack tüm kümeyi etkiler—bir tabloyu veya bir satır kümesini Backtrack edemezsiniz. Cerrahi satır düzeyinde kurtarma için—her iki motorda da—Leo'nun kullandığı geçici-kümeye-PITR yaklaşımı araçtır.
+
+**Aurora Global Database: Çoklu Bölge Okumaları**
+
+**Aurora Global Database**, Aurora'yı birden fazla AWS bölgesine genişletir:
+
+- **Bir birincil bölge** tüm yazmaları ele alır
+- **Beş ikincil bölgeye kadar** tipik olarak <1 saniye replikasyon gecikmesiyle okumalara hizmet eder
+- İkincil bölgeler 1 dakikanın altında birincile terfi ettirilebilir (DR senaryoları için)
+
+Nimbus'un küresel genişlemesi için, Aurora Global Database, Londra'daki bir restoran ortağının yerel menüsünü AB okuma replikasından sorgulamasına izin verirken, tüm siparişler (yazmalar) hâlâ ABD birincilinden geçer.
+
+**RDS vs Aurora: Her Birini Ne Zaman Seçmeli**
 
 | Faktör            | RDS (PostgreSQL/MySQL)        | Aurora                                                     |
 |-------------------|-------------------------------|------------------------------------------------------------|
-| Maliyet            | Küçük iş yükleri için daha düşük | Daha yüksek temel fiyat, ancak daha iyi ölçeklenir             |
-| Uyumluluk         | Tam                          | MySQL/PostgreSQL uyumlu (az sayıda farklarla)           |
-| Maksimum replikalar | 5                             | 15                                                         |
-| Replika gecikmesi  | Saniyeler                    | Tipik olarak <100ms                                         |
-| Depolama          | Sabit tahsis                  | Otomatik olarak 128TB'a kadar ölçeklenir                   |
-| Geçiş süresi      | 60-120 saniye                | <30 saniye                                                |
-| Serverless seçeneği| Sınırlı                       | Aurora Serverless v2                                       |
-| En iyisi için      | İstikrarlı, tahmin edilebilir iş yükleri | Değişken trafik, yüksek okuma hacmi, hızlı geçiş ihtiyacı |
+| Maliyet           | Küçük iş yükleri için daha düşük | Daha yüksek taban, ama daha iyi ölçeklenir              |
+| Uyumluluk         | Tam                           | MySQL/PostgreSQL uyumlu (küçük farklarla)                  |
+| Maks replika      | 15 (her biri tam veri kopyası) | 15 (paylaşılan depolama birimi)                           |
+| Replika gecikmesi | Saniyeler olabilir            | Genellikle <100ms                                         |
+| Depolama          | Sabit sağlama                 | 128 TiB'a otomatik ölçeklenir (son sürümlerde 256 TiB)    |
+| Geçiş süresi      | 60-120 saniye                 | <30 saniye                                                |
+| Sunucusuz seçeneği | Sınırlı                      | Aurora Serverless v2                                       |
+| En iyisi          | Kararlı, öngörülebilir iş yükleri | Değişken trafik, yüksek okuma hacmi, hızlı geçiş ihtiyacı |
+
+**İlişkiselin Ötesinde: Amaca Yönelik Aile**
+
+Bölüm 9 DocumentDB'yi (MongoDB uyumlu belgeler), Neptune'ü (graf ilişkileri) ve Keyspaces'i (Cassandra uyumlu geniş sütun) tanıttı ve bölüm 10 MemoryDB'yi (dayanıklı Redis uyumlu birincil veritabanı) tanıttı. İki isim daha aileyi tamamlar—onlarda derinliğe ihtiyacınız yok, sadece hangi veri şeklinin hangi motora işaret ettiğini tanıma yeteneğine, çünkü sürekli cevap seçenekleri olarak görünürler:
+
+- **Amazon Timestream**: **zaman serisi** verisi—sensör okumaları, metrikler, telemetri. Sınav sinyali: "zaman içinde IoT ölçümleri." (Gerçek dünyada mevcut teklif Timestream for InfluxDB'dir; orijinal "LiveAnalytics" çeşidi 2025'te yeni müşterilere kapandı.)
+- **Amazon QLDB**: onunla eski sorularda hâlâ "değişmez, kriptografik olarak doğrulanabilir defter" olarak karşılaşabilirsiniz. AWS QLDB'yi 2025'te durdurdu (bunun yerine Aurora PostgreSQL öneriyor)—onu bir yapı taşı değil, eski bir dikkat dağıtıcı olarak ele alın.
+
+Bir beyaz tahtaya yazmaya değer kural: **ilişkisel satırlar → RDS/Aurora; ölçekte anahtar-değer → DynamoDB; belgeler → DocumentDB; ilişkiler → Neptune; zaman → Timestream; Cassandra → Keyspaces; dayanıklı Redis → MemoryDB.** Şekli eşleştirin ve soru kendini yanıtlar.
 
 ## Güçlü Yönler ve Sınırlamalar
 
-**Aurora'nın güçlü yönleri**:
+**Aurora güçlü yönleri**:
 
-- Standart RDS'ye göre önemli ölçüde daha hızlı geçiş
-- Minimum gecikmeyle 15 okuma replikası
-- Otomatik ölçeklenebilir depolama
+- Standart RDS'den önemli ölçüde daha hızlı geçiş
+- Minimal gecikmeyle 15 okuma replikasına kadar
+- Otomatik ölçeklenen depolama
 - Değişken iş yükleri için Serverless v2
-- Çok bölgesel dağıtım için Global Database
+- Çoklu bölge dağıtımı için Global Database
 
-**Aurora'nın sınırlamaları**:
+**Aurora sınırlamaları**:
 
-- Küçük, istikrarlı iş yükleri için daha yüksek maliyet
-- Yazma yoğun iş yükleri için I/O fiyatlandırması önemli olabilir (I/O-Optimize edilmiş için bunu kullanın)
-- Minor MySQL/PostgreSQL uyumluluk farklılıkları, kod değişiklikleri gerektirebilir
-- Serverless v2 soğuk başlangıçlar (sıfırın yakınında) gecikme zirveleri neden olabilir
+- Küçük, kararlı iş yükleri için daha yüksek maliyet
+- G/Ç fiyatlandırması yazma ağırlıklı iş yükleri için önemli olabilir (bunun için I/O-Optimized kullanın)
+- Küçük MySQL/PostgreSQL uyumluluk farkları kod değişiklikleri gerektirebilir
+- Serverless v2'nin otomatik duraklatmadan devamı (~15 saniye) ve hızlı yukarı ölçeklenmesi gecikme sıçramalarına neden olabilir
 
 ## Özet
 
-- **Replikalar** okuma trafiğini ana sunucudan dağıtır. Asenkron replikasyon — çoğu okuma için hafif bir gecikme kabul edilebilir.
-- **Aurora**, depolama katmanını yeniden tanımlar: dağıtık, replikalara yayılır, otomatik ölçekleme.
-- Aurora aşağıdaki özellikleri sunar: 15 okuma replikası, <100ms replika gecikmesi, <30s geçiş, otomatik ölçekleme için kadar 128TB depolama.
-- **Aurora Serverless v2**: yük bazında hesaplama kapasitesini otomatik olarak ölçeklendirir. Değişken trafik için uygundur.
-- **Aurora Küresel Veritabanı**: bir bölgede ana sunucu, bir ila beş bölgede okuma replikaları.
-- Daha küçük, kararlı ve tahmin edilebilir iş yükleri için RDS'yi seçin. Ölçeklenebilirlik, hızlı geçiş veya değişken trafik yönetimi gerektiğinde Aurora'yu seçin.
+Bölüm 23'teki S3 yaşam döngüsü çalışması, veriyi doğru depolama katmanına taşıyarak maliyetleri azalttı. Aurora bunun eşdeğerini işlem için yapar: zirve yükü için sağlayıp her zaman onun için ödemek yerine, Serverless v2 talebe uyacak şekilde ölçeklenir.
+
+- **Okuma replikaları** okuma trafiğini birincilden dağıtır. Asenkron replikasyon—çoğu okuma için hafif gecikme kabul edilebilir. Yazma tutarlılığı gerektiren okumaları (yazma sonrası hemen okumalar, yönetici arayüzü okumaları) replikaya değil, birincile yönlendirin.
+- **Aurora** depolama katmanını yeniden hayal eder: dağıtık, replikalar arasında paylaşılan, otomatik ölçeklenen.
+- Aurora şunları sunar: 15 okuma replikası, <100ms replika gecikmesi, <30s geçiş, 128 TiB'a (son sürümlerde 256 TiB) otomatik ölçeklenen depolama.
+- **Performance Insights**: nasıl ölçekleneceğine karar vermeden önce veritabanı yüküne neden olan belirli SQL sorgularını belirleyin. Eksik bir dizin, daha büyük bir örnek ihtiyacını ortadan kaldırabilir.
+- **CloudWatch veritabanı metrikleri**: DatabaseConnections (doygunluğa yakın, uygulama bağlantı havuzlamasının bozuk olduğu anlamına gelir), CPUUtilization (sürekli yüksek CPU pahalı sorgular demektir), ReadLatency (zamanla bozulma genellikle eksik dizinli büyüyen bir tablodur).
+- **Aurora Serverless v2**: işlemi 0,5 ACU'luk artışlarla otomatik ölçeklendirir. ACU-saat başına ücretlendirilir. Zirve ile yoğun olmayan dönem arasında yüksek değişkenliği olan iş yükleri için sağlanan örneklerden önemli ölçüde daha ucuz.
+- **Noktaya-zamanda kurtarma (PITR)**: bir Aurora kümesini yedek saklama penceresi içindeki herhangi bir saniyeye geri yükleyin—*yeni* bir kümeye, böylece siz kayıp satırları cerrahi olarak geri kopyalarken üretim ayakta kalır.
+- **Hızlı veritabanı klonlama**: boyuttan bağımsız olarak dakikalar içinde bir kümenin kopyala-yaz klonu. Ucuz, izole—göçleri üretimde çalışmadan önce üretim verisine karşı test etmek için kullanın.
+- **Aurora Backtrack** (yalnızca MySQL uyumlu—PostgreSQL değil): kümeyi bir yedekten geri yüklemeden yerinde bir zaman noktasına geri sarın. 72 saate kadar pencereler için kullanılabilir. `rds:BacktrackDBCluster` IAM iznini gerektirir—operasyon ekibiyle sınırlandırın.
+- **Aurora Global Database**: bir bölgede birincil, beş bölgeye kadar okuma replikaları.
+- **Okuma replikası terfisi**: bölgeler arası okuma replikaları bölgesel DR için bağımsız birincillere terfi ettirilebilir. DR faydasını ikinci bir tam örnek çalıştırma maliyetiyle dengeleyin.
+- Daha küçük, kararlı, öngörülebilir iş yükleri için RDS seçin. Ölçeğe, hızlı geçişe veya değişken trafik işlemeye ihtiyacınız olduğunda Aurora seçin.
 
 ## Sınav İpuçları
 
-*SAA-C03 Alanı: Yüksek Performanslı Mimarileri Tasarla (Alan 3, Görev 3.3)*
+*SAA-C03 Alanı: Yüksek Performanslı Mimariler Tasarlama (Alan 3, Görev 3.3)*
 
-- **Aurora replikası vs RDS okuma replikası**: Aurora replikaları depolama paylaşır (neredeyse sıfır gecikme, <30s geçiş). RDS okuma replikaları verileri çoğaltır (gecikme mümkündür, geçiş için dakikalar).
-- **Aurora Serverless v2**: "Veritabanı kapasitesini otomatik olarak ölçeklendirin", "öngörülemeyen veya dalgalanan veritabanı trafiği", "sıfıra ölçekleyin" → Aurora Serverless v2.
-- **Aurora Küresel Veritabanı**: "çok bölge veritabanı", "düşük gecikmeyle AB bölgesinden okuma", "RTO < 1 dakika için bölgesel geçiş" → Aurora Küresel Veritabanı.
-- **Geçiş zamanı**: Aurora < 30 saniye. RDS Çoklu-AZ 60-120 saniye. Her ikisini de bilin.
-- **Aurora I/O-Optimize**: daha yüksek depolama ve örnek maliyeti, her I/O ücreti yoktur. I/O maliyetleri baskın olduğunda (yazma yoğun) kullanın. Standart Aurora: daha düşük depolama maliyeti, I/O başına ödeme. Okuma yoğun kullanım için kullanın.
-- **Aurora Arka Plan**: belirli bir zamana geri dönen veritabanını, tam bir yedekten geri yüklemeden olmadan geri döndürür. MySQL uyumlu Aurora için yalnızca mevcuttur. Sınav işareti: "rastgele silinen veriler, tam bir yedekten geri yüklemeden hızlı bir şekilde kurtarmak gerekiyor."
+- **Aurora replikası vs RDS okuma replikası**: Aurora replikaları depolamayı paylaşır (sıfıra yakın gecikme, <30s geçiş). RDS okuma replikaları veriyi replike eder (gecikme mümkün, geçiş için dakikalar).
+- **Aurora Serverless v2**: "veritabanı kapasitesini otomatik ölçeklendir," "öngörülemez veya ani veritabanı trafiği" → Aurora Serverless v2. Dikkat: tarihsel olarak yalnızca Serverless **v1** sıfıra ölçekleniyordu; v2'nin minimumu 2024 sonuna kadar 0,5 ACU'ydu, sonra v2 0 ACU'ya otomatik duraklatma kazandı. Eski sınav soruları hâlâ v2'nin sıfıra ölçeklenemeyeceğini varsayabilir.
+- **Aurora Global Database**: "çoklu bölge veritabanı," "ABD birincilinden düşük gecikmeyle AB'den oku," "bölgesel geçiş için RTO < 1 dakika" → Aurora Global Database.
+- **Geçiş zamanlaması**: Aurora < 30 saniye. RDS Multi-AZ 60-120 saniye. İkisini de bilin.
+- **Veri şekline göre amaca yönelik veritabanları**: "sosyal graf / öneriler / dolandırıcılık halkaları" → Neptune. "MongoDB" → DocumentDB. "Cassandra" → Keyspaces. "zaman serisi / IoT telemetri" → Timestream. "Redis uyumlu *birincil* veritabanı (dayanıklı)" → MemoryDB (vs ElastiCache = önbellek). "Değişmez kriptografik defter" → eski sorularda QLDB (2025'te durduruldu).
+- **Aurora I/O-Optimized**: Daha yüksek depolama ve örnek maliyeti, G/Ç başına ücret yok. G/Ç maliyetleri baskın olduğunda (yazma ağırlıklı) kullanın. Standart Aurora: daha düşük depolama maliyeti, G/Ç başına ödeyin. Okuma ağırlıklı için kullanın.
+- **Aurora Backtrack**: Veritabanını bir yedek anlık görüntüsünden geri yüklemeden belirli bir zaman noktasına yerinde geri sarın. Yalnızca MySQL uyumlu Aurora için kullanılabilir—Aurora PostgreSQL için, cevap noktaya-zamanda geri yükleme (yeni bir kümeye) veya hızlı bir klondur. Sınav sinyali: "yanlışlıkla silinen veri, tam bir yedek geri yüklemeden hızlıca kurtarmak gerekiyor" + MySQL → Backtrack.
+- **Aurora hızlı veritabanı klonlama**: veritabanı boyutundan bağımsız olarak dakikalar içinde kopyala-yaz klon. Sınav sinyali: "üretim verisinin bir kopyasına karşı hızlı ve ucuz test et" → klon, anlık görüntü-geri yükleme değil.
 
-## Uygulamalar
+## Alıştırmalar
 
-**Uygulama 1 — Hatırlama**
+**Alıştırma 1 — Hatırlama**
 
-Aurora ve standart RDS okuma replikaları arasındaki fark nedir? Aurora'nın replikasyon gecikmesi neden genellikle daha düşüktür?
+Aurora ile standart RDS okuma replikaları arasındaki farkı açıklayın. Aurora'nın replikasyon gecikmesi neden tipik olarak daha düşüktür?
 
-*(İpucu: Anahtar fark paylaşılan depolama ile veri replikasyonu arasındaki farktır. Her replikaya bir yazma geldiğinde ne yapması gerektiğini düşünün.)*
+*(İpucu: Temel fark paylaşılan depolama vs veri replikasyonudur. Bir yazma geldiğinde her replikanın ne yapması gerektiğini düşünün.)*
 
-**Uygulama 2 — Sınav Uygulaması**
+**Alıştırma 2 — SAA-C03 Senaryosu**
 
-*Senaryo*: Bir sosyal medya platformunun MySQL veritabanı, artan trafik nedeniyle okuma gecikmesi nedeniyle yüksek yüklenmiştir. Uygulama okuma ağırlıklıdır (%95 okuma, %5 yazma). Ekip, yükte tutarlı okuma performansı, hatta zirve dönemlerde sağlamak istiyor. Minimum kesinti ile otomatik geçiş (RTO < 30 saniye hedefi) gerekiyor. Veri hacmi tahmin edilemez bir şekilde büyüyor.
+*Senaryo*: Bir sosyal medya platformunun MySQL veritabanı, artan trafik nedeniyle yüksek okuma gecikmesi yaşıyor. Uygulama okuma ağırlıklıdır (%95 okuma, %5 yazma). Ekibin trafik sıçramaları sırasında bile okuma gecikmesinin tutarlı olmasına ihtiyacı var. Minimal kesintiyle otomatik geçişe ihtiyaçları var (hedef RTO < 30 saniye). Veri hacmi öngörülemez şekilde büyüyor.
 
-Bu gereksinimleri en iyi karşılayan veri çözümü hangisidir?
+Bu gereksinimleri EN İYİ hangi veritabanı çözümü karşılar?
 
-A) RDS MySQL Çoklu-AZ beş okuma replikası ile
-B) Aurora MySQL ile Aurora Replikaları ve Aurora Serverless v2
-C) RDS MySQL ile daha büyük bir örnek türü (dikey ölçekleme)
-D) DynamoDB ile DynamoDB DAX ile okuma önbelleklemesi
+A) Beş okuma replikalı RDS MySQL Multi-AZ  
+B) Aurora Replikaları ve Aurora Serverless v2 ile Aurora MySQL  
+C) Daha büyük bir örnek türüyle RDS MySQL (dikey ölçeklendirme)  
+D) Okuma önbelleğe alma için DynamoDB DAX ile DynamoDB
 
-**İpucu 1**: "RTO < 30 saniye" — hangi hizmet bu gereksinimi karşılıyor? Her seçeneğin geçiş zamanlamasını kontrol edin.
+**İpucu 1**: "RTO < 30 saniye"—hangi hizmet bunu başarır? Her seçeneğin geçiş zamanlamasını kontrol edin.
 
-**İpucu 2**: "Yükte tutarlı okuma performansı" — hangi hizmetin replikaları neredeyse sıfır gecikmeye sahipken potansiyel saniye gecikmeye sahip?
+**İpucu 2**: "Sıçramalar sırasında tutarlı okuma gecikmesi"—hangi hizmetin replikaları sıfıra yakın gecikmeye karşı potansiyel saniyeler gecikmeye sahip?
 
-**İpucu 3**: "Tahmin edilemez bir şekilde büyüyen veri hacmi" — hangi hizmet depolama alanını otomatik olarak ölçeklendirir?
+**İpucu 3**: "Öngörülemez şekilde büyüyen veri hacmi"—hangi hizmet depolamayı otomatik ölçeklendirir?
 
 **Cevap**: B
 
-**Açıklama**: Aurora MySQL ile Aurora Replikaları, neredeyse sıfır replikasyon gecikmesi (milyonlarca, saniye değil) ile tutarlı okuma performansı sağlar. Aurora Serverless v2, yük sırasında aşırı önbellekleme yapmadan hesaplama kapasitesini otomatik olarak ölçeklendirir. Aurora, veri büyüdükçe depolama alanını otomatik olarak ölçeklendirir. Aurora geçişi (replikayı yükseltme) 30 saniyeden daha kısa sürede tamamlanır — RTO gereksinimi karşılar.
+**Açıklama**: Aurora Replikaları ile Aurora MySQL, yük altında tutarlı okuma performansı için sıfıra yakın replikasyon gecikmesi (saniyeler değil, milisaniyeler) sağlar. Aurora Serverless v2, aşırı sağlama olmadan trafik sıçramaları sırasında işlemi otomatik ölçeklendirir. Aurora depolaması veri büyüdükçe otomatik ölçeklenir. Aurora geçişi (bir replikanın terfisi) 30 saniyenin altında tamamlanır—RTO gereksinimini karşılar.
 
-**Neden A?** RDS Çoklu-AZ geçişi 60-120 saniye sürer — RTO < 30 saniyeyi karşılamaz. Standart RDS okuma replika gecikmesi, yük altında saniyelerle ulaşabilir — "tutarlı" okuma performansı garanti etmek daha zordur.
+**Neden A değil?** RDS Multi-AZ geçişi 60-120 saniye sürer—RTO < 30 saniyeyi karşılamaz. Standart RDS okuma replikası gecikmesi yük altında saniyelere ulaşabilir—"tutarlı" okuma gecikmesini garanti etmek daha zordur.
 
-**Neden C?** Dikey ölçekleme (daha büyük bir örnek türü) kapasiteyi artırır ancak okuma yükünü dağıtmaz. Veritabanı, okuma için tek bir arıza noktasıdır.
+**Neden C değil?** Dikey ölçeklendirme (daha büyük örnek) kapasiteyi artırır ama okuma yükünü dağıtmaz. Veritabanı okumalar için tek bir arıza noktası olarak kalır.
 
-**Neden D?** DynamoDB NoSQL'dir — MySQL'den DynamoDB'ye geçiş, veri modelini ve sorgu sorularını yeniden yapılandırmayı gerektirir, bu da bu performans iyileştirme görevinin kapsamı dışındadır.
+**Neden D değil?** DynamoDB NoSQL'dir—MySQL'den DynamoDB'ye göç, veri modelini ve uygulama sorgularını yeniden mimari yapmayı gerektirir, ki bu bu performans iyileştirme görevinin kapsamının çok ötesindedir.
 
-*SAA-C03 Alanı: Yüksek Performanslı Mimarileri Tasarla — Görev 3.3*
+*SAA-C03 Alanı: Yüksek Performanslı Mimariler Tasarlama — Görev 3.3*
 
-**Uygulama 3 — Mimari Zorluğu *(İsteğe Bağlı)***
+**Alıştırma 3 — Mimari Zorluk** *(İsteğe Bağlı)*
 
-Nimbus, restoran ortaklarının Batı Kıyısındaki, Almanya'daki ve Avustralya'daki verilerini hızla görmesini sağlamak istiyor, çapraz bölge gecikmesi olmadan. Ancak tüm yazılar, tutarlılığı korumak için tek bir ABD-Doğu ana sunucuya gitmelidir.
+Nimbus küresel bir genişleme tasarlıyor. Doğu Kıyısı'ndaki, Almanya'daki ve Avustralya'daki restoran ortaklarının kendi sipariş verilerini bölgeler arası gecikme olmadan hızlıca görmesini istiyorlar. Ancak tutarlılığı korumak için tüm yazmalar tek us-west-2 birincilinden geçmeli.
 
-Aurora kullanarak bir veritabanı mimarisi tasarlayın. Küresel Veritabanı nasıl yapılandırılmalıdır? ABD-Doğu ana sunucu çökmüşse ne olur? Promosyon sürecini nasıl yönetirsiniz?
+Aurora kullanarak veritabanı mimarisini tasarlayın. Global Database'i nasıl yapılandırırdınız—örneğin, us-east-1, eu-central-1 ve ap-southeast-2'de ikincil kümeler? us-west-2 birincili çökerse ne olur? Terfi sürecini nasıl ele alırdınız?
 
-*(Tek bir doğru cevap yoktur. Amaç, çok bölge veritabanı tasarımı konusunda pratik yapmaktır.)*
+*(Tek bir doğru cevap yoktur. Amaç, çoklu bölge veritabanı tasarımı pratiği yapmaktır.)*
 
-## Son Notlar
+## Kredilerden Sonraki Sahne
 
-Leo, Serverless v2 ile Aurora'ya geçti.
+Leo Serverless v2 ile Aurora'ya göç etti.
 
-Cuma zirvesi geçti ve CPU 60'ı aştı. Sorgu gecikmesi tutarlı kaldı. Aurora, yükü otomatik olarak ölçeklendirmek için kapasiteyi artırdı ve ardından yoğunluktan sonra geri düştü.
+Cuma sıçraması geldi ve gitti. CPU asla %60'ı geçmedi. Sorgu gecikmesi tutarlı kaldı. Aurora yükü ele almak için otomatik olarak yukarı ölçeklenmiş, sonra yoğunluktan sonra geri aşağı ölçeklenmişti.
 
-"Cuma günü bu ne kadar maliyeti oluşturdu, geçen Cuma'ya göre?" Tom Pazartesi sabahı sordu.
+"Bu geçen Cuma'ya kıyasla ne kadara mal oldu?" diye sordu Tom Pazartesi sabahı.
 
-Leo, fatura keşifçisini açtı. "Cuma, saatlik 0,89 dolarla zirveye ulaştı. Cumartesi sabahı ise saatlik 0,11 dolar oldu."
+Leo faturalandırma gezginini açtı. "Cuma akşam zirvesi boyunca ortalama yaklaşık 2,16 $/saatti. Cumartesi sabahı 0,24 $/saatti."
 
-Tom bir şey söylemedi.
+Tom hiçbir şey söylemedi.
 
-"Eski kurulum, yükten bağımsız olarak saatlik 0,47 dolar sabit bir fiyat," diye ekledi Leo.
+"Eski kurulum yükten bağımsız sabit 0,47 $/saatti," diye ekledi Leo.
 
-"Yani, zirve sırasında ödediğimiz miktar, daha öncekinden daha fazlaydı," dedi Tom.
+"Yani sıçrama sırasında öncekinden daha fazla ödedik," dedi Tom.
 
-"Evet. Ancak, düşük yoğunlukta önemli ölçüde daha az ödedik. Hafta boyunca net maliyet daha düşük."
+"Evet. Ama yoğun olmayan dönemde önemli ölçüde daha az. Hafta boyunca net maliyet daha düşük."
 
 Tom hesapladı. Sonra başını salladı.
 
-"Burada bir ders var," dedi. "Doğru soru 'bu daha ucuz mu?' değil, 'bu, gerçek kullanım modelimiz için daha ucuz mu?'"
+"Burada bir ders var," dedi. "Doğru soru 'bu daha ucuz mu?' değil. 'Bu, gerçek kullanım kalıbımız için daha ucuz mu?'"
 
-O sırada odanın diğer ucundan Priya, "Bu, kıdemli bir mühendisin sezgisidir," dedi.
+"Bu," dedi Priya odanın diğer ucundan, "bir kıdemli mühendisin içgüdüsüdür."
 
-Tom, bu şekilde tanımlanmaktan hafifçe endişelenmiş görünüyordu.
+Tom bu şekilde tanımlanmaktan biraz endişeli görünüyordu.
 
-Bir sonraki bölümde: Ağınız darboğaz olduğunda ve özel bir otoyolun ücreti haklı çıkarıp çıkaramayacağını öğrenin.
+Sonraki bölümde: ağınız darboğaz olduğunda ve neden özel bir otoyolun gişe parasına değebileceği.

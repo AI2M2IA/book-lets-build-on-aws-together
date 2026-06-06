@@ -1,386 +1,640 @@
-# Ekipman A: AWS Hizmetlerine Hızlı Bakış
+# Ek A: AWS Hizmetleri Hızlı Başvuru
 
-Bu kitapta ele alınan her hizmet, tanıtıldıkları sırayla. Bu, bir çalışma referansı ve sınav hazırlığı sırasında hızlı bir bakış açısı olarak kullanın.
-
----
-
-## Hesaplama
-
-**EC2 — Esnek Hesaplama Bulutu** *(4. Bölüm)*
-
-Bulutta sanal makineler. İstemci türünü (CPU, bellek, depolama), işletim sistemini ve bölgeyi seçersiniz. Bir saat (Talep Üzerinde) veya bir taahhüt (Rezervli Instance'lar / Tasarruf Planları) veya boş kapasite yuvası (Spot) için ödeme yaparsınız. Temel hesaplama temelidir.
-
-Temel kavramlar: AMI (Amazon Makine Görüntüsü), istemci türleri (t3, m6g, r6g, c6g aileleri), anahtar çiftleri, istemci profilleri, yerleşim grupları.
-
-Sınav işareti: Kalıcı, durum bilgili veya uzun süreli hesaplama gerektiğinde — EC2 veya ECS. Kısa süreli, olay tetiklemeli veya boş boşta çalışma maliyeti gerektiğinde — Lambda.
+Bu kitapta ele alınan her hizmet, tanıtıldıkları sırayla. Bunu bir çalışma referansı ve sınav hazırlığı sırasında hızlı bir başvuru kaynağı olarak kullanın.
 
 ---
 
-**Otomatik Ölçekleme + Uygulama Yük Dengeleyici** *(7. Bölüm)*
+## Hesaplama (Compute)
 
-Otomatik Ölçekleme Grupları (ASG'ler), yük doğrultusunda EC2 istemcilerini ekler ve çıkarır. Uygulama Yük Dengeleyiciler (UYD'ler), trafiği istemciler arasında dağıtır ve yolu veya ana bilgisayarı kullanarak yönlendirir. Birlikte, yatay ölçekleme katmanını oluşturur.
+**EC2 — Elastic Compute Cloud** *(Bölüm 4)*
 
-Temel kavramlar: Başlangıç şablonu, ölçekleme politikaları (hedef izleme, adım, planlı), sağlık kontrolleri, UYD hedef grupları, dinleyici kuralları, ağırlıklı yönlendirme.
+Bulutta sanal makineler. Örnek tipini (CPU, bellek, depolama), işletim sistemini ve bölgeyi (region) siz seçersiniz. Saat başına (On-Demand), taahhüde göre (Reserved Instances / Savings Plans) veya boş kapasite yuvasına göre (Spot) ödeme yaparsınız. Temel hesaplama birimidir.
 
-Sınav işareti: "Değişken yük" veya "yüksek kullanılabilirlik AZ'ler arasında" → ASG + UYD.
+Anahtar kavramlar: AMI (Amazon Machine Image), örnek tipleri (t3, m6g, r6g, c6g aileleri), anahtar çiftleri (key pairs), örnek profilleri (instance profiles), yerleşim grupları (placement groups).
 
----
-
-**Lambda** *(20. Bölüm)*
-
-Sunucusuz fonksiyonlar. Kod yazarsınız, AWS bunu olaylara yanıt olarak çalıştırır. Yönetilmesi gereken sunucular yoktur. Bir çağrıya ve yürütme milisaniyeye göre ödeme yaparsınız. Binlerce eş zamanlı yürütme için otomatik olarak ölçeklenir.
-
-Temel kavramlar: Olay kaynakları (API Gateway, S3, SQS, EventBridge, Kinesis), rol, eş zamanlılık sınırları, ayrılmış ve tahsis edilmiş eş zamanlılık, soğuk başlatma, Katmanlar, 15 dakikalık maksimum süre, 15 dakikalık maksimum süre.
-
-Sınav işareti: "Sunucusuz", "olay odaklı", "kısa süreli görevler", "boşta çalışma maliyeti yok" → Lambda.
+Sınav ipucu: Bir senaryo kalıcı, durum bilgili (stateful) veya uzun süreli hesaplama gerektirdiğinde — EC2 veya ECS. Bir senaryo kısa süreli, olay tetiklemeli veya boşta sıfır maliyetli hesaplama gerektirdiğinde — Lambda.
 
 ---
 
-**ECS — Esnek Kapasite Hizmeti** *(21. Bölüm)*
+**Auto Scaling + Application Load Balancer** *(Bölüm 7)*
 
-AWS'de Docker kapaklarını çalıştırır. İki başlatma türü vardır: EC2 (ev sahibi yönetir) ve Fargate (AWS ev sahibi yönetir). ECS, görev tanımlarını, hizmetleri, küme planlamasını ve yük dengeleyiciler ve hizmet keşfi ile entegrasyonu yönetir.
+Auto Scaling Group'lar (ASG'ler), yüke göre EC2 örnekleri ekler ve kaldırır. Application Load Balancer'lar (ALB'ler), trafiği örnekler arasında dağıtır ve yola (path) veya host'a göre yönlendirir. Birlikte yatay ölçekleme katmanını oluştururlar.
 
-Temel kavramlar: Görev tanımı, ECS hizmeti, Fargate vs. EC2 başlatma türü, ECR (kapak kaydı), görev IAM rolü, hizmet otomatik ölçekleme.
+Anahtar kavramlar: Launch template, ölçekleme politikaları (hedef izleme, adım, planlı), sağlık kontrolleri (health checks), ALB hedef grupları, dinleyici kuralları (listener rules), ağırlıklı yönlendirme.
 
-Sınav işareti: "Kapalı iş yükleri", "mikro hizmetler", "AWS'de Docker" → ECS (genellikle sunucusuz kapaklar için Fargate).
-
----
-
-**EKS — Esnek Kubernetes Hizmeti** *(21. Bölüm)*
-
-Yönetilen Kubernetes. AWS kontrol düzlemini çalıştırır; siz çalışan düğümleri (EC2 veya Fargate) çalıştırırsınız. EKS'yi, ekibin zaten Kubernetes'i kullandığı veya Kubernetes özelliklerine ihtiyaç duyan iş yükleri için kullanırsınız.
-
-Sınav işareti: "Kubernetes", "mevcut K8s iş yüklerini taşımak gerekiyor" → EKS. "Sadece kapaklara ihtiyaç var, K8s karmaşıklığı yok" → ECS.
+Sınav ipucu: "Değişken yükü karşıla" veya "AZ'ler arasında yüksek kullanılabilirlik" → ASG + ALB.
 
 ---
 
-## Depolama
+**Lambda** *(Bölüm 20)*
 
-**S3 — Basit Depolama Hizmeti** *(5. Bölüm)*
+Sunucusuz fonksiyonlar. Kodu siz yazarsınız; AWS onu olaylara yanıt olarak çalıştırır. Yönetilecek sunucu yoktur. Çağrı başına ve yürütme milisaniyesi başına ödeme yaparsınız. Binlerce eş zamanlı yürütmeye otomatik olarak ölçeklenir.
 
-Nesne depolama. Sınırsız kapasite, %99,999,99999% (on bir dokuz) dayanıklılık. Dosyaları kapaklarda nesneler olarak saklar. Kapakların bölgede yaşadığını. Nesneler 0 bayttan 5 TB'ye kadar olabilir.
+Anahtar kavramlar: Olay kaynakları (API Gateway, S3, SQS, EventBridge, Kinesis), yürütme rolü (execution role), eş zamanlılık sınırları, ayrılmış (reserved) ve tedarik edilmiş (provisioned) eş zamanlılık, soğuk başlangıç (cold start), Layers, 15 dakikalık maksimum süre.
 
-Temel kavramlar: Kapak politikası, nesne ACL'si, sürümleme, statik web sitesi barındırma, imzalanmış URL'ler, çoklu yükleme, Transfer Hızlandırma, depolama sınıfları (Standart, Akıllı Katman, Standart-IA, Tek Bölge-IA, Buzhane Anında Erişim, Buzhane Esnek Erişim, Buzhane Derin Arşiv).
-
-Sınav işareti: "Dosyaları ve verileri sakla ve al", "statik varlıklar", "yedeklemeler", "veri gölü" → S3. Doğru depolama sınıfı erişim sıklığına ve geri çağırma hızına bağlıdır.
+Sınav ipucu: "Sunucusuz", "olay odaklı", "kısa süreli görevler", "boşta maliyet yok" → Lambda.
 
 ---
 
-**EBS — Esnek Blok Depolama** *(6. Bölüm)*
+**ECS — Elastic Container Service** *(Bölüm 21)*
 
-Tek bir EC2 örneğine bağlanan blok depolama. Bir hard drive'a benzer. Örneğe yaşam döngüsü bağımsız olarak kalır (ayırabilir ve yeniden bağlayabilirsiniz). En yaygın türler: gp3 (genel amaçlı SSD, varsayılan), io2 (veritabanları için tahsis edilmiş IOPS), st1 (sıralı okumalar için verim odaklı HDD, standart).
+AWS'de Docker konteynerleri çalıştırır. İki başlatma tipi: EC2 (host'u siz yönetirsiniz) ve Fargate (host'u AWS yönetir). ECS, görev tanımlarını (task definitions), servisleri, küme zamanlamasını ve yük dengeleyiciler ile servis keşfi (service discovery) entegrasyonunu yönetir.
 
-Temel kavramlar: Snaphot'lar (incremental, S3'te saklanır), şifreleme (KMS), Çoklu Bağlatma (io1/io2 yalnızca), IOPS ve verim tahsisleri.
+Anahtar kavramlar: Task definition, ECS servisi, Fargate ve EC2 başlatma tipi, ECR (konteyner kayıt defteri), task IAM rolü, servis otomatik ölçeklemesi.
 
-Sınav işareti: "EC2 için kalıcı depolama", "veritabanı depolama", "düşük gecikmeli blok erişimi gerekiyor" → EBS.
-
----
-
-**EFS — Esnek Dosya Sistemi** *(6. Bölüm)*
-
-Birden çok EC2 örneğinden aynı anda erişilebilen paylaşılan bir dosya sistemidir. NFS protokolü. Otomatik olarak ölçeklenir. EBS'ye göre GB başına daha pahalıdır. İki depolama sınıfı vardır: Standart ve Nadiren Erişim. Akıllı Katman, dosyaları erişim sıklığına göre otomatik olarak hareket eder.
-
-Sınav işareti: "Paylaşılan bir dosya sistemi", "aynı dosyaya ihtiyaç duyan birden çok EC2 örneği", "NFS" → EFS.
+Sınav ipucu: "Konteynerli iş yükleri", "mikroservisler", "AWS'de Docker" → ECS (genellikle sunucusuz konteynerler için Fargate).
 
 ---
 
-**S3 Depolama Sınıfları ve Yaşam Döngüsü Politikaları** *(23. Bölüm)*
+**EKS — Elastic Kubernetes Service** *(Bölüm 21)*
 
-S3 Akıllı Katman, erişim sıklığına göre nesneleri otomatik olarak katmanlar arasında hareket ettirir. Yaşam döngüsü politikaları, yaş kurallarına göre nesneleri (Standart → Standart-IA → Buzhane) katmanlar arasında geçiş yapar. Buzhane depolama sınıfları, dakikalar (Buzhane Anında) ila 12 saat (Buzhane Derin Arşiv) aralığındaki geri çağırma gecikmelerine sahiptir.
+Yönetilen Kubernetes. AWS kontrol düzlemini (control plane) çalıştırır; worker node'ları (EC2 veya Fargate) siz çalıştırırsınız. Ekibiniz zaten Kubernetes kullanıyorsa veya Kubernetes'e özgü özellikler gerektiren iş yükleri varsa EKS kullanın.
 
-Exam sinyali: "Azotlama maliyetlerini sık erişilmeyen verilere azaltın" → yaşam döngüsü politikaları, Akıllı Katmanlama veya Buzdolabına.
+Sınav ipucu: "Kubernetes", "mevcut K8s iş yüklerini taşıma ihtiyacı" → EKS. "Sadece K8s yükü olmadan konteyner gerekiyor" → ECS.
 
 ---
 
-## Veritabanları
+**AWS Batch** *(Bölüm 21)*
 
-**RDS — İlişkisel Veritabanı Hizmeti** *(Bölüm 8)*
+Docker konteynerleri için yönetilen toplu (batch) hesaplama. Bir iş (Docker imajı + komut), bir iş kuyruğu ve bir hesaplama ortamı (EC2 veya Fargate) tanımlarsınız. AWS Batch hesaplamayı otomatik olarak tedarik eder ve ölçekler, ardından iş bittiğinde sonlandırır. Maliyeti azaltmak için Spot Instance'ları destekler.
 
-Yönetilen ilişkisel veritabanları. Desteklenen motorlar: MySQL, PostgreSQL, MariaDB, Oracle, SQL Server ve Aurora (AWS'nin özel motoru). AWS, yedeklemeleri, yamaları, arıza toleransını ve replikasyonu yönetir. Şema tasarımı, sorgular ve örnekleme boyutlandırması üzerinde siz yönetirsiniz.
+Anahtar kavramlar: Job definition (ne çalıştırılacak), job queue (işlerin beklediği yer), compute environment (EC2 veya Fargate, On-Demand veya Spot), array jobs (aynı işin birçok paralel kopyasını çalıştırma).
 
-Temel kavramlar: Çoklu-Bölge dağıtımı (otomatik arıza toleransı, senkron replikasyon), Okuma Replikaları (geriye doğru, okuma ölçeklendirmesi için), otomatik yedeklemeler (1-35 gün tutma süresi), manuel anlık görüntüler (silinene kadar saklanır), RDS Proxy (bağlantı havuzu).
+Sınav ipucu: "Lambda'nın 15 dakikalık zaman aşımını aşan toplu işleme", "konteynerler üzerinde sonlu hesaplama işleri", "AWS'de HPC iş yükleri" → AWS Batch.
 
-Exam sinyali: "İlişkisel veritabanı", "ACID işlemleri", "var olan SQL iş yükü" → RDS veya Aurora.
+---
+
+**AWS Outposts** *(Bölüm 2)*
+
+Kendi veri merkezinize veya ortak yerleşim (co-location) tesisinize kurulan, tamamen yönetilen bir AWS donanım rafı. Genel bulutla aynı AWS hizmetlerini, API'lerini ve araçlarını (EC2, EBS, RDS, EKS, Outposts üzerinde S3) çalıştırır ama fiziksel olarak şirket içindedir (on-premises).
+
+Anahtar kavramlar: Şirket içinde aynı AWS API'leri, kurulumu ve yamayı AWS yönetir, raf alanı ve gücü müşteri sağlar, Local Gateway (LGW) Outposts'u şirket içi ağlara bağlar.
+
+Sınav ipucu: "AWS'yi kendi veri merkezinizde çalıştır", "veri ikametgâhı (data residency) hesaplamanın şirket içinde kalmasını gerektiriyor", "internet bağımlılığı olmadan AWS API'leri" → Outposts.
+
+---
+
+**AWS Wavelength** *(Bölüm 2)*
+
+5G telekomünikasyon sağlayıcılarının ağları içine dağıtılan AWS altyapısı. Wavelength Zone'ları 5G ağ kenarında yer alır ve mobil cihazlara tek haneli milisaniye gecikme süresi sağlar.
+
+Anahtar kavramlar: Wavelength Zone'ları, telekom ağları içindeki AWS Region'larının uzantılarıdır; trafik, cihaz ile Wavelength Zone arasında operatör ağında kalır.
+
+Sınav ipucu: "5G mobil kullanıcılara tek haneli milisaniye gecikme süresi", "mobil AR/VR", "mobilde gerçek zamanlı oyun", "otonom araç telemetrisi" → Wavelength.
+
+---
+
+**AWS Application Migration Service (MGN)** *(Bölüm 25)*
+
+Yeniden barındırma (lift-and-shift) geçiş hizmeti. Bir ajan, kaynak sunucuların disklerini blok blok AWS'deki düşük maliyetli bir hazırlama (staging) alanına çoğaltır; talep üzerine test kopyaları başlatırsınız; geçişte (cutover) MGN, çoğaltılan sunucuları yerel EC2 örneklerine dönüştürür. Uygulama değişikliği gerekmez.
+
+Anahtar kavramlar: Blok düzeyinde sürekli çoğaltma, hazırlama alanı, geçişten önce test başlatmaları, "7 R" geçiş stratejileri (MGN = rehost).
+
+Sınav ipucu: "Yüzlerce VM'i kod değişikliği olmadan hızlıca taşı", "sunucuları EC2'ye lift-and-shift" → MGN. DataSync *dosyaları* taşır; DMS *veritabanlarını* taşır; MGN *bütün sunucuları* taşır.
+
+---
+
+## Depolama (Storage)
+
+**S3 — Simple Storage Service** *(Bölüm 5)*
+
+Nesne depolama. Sınırsız kapasite, %99,999999999 (on bir dokuz) dayanıklılık. Dosyaları bucket'larda nesneler olarak saklar. Bucket'lar bir bölgede yaşar. Nesneler 0 bayttan 5 TB'a kadar değişebilir.
+
+Anahtar kavramlar: Bucket policy, nesne ACL'si, sürümleme (versioning), statik web sitesi barındırma, önceden imzalanmış URL'ler (presigned URLs), çok parçalı yükleme (multipart upload), Transfer Acceleration, depolama sınıfları (Standard, Intelligent-Tiering, Standard-IA, One Zone-IA, Glacier Instant Retrieval, Glacier Flexible Retrieval, Glacier Deep Archive, ayrıca tek AZ'li, gecikmeye duyarlı dizin-bucket iş yükleri için S3 Express One Zone).
+
+Sınav ipucu: "Dosya sakla ve getir", "statik varlıklar", "yedekler", "veri gölü (data lake)" → S3. Doğru depolama sınıfı, erişim sıklığına ve getirme hızına bağlıdır.
+
+---
+
+**EBS — Elastic Block Store** *(Bölüm 6)*
+
+Tek bir EC2 örneğine bağlı blok depolama. Bir sabit disk gibi davranır. Örnek yaşam döngüsünden bağımsız olarak kalıcı olur (ayırıp yeniden bağlayabilirsiniz). En yaygın tipler: gp3 (genel amaçlı SSD, varsayılan), io2 (veritabanları için tedarik edilmiş IOPS), st1 (sıralı okumalar için verim odaklı HDD).
+
+Anahtar kavramlar: Anlık görüntüler (snapshots, artımlı, S3'te saklanır), şifreleme (KMS), Multi-Attach (yalnızca io1/io2), IOPS ve verim tedariki.
+
+Sınav ipucu: "EC2 için kalıcı depolama", "veritabanı depolaması", "düşük gecikmeli blok erişimi gerektirir" → EBS.
+
+---
+
+**EFS — Elastic File System** *(Bölüm 6)*
+
+Birden fazla EC2 örneğinden aynı anda erişilebilen paylaşımlı dosya sistemi. NFS protokolü. Otomatik olarak ölçeklenir. GB başına EBS'den daha pahalıdır. Depolama sınıfları arasında Standard, Infrequent Access ve Archive bulunur. Intelligent-Tiering dosyaları otomatik olarak taşır.
+
+Sınav ipucu: "Paylaşımlı dosya sistemi", "birden fazla EC2 örneğinin aynı dosyalara ihtiyacı var", "NFS" → EFS.
+
+---
+
+**FSx Ailesi** *(Bölüm 6)*
+
+Belirli teknolojiler için yönetilen dosya sunucuları. FSx for Windows File Server: SMB protokolü, NTFS, Active Directory entegrasyonu, Multi-AZ. FSx for Lustre: HPC/ML için paralel yüksek performanslı dosya sistemi, S3 nesnelerini dosya olarak sunar (lazy loading). FSx for NetApp ONTAP: çoklu protokol (NFS + SMB + iSCSI), anlık görüntüler, SnapMirror çoğaltma. FSx for OpenZFS: düşük gecikmeli NFS, anlık görüntüler ve yazılabilir klonlar.
+
+Sınav ipucu: "SMB/Active Directory" → FSx for Windows. "S3 verisi üzerinde HPC/ML eğitimi" → FSx for Lustre. "Aynı veriye NFS ve SMB / NetApp geçişi" → FSx for ONTAP. "ZFS geçişi / anlık klonlar" → FSx for OpenZFS.
+
+---
+
+**S3 Depolama Sınıfları ve Yaşam Döngüsü Politikaları** *(Bölüm 23)*
+
+S3 Intelligent-Tiering, nesneleri erişim sıklığına göre erişim katmanları arasında otomatik olarak taşır. Yaşam döngüsü politikaları, yaş kurallarına göre nesneleri sınıflar arasında geçirir (Standard → Standard-IA → Glacier). Glacier depolama sınıflarının getirme gecikmesi dakikalardan (Glacier Instant) 12 saate (Glacier Deep Archive) kadar değişir.
+
+Sınav ipucu: "Seyrek erişilen veriler için depolama maliyetini azalt" → yaşam döngüsü politikaları, Intelligent-Tiering veya Glacier.
+
+---
+
+**AWS Storage Gateway** *(Bölüm 6)*
+
+Şirket içi ortamları AWS depolamasına bağlayan hibrit depolama hizmeti. Verileri S3, S3 Glacier'da veya EBS anlık görüntüleri olarak saklarken, uygulamaların zaten anladığı protokoller üzerinden depolama sunar.
+
+Anahtar kavramlar: File Gateway (NFS/SMB → S3), Volume Gateway (iSCSI, önbellekli veya saklanan mod), Tape Gateway (sanal teyp kütüphanesi → Glacier).
+
+Sınav ipucu: "Şirket içi uygulamanın kod değişikliği olmadan bulut depolamasına ihtiyacı var" → Storage Gateway. "Teyp yedeklemesinin yerini al" → Tape Gateway.
+
+---
+
+**AWS DataSync** *(Bölüm 25)*
+
+Ajan tabanlı veri geçişi ve çoğaltma hizmeti. Hafif bir ajan, şirket içi dosya sunucularına NFS veya SMB üzerinden bağlanır ve paylaşımları S3, EFS veya FSx'e senkronize eder — yerleşik zamanlama, bant genişliği kısıtlaması ve bütünlük doğrulaması ile.
+
+Anahtar kavramlar: DataSync ajanı (şirket içi VM veya EC2), NFS/SMB kaynakları, S3/EFS/FSx hedefleri, planlı artımlı transferler.
+
+Sınav ipucu: "Şirket içi NAS'tan AWS'ye ağ üzerinden çok sayıda dosyayı taşı veya sürekli senkronize et" → DataSync.
+
+---
+
+**AWS Transfer Family** *(Bölüm 25)*
+
+Depolama hedefi olarak S3 veya EFS ile desteklenen, tamamen yönetilen SFTP, FTPS ve FTP sunucusu. İstemciler mevcut SFTP yazılımlarıyla bağlanır; yüklenen dosyalar doğrudan bir bucket'a veya dosya sistemine düşer.
+
+Anahtar kavramlar: Yönetilen uç nokta (isteğe bağlı statik IP ile), S3 veya EFS destekli depolama, harici iş ortakları için mevcut protokol uyumluluğu.
+
+Sınav ipucu: "İş ortakları SFTP üzerinden yüklemeye devam etmeli ama dosyalar S3'e düşmeli" → Transfer Family.
+
+---
+
+**AWS Snow Family** *(Bölüm 25)*
+
+Çevrimdışı, toplu veri geçişi için fiziksel veri transfer cihazları. Snowball Edge Storage Optimized: 80 TB kullanılabilir, sağlamlaştırılmış muhafaza, konumunuza gönderilir; veriyi yerel olarak yükler ve S3'e alınması için geri gönderirsiniz.
+
+Anahtar kavramlar: Önce transfer hesabını yapın — ağ transferi yaklaşık bir hafta veya daha fazla sürecekse, fiziksel cihaz kazanır. *Eski not (2026)*: AWS aileyi emekliye ayırıyor — Snowmobile (2024) ve Snowcone (2024 sonu) kalktı ve Snow cihazları Kasım 2025'te yeni müşterilere kapatıldı (AWS artık DataSync ve Data Transfer Terminals'a yönlendiriyor). SAA-C03 soru bankası bundan önce hazırlandığı için sınav hâlâ Snowball'u cevap olarak bekliyor.
+
+Sınav ipucu: "Petabayt ölçeğinde geçiş", "sınırlı bant genişliği, haftalarca transfer süresi" → Snow Family.
+
+---
+
+**AWS Backup** *(Bölüm 18 ve 23)*
+
+EBS, RDS, DynamoDB, EFS ve Storage Gateway genelinde merkezi, politika tabanlı yedekleme hizmeti. Yedekleme planları (backup plans) zamanlamaları ve saklama sürelerini tanımlar; kasalar (vaults) kurtarma noktalarını saklar.
+
+Anahtar kavramlar: Yedekleme planları ve kasalar, bölgeler arası ve hesaplar arası kopyalar, değişmezlik (immutability) için Vault Lock.
+
+Sınav ipucu: "Birden fazla AWS hizmetinde yedeklemeleri merkezileştir ve otomatikleştir", "fidye yazılımı/hesap ele geçirme koruması için hesaplar arası yedek kopyalar" → AWS Backup.
+
+---
+
+## Veritabanları (Databases)
+
+**RDS — Relational Database Service** *(Bölüm 8)*
+
+Yönetilen ilişkisel veritabanları. Desteklenen motorlar: MySQL, PostgreSQL, MariaDB, Oracle, SQL Server ve Aurora (AWS'nin tescilli motoru). AWS, yedeklemeleri, yamaları, yük devretmeyi (failover) ve çoğaltmayı yönetir. Şema tasarımını, sorguları ve örnek boyutlandırmasını siz yönetirsiniz.
+
+Anahtar kavramlar: Multi-AZ dağıtımı (otomatik yük devretme, eş zamanlı çoğaltma), Read Replica'lar (eş zamanlı olmayan, okuma ölçeklemesi için), otomatik yedeklemeler (1-35 gün saklama), manuel anlık görüntüler (silinene kadar tutulur), RDS Proxy (bağlantı havuzlama).
+
+Sınav ipucu: "İlişkisel veritabanı", "ACID işlemleri", "mevcut SQL iş yükü" → RDS veya Aurora.
 
 ---
 
 **Aurora** *(Bölüm 24)*
 
-AWS'nin ilişkisel veritabanı motoru, MySQL ve PostgreSQL ile uyumludur. 6 kopyada 3 AZ'de dağıtılmış depolama motoru. Tipik olarak MySQL'den 5 kat daha hızlıdır. Aurora Serverless v2, kapasiteyi otomatik olarak ölçeklendirir (ACU'lar - Aurora Kapasite Birimleri ölçüsünde).
+AWS'nin ilişkisel veritabanı motoru, MySQL ve PostgreSQL ile uyumlu. Veriyi 3 AZ genelinde 6 kopyada çoğaltan dağıtık depolama motoru. Tipik olarak MySQL'den 5 kat daha hızlı. Aurora Serverless v2, kapasiteyi otomatik olarak ölçekler (ACU — Aurora Capacity Units cinsinden ölçülür) ve desteklenen motor sürümlerinde, açık bağlantı tutulmadığında 0 ACU'ya otomatik duraklayabilir (auto-pause).
 
-Temel kavramlar: Aurora kümesi (yazar + kadar 15 okuyucu uç noktası), Aurora Küresel Veritabanı (küresel okuma replikaları < 1 saniyelik gecikme ile), Aurora Serverless v2.
+Anahtar kavramlar: Aurora kümesi (writer + tek bir reader uç noktası arkasında 15'e kadar Aurora Replica), Aurora Global Database (1 saniyenin altında çoğaltma gecikmesiyle bölgeler arası okuma replikaları), Aurora Serverless v2, ACU'lar, otomatik duraklatma/devam ettirme davranışı.
 
-Exam sinyali: "Yüksek performanslı ilişkisel veritabanı", "MySQL/PostgreSQL ile uyumlu", "küresel okumalar", "değişken iş yükü" → Aurora.
+Sınav ipucu: "Yüksek performanslı ilişkisel veritabanı", "MySQL/PostgreSQL uyumlu", "küresel okumalar", "değişken iş yükü" → Aurora.
 
 ---
 
 **DynamoDB** *(Bölüm 9)*
 
-Tamamen yönetilen NoSQL veritabanı. Ana-değer ve belge modeli. Tek bir milisaniyeli performansla herhangi bir işlem hacmine ölçeklenebilir. İki kapasite modu vardır: talep başına (talep başına ödeme) ve saat başına kapasite birimi başına ödeme (Auto Ölçeklendirme ile).
+Tamamen yönetilen NoSQL veritabanı. Anahtar-değer ve belge modeli. Tek haneli milisaniye performansıyla herhangi bir verime ölçeklenir. İki kapasite modu: on-demand (istek başına ödeme) ve provisioned (saat başına kapasite birimi başına ödeme, Auto Scaling ile).
 
-Temel kavramlar: Bölüm anahtarı (zorunlu), sıralama anahtarı (isteğe bağlı), Küresel İkincil İndeks (GSI), Yerel İkincil İndeks (LSI), DynamoDB Akışları (değişiklik verisi yakalama), DynamoDB Hızlandırıcı (DAX) - bellek içi önbellek, TTL (Yaşam Süresi), işlemler.
+Anahtar kavramlar: Partition key (gerekli), sort key (isteğe bağlı), Global Secondary Index (GSI), Local Secondary Index (LSI), DynamoDB Streams (değişiklik veri yakalama), DynamoDB Accelerator (DAX) — bellek içi önbellek, TTL (Time to Live), işlemler.
 
-Exam sinyali: "Yüksek işlem hacmi anahtara dayalı erişim", "esnek şema", "sunucusuz NoSQL" → DynamoDB.
+Sınav ipucu: "Yüksek verimli anahtar tabanlı erişim", "esnek şema", "sunucusuz NoSQL" → DynamoDB.
 
 ---
 
 **ElastiCache** *(Bölüm 10)*
 
-Yönetilen bellek içi önbellek. İki motor: Redis (sabit, pub/sub, Lua betiği, veri yapıları) ve Memcached (saf önbellek, daha basit, çoklu iş parçacıklı). Veritabanı yükünü azaltmak ve sıkça okunan verileri mikro saniyelerde sunmak için kullanın.
+Yönetilen bellek içi önbellekleme. İki motor: Redis (kalıcı, pub/sub, Lua betikleme, veri yapıları) ve Memcached (saf önbellek, daha basit, çok iş parçacıklı). Veritabanı yükünü azaltmak ve sık okunan verileri mikrosaniyeler içinde sunmak için kullanın.
 
-Temel kavramlar: Cache-aside deseni, yaz-atıl deseni, boşaltma politikaları, TTL, küme modu (Redis), Çoklu-Bölge otomatik arıza toleransı ile.
+Anahtar kavramlar: Cache-aside deseni, write-through deseni, çıkarma (eviction) politikaları, TTL, cluster modu (Redis), otomatik yük devretmeli Multi-AZ.
 
-Exam sinyali: "Veritabanı yükünü azaltın", "alt milisaniyelik okuma gecikmesi", "oturum yönetimi", "gerçek zamanlı lider tahtası" → ElastiCache Redis.
-
----
-
-## Ağlar
-
-**VPC — Sanal Özel Bulut** *(Bölüm 11)*
-
-AWS içinde izole bir ağ. Bölgedeki tüm AZ'leri kapsar. IP adres alanı (CIDR bloğu) tanımlarsınız, alt ağlar (kamuya açık veya özel) oluşturursunuz, rota tablolarını yapılandırır ve güvenlik grupları ve NACL'ler aracılığıyla erişimi kontrol edersiniz.
-
-Temel kavramlar: Kamu alt ağı (internet yola bağlı), özel alt ağ (çıkış trafiği için NAT Geçidi'ne yol), İnternet Geçidi (giriş + çıkış internete), NAT Geçidi (özel örnekler için yalnızca çıkış), VPC Peering (iki VPC'yi birbirine bağlar), VPC Uç Noktaları (AWS hizmetlerine internet üzerinden gitmeden bağlanır).
-
-Exam sinyali: "AWS içinde özel bir ağ", "kaynakları internetten izole edin", "ağ trafiğini kontrol edin" → VPC.
+Sınav ipucu: "Veritabanı yükünü azalt", "milisaniyenin altında okuma gecikmesi", "oturum yönetimi", "gerçek zamanlı lider tablosu" → ElastiCache Redis.
 
 ---
 
-**Güvenlik Grupları ve NACL'ler** *(Bölüm 15)*
+**Amazon MemoryDB for Redis** *(Bölüm 10)*
 
-Güvenlik grupları, örnek düzeyinde durum bilgili güvenlik duvarlarıdır - yalnızca izin kuralları, otomatik olarak geri dönüş trafiği vardır. NACL'ler (Ağ Erişimi Kontrol Listeleri), alt ağ düzeyinde durum bilgisi olmayan güvenlik duvarlarıdır - hem giriş hem de çıkış kuralları gerekir, kuralların numarasına göre sıralanır.
+Dayanıklı, Redis uyumlu, bellek içi birincil veritabanı. ElastiCache'ten (veri kaybının kabul edilebilir olduğu bir önbellek) farklı olarak, MemoryDB bir Multi-AZ işlem günlüğü saklar ve dayanıklılığı garanti eder. MemoryDB'yi birincil veritabanınız olarak kullanabilirsiniz — sadece başka bir veritabanının önünde bir önbellek olarak değil.
 
-Exam sinyali: "Bir alt ağa belirli bir IP adresinin erişimini engelle" → NACL. "Bir örneğe/alt ağa yönelik trafiği kontrol et" → güvenlik grubu.
+Anahtar kavramlar: Redis API uyumluluğu, Multi-AZ işlem günlüğü (dayanıklılık garantisi), bellek içi performans, birincil veritabanı (önbellek katmanı değil).
+
+Sınav ipucu: "Redis uyumlu VE veri kaybı kabul edilemez", "dayanıklı bellek içi veritabanı" → MemoryDB. "Önbellek olarak Redis, veri kaybı kabul edilebilir" → ElastiCache Redis.
+
+---
+
+**Amaca Özel Veritabanları** *(Bölüm 9, 10 ve 24)*
+
+Veri şeklini motora eşleştirin. DocumentDB: MongoDB uyumlu belgeler. Neptune: graf veritabanı (ilişkiler, geçişler — Gremlin/SPARQL). Keyspaces: Cassandra uyumlu geniş sütun. Timestream: zaman serisi (mevcut sunum: Timestream for InfluxDB). MemoryDB: dayanıklı, Redis uyumlu *birincil* veritabanı (ElastiCache = önbellek). QLDB ("değişmez kriptografik defter") 2025'te kullanımdan kaldırıldı — eski bir çeldirici olarak değerlendirin.
+
+Sınav ipucu: "sosyal graf / öneriler / dolandırıcılık halkaları" → Neptune. "MongoDB" → DocumentDB. "Cassandra" → Keyspaces. "Zaman içinde IoT telemetrisi" → Timestream.
+
+---
+
+**AWS DMS — Database Migration Service** *(Bölüm 8)*
+
+Veritabanlarını minimum kesinti süresiyle AWS'ye taşır. Tam yükleme (full load, ilk kopya) artı CDC'yi (Change Data Capture) destekleyerek, geçiş devam ederken kaynağı ve hedefi senkronize tutar. Aynı motor tipleri arasında geçiş yaparken (MySQL → MySQL, PostgreSQL → PostgreSQL) DMS'yi doğrudan kullanın. Farklı motor tipleri arasında geçiş yaparken (Oracle → Aurora PostgreSQL), önce şemayı dönüştürmek için AWS Schema Conversion Tool (SCT) kullanın, ardından veri için DMS.
+
+Anahtar kavramlar: Çoğaltma örneği (replication instance), kaynak ve hedef uç noktaları, tam yükleme + CDC, heterojen geçişler için SCT (Schema Conversion Tool).
+
+Sınav ipucu: "Minimum kesinti süresiyle veritabanı taşı" → DMS. "Oracle'dan Aurora'ya" veya herhangi bir heterojen geçiş → SCT + DMS. "Aynı motor, aynı tip" → doğrudan DMS.
+
+---
+
+## Ağ (Networking)
+
+**VPC — Virtual Private Cloud** *(Bölüm 11)*
+
+AWS içinde izole edilmiş bir ağ. Bir bölgedeki tüm AZ'leri kapsar. IP adres alanını (CIDR bloğu) tanımlar, alt ağlar (subnet — genel veya özel) oluşturur, yönlendirme tablolarını yapılandırır ve erişimi güvenlik grupları (security groups) ve NACL'ler aracılığıyla kontrol edersiniz.
+
+Anahtar kavramlar: Genel alt ağ (Internet Gateway'e yönlendirme), özel alt ağ (giden için NAT Gateway'e yönlendirme), Internet Gateway (internete gelen + giden), NAT Gateway (özel örnekler için yalnızca giden), VPC Peering (iki VPC'yi bağlama), VPC Endpoints (internet olmadan AWS hizmetlerine bağlanma).
+
+Sınav ipucu: "AWS'de özel ağ", "kaynakları internetten izole et", "ağ trafiğini kontrol et" → VPC.
+
+---
+
+**Security Group'lar ve NACL'ler** *(Bölüm 15)*
+
+Security group'lar örnek düzeyinde durum bilgili (stateful) güvenlik duvarlarıdır — yalnızca izin kuralları, dönüş trafiği otomatiktir. NACL'ler (Network Access Control Lists) alt ağ düzeyinde durum bilgisiz (stateless) güvenlik duvarlarıdır — hem gelen hem giden kuralları gerektirir, kural numarasına göre sırayla değerlendirilir.
+
+Sınav ipucu: "Belirli bir IP'yi alt ağa erişmesini engelle" → NACL. "Bir örneğe gelen/giden trafiği kontrol et" → security group.
 
 ---
 
 **Route 53** *(Bölüm 12)*
 
-AWS'nin DNS hizmeti ve alan kaydı. İnternet trafiğini AWS kaynaklarına ve dış uç noktalara yönlendirir. Yönlendirme politikaları: Basit, Ağırlıklı, Gecikme tabanlı, Arıza Toleransı, Coğrafi, Coğrafi Yakınlık, Çok Değerli Cevap.
+AWS'nin DNS hizmeti ve alan adı kaydedicisi. İnternet trafiğini AWS kaynaklarına ve harici uç noktalara yönlendirir. Yönlendirme politikaları: Simple, Weighted, Latency-based, Failover, Geolocation, Geoproximity, Multivalue answer.
 
-Temel kavramlar: Hosted bölgeleri (kamuya açık ve özel), kayıt türleri (A, AAAA, CNAME, Alias), sağlık kontrolleri, Trafik Akışı (görsel politika düzenleyici).
+Anahtar kavramlar: Hosted zone'lar (genel ve özel), kayıt tipleri (A, AAAA, CNAME, Alias), sağlık kontrolleri, Traffic Flow (görsel politika düzenleyici — geoproximity'nin, Traffic Flow gerektirmeden, ayarlanabilir bir önyargı (bias) ile kayıtlarda doğrudan bir yönlendirme politikası olarak da kullanılabildiğini unutmayın).
 
-Exam sinyali: "DNS yönlendirme", "bölge aralarında arıza toleransı", "latence veya konuma göre yönlendirme" → Route 53 uygun yönlendirme politikasının kullanılmasıyla.
+Sınav ipucu: "DNS yönlendirmesi", "bölgeler arası yük devretme", "gecikmeye veya konuma göre yönlendirme" → uygun yönlendirme politikası ile Route 53.
 
 ---
 
 **CloudFront** *(Bölüm 13)*
 
-İçerik Dağıtım Ağı (CDN). İçeriği uç noktadaki (400+ dünya çapında) önbelleğe alır. Son kullanıcılar için gecikmeyi azaltır. S3, EC2, ALB, API Gateway gibi kaynaklardan gelen veri transfer maliyetlerini azaltır.
+İçerik Dağıtım Ağı (CDN). İçeriği kenar konumlarında (dünya çapında 750+ varlık noktası) önbelleğe alır. Son kullanıcılar için gecikmeyi azaltır. Önbellekleme yoluyla kaynak transfer maliyetlerini azaltır. Kaynak olarak S3, EC2, ALB ve API Gateway ile entegre olur.
 
-Temel kavramlar: Dağıtım, kaynaklar, davranışlar (kaynaklara yol tabanlı yönlendirme), TTL (önbellek kontrolü), önbellek güncellemeleri, imzalı URL'ler ve çerezler (erişim kontrolü), Lambda@Edge ve CloudFront İşlevleri (uç noktada kod yürütme), Kaynak Kalkanı (kaynak yükünü azaltma).
+Anahtar kavramlar: Distribution, kaynaklar (origins), davranışlar (yola dayalı kaynak yönlendirme), TTL (önbellek kontrolü), önbellek geçersiz kılma (cache invalidation), imzalı URL'ler ve çerezler (erişim kontrolü), Lambda@Edge ve CloudFront Functions (kenarda kod çalıştırma), Origin Shield (kaynak yükünü azaltma).
 
-Exam sinyali: "Küresel düşük gecikme", "statik içeriği önbelleğe al", "kaynak yükünü azalt", "Shield ile DDoS'yi koru" → CloudFront.
-
----
-
-**Doğrudan Bağlantı ve VPN** *(Bölüm 25)*
-
-AWS Direct Connect, bulut üzerinde, on-premises veritabanlarınıza AWS’e bağlamak için kullanılan özel bir fiziksel ağ bağlantısıdır. Kamu internetini kullanmaz. Daha tutarlı bant genişliği ve gecikme sağlar. AWS Site-to-Site VPN, kamu interneti üzerinden şifreli bir tüneldir — daha hızlı kurulum ve daha düşük maliyetli olmasına rağmen değişken performans gösterebilir.
-
-Temel kavramlar: Sanal Arayüz (VIF), Direct Connect Gateway (birden fazla bölgeye bağlanmak için), Transit Gateway (hub-and-spoke ağ topolojisi), VPN tüneli yedekliliği.
-
-Soru işareti: “Özel, özel bir bağlantı AWS’e” → Direct Connect. “Şifreli bağlantı, daha hızlı kurulum” → VPN. “Birden fazla VPC’ye bağlanmak” → Transit Gateway.
+Sınav ipucu: "Küresel düşük gecikme", "statik içeriği önbelleğe al", "kaynak yükünü azalt", "Shield ile DDoS'a karşı koru" → CloudFront.
 
 ---
 
-**VPC Uç Noktaları** *(30. Bölüm)*
+**Direct Connect ve VPN** *(Bölüm 25)*
 
-Özel kaynakları kamu interneti veya NAT Gateway’i kullanmadan AWS hizmetlerine bağlamak için kullanılır. Gateway Uç Noktaları: ücretsizdir ve yalnızca S3 ve DynamoDB için mevcuttur. Arayüz Uç Noktaları (PrivateLink): saat başına + GB başına ücretlendirilir ve çoğu AWS hizmeti için mevcuttur.
+AWS Direct Connect, şirket içi veri merkezinizden AWS'ye özel bir fiziksel ağ bağlantısıdır. Genel interneti atlar. Daha tutarlı bant genişliği ve gecikme. AWS Site-to-Site VPN, genel internet üzerinden şifreli bir tüneldir — kurulumu daha hızlı, maliyeti daha düşük, ama performansı değişken.
 
-Soru işareti: “EC2, özel bir alt ağdan S3/DynamoDB’ye çağrılır — NAT Gateway maliyetlerini azaltır” → Gateway Uç Noktası (ücretsiz). “SQS, SSM, Secrets Manager’dan özel bir alt ağa özel bağlantı” → Arayüz Uç Noktası.
+Anahtar kavramlar: Virtual Interface (VIF), Direct Connect Gateway (birden fazla bölgeye bağlanma), Transit Gateway (hub-and-spoke ağ topolojisi), VPN tüneli yedekliliği.
 
----
-
-**Güvenlik ve Kimlik**
-
-**IAM — Kimlik ve Erişim Yönetimi** *(3 ve 14. Bölümler)*
-
-AWS hesabınızda kimin ne yapabileceğini kontrol eder. Kullanıcılar (uzun vadeli kimlik bilgileri), Gruplar (izinleri paylaşan kullanıcılar), Roller (hizmetler ve çapraz hesap erişimi için geçici kimlik bilgileri), Politikalar (izin/yasaklama kurallarını tanımlayan JSON belgeleri).
-
-Temel kavramlar: İlke, Eylem, Kaynak, Koşul, açık reddetme > açık izin > örtülü reddetme, SCP (AWS Organizasyonlarında Hizmet Kontrol Politikası), İzin Sınırı, Rolü Al.
-
-Soru işareti: IAM, her güvenlik sorusunda yer alır. Anahtar desen: hizmetler IAM rollerini kullanır (kullanıcılar değil). Çapraz hesap erişimi rol ataması kullanır. En az ayrıcalık — yalnızca gerekli olanı verin.
+Sınav ipucu: "AWS'ye özel ayrılmış bağlantı" → Direct Connect. "Şifreli bağlantı, daha hızlı kurulum" → VPN. "Birden fazla VPC'yi bağla" → Transit Gateway.
 
 ---
 
-**KMS — Anahtar Yönetimi Hizmeti** *(16. Bölüm)*
+**VPC Endpoints** *(Bölüm 30)*
 
-Yönetilen şifreleme anahtarı hizmetidir. Şifreleme anahtarları oluşturur, depolar ve kontrol eder. Müşteriye ait anahtarlar (CMK’lar), dönüşüm, kullanım ve erişim politikalarını tanımlamanıza olanak tanır. AWS tarafından yönetilen anahtarlar otomatik olarak yönetilir.
+Genel interneti veya NAT Gateway'i kullanmadan özel kaynakları AWS hizmetlerine bağlar. Gateway Endpoint'ler: ücretsiz, yalnızca S3 ve DynamoDB için kullanılabilir. Interface Endpoint'ler (PrivateLink): saat başına + GB başına ücretlendirilir, çoğu AWS hizmeti için kullanılabilir.
 
-Temel kavramlar: Anahtar politikası (IAM politikası ayrıntısı), Envelop Şifrelemesi (veri bir veri anahtarıyla şifrelenir; veri anahtarı CMK ile şifrelenir), Otomatik anahtar dönüşümü, Çok bölge anahtarları, İzinler.
-
-Soru işareti: “Veriyi dinlenme halinde şifreleyin”, “müşteriye ait şifreleme anahtarları”, “anahtar dönüşümü” → KMS.
+Sınav ipucu: "Özel alt ağdaki EC2, S3/DynamoDB'yi çağırır — NAT Gateway maliyetlerini azalt" → Gateway Endpoint (ücretsiz). "Özel alt ağdan SQS, SSM, Secrets Manager'a özel bağlantı" → Interface Endpoint.
 
 ---
 
-**Secrets Manager** *(16. Bölüm)*
+**AWS Client VPN** *(Bölüm 11)*
 
-Hassas değerleri depolar ve otomatik olarak döndürür: veritabanı kimlik bilgilerini, API anahtarlarını, OAuth jetonlarını. RDS için otomatik şifreleme dönüşümünü entegre eder. Uygulamalar, kimlik bilgilerini çalışma zamanında API aracılığıyla alır — kimlik bilgilerini kodlamaz.
+Bireysel cihazların (dizüstü bilgisayarlar, iş istasyonları) internet üzerinden bir VPC'ye güvenli bir şekilde bağlanmasını sağlayan yönetilen OpenVPN uç noktası. Kimlik doğrulama seçenekleri: Active Directory, bir kimlik sağlayıcı ile SAML 2.0 federasyonu veya karşılıklı TLS (sertifika tabanlı). Split-tunnel (yalnızca VPC'ye yönelik trafik tünelden geçer) ve full-tunnel (tüm trafik AWS üzerinden yönlendirilir) destekler.
 
-Soru işareti: “Veritabanı kimlik bilgilerini saklayın ve döndürün”, “kodlamadan kimlik bilgilerini saklamayın” → Secrets Manager. “Yapılandırma değerlerini, sırları değil” → Parameter Store (SSM).
+Anahtar kavramlar: Client VPN uç noktası, hedef ağ (VPC alt ağı ilişkilendirmesi), yetkilendirme kuralları, split-tunnel ve full-tunnel.
 
----
-
-**AWS Shield** *(17. Bölüm)*
-
-DDoS koruması. Shield Standard otomatik ve ücretsizdir — yaygın hacimsel ve protokol saldırılarına karşı koruma sağlar. Shield Advanced, maliyetli koruma, 24/7 DDoS yanıt ekibi ve ayrıntılı saldırı görünürlüğü ekler.
-
-Soru işareti: “DDoS’tan korunun” → Shield Standard (otomatik) veya Shield Advanced (kurumsal, SLA ile).
+Sınav ipucu: "Uzaktan çalışan mühendislerin evden bir VPC'ye güvenli erişime ihtiyacı var", "bireysel cihazdan VPC'ye bağlantı" → Client VPN. Karşılaştırma: Site-to-Site VPN = ağdan ağa. Client VPN = cihazdan ağa.
 
 ---
 
-**WAF — Web Uygulaması Güven Duvarı** *(17. Bölüm)*
+**Network Load Balancer (NLB) ve Gateway Load Balancer (GWLB)** *(Bölüm 7)*
 
-HTTP/HTTPS trafiğini kurallara göre filtreler: IP blokları, hız sınırları, SQL enjeksiyonu desenleri, XSS desenleri, coğrafi kısıtlamalar, özel kurallar. CloudFront, ALB, API Gateway veya AppSync ile ilişkilendirilebilir.
+NLB, Katman 4'te (TCP/UDP/TLS) çalışır: HTTP incelemesi yok, yalnızca aşırı hızda paket yönlendirme — saniyede milyonlarca istek, AZ başına statik IP ve kaynak IP korumasıyla. GWLB, Katman 3'te çalışır ve tek bir amaç için vardır: üçüncü taraf sanal ağ cihazlarını (güvenlik duvarları, IDS/IPS, derin paket incelemesi) trafik akışlarına satır içi (inline) eklemek.
 
-Soru işareti: “Belirli IP adreslerini engelleyin”, “SQL enjeksiyonunu kenarlarda engelleyin”, “API çağrılarını hızla sınırlayın” → WAF.
+Anahtar kavramlar: NLB = Katman 4, statik IP'ler, ultra düşük gecikme, HTTP olmayan protokoller. GWLB = Katman 3, GENEVE kapsülleme, tek bir giriş noktası arkasında cihaz filoları. ALB = Katman 7 (yola/host'a göre yönlendirme).
 
----
-
-**GuardDuty** *(17. Bölüm)*
-
-Tehdit tespiti hizmeti. CloudTrail günlüklerini, VPC Flow Loglarını ve DNS günlüklerini ML ve tehdit istihbaratı kullanarak analiz eder. Olağan API aktivitesini, bilinen kötü amaçlı IP’lere iletişimini, tehlike altında olan kimlik bilgilerini tespit eder.
-
-Soru işareti: “Olağan dışı aktiviteyi tespit edin”, “tehlike altında olan IAM kimlik bilgilerini belirleyin”, “sürekli tehdit izleme” → GuardDuty.
+Sınav ipucu: "Saniyede milyonlarca TCP isteği", "yük dengeleyici için statik IP", "kaynak IP'yi koru" → NLB. "Üçüncü taraf güvenlik cihazlarını trafik yoluna ekle" → GWLB.
 
 ---
 
-## Mesajlaşma ve Olay İşleme
+**AWS Global Accelerator** *(Bölüm 25)*
 
-**SQS — Basit Kuyruk Hizmeti** *(19. Bölüm)*
+Kullanıcı trafiğini, genel internetten geçmek yerine en yakın kenar konumunda AWS'nin özel küresel omurgasına yönlendirir. Bir veya daha fazla bölgedeki ALB'lerinizin, NLB'lerinizin veya EC2 örneklerinizin önünde duran iki statik Anycast IP adresi sağlar. *Dinamik* (önbelleğe alınamayan) trafik için gecikmeyi ve tutarlılığı iyileştirir.
 
-Yönetilen mesaj kuyruğu. Üreticiler mesajlar gönderir; tüketiciler mesajları okur ve siler. Hizmetleri ayırır: gönderen, alıcının mevcut olup olmadığını bilmek zorunda değildir. Standart kuyruklar: en az bir kez teslimat, en iyi çaba ile sıralama. FIFO kuyruklar: tam bir kez işleme, sıkı sıralama.
+Anahtar kavramlar: Statik Anycast IP'ler, AWS omurgasına kenar girişi, sağlık kontrolü tabanlı bölgesel yük devretme (saniyeler içinde), trafik kadranlı (traffic dials) uç nokta grupları.
 
-Temel kavramlar: Görünürlük zaman aşımı (mesaj diğer tüketiciler tarafından işleme sırasında gizlenir), Başarısız olan mesajlar için Ölüm Haritası Kuyruğu (DLQ), Mesaj tutulumu (varsayılan olarak 4 gün, maksimum 14 gün), Uzun polling (boş yanıtları azaltır).
-
-Soru işareti: “Hizmetleri ayırın”, “yükte sıçramaları tamponlayın”, “asenkron işleme” → SQS. “Sıra önemli ve tam bir kez gereklidir” → SQS FIFO.
+Sınav ipucu: "Küresel kullanıcılar, dinamik/HTTP olmayan trafik, statik IP, hızlı bölgesel yük devretme" → Global Accelerator. "Önbelleğe alınabilir/statik içerik" → bunun yerine CloudFront.
 
 ---
 
-**SNS — Basit Bildirim Hizmeti** *(19. Bölüm)*
+## Güvenlik ve Kimlik (Security and Identity)
 
-Yönetilen yayın/abone hizmeti. Yayıncılar bir konuya mesaj gönderir; tüm aboneler bir kopyasını alır. Fan-out deseni: bir mesaj → birçok tüketici. Protokoller: SQS, Lambda, HTTP/HTTPS, e-posta, SMS, mobil push.
+**IAM — Identity and Access Management** *(Bölüm 3 ve 14)*
 
-Anahtar Kavramlar: Konu, abonelik, fan-out deseni (SNS → birden çok SQS kuyruğuna), mesaj filtreleme (abonentler yalnızca eşleşen mesajları alır).
+AWS hesabınızda kimin neyi yapabileceğini kontrol eder. Kullanıcılar (uzun vadeli kimlik bilgileri), Gruplar (izinleri paylaşan kullanıcılar), Roller (hizmetler ve hesaplar arası erişim için geçici kimlik bilgileri), Politikalar (izin/reddet kurallarını tanımlayan JSON belgeleri).
 
-Sorgu İşareti: “Birden çok uç noktaya aynı anda bildirim gönderin”, “tek bir olayı birden çok tüketiciye fan-out yapın” → SNS. Yaygın desen: SNS + SQS dayanıklı fan-out için.
+Anahtar kavramlar: Principal, Action, Resource, Condition, açık reddetme > açık izin > örtük reddetme, SCP (AWS Organizations'da Service Control Policy), Permission boundary, AssumeRole.
 
----
-
-**EventBridge** *(22. Bölüm)*
-
-Olay aracı, olay odaklı mimariler oluşturmak için kullanılır. AWS hizmetlerinden, SaaS ortaklarından ve özel kaynaklardan gelen olayları Lambda, SQS, SNS, Step Functions ve diğer hedeflere yönlendirir. Zamanlanmış kurallar (cron) ve desen eşleştirme destekler.
-
-Sorgu İşareti: “AWS hizmetlerinden olayları hedeflere yönlendirin”, “Lambda fonksiyonlarını planlayın”, “olay odaklı orkestrasyon” → EventBridge.
+Sınav ipucu: IAM, her güvenlik sorusuna dahildir. Anahtar desen: hizmetler IAM rolleri kullanır (kullanıcı değil). Hesaplar arası erişim rol üstlenme (role assumption) kullanır. En az ayrıcalık — yalnızca gerekeni ver.
 
 ---
 
-**Step Functions** *(22. Bölüm)*
+**KMS — Key Management Service** *(Bölüm 16)*
 
-Sunucusuz iş akışı orkestrasyonu. Lambda fonksiyonlarını, ECS görevlerini, DynamoDB, SNS, SQS ve diğer hizmetleri görsel durum makinelerine koordine eder. Yeniden denemeler, hata yönetimi, paralel dallar ve bekleme durumlarını işler.
+Yönetilen şifreleme anahtarı hizmeti. Kriptografik anahtarları oluşturur, saklar ve kontrol eder. Müşteri tarafından yönetilen anahtarlar (CMK'ler), rotasyon, kullanım ve erişim politikalarını tanımlamanıza olanak tanır. AWS tarafından yönetilen anahtarlar otomatik olarak yönetilir.
 
-Anahtar Kavramlar: Durum makinesi, durum türleri (Görev, Bekleme, Seçim, Paralel, Harita, Geç, Başar, Başarısız), Standart İş Akışları (kesin-bir-kez) vs. Express İş Akışları (en az bir kez, yüksek hacimli).
+Anahtar kavramlar: Key policy (IAM politikasından ayrı), Zarf şifreleme (envelope encryption, veri bir veri anahtarı ile şifrelenir; veri anahtarı CMK ile şifrelenir), Otomatik anahtar rotasyonu, Çok bölgeli anahtarlar, Grants.
 
-Sorgu İşareti: “Birden çok Lambda fonksiyonunu orkestre edin”, “yeniden deneme mantığıyla uzun süreli iş akışları”, “insan onay adımları” → Step Functions.
-
----
-
-**Kinesis** *(26. Bölüm)*
-
-Gerçek zamanlı veri akışı. Kinesis Data Akışları: kayıtların dayanıklı, sıralı akışı (dağıtılmış bir commit log'u gibi). Tüketiciler kayıtları işler, veri 24 saat ile 7 güne kadar saklanır. Kinesis Data Firehose: S3, Redshift, OpenSearch, Splunk'a tam olarak yönetilen teslimat – tüketici yönetimi gerekmez.
-
-Anahtar Kavramlar: Şerit (geçiş birimi: 1MB/s yazma, 2MB/s okuma), anahtar bölüm (şerit atama belirler), dizi numarası, kontrol noktası (KCL veya Lambda), Firehose vs. Akışlar.
-
-Sorgu İşareti: “Gerçek zamanlı akış”, “sıralı kayıtlar”, “olayları yeniden oynatma” → Kinesis Data Akışları. “Akış verilerini S3/Redshift’e tüketici yönetimi olmadan teslim edin” → Kinesis Firehose. SQS ile karşılaştırma: Kinesis saklar ve oynatır; SQS tüketim üzerine siler.
+Sınav ipucu: "Veriyi durağan halde şifrele", "müşteri tarafından yönetilen şifreleme anahtarları", "anahtar rotasyonu" → KMS.
 
 ---
 
-## Analitik
+**Secrets Manager** *(Bölüm 16)*
 
-**Athena** *(26. Bölüm)*
+Hassas değerleri saklar ve otomatik olarak döndürür: veritabanı kimlik bilgileri, API anahtarları, OAuth token'ları. Otomatik parola rotasyonu için RDS ile entegre olur. Uygulamalar gizli bilgileri çalışma zamanında API aracılığıyla alır — kimlik bilgilerini asla sabit kodlamayın (hardcode).
 
-S3’te depolanan veriler üzerinde sunucusuz SQL sorguları. Altyapıyı yönetmenize gerek yok. Sorgu başına ödeme (taranan GB başına). Parquet, ORC gibi sütun formatları ve bölümlendirilmiş verilerle en iyi çalışır.
-
-Sorgu İşareti: “S3 verilerini SQL ile sorgulayın”, “veri gölünde atıl analiz”, “altyapı yönetimi gerekmiyor” → Athena.
+Sınav ipucu: "Veritabanı kimlik bilgilerini sakla ve döndür", "sabit kodlanmış gizli bilgilerden kaçın" → Secrets Manager. "Yapılandırma değerlerini sakla, gizli bilgi değil" → Parameter Store (SSM).
 
 ---
 
-**Glue** *(26. Bölüm)*
+**AWS Shield** *(Bölüm 17)*
 
-Sunucusuz ETL (Çıkar, Dönüştür, Yükle) hizmeti. Glue Crawler’lar verileri keşfeder ve Glue Veri Kataloğunu günceller. Glue İşleri Spark veya Python dönüşümlerini çalıştırır. Veri Kataloğu, Athena, Redshift Spectrum ve EMR ile entegre olur.
+DDoS koruması. Shield Standard otomatik ve ücretsizdir — yaygın hacimsel ve protokol saldırılarına karşı korur. Shield Advanced finansal koruma, 7/24 DDoS müdahale ekibi ve ayrıntılı saldırı görünürlüğü ekler.
 
-Sorgu İşareti: “Analiz için verileri dönüştürün ve yükleyin”, “S3 verilerinin şemasını keşfedin”, “ETL boru hattı” → Glue.
-
----
-
-## Yüksek Kullanılabilirlik ve Felaket Kurtarma
-
-**Çoklu Bölge ve Çoklu Bölge** *(18. Bölüm)*
-
-Çoklu Bölge: bölge içinde senkron replikasyon, otomatik geçiş için (RDS Çoklu Bölge, bölge içinde yük denleyiciler). RPO ~0, RTO ~60s için RDS. Çoklu Bölge: coğrafi yedeklilik için asenkron replikasyon ve küresel kullanıcılar için daha düşük gecikme süresi.
-
-Anahtar Kavramlar: RTO (Kurtarma Süresi Hedefi — kurtarılabilecek süre), RPO (Kurtarma Noktası Hedefi — ne kadar veri kaybedilebilir). Pilot Işık, Ilık Bekleme, Aktif-Aktif DR stratejileri.
-
-Sorgu İşareti: Çoklu Bölge düzeyindeki arıza durumlarını (Çoklu Bölge tarafından ele alınır) vs. bölgesel arıza durumlarını (Çoklu Bölge tarafından ele alınır) ayırt edin. Çoklu Bölge ile maliyet ve karmaşıklık önemli ölçüde artar.
+Sınav ipucu: "DDoS'a karşı koru" → Shield Standard (otomatik) veya Shield Advanced (kurumsal, SLA ile).
 
 ---
 
-## Maliyet Optimizasyonu
+**WAF — Web Application Firewall** *(Bölüm 17)*
 
-**EC2 Fiyatlandırma Modelleri** *(27. Bölüm)*
+HTTP/HTTPS trafiğini kurallara göre filtreler: IP blokları, hız sınırları, SQL injection kalıpları, XSS kalıpları, coğrafi kısıtlamalar, özel kurallar. CloudFront, ALB, API Gateway veya AppSync'e bağlanır.
 
-Talep Üzerinde: tam fiyat, herhangi bir taahhüt yok. Rezervasyonlu Tesisler (1 veya 3 yıl): belirli bir örnekleme türü için %30-72’lik indirim. Hesaplama veya EC2 Örnekleme Planları: esneklik için saatlik taahhüt harcaması. Spot: kesintiye uğrayabilen iş yükleri için %60-90’lık indirim.
-
-Sorgu İşareti: “Tahmin edilebilir bir iş yükü için maliyeti en aza indirin” → Rezervasyonlu Tesisler veya Hesaplama Planları. “Hatalara dayanıklı toplu işleme” → Spot. “Tahmin edilemez veya kısa vadeli” → Talep Üzerinde.
+Sınav ipucu: "Belirli IP adreslerini engelle", "kenarda SQL injection'ı önle", "API çağrılarını hız sınırla" → WAF.
 
 ---
 
-**Veri Transferi Fiyatlandırması** *(30. Bölüm)*
+**GuardDuty** *(Bölüm 17)*
 
-AWS’ye Gelen: ücretsiz. Aynı Bölge: ücretsiz. Aynı Bölge içinde: $0.01/GB her iki yönde. Farklı Bölgeler: $0.02-0.08/GB. İnternet (gidiş): ~$0.09/GB. NAT Gateway işleme: $0.045/GB. CloudFront veri transferi, doğrudan EC2-internet’e göre daha ucuzdur ve önbelleğe alma toplam hacmi azaltır.
+Tehdit algılama hizmeti. ML ve tehdit istihbaratı kullanarak CloudTrail günlüklerini, VPC Flow Logs'u ve DNS günlüklerini analiz eder. Olağandışı API etkinliğini, bilinen kötü amaçlı IP'lerle iletişimi, ele geçirilmiş kimlik bilgilerini algılar.
 
-Sorgu İşareti: “S3/DynamoDB’den özel bir alt ağa veri transfer maliyetlerini azaltın” → Arayüz Uç Noktaları (ücretsiz). “Diğer hizmetler için NAT Gateway maliyetlerini azaltın” → Arayüz Uç Noktaları.
-
----
-
-## İzlenebilirlik
-
-**CloudWatch** *(tümünde referans gösterilir)*
-
-İzleme ve izlenebilirlik. CloudWatch Metrikleri: AWS hizmetlerinden ve özel uygulamalardan gelen sayısal zaman serisi verileri. CloudWatch Günlükleri: log verilerini toplar, arar ve analiz eder. CloudWatch Alarmları: metrik eşiklerine göre bildirimleri tetikler veya ölçeklemeyi otomatikleştirir. CloudWatch Panoları: metrikleri görselleştirir.
-
-Anahtar Kavramlar: Metrik boyutları, tutma süreleri, log grupları ve log akışları, metrik filtreleri, CloudWatch Agent (OS düzeyinde metrikler ve EC2’den log’lar için), Kapı Odası Görüntüleme.
+Sınav ipucu: "Olağandışı etkinliği algıla", "ele geçirilmiş IAM kimlik bilgilerini belirle", "sürekli tehdit izleme" → GuardDuty.
 
 ---
 
-**CloudTrail** *(Bütün Bölümlerde Referans Verilir)*
+**Amazon Inspector** *(Bölüm 17)*
 
-AWS hesabınızdaki her API çağrısını kaydeder: kim tarafından yapıldı, nereden yapıldı, ne zaman yapıldı ve yanıt neydi. Çoklu bölge izleme yolu (Multi-region trail), logları S3'te sonsuza kadar saklar. Güvenlik denetimi, uyumluluk ve olay araştırması için kullanılır.
+Otomatik güvenlik açığı değerlendirme hizmeti. EC2 örneklerini, Amazon ECR konteyner imajlarını ve Lambda fonksiyonlarını yazılım güvenlik açıkları (CVE'ler) ve istenmeyen ağ maruziyeti için sürekli olarak tarar. Bulgular, merkezi yönetim için AWS Security Hub'a gönderilir.
 
-Sınav işareti: "O kaynağı kim sildi?" "Tüm API aktivitesini inceleyin" → CloudTrail.
+Anahtar kavramlar: CVE taraması, sürekli (tek seferlik değil) değerlendirme, EC2 + ECR + Lambda kapsamı, Security Hub entegrasyonu.
 
----
-
-**AWS Config** *(31. Bölümde Referans Verilir)*
-
-Kaynak yapılandırma değişikliklerini zaman içinde takip eder. Kaynakları uyumluluk kurallarına göre değerlendirir. Her kaynak için her yapılandırma değişikliğinin geçmişini kaydeder. Sistem Yöneticisi ile entegre olur ve düzeltme sağlar.
-
-Sınav işareti: "Bu kaynak, güvenlik politikamızla uyumlu mu?" "Bu kaynağın yapılandırması geçen hafta nasıl görünüyordu?" → AWS Config.
+Sınav ipucu: "EC2'yi bilinen güvenlik açıkları için otomatik tara", "konteyner imajları için CVE taraması", "sürekli güvenlik açığı değerlendirmesi" → Inspector.
 
 ---
 
-## İyi Tasarlanmış (Well-Architected)
+**Amazon Cognito** *(Bölüm 14)*
 
-**Alt Temeller** *(31. Bölüm)*
+Uygulamanızın son kullanıcıları için yönetilen kimlik doğrulama — kendiniz oluşturmak zorunda olmadığınız bir kullanıcı dizini. User Pool'lar kaydolma, oturum açma, MFA, parola sıfırlama ve sosyal kimlik sağlayıcılarını (Google, Facebook, herhangi bir OIDC sağlayıcısı) yönetir ve uygulamanızın doğruladığı JWT'ler verir. Identity Pool'lar bu token'ları geçici AWS kimlik bilgileriyle değiştirir.
 
-| Temel     | Temel soru                       | Temel hizmetler                               |
-|----------|------------------------------------|-----------------------------------------------|
-| Operasyonel Mükemmellik | İşlemlerimiz iyi sürüyor mu?       | CloudWatch, CloudTrail, SSM, Config          |
-| Güvenlik   | Korunuyor muyuz?                   | IAM, KMS, GuardDuty, WAF, Shield, Secrets Manager |
-| Güvenilirlik | Başarısızlık durumunda kurtuluyor muyuz? | Çoklu Bölge, Route 53 failover, yedekleme/geri yükleme, SQS |
-| Performans Verimliliği | Doğru kaynakları kullanıyor muyuz? | Boyutlandırma, Otomatik Ölçekleme, CloudFront, Kinesis |
-| Maliyet Optimizasyonu | Akıllıca harcıyor muyuz?        | Tasarruf Planları, Spot, S3 yaşam döngüsü, VPC Uç Noktaları |
-| Sürdürülebilirlik | Çevresel etkiyi azaltıyor muyuz? | Boyutlandırma, Graviton, verimli depolama katmanları |
+Anahtar kavramlar: User Pool (kimlik doğrulama, JWT'ler) ve Identity Pool (geçici AWS kimlik bilgileri), barındırılan UI, sosyal/OIDC/SAML federasyonu, API Gateway Cognito authorizer.
 
-AWS İyi Tasarlanmış Aracı: Tasarımınızı alt temeller karşı karşıya olduğu şekilde değerlendirir. Sınavdan önce her bir temelin sorularının arkasındaki mantığı anlamak için kullanın.
+Sınav ipucu: "Uygulamanın kullanıcı kaydı/oturum açmaya ihtiyacı var", "sosyal giriş", "mobil uygulama kullanıcılarına AWS kaynaklarına geçici erişim ver" → Cognito. Karşılaştırma: IAM mühendisleriniz ve hizmetleriniz içindir; Cognito müşterileriniz içindir.
+
+---
+
+**AWS Certificate Manager (ACM)** *(Bölüm 16)*
+
+AWS tarafından yönetilen hizmetler (ALB, CloudFront, API Gateway) için ücretsiz genel TLS/SSL sertifikaları tedarik eder ve tüm yaşam döngüsünü yönetir — yenileme takvimi yok, özel anahtar yönetimi yok. DNS doğrulaması yoluyla otomatik yeniler.
+
+Anahtar kavramlar: DNS ve e-posta doğrulaması, otomatik yenileme, CloudFront sertifikaları us-east-1'de olmalıdır, ücretsiz genel sertifikalar dışa aktarılamaz (2025'ten beri ücretli, dışa aktarılabilir bir seçenek mevcuttur).
+
+Sınav ipucu: "Yük dengeleyici veya CDN üzerinde HTTPS", "otomatik sertifika yenileme" → ACM.
+
+---
+
+**Amazon Macie** *(Bölüm 17)*
+
+S3 için hassas veri keşfi. Bucket'larda PII (isimler, kart numaraları, kimlik bilgileri) bulmak için makine öğrenimi ve kalıp eşleştirme kullanır ve genel maruziyet gibi erişim risklerini işaretler. GuardDuty'yi tamamlar: GuardDuty davranışı izler; Macie depolanan şeyi denetler.
+
+Anahtar kavramlar: Yönetilen veri tanımlayıcıları (PII kalıpları), yalnızca S3 kapsamı, bulgular Security Hub/EventBridge'e.
+
+Sınav ipucu: "S3'te PII keşfet", "hassas veri maruziyetini belirle" → Macie.
+
+---
+
+**AWS Control Tower** *(Bölüm 14)*
+
+Çok hesaplı bir ortamın kurulumunu ve yönetişimini otomatikleştirir. Bir landing zone oluşturur — Organizations, CloudTrail, Config ve korkuluklarla (guardrails) önceden bağlanmış yönetim, log arşivi ve denetim hesapları — günlerce manuel bağlantı yerine dakikalar içinde.
+
+Anahtar kavramlar: Landing zone, korkuluklar (önleyici = SCP'ler, tespit edici = Config kuralları), standartlaştırılmış yeni hesaplar için Account Factory.
+
+Sınav ipucu: "En iyi uygulamalarla yeni bir çok hesaplı ortamı otomatik olarak kur ve yönet" → Control Tower. Karşılaştırma: Organizations ham yapı taşıdır; Control Tower otomatik montajdır.
+
+---
+
+## Mesajlaşma ve Olay İşleme (Messaging and Event Processing)
+
+**SQS — Simple Queue Service** *(Bölüm 19)*
+
+Yönetilen mesaj kuyruğu. Üreticiler mesaj gönderir; tüketiciler okur ve siler. Hizmetleri ayrıştırır (decouple): gönderici, alıcının uygun olup olmadığını bilmek zorunda değildir. Standard kuyruklar: en az bir kez teslimat, en iyi çaba sıralaması. FIFO kuyruklar: tam olarak bir kez işleme, katı sıralama.
+
+Anahtar kavramlar: Görünürlük zaman aşımı (visibility timeout, işlenirken mesaj diğer tüketicilerden gizlenir), tekrar tekrar başarısız olan mesajlar için Dead Letter Queue (DLQ), Mesaj saklama (varsayılan 4 gün, 14 güne kadar), Long polling (boş yanıtları azaltır), Maksimum yük varsayılan 256 KB (2025'ten beri 1 MiB'a yükseltilebilir; daha büyük yükler için Extended Client Library gövdeyi S3'te saklar).
+
+Sınav ipucu: "Hizmetleri ayrıştır", "yük artışları sırasında istekleri tampona al", "asenkron işleme" → SQS. "Sıralama önemli ve tam olarak bir kez gerekli" → SQS FIFO.
+
+---
+
+**SNS — Simple Notification Service** *(Bölüm 19)*
+
+Yönetilen pub/sub hizmeti. Yayıncılar bir konuya (topic) mesaj gönderir; tüm aboneler bir kopya alır. Fan-out deseni: bir mesaj → birçok tüketici. Protokoller: SQS, Lambda, HTTP/HTTPS, e-posta, SMS, mobil push.
+
+Anahtar kavramlar: Topic, abonelik, fan-out deseni (SNS → birden fazla SQS kuyruğu), mesaj filtreleme (aboneler yalnızca eşleşen mesajları alır).
+
+Sınav ipucu: "Aynı anda birden fazla uç noktaya bildirim gönder", "tek bir olayı birden fazla tüketiciye fan-out yap" → SNS. Yaygın desen: dayanıklı fan-out için SNS + SQS.
+
+---
+
+**EventBridge** *(Bölüm 22)*
+
+Olay odaklı mimariler oluşturmak için olay veri yolu (event bus). AWS hizmetlerinden, SaaS iş ortaklarından ve özel kaynaklardan gelen olayları Lambda, SQS, SNS, Step Functions ve diğer hedeflere yönlendirir. Planlı kuralları (cron) ve kalıp eşleştirmeyi destekler.
+
+Sınav ipucu: "AWS hizmetlerinden hedeflere olay yönlendir", "Lambda fonksiyonlarını planla", "olay odaklı orkestrasyon" → EventBridge.
+
+---
+
+**Step Functions** *(Bölüm 22)*
+
+Sunucusuz iş akışı orkestrasyonu. Lambda fonksiyonlarını, ECS görevlerini, DynamoDB'yi, SNS'i, SQS'i ve diğer hizmetleri görsel durum makinelerinde (state machines) koordine eder. Yeniden denemeleri, hata işlemeyi, paralel dalları ve bekleme durumlarını yönetir.
+
+Anahtar kavramlar: State machine, durum tipleri (Task, Wait, Choice, Parallel, Map, Pass, Succeed, Fail), Standard Workflows (tam olarak bir kez, uzun süreli) ve Express Workflows: Asenkron (en az bir kez, yüksek hacim — görevleri idempotent olacak şekilde tasarlayın) ve Senkron (en fazla bir kez, sonucu bir API çağrısı gibi doğrudan döndürür).
+
+Sınav ipucu: "Birden fazla Lambda fonksiyonunu orkestre et", "yeniden deneme mantığıyla uzun süreli iş akışları", "insan onayı adımları" → Step Functions.
+
+---
+
+**Kinesis** *(Bölüm 26)*
+
+Gerçek zamanlı veri akışı. Kinesis Data Streams: dayanıklı, sıralı kayıt akışı (dağıtık bir commit günlüğü gibi). Tüketiciler kayıtları işler; veriler 24 saat (varsayılan) ile 365 gün (Extended Data Retention ile) arasında saklanır. Amazon Data Firehose (eski adıyla Kinesis Data Firehose): S3, Redshift, OpenSearch, Splunk'a tamamen yönetilen teslimat — tüketici yönetimi gerekmez.
+
+Anahtar kavramlar: Shard (verim birimi: 1 MB/sn yazma, 2 MB/sn okuma), partition key (shard atamasını belirler), sıra numarası, checkpointing (KCL veya Lambda), Firehose ve Streams.
+
+Sınav ipucu: "Gerçek zamanlı akış", "sıralı kayıtlar", "olayları yeniden oynat" → Kinesis Data Streams. "Akış verilerini tüketici yönetmeden S3/Redshift'e teslim et" → Amazon Data Firehose (eski sorular "Kinesis Data Firehose" diyebilir). "Akış verisi üzerinde SQL" → Amazon Managed Service for Apache Flink (eski adıyla Kinesis Data Analytics). SQS ile karşılaştırma: Kinesis saklar ve yeniden oynatır; SQS tüketimde siler.
+
+---
+
+**Amazon MQ** *(Bölüm 19)*
+
+Apache ActiveMQ ve RabbitMQ'yu destekleyen yönetilen mesaj aracısı hizmeti. Endüstri standardı mesajlaşma protokollerini destekler: AMQP, STOMP, MQTT, OpenWire ve WebSocket. Birincil kullanım durumu, şirket içi mesaj aracısı iş yüklerinin lift-and-shift geçişidir — zaten ActiveMQ veya RabbitMQ kullanan uygulamalar kod değişikliği olmadan bağlanabilir.
+
+Anahtar kavramlar: ActiveMQ ve RabbitMQ motor seçimi, protokol desteği (AMQP/STOMP/MQTT), HA için tek örnekli veya etkin/yedek (active/standby) aracı yapılandırması.
+
+Sınav ipucu: "Şirket içi ActiveMQ veya RabbitMQ'yu uygulama kodunu değiştirmeden AWS'ye taşı" → Amazon MQ. "Sıfırdan AWS-yerel mesajlaşma" → SQS veya SNS (daha basit, daha ölçeklenebilir).
+
+---
+
+## Analitik (Analytics)
+
+**Athena** *(Bölüm 26)*
+
+S3'te saklanan veriler üzerinde sunucusuz SQL sorguları. Yönetilecek altyapı yok. Sorgu başına ödeme (taranan TB başına). Sütunlu formatlar (Parquet, ORC) ve bölümlenmiş verilerle en iyisi.
+
+Sınav ipucu: "S3 verisini SQL ile sorgula", "veri gölü üzerinde anlık analitik", "altyapı yönetimi yok" → Athena.
+
+---
+
+**Glue** *(Bölüm 26)*
+
+Sunucusuz ETL (Extract, Transform, Load) hizmeti. Glue Crawler'lar veriyi keşfeder ve Glue Data Catalog'u günceller. Glue Job'lar Spark veya Python dönüşümleri çalıştırır. Data Catalog, Athena, Redshift Spectrum ve EMR ile entegre olur.
+
+Sınav ipucu: "Analitik için veriyi dönüştür ve yükle", "S3 verisinin şemasını keşfet", "ETL boru hattı" → Glue.
+
+---
+
+**Amazon QuickSight** *(Bölüm 26)*
+
+Yönetilen iş zekası ve veri görselleştirme hizmeti. İçe aktarılan veriyi hızlı pano oluşturma için önbelleğe alan bellek içi bir motor olan SPICE'ı (Super-fast, Parallel, In-memory Calculation Engine) kullanır. Athena, S3, Redshift, RDS ve diğer AWS veri kaynaklarına bağlanır. Yönetilecek BI sunucusu yok.
+
+Anahtar kavramlar: SPICE (bellek içi motor), veri kümeleri, analizler, panolar, ML Insights (anomali algılama, tahmin), satır düzeyi ve sütun düzeyi güvenlik.
+
+Sınav ipucu: "Sunucu yönetmeden AWS'de BI panosu", "Athena veya Redshift'ten veriyi görselleştir" → QuickSight.
+
+---
+
+**AWS Lake Formation** *(Bölüm 26)*
+
+S3 ve Glue Data Catalog üzerine merkezi veri gölü erişim kontrol katmanı. Tablo, sütun ve satır düzeyinde ince ayrıntılı izinler sağlar — tek başına S3 bucket politikalarından daha ayrıntılı. Güvenli bir veri gölü kurmayı basitleştirir: Lake Formation izin modelini yönetir; Glue kataloğu yönetir; S3 veriyi tutar.
+
+Anahtar kavramlar: Veri gölü izinleri (tablo/sütun/satır düzeyi), Glue Data Catalog entegrasyonu, öznitelik tabanlı erişim kontrolü için LF-tag'leri, Athena ve Redshift Spectrum sorguları için merkezi izin verme/geri alma.
+
+Sınav ipucu: "Veri gölünde ince ayrıntılı erişim kontrolü", "S3 verisinde sütun düzeyi veya satır düzeyi güvenlik" → Lake Formation.
+
+---
+
+## Yüksek Kullanılabilirlik ve Felaket Kurtarma (High Availability and Disaster Recovery)
+
+**Multi-AZ ve Multi-Region** *(Bölüm 18)*
+
+Multi-AZ: otomatik yük devretme için bir bölge içinde eş zamanlı çoğaltma (RDS Multi-AZ, AZ'ler arası yük dengeleyici). RDS için RPO ~0, RTO ~60 sn. Multi-Region: coğrafi yedeklilik ve küresel kullanıcılar için daha düşük gecikme için eş zamanlı olmayan çoğaltma.
+
+Anahtar kavramlar: RTO (Recovery Time Objective — kurtarma ne kadar sürer), RPO (Recovery Point Objective — ne kadar veri kaybedilebilir). Pilot Light, Warm Standby, Active-Active DR stratejileri.
+
+Sınav ipucu: AZ düzeyindeki arızalar (Multi-AZ ele alır) ile bölgesel arızalar (Multi-Region ele alır) arasında ayrım yapın. Maliyet ve karmaşıklık Multi-Region ile önemli ölçüde artar.
+
+---
+
+**AWS Elastic Disaster Recovery (DRS)** *(Bölüm 18)*
+
+Sunucular için yönetilen felaket kurtarma (şirket içi veya EC2). Kaynak sunucuları sürekli olarak blok blok düşük maliyetli bir hazırlama alanına çoğaltır ve gerektiğinde dakikalar içinde tam kurtarma örnekleri başlatır — yönetilen bir pilot light: yedekle-ve-geri yükle fiyatlarına yakın, warm-standby'a yakın kurtarma süreleri.
+
+Anahtar kavramlar: Sürekli blok düzeyi çoğaltma, düşük maliyetli hazırlama alanı, talep üzerine kurtarma başlatma, zamanda noktaya (point-in-time) kurtarma.
+
+Sınav ipucu: "Yönetilen bir DR hizmetiyle sunucu tabanlı iş yükleri için kesinti süresini ve veri kaybını en aza indir", "kendin oluşturmadan pilot light" → DRS.
+
+---
+
+## Maliyet Optimizasyonu (Cost Optimization)
+
+**EC2 Fiyatlandırma Modelleri** *(Bölüm 27)*
+
+On-Demand: tam fiyat, taahhüt yok. Reserved Instances (1 veya 3 yıl): belirli örnek tipi için %30-72 indirim. Savings Plans (Compute veya EC2 Instance): esneklik için taahhüt edilen saatlik harcama. Spot: kesintiye uğrayabilen iş yükleri için %60-90 indirim.
+
+Sınav ipucu: "Öngörülebilir iş yükü için maliyeti en aza indir" → Savings Plans veya Reserved Instances. "Hata toleranslı toplu işleme" → Spot. "Öngörülemeyen veya kısa vadeli" → On-Demand.
+
+---
+
+**Veri Transferi Fiyatlandırması** *(Bölüm 30)*
+
+AWS'ye gelen: ücretsiz. Aynı AZ: ücretsiz. AZ'ler arası: her yönde 0,01 $/GB. Bölgeler arası: 0,02-0,08 $/GB. İnternet (giden): ~0,09 $/GB. NAT Gateway işleme: 0,045 $/GB. CloudFront veri transferi, doğrudan EC2'den internete göre daha ucuzdur ve önbellekleme toplam hacmi azaltır.
+
+Sınav ipucu: "Özel alt ağdan S3/DynamoDB için veri transfer maliyetlerini azalt" → Gateway Endpoint'ler (ücretsiz). "Diğer hizmetler için NAT Gateway maliyetlerini azalt" → Interface Endpoint'ler.
+
+---
+
+## Gözlemlenebilirlik (Observability)
+
+**CloudWatch** *(kitap boyunca atıfta bulunulan)*
+
+İzleme ve gözlemlenebilirlik. CloudWatch Metrics: AWS hizmetlerinden ve özel uygulamalardan sayısal zaman serisi verileri. CloudWatch Logs: günlük verilerini toplama, arama ve analiz etme. CloudWatch Alarms: metrik eşiklerine göre bildirimleri veya otomatik ölçeklemeyi tetikleme. CloudWatch Dashboards: metrikleri görselleştirme.
+
+Anahtar kavramlar: Metrik boyutları, saklama süreleri, log grupları ve log akışları, metrik filtreleri, CloudWatch Agent (EC2'den OS düzeyi metrikler ve günlükler için), Container Insights.
+
+---
+
+**CloudTrail** *(kitap boyunca atıfta bulunulan)*
+
+AWS hesabınızda yapılan her API çağrısını kaydeder: kim yaptı, nereden, ne zaman ve yanıt neydi. Çok bölgeli iz (trail), günlükleri S3'te süresiz olarak saklar. Güvenlik denetimi, uyumluluk ve olay araştırması için kullanılır.
+
+Sınav ipucu: "O kaynağı kim sildi?" "Tüm API etkinliğini denetle" → CloudTrail.
+
+---
+
+**X-Ray** *(Bölüm 20)*
+
+Dağıtık izleme (distributed tracing): bireysel istekleri hizmetler arasında takip eder (izler → segmentler → alt segmentler), her atlama için gecikme ve hata oranlarıyla bir hizmet haritası oluşturur. Örnekleme (sampling) yükü düşük tutar; ek açıklamalar (annotations) izleri aranabilir yapar. Aktif izleme, Lambda ve API Gateway aşamalarında açılır.
+
+Sınav ipucu: "İstekleri mikroservisler arasında izle", "hizmetler arasındaki darboğazı bul" → X-Ray (CloudWatch değil, CloudTrail değil).
+
+---
+
+**AWS Config** *(Bölüm 31'de atıfta bulunulan)*
+
+Kaynak yapılandırma değişikliklerini zaman içinde izler. Kaynakları uyumluluk kurallarına göre değerlendirir. Her kaynak için her yapılandırma değişikliğinin geçmişini kaydeder. Düzeltme (remediation) için Systems Manager ile entegre olur.
+
+Sınav ipucu: "Bu kaynak güvenlik politikamıza uygun mu?" "Bu kaynağın yapılandırması geçen hafta nasıldı?" → AWS Config.
+
+---
+
+## Well-Architected
+
+**Altı Sütun** *(Bölüm 31)*
+
+| Sütun                       | Temel soru                                | Anahtar hizmetler                                 |
+|-----------------------------|-------------------------------------------|---------------------------------------------------|
+| Operational Excellence      | İyi çalışıyor muyuz?                       | CloudWatch, CloudTrail, SSM, Config               |
+| Security                    | Korunuyor muyuz?                          | IAM, KMS, GuardDuty, WAF, Shield, Secrets Manager |
+| Reliability                 | Arızadan kurtarıyor muyuz?                | Multi-AZ, Route 53 failover, yedekle/geri yükle, SQS |
+| Performance Efficiency      | Doğru kaynakları mı kullanıyoruz?         | Doğru boyutlandırma, Auto Scaling, CloudFront, Kinesis |
+| Cost Optimization           | Akıllıca mı harcıyoruz?                   | Savings Plans, Spot, S3 yaşam döngüsü, VPC Endpoints |
+| Sustainability              | Çevresel etkiyi en aza indiriyor muyuz?   | Doğru boyutlandırma, Graviton, verimli depolama katmanları |
+
+AWS Well-Architected Tool: mimarinizi altı sütuna göre değerlendirir. Her sütunun sorularının ardındaki mantığı anlamak için sınavdan önce kullanın.

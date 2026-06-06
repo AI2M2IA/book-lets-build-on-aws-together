@@ -1,274 +1,468 @@
-# Bölüm 28: Depolama Faturaları Şaşkınlığı
+# Bölüm 28: Depolama Faturası Sürprizi
 
-Tom, EC2 için Tasarruf Planını sunmuştu. Faturanın bir sonraki satırı S3 idi: $198/ay (23. Bölümdeki yaşam döngüsü politikalarındaki değişikliklerden sonra $847'den düşmüştü).
+Tabloda artık on altı sekme vardı. Tom onu ikinci bir pencerede açık tutuyordu, tıpkı bazı insanların bir alışveriş listesi tuttuğu gibi — her zaman görünür, her zaman birikiyor. EC2 için yeni bir satır ekledi (tamam, Tasarruf Planı taahhüt edildi) ve imlecini bir sonraki satıra taşıdı.
 
-Ardından EBS'i inceledi: $440/ay.
+Depolama.
 
-"Bu biraz yüksek," dedi.
+**Özet: EC2 Halledildi, Bir Kalem Kaldı**
 
-Leo, EBS hacim listesini açtı. 47 adet hacim, örneklere bağlıydı. Ve sonra da 23 adet örneklere bağlı olmayan hacim vardı.
+Bölüm 27’deki compute fiyatlandırma çalışması EC2 stratejisini sabitlemişti: üç yıllık süreyle 0,45 dolar/saatlik bir Compute Tasarruf Planı, artı gece toplu işi için Spot — süre boyunca tahminen 42.500 dolar tasarruf. O iş bitmişti ve iyi yapılmıştı. Ama faturada bir satırdı. Tom, altı aylık Athena maliyet analizinden, faturanın birçok satırı olduğunu — ve her birinin aynı incelemeyi hak ettiğini — öğrenmişti. Sırada S3 vardı: 198 dolar/ay, Bölüm 23’teki yaşam döngüsü politikası değişikliklerinden sonra zaten 847 dolardan iyileştirilmişti. Ama gözüne çarpan sayı sayfada daha aşağıdaydı. EBS: 440 dolar/ay.
 
-"Bu 23 hacim," dedi Tom. "Bunlar ne?"
+“Bu yüksek görünüyor,” dedi.
 
-Leo onları araştırdı. Hepsi ayrılmıştı – şu anda herhangi bir örnek tarafından kullanılmıyorlardı. Çoğu, hata ayıklama amaçlı oluşturulmuş özetlerden geliyordu. Bazıları, sonlandırılmış örneklerden geliyordu ancak hacimler silinmemişti.
+Leo, EBS birim listesini açtı. Instance’lara bağlı 47 EBS birimi vardı. Ve sonra herhangi bir instance’a bağlı olmayan 23 birim daha vardı.
 
-"Okunmayan depolama için GB başına 0,10 dolar ödüyoruz," dedi Leo.
+“Bu 23 birim,” dedi Tom. “Bunlar ne?”
 
-Tom toplamı inceledi: Bağlı olmayan 2,3 TB'lık hacimler.
+**Yetim Birim Denetimi**
 
-"Hiç kullanmadığımız depolama için aylık 230 dolar," dedi Tom. "Bu ne kadar süredir devam ediyor?"
+Leo onları tek tek incelemeye başladı. Bu hızlı bir süreç değildi — birimler tek tip etiketlenmemişti, etiketler tutarsızdı ve bazıları o kadar uzun zaman önce oluşturulmuştu ki kimse bağlamı hatırlamıyordu. Tom bir sandalye çekip izledi.
 
-Leo, oluşturulma tarihlerini kontrol etti. En eski hacim 16 ay önceydi.
+Birim ebs-021a4c. 16 ay önce oluşturuldu. Etiket: “debug-prod-db-snapshot-restore.” Boyut: 200GB. Son bağlanma: hiç, ya da bağlanma geçmişi temizlenmiş.
 
-"Üç bin altı yüz sekmiş dolar," dedi Tom sessizce. "Kimse erişmediği depolama için üç bin altı yüz dolar harcadık."
+“Onu hatırlıyorum,” dedi Leo. “Bir veritabanı sorgu sorunumuz vardı ve verileri kontrol etmek için bir snapshot’ı geri yükledim. Kontrol ettim, sorunu orada bulamadım ve birimi silmeyi unuttum.”
 
-Bağlı olmayan hacimleri silmedi. Bir sonraki ay, EBS faturası 210 dolara düştü.
+Birim ebs-07f38b. 11 ay önce oluşturuldu. Etiket: “load-test-temp.” Boyut: 400GB.
+
+Leo bir an sessiz kaldı. “Sanırım o, Series Seed sunumundan önce yaptığımız yük testiydi. Zirve yükü simüle etmek için ekstra depolamalı ekstra instance’lar sağladık ve sonra... sonrasında hiçbirini sildiğimi sanmıyorum.”
+
+“Onu zaten dağıtmıştım — ah,” dedi. “Yük testi geçiciydi. Birimler değildi.”
+
+Birim ebs-0ab12c’den ebs-0ab134’e kadar. Sekiz ardışık birim, 9 ay önce oluşturuldu. Etiket: “k8s-experiment.” Her biri 100GB, toplam 800GB.
+
+“O Kubernetes değerlendirmesiydi,” dedi Priya, Leo’nun omzunun üzerinden bakarak. “ECS’ye mi yoksa EKS’ye mi geçeceğimizi değerlendirmek için üç hafta harcadık. EKS ikinci sıradaydı. Deney kümesini söktük ama görünüşe göre kalıcı birimleri bıraktık.”
+
+Tom bunu ayrı bir sekmede topluyordu. Birim birim, sayılar birikti:
+
+- Debug geri yükleme birimleri: 4 birim × 200GB = 800GB
+- Yük testi birimleri: 200 ile 400GB arasında altı birim — toplamda kabaca 1.200GB
+- Kubernetes deney birimleri: 8 birim × 100GB = 800GB
+- Çeşitli etiketsiz: 5 birim × çeşitli boyutlar = ~700GB
+
+Toplam: 23 bağlı olmayan birim arasında yaklaşık 3.500GB.
+
+“Bu ayda ne kadara mal oluyor?” diye sordu Tom. Cevap: gp3, 0,08 dolar/GB/ay. 3.500GB × 0,08 dolar = 280 dolar/ay.
+
+En eski oluşturma tarihini kontrol etti. On altı ay. Hesap makinesini çıkardı.
+
+“Bunlardan bazıları için on altı aydır ödeme yapıyoruz,” dedi. “Bazıları için dokuz. Hepsinin ortalaması muhtemelen on ay.” 23 birim, her biri ortalama 12 dolar/ay, ortalama 10 ay. Bu yaklaşık 2.760 dolardı. Daha büyük birimleri ekleyince hesap, toplamda kabaca 3.200 dolarlık israfa çıktı.
+
+“Üç bin iki yüz dolar,” dedi Tom. “Kimsenin kullanmadığı birimlerden.”
+
+“Ve kimse fark etmedi çünkü ücret düzinelerce kaleme yayılmış,” dedi Leo. “Bu tek bir 3.200 dolarlık ücret değil. Ayda 12 ya da 50 ya da 80 dolarlık 23 ücret, her biri tek başına herhangi bir alarmı tetiklemeyecek kadar küçük.”
+
+Tom, 23 bağlı olmayan birimin hepsini sildi. Her birinin ihtiyaç duydukları veri içermediğini Leo ve Priya ile teyit etti — debug birimi o zamandan beri taşınmış bir veritabanından kalan eski veriydi, yük testi verisi alakasızdı, Kubernetes deney birimleri boştu. Silme on beş dakika sürdü. Ertesi ay, EBS faturası 440 dolardan 160 dolara düştü.
+
+“Dur — ama bunu *neden* böyle yapalım ki?” diye sordu Maya, Tom ona bulguyu anlattığında. “Bir instance’ı sonlandırdığında birimi silmek neden varsayılan değil?”
+
+“Birime bağlı,” dedi Tom. “**Kök** birim varsayılan olarak silinir — onun için `DeleteOnTermination` true’dur. Ama bağladığınız herhangi bir **ek** veri birimi varsayılan olarak korunur. Varsayım, üzerlerindeki verilere ihtiyaç duyabileceğinizdir. Bu 23 yetim hepsi veri birimleriydi — bir debug oturumu veya bir yük testi için bağlanmış, sonra instance sonlandırıldığında geride bırakılmış.”
+
+“Yani varsayılan, veri birimlerinde kazara veri kaybından sizi korur.”
+
+“Ve dikkat etmiyorsanız size paraya mal olur. Bundan sonra: herhangi bir ek veri birimi, instance sonlandığında açıkça silinir — ya da bağlama zamanında `DeleteOnTermination` ayarlanır — birisi onları neden saklamaları gerektiğine dair belgelenmiş bir gerekçe sunmadıkça.”
+
+“Birisi o gerekçeyi belgelemeyi unutursa ne olacağını düşündük mü?” diye sordu Priya. “Önemli bir şeyi silebiliriz.”
+
+“Ödünleşim bu,” dedi Tom. “Şu anda ödünleşim diğer yönde — her şeyin saklanması gerektiğini varsayıyoruz ve saklanmaması gerektiğinde bunun bedelini ödüyoruz. ‘Bu birimi sakla’yı belgeleme disiplini, mevcut ‘her şeyi sessizce sakla’ varsayılanından daha az risklidir.”
 
 **Depolama Maliyeti Denetimi**
 
-Tom'un EBS keşfi, daha geniş bir örüntünün belirtisiydi: Depolama maliyetleri görünmez bir şekilde birikiyor. Hesaplama gücü (47 sunucunun çalışır durumda olması fark edilebilir) gibi, depolama sessizce birikiyor.
+Tom’un EBS keşfi daha geniş bir örüntünün belirtisiydi: depolama maliyetleri görünmez bir şekilde birikir. Compute’un aksine (47 sunucu çalışıyorsa fark edersiniz), depolama sessizce birikir.
 
-Bir depolama birimine kiralama gibi düşünün. Bir birim kiralamak kredi kartı açıklamasında açıkça görülebilir. Ancak, bir projeyle ikinci bir birim, ardından eski mobilyalar için üçüncü bir birim kiralarsanız ve asla içeriğine geri dönmezseniz, ücretler her ay, siz ne depoladığınızı bile unuttuktan sonra sessizce, ne olduğunu unutana kadar devam eder. Bulut depolaması aynı şekilde çalışır: baytlar orada oturur, fatura gelir ve kimse onları daha fazla ihtiyacı olmayan şeylerle dolu bir şekilde bulana kadar sorgulamaz.
+Bir depolama birimi kiralaması gibi düşünün. Bir birim kiralamak kredi kartı ekstresinde aşikârdır. Ama bir proje için ikinci bir birim, sonra eski mobilyalar için üçüncü bir birim kiralarsanız ve içinde ne olduğunu kontrol etmek için bir daha hiç geri dönmezseniz — ücretler her ay sessizce gelmeye devam eder, neyi sakladığınızı unuttuktan çok sonra bile. Bulut depolaması aynı şekilde çalışır: baytlar orada durur, fatura gelir ve birisi sonunda kapıyı açıp onu artık kimsenin ihtiyaç duymadığı şeylerle dolu bulana kadar kimse sorgulamaz.
 
-Kapsamlı bir depolama maliyeti denetimi şunları içerir:
+Kapsamlı bir depolama maliyeti denetimi şunlara bakar:
 
-**S3:**
+**S3**:
 
-- Tüm kapaklarda yaşam döngüsü politikaları uygulanıyor mu?
-- RDS, EBS gibi eski özetler S3'te mi oturuyor?
-- Akıllı Katmanlama, belirsiz erişim desenlerine sahip kapaklarda uygun mu?
-- Erişimini hiç almayan çoklu kopyalar oluşturmak için versiyonlama kullanılıyor mu?
+- Tüm bucket’lar için yaşam döngüsü politikaları mevcut mu?
+- S3’te duran eski snapshot’lar (RDS, EBS) var mı?
+- Belirsiz erişim örüntüleri olan bucket’lar için Intelligent-Tiering uygun mu?
+- Hiç erişilmeyen birden fazla kopya oluşturan sürümlenmiş nesneler var mı?
+- Sessizce biriken tamamlanmamış multipart yüklemeler var mı?
 
-**EBS:**
+**EBS**:
 
-- Hiçbir hacim bağlı değil mi (çalışan bir örnek tarafından kullanılmıyor mu)?
-- gp3 hacimleri doğru şekilde yapılandırılmış mı? (Varsayılan gp3 hacimleri ihtiyaç duymadığı için aşırı tahsisli bant genişliği/IOPS'ye sahip olabilir)
-- Gereksiz yere eski özetler korunuyor mu?
+- Herhangi bir birim bağlı değil mi (onu kullanan çalışan bir instance yok mu)?
+- gp3 birimleri düzgün yapılandırılmış mı? (Varsayılan gp3 birimleri, ihtiyaç duyulmayan fazla sağlanmış işlem hacmine/IOPS’a sahip olabilir)
+- Gereğinden eski snapshot’lar saklanıyor mu?
 
-**RDS:**
+**RDS**:
 
-- Otomatik yedekleme tutma süreleri uygun şekilde ayarlanmış mı? (Daha uzun = daha yüksek depolama maliyeti)
-- Eski örneklerden manuel özetler hala orada mı?
-- Veritabanı göçlerinden gelen okuma replikaları hala çalışıyor mu?
+- Otomatik yedekleme saklama süreleri uygun şekilde ayarlanmış mı? (Daha uzun = daha fazla depolama maliyeti)
+- Eski instance’lardan kalan manuel snapshot’lar hâlâ duruyor mu?
+- Veritabanı geçişlerinden kalan okuma replikaları hâlâ çalışıyor mu?
 
-**EFS:**
+**EFS**:
 
-- EFS hacmi doğru depolama sınıfında mı? (Standart vs Nadiren Erişim)
+- EFS birimi doğru depolama sınıfında mı? (Standard vs Infrequent Access)
 
-**S3 Versiyonlama: Gizli Maliyet**
+**S3 Sürümleme: Gizli Maliyet**
 
-5. Bölümde S3 versiyonlamanın her önceki nesne sürümünü koruduğunu belirtmiştik. Bu, güvenlik için harika. Yaşam döngüsü kuralları için versiyonlama için de yoksa maliyetler için kötü.
+Bölüm 5’te, S3 sürümlemenin bir nesnenin her önceki sürümünü sakladığından bahsetmiştik. Bu, güvenlik için mükemmeldir. Sürümler için yaşam döngüsü kurallarınız da yoksa, maliyetler için berbattır.
 
-Versiyonlama bir kapakta etkinleştirildiğinde, bir nesneyi her değiştirdiğinizde eski sürüm korunur. Zamanla:
+Bir bucket’ta sürümleme etkinleştirildiğinde, bir nesnenin üzerine her yazdığınızda eski sürüm saklanır. Zamanla:
 
-- Gün 1: Resim yüklendi (v1)
-- Gün 30: Resim güncellendi (v1 artık "noncurrent" sürüm, v2 mevcut sürüm)
-- Gün 60: Resim tekrar güncellendi (v1 ve v2 noncurrent sürüm, v3 mevcut sürüm)
-- Gün 365: v1, v2... v12 hepsi saklanır. Bir resim için 12 kopyayı ödüyorsunuz.
+- 1. Gün: Resim yüklendi (v1)
+- 30. Gün: Resim güncellendi (v1 artık “noncurrent” bir sürüm, v2 güncel)
+- 60. Gün: Resim tekrar güncellendi (v1 ve v2 noncurrent, v3 güncel)
+- 365. Gün: v1, v2... v12 hepsi saklanıyor. Bir resmin 12 kopyası için ödeme yapıyorsunuz.
 
-Çözüm: Noncurrent sürümler için yaşam döngüsü kuralları.
+Sürümlemenin eski sürümleri neden otomatik olarak temizlemediğini merak ediyor olabilirsiniz. Cevap kasıtlıdır — AWS, verilerinizi otomatik olarak silmek istemez. Ama sonuç, S3’e onları ne kadar süre saklayacağını açıkça söyleyene kadar her sürümün birikmesidir. Çözüm: noncurrent sürümler için yaşam döngüsü kuralları.
 
 ```
 Expire noncurrent versions after 30 days
 Delete failed multipart uploads after 7 days
 ```
 
-Tom, bu kuralları tüm sürümlemiş bucket'lara uyguladı. Bir sonraki ay, S3 depolama %18 oranında azaldı.
+Tom bu kuralları tüm sürümlenmiş bucket’lara uyguladı. Ertesi ay, S3 depolaması %18 azaldı.
 
-**EBS: Boyutlandırma ve gp3 Güncellemesi**
+**Tamamlanmamış Multipart Yüklemeler: Görünmez Birikim**
 
-EBS hacim fiyatlandırması iki bileşene sahiptir:
+Çoğu mühendisin tamamen kaçırdığı daha incelikli bir S3 maliyeti var: tamamlanmamış multipart yüklemeler.
 
-1.  Depolama (GB başına ayda)
-2.  Provisioned IOPS ve bant genişliği (io1/io2'deyseniz veya ek gp3 performansı için ödeme yapıyorsanız)
+S3 büyük bir dosyayı yüklerken, onu parçalara böler ve her birini ayrı ayrı yükler. Bu, multipart yükleme mekanizmasıdır — birkaç yüz megabaytın üzerindeki dosyalar için tek bir büyük PUT’tan daha güvenilir. Ama bir yükleme başlar ve sonra yarıda başarısız olursa — bir ağ kesintisi, bir istemci çökmesi, bir uygulama hatası — zaten yüklenmiş parçalar S3’te kalır. Bucket’ınızda nesne olarak görünmezler. Hiçbir listede görünmezler. Ama saklanırlar ve standart S3 oranlarında bunlar için ücretlendirilirsiniz.
 
-**gp3 fırsatı**: 6. Bölümde, gp3'ün mevcut varsayılan sürüm olduğunu ve gp2'den daha ucuz olduğunu belirtmiştik. Nimbus, gp3'ün kullanıma sunulduğu (Kasım 2020) Aralık ayından önce hacimler oluşturmuş olsaydı, bunlar hala gp2 olabilirlerdi.
+Tom bunu, S3 konsolundaki S3 Storage Lens panosunu etkinleştirip “incomplete multipart uploads”a göre sıralayarak buldu. Nimbus’un dört AWS hesabındaki bucket’larda sessizce duran 340GB tamamlanmamış multipart yükleme verisi vardı, bir kısmı bir yıldan eskiydi.
 
-Tom, 1.200 GB'lık toplam 12 gp2 hacmi buldu. Bu hacimlere gp3'e geçiş yapmak, hemen %20 tasarruf sağladı ve performansında herhangi bir düşüş olmadı.
+“Bu ayda ne kadara mal oluyor?” diye sordu Tom. 0,023 dolar/GB/ay × 340GB = 7,82 dolar/ay. Tek başına küçük. Ama bir yıldır kimse fark etmeden birikiyordu.
 
-**IOPS ve bant genişliği**: gp3 hacimleri, ek ücret ödemeden varsayılan olarak 3.000 IOPS ve 125 MB/s bant genişliğine sahiptir. Yükümlülüğünüzün ihtiyaç duyduğu kadar daha fazla kapasite sağlayabilirsiniz. Provisioned performansın gerçekten kullanılıp kullanılmadığını gözden geçirin.
+Çözüm: her bucket’a bir yaşam döngüsü kuralı ekle.
 
-Tom, 10.000 provisioned IOPS'li iki gp3 hacmi buldu. Bulut İzleme metriklerini kontrol etti: gerçek ortalama IOPS 1.200 idi. Provisioned IOPS'yi 4.000'e düşürdü (gerçek zirveye göre bir güvenlik marjı).
-
-Aylık tasarruf: 68 ABD Doları.
-
-**Anlık Görüntüleme yaşam döngüsü**: EBS anlık görüntüleri artımlıdır (her anlık görüntü, önceki anlık görüntüden sonraki değişiklikleri yalnızca depolar), ancak birikerek büyürler. Nimbus'ın erken dönemlerinden kalan eski anlık görüntüler hala mevcuttu. Tom, günlük anlık görüntülerden 30 gününü korudu ve diğerlerini silerek kurtardı.
-
-**EFS: Depolama Katmanları**
-
-Amazon EFS'nin kendi depolama katmanları vardır:
-
--   **EFS Standart**: Sık erişilen dosyalara yönelik. Daha yüksek maliyetli.
--   **EFS Nadiren Erişim (IA)**: 30 gün içinde erişilmeyen dosyalara yönelik. Standarta göre %92 daha ucuz.
--   **EFS Arşiv**: 90 gün içinde erişilmeyen dosyalara yönelik. IA'dan daha ucuz.
-
-**EFS Akıllı Katmanlama**: Erişim kalıplarına göre depolama katmanları arasında dosyaları otomatik olarak taşır.
-
-Tom, EFS hacmine Akıllı Katmanlamayı etkinleştirdi. Altı hafta sonra, %68'inin Nadiren Erişim'e taşınmıştı. EFS aylık maliyeti 89 ABD Dolarından 31 ABD Dolarına düştü.
-
-**S3 Maliyet Dağılımı Etiketleri: Kimin Ne Harcadığını Bulma**
-
-Nimbus büyüdükçe, birden fazla ekip S3'te veri depiliyor. Analitik ekibi kendi bucket'larını, mühendislik ekibi kendi bucket'larını ve restoran verileri ekibi kendi bucket'larını kullanıyordu.
-
-Fatura sadece "S3: 198 ABD Doları" olarak gösteriliyordu. Ekip başına bir ayrım yoktu.
-
-**Maliyet dağılımı etiketleri**, AWS kaynaklarına iş metadata'sı (ekip, proje, ortam) ile etiketlemenize ve AWS Maliyet İzleyici'de bu etiketlere göre maliyetleri görmenize olanak tanır.
-
-Tom, tüm S3 bucket'larına etiketler ekledi:
+```
+AbortIncompleteMultipartUpload:
+  DaysAfterInitiation: 7
 ```
 
+Yedi günden sonra, herhangi bir tamamlanmamış multipart yükleme otomatik olarak temizlenir. Bu, herhangi bir sürekli ilgi gerektirmeden süresiz çalışır.
+
+“Bütün o şey tam bir yıl orada durmuş olsaydı — başarısız yüklemelere harcadığımız 94 dolar diyelim,” dedi Leo.
+
+“Başarısız yüklemelere,” diye onayladı Tom. “Başarılı depolamaya bile değil. Altyapı israfının tanımı budur.”
+
+**EBS: Doğru Boyutlandırma ve gp3 Yükseltmesi**
+
+EBS birim fiyatlandırmasının iki bileşeni vardır:
+
+1. Depolama (GB başına aylık)
+2. Sağlanmış IOPS ve işlem hacmi (io1/io2’deyseniz veya fazladan gp3 performansı için ödeme yapıyorsanız)
+
+**gp3 fırsatı**: Bölüm 6’da, gp3’ün mevcut varsayılan olduğunu ve gp2’den daha ucuz olduğunu belirtmiştik. Nimbus’un gp3 mevcut olmadan önce (Aralık 2020’de piyasaya sürüldü) oluşturulmuş birimleri varsa, bunlar hâlâ gp2 olabilir.
+
+Geçiş basittir: birim türünü AWS konsolunda veya CLI ile gp2’den gp3’e değiştirin. Kesinti gerekmez. Dönüşüm sırasında birim kullanılabilir kalır. Performans özellikleri eşit veya daha iyidir — gp3, gp2’nin daha küçük birimler için tutarsız olabilen patlamalı modeline kıyasla 3.000 IOPS ve 125 MB/s temel işlem hacmi sağlar.
+
+“Dur — ama bunu *neden* böyle yapalım ki?” diye sordu Maya. “gp3 daha ucuz ve en az gp2 kadar iyiyse, AWS neden herkesi otomatik olarak geçirmedi?”
+
+“Çünkü AWS, müşteri altyapısında tek taraflı değişiklikler yapmaz,” dedi Tom. “Faydalı olanları bile. Değişiklik teorik olarak bazı iş yükleri için yan etkilere sahip olabilir. Müşterinin başlatması gerekir. Bu yüzden binlerce ekip, gp3 piyasaya sürüldükten yıllar sonra hâlâ gp2 fiyatları ödüyor, sadece kimse bakmaya gitmedi diye.”
+
+Tom, gp3 geçişini bir Cumartesi sabahı yapmaya karar verdi — EC2 fiyatlandırma analizine uyguladığı aynı sabah disiplini. Sessiz zaman. Ayaküstü toplantı yok. Sadece AWS konsolu ve bir plan.
+
+Üretim ortamında hâlâ gp2 olan 8 birim belirlemişti: dört API sunucusu kök birimi, arka plan işleyicilerine bağlı iki birim ve yeni dağıtımlar için gp3 geçişi standart uygulama haline gelmeden önce oluşturulmuş iki eski veri birimi. Hepsi birlikte 960 GB ediyordu.
+
+Geçiş süreci, birim başına tek bir API çağrısıydı:
+
+```bash
+aws ec2 modify-volume \
+  --volume-id vol-0a1b2c3d4e5f67890 \
+  --volume-type gp3 \
+  --iops 3000 \
+  --throughput 125
+```
+
+`--iops 3000` ve `--throughput 125` parametreleri gp3’ün temel varsayılanlarıyla eşleşiyordu. gp2 için Tom önce CloudWatch metriklerini kontrol etmişti: her birimdeki ortalama IOPS 200 ile 800 arasındaydı. Hiçbiri, gp3’ün ücretsiz sağladığı 3.000 IOPS temelinden fazlasına ihtiyaç duymuyordu. İşlem hacmi de benzer şekilde rahattı — 125 MB/s varsayılanının çok içinde.
+
+“Geçişten sonra bir birim daha fazla IOPS’a ihtiyaç duyarsa ne olur?” diye sordu Maya, Tom geçiş planını açıkladığında.
+
+“Bir gp3 biriminde sağlanmış IOPS’ı istediğimiz zaman artırabiliriz,” dedi Tom. “Geçiş hiçbir şeyi kilitlemez. 3.000 IOPS’ta gp3’e geçer ve bunun yetersiz olduğunu fark edersek, daha fazlasını eklemek için birimi tekrar değiştiririz. Değişiklik canlıdır — kesinti yok, sökme yok.”
+
+“Ve gp2 yerinde değiştirilemez mi?”
+
+“gp2, yerinde gp3’e değiştirilebilir. Yapamayacağınız şey gp3’ten gp2’ye geri dönmektir — en azından kolay değil ve buna gerek de yok.”
+
+Gerçek geçiş, ilk komuttan tüm 8 birim genelinde tamamlanmaya kadar 73 dakika sürdü. AWS, her birimi bağlıyken ve kullanımdayken değiştirdi. API sunucuları baştan sona trafik almaya devam etti. CloudWatch, dönüşüm sırasında G/Ç gecikmesinde hiçbir artış göstermedi — geçiş çalışan uygulama açısından tamamen şeffaftı.
+
+“‘Kesinti gerekmez’ aslında böyle görünüyor,” dedi Leo, Tom’un yakaladığı öncesi ve sonrası metriklerine bakarak. “‘Kesinti yok’un ‘kısa bir yeniden başlatma’ anlamına geldiğini varsaymıştım. Uygulamanın bakış açısından kelimenin tam anlamıyla hiçbir şeyin değişmemesi anlamına geliyor.”
+
+Tasarruf: gp2, 0,10 dolar/GB/ay; gp3, 0,08 dolar/GB/ay. 960 GB’da: 96 dolar/ay’a karşı 76,80 dolar/ay. Aylık tasarruf: 19,20 dolar. Kendi başına dönüştürücü değil, ama temsil ettiği disiplin öyleydi. O noktadan itibaren oluşturulan her yeni birim varsayılan olarak gp3 kullandı. Tom’un o sabah yazdığı kurumsal kural: gp2 birimi yok. EBS birimi oluşturan herhangi bir mühendis, aksine belirli, belgelenmiş bir neden olmadıkça gp3 kullanmalı.
+
+**IOPS ve işlem hacmi**: gp3 birimleri, ek ücret olmadan varsayılan olarak 3.000 IOPS ve 125 MB/s işlem hacmiyle gelir. İş yükünüz gerektiriyorsa daha fazla sağlayabilirsiniz. Sağlanmış performansın gerçekten kullanılıp kullanılmadığını gözden geçirin.
+
+Aynı denetimde Tom, 10.000 sağlanmış IOPS’a sahip iki birim buldu — katılmadan önceden kalma eski bir ayar, o zamandan beri Aurora’ya geçmiş bir veritabanı için boyutlandırılmış. CloudWatch metriklerini kontrol etti: gerçek ortalama IOPS 1.200’dü. Sağlanmış IOPS’ı 4.000’e düşürdü (gerçek zirvenin üzerinde bir güvenlik marjı).
+
+Aylık tasarruf: kimsenin kullanmadığı performans boşluğuna ödenen sağlanmış IOPS maliyetlerinde 68 dolar.
+
+**Snapshot yaşam döngüsü**: EBS snapshot’ları artımlıdır (her snapshot yalnızca bir öncekinden bu yana yapılan değişiklikleri saklar), ama birikirler. Nimbus’un ilk günlerinden kalan eski snapshot’lar hâlâ vardı. Tom, 30 günlük günlük snapshot’ı sakladı ve gerisini sildi.
+
+**EFS: Depolama Sınıfları ve Intelligent-Tiering Kararı**
+
+Amazon EFS’nin kendi depolama sınıfları vardır:
+
+- **EFS Standard**: Sık erişilen dosyalar için. Daha yüksek maliyet.
+- **EFS Infrequent Access (IA)**: 30 gün erişilmeyen dosyalar için. Standard’dan %92 daha ucuz.
+- **EFS Archive**: 90 gün erişilmeyen dosyalar için. IA’dan bile daha ucuz.
+
+**EFS Intelligent-Tiering**: Erişim örüntülerine göre dosyaları depolama sınıfları arasında otomatik olarak taşır.
+
+Tom, EFS biriminde Intelligent-Tiering’i etkinleştirdi. Altı hafta sonra, dosyaların %68’i Infrequent Access’e taşınmıştı. Aylık EFS maliyeti 89 dolardan 31 dolara düştü.
+
+Ama Intelligent-Tiering ile manuel bir yaşam döngüsü kuralı arasındaki seçim önemsiz değildi. Tom bunu düşünmüştü.
+
+“Dur — ama Intelligent-Tiering’i, sadece manuel bir yaşam döngüsü kuralı ayarlamak yerine *neden* yapalım ki?” diye sordu Maya. “30 günden eski dosyaların erişilmediğini biliyorsak, neden sadece kuralı ayarlayıp işi bitirmiyoruz?”
+
+“Intelligent-Tiering geri gelen dosyaları halleder,” dedi Tom. “Dosyaları 30 gün sonra IA’ya taşımak için bir yaşam döngüsü kuralı ayarlarsam ve sonra biri altı aydır IA’da olan bir dosyaya erişirse, o IA’da kalır. Intelligent-Tiering ile, erişim yeniden başlarsa dosya otomatik olarak Standard’a geri taşınır. Çift yönlüdür.”
+
+“Peki o zaman yaşam döngüsü kuralını ne zaman tercih edersin?”
+
+“Erişim örüntüsünün tek yönlü olduğundan emin olduğunda. Arşiv logları — yazılırlar, eskirler, bir uyumluluk denetimi için bir kez erişilir ve sonra bir daha hiç. O örüntü için, 90 gün sonra Archive’a taşıyan bir yaşam döngüsü kuralı, Intelligent-Tiering’den daha ucuzdur çünkü izleme yükünü ödemiyorsunuz.”
+
+“Bir izleme ücreti mi var?”
+
+“S3 Intelligent-Tiering için evet, bu yüzden S3 yaşam döngüsü bölümünde küçük nesne ekonomisini ele almıştık. EFS için, karar çoğunlukla erişim örüntüsüyle ilgili: dosyalar tekrar sıcak olabilirse, Intelligent-Tiering daha güvenlidir. Yalnızca tek yönde eskiyorlarsa, Archive’a bir yaşam döngüsü kuralı daha ucuz ve daha basittir.”
+
+**S3 Maliyet Tahsis Etiketleri: Kimin Ne Harcadığını Bulma**
+
+Nimbus büyüdükçe, birden fazla ekip S3’te veri depoluyordu. Analitik ekibinin kendi bucket’ları vardı. Mühendislik ekibinin kendi bucket’ları vardı. Restoran verisi ekibinin kendi bucket’ları vardı.
+
+Fatura sadece “S3: 198 dolar” gösteriyordu. Ekibe göre bir döküm yoktu.
+
+**Maliyet tahsis etiketleri**, AWS kaynaklarını iş meta verileriyle (ekip, proje, ortam) etiketlemenize ve sonra AWS Cost Explorer’da bu etiketlere göre dökülmüş maliyetleri görmenize olanak tanır.
+
+Tom, tüm S3 bucket’larına etiketler ekledi:
 ```
 Team: analytics
 Environment: production
 Project: nimbus-core
+```
 
-Efter en faturalama dönemi, he hedeflenen verileri görebiliyordu: "Analiz ekibinin veri gölü 74 ABD dolarıdır/ay. Mühendislik yedeklemeleri 43 ABD dolarıdır/ay. Restoran verileri 81 ABD dolarıdır/ay."
+Etiketlemeli bir faturalandırma döngüsünden sonra şunu görebiliyordu: “Analitik ekibinin veri gölü 74 dolar/ay. Mühendislik yedeklemeleri 43 dolar/ay. Restoran verisi 81 dolar/ay.”
 
-Şimdi her ekibe bütçe hakkında konuşabilirdi, sadece bir toplam sayıya bakmak yerine.
+Artık sadece bir toplam sayıya bakmak yerine her ekiple bütçe konuşmaları yapabilirdi.
 
-**AWS Maliyet Avcisi ve AWS Bütçeleri**
+**AWS Cost Explorer ve AWS Budgets**
 
-**AWS Maliyet Avcisi**: Tarihsel ve tahmin edilen maliyetleri hizmet, bölge, etiket ve kullanım türüne göre görselleştirir. Para nereye gittiğini anlamak için temeldir.
+**AWS Cost Explorer**: Geçmiş ve tahmini maliyetleri hizmete, bölgeye, etikete ve kullanım türüne göre görselleştirir. Paranın nereye gittiğini anlamak için elzemdir.
 
-**AWS Bütçeleri**: Maliyetlerin (veya tahmin edilen maliyetlerin) bir eşiği aşması (veya aşması) durumunda uyarılar ayarlamanızı sağlar. Hizmet, bölge, etiket veya hesap tarafından bütçelenebilir.
+**AWS Budgets**: Maliyetler bir eşiği aştığında (veya aşması tahmin edildiğinde) uyarılar ayarlar. Hizmete, bölgeye, etikete veya hesaba göre bütçeleyebilirsiniz.
 
-Tom üç bütçe ayarladı:
+Tom üç bütçe kurdu:
 
-1. Toplam aylık fatura: Bütçenin %90'ı kadar olan miktarda uyarı
-2. EC2 Talep Üzerinde: Talep Üzerinde harcama 500 ABD dolarını aşarsa (Bir Tasarruf Planı boşluğuna işaret eder)
-3. Veri aktarımı dışı: 200 ABD dolarında uyarı (veri aktarım maliyetleri beklenmedik şekilde artabilir)
+1. Toplam aylık fatura: Bütçelenen miktarın %90’ında uyar
+2. EC2 On-Demand: On-Demand harcaması 500 dolar/ayı aşarsa uyar (bir Tasarruf Planı boşluğuna işaret eder)
+3. Dışarı veri aktarımı: 200 dolar/ayda uyar (veri aktarım maliyetleri beklenmedik şekilde fırlayabilir)
 
-Bütçeler, Slack kanalı aracılığıyla uyarılar gönderdi. Ekibin sınırlarına yaklaştığını, faturalarda keşfetmek yerine fark etmelerini sağladı.
+Budgets, uyarıları bir Slack kanalına gönderdi. Ekip, limitlere yaklaştıklarını aylık faturada keşfetmek yerine gördü.
 
-**Mindakarlığın Maliyeti**
+**Her Satırın Fişi: Maliyet ve Kullanım Raporları**
 
-Tom bir elektronik tablo yaptı. Nimbus'un harcadığı şunları hesapladı:
+Cost Explorer, Tom’un sorularının çoğunu yanıtladı. Sonra yanıtlayamadığı bir tanesine takıldı: “tam olarak hangi S3 bucket’ları, saat saat, geçen Salı’nın zirvesini yönlendirdi — ve hangi etiketler altında?”
 
-- Bağlanmamış EBS hacimleri (16 ay): 3.680 ABD doları
-- Eski S3 anlık görüntüleri (keşfedildi ve silindi): 890 ABD doları
-- Gereksiz provisioned IOPS: 816 ABD doları
-- gp2'den gp3'e geçiş tasarrufları (önce yapıldıysa tahmini, 18 ay): 2.160 ABD doları
-- Geçerli olmayan S3 sürümleri birikiyor: 1.340 ABD doları
+Adli düzeydeki sorular için AWS, **Maliyet ve Kullanım Raporu’nu (CUR)** — artık **Data Exports** aracılığıyla sunuluyor — AWS’nin ürettiği en ayrıntılı faturalama verisini sağlar: her kalem, **kaynak başına, saat başına**, etiketlerle, sahip olduğunuz bir S3 bucket’ına teslim edilir. Bu bir pano değil; ham defterdir. Standart örüntü, onu Athena ile sorgulamak (sütunlu bir formatta gelir) veya panolar için QuickSight’a beslemektir.
 
-Belirlenen toplam boşa harama: 18 ayda yaklaşık 8.800 ABD doları.
+Sınavda iş bölümü: **Cost Explorer** = konsoldaki interaktif görselleştirme ve tahminler. **Budgets** = eşiklerde uyarılar. **CUR/Data Exports** = kendi analiziniz için S3’e teslim edilen en granüler veri. Bir soru “özel analiz için kaynak düzeyinde, saatlik maliyet verisi” derse — bu, Cost Explorer değil, CUR’dur.
 
-"Sekiz bin sek yüz dolar," Maya dedi.
+“Buna hiç bakmazsak ne olacağını düşündük mü?” diye sordu Priya. “İki günde 6.700 dolar bulduk. Hâlâ ne saklanıyor?”
 
-"Mindakarlık nedeniyle," Tom dedi. "Yanlış mimari kararları yapmaktan değil, temizlemeyi yapmamaktan kaynaklanıyor."
+“Düzenli denetimler,” diye devam etti. “Aylık Cost Explorer incelemeleri. AWS Trusted Advisor, bağlı olmayan birimleri ve boştaki kaynakları otomatik olarak işaretler. Bilinen israf örüntülerinin temizliğini otomatikleştir: N günden eski snapshot’ları sil, bağlı olmayan EBS birimleri için uyar, eski S3 sürümlerinin süresini doldur.”
 
-"Sistematik düzeltme nedir?"
+**S3 Requester-Pays: Aktarım Maliyetini Kaydırma**
 
-"Düzenli denetimler," Priya dedi. "Ayda bir kez Maliyet Avcısı incelemeleri. AWS Güvenilir Danışman, bağlantısız hacimler ve boş kaynaklar hakkında otomatik olarak uyarılar verir. Bilinen boşa harama kalıplarının otomatik temizlenmesini otomatikleştirmek: Sürümleri N günün üzerinde silin, bağlantısız EBS hacimleri hakkında uyarı verin, eski S3 sürümlerini geçersiz kılın."
+Depolama denetimi sırasında Tom, beklemediği bir durum buldu.
 
-"Ve," Tom ekledi, "maliyet hijyenini dağıtım sürecine dahil edin. Bir mühendis bir EC2 örneğini sonlandırdığında, EBS hacmi varsayılan olarak silinmezse, açıkça çıkış yapabilirler."
+Nimbus’un restoran ortaklarının menü fotoğraf varlıklarını — sipariş platformunun müşterilere sunduğu işlenmiş, yeniden boyutlandırılmış görselleri — indirmeleri gerekiyordu. Menüsünü güncelleyen bir restoran için bu, 50 MB’tan (küçük bir güncelleme) 800 MB’a (tam bir mevsimsel yenileme) kadar görsel dosyası indirmek anlamına geliyordu. Şu anda Nimbus, her indirmede giden veri aktarım maliyetini ödüyordu: S3’ten ortağın konumuna 0,09 dolar/GB.
+
+287 restoran ortağında, ayda ortalama bir menü yenilemesi ve ortalama 200 MB indirme ile hesap şuydu: 287 × 0,2GB × 0,09 dolar = 5,17 dolar/ay. Mevcut ölçekte önemli değil.
+
+“2.000 restoranda ne olur?” diye sordu Tom.
+
+“Aynı hesap,” dedi Maya. “Ayda yaklaşık 36 dolar.”
+
+“Peki 10.000 restoranda ve ortaklar büyük mevsimsel varlık paketleri indiriyorsa — diyelim ki bayram menü güncellemeleri için 2 GB?”
+
+Hesabı yaptı. 10.000 × 2GB × 0,09 dolar = ayda 1.800 dolar veri aktarımı, sadece ortakların ihtiyaç duydukları varlıkları indirmesi için.
+
+“Bu gerçek bir sayı,” dedi Priya.
+
+“O fatura, bir Series B kapatmaya çalıştığımız ayda ortaya çıkarsa ne olacağını düşündük mü?” diye devam etti Priya.
+
+“S3 Requester-Pays,” dedi Tom.
+
+S3’ün Requester-Pays adlı bir özelliği var: bir bucket’ta etkinleştirildiğinde, isteği yapan varlık — bucket sahibi değil — veri aktarımı ve istek maliyetlerini öder. Bucket sahibi hâlâ depolama için öder. Ama bucket’tan her indirme, isteği yapanın AWS hesabına faturalandırılır.
+
+Ödünleşim erişimdir. Requester-Pays, isteği yapanların geçerli bir hesaba sahip AWS müşterileri olmasını gerektirir — bir Requester-Pays bucket’ına kimliği doğrulanmamış veya anonim erişim bir hata döndürür. Çeşitli teknik beceri seviyelerine sahip işletmeler olan Nimbus’un restoran ortakları için, kendi menü varlıklarını indirmek için bir AWS hesaplarının olmasını şart koşmak uygulanabilir bir model değildi.
+
+“Doğrudan ortak erişimi için Requester-Pays yapamayız,” dedi Maya. “Ortaklarımızın çoğu fotoğraf indirmek için bir AWS hesabı kurmayacak.”
+
+“Doğru,” dedi Tom. “Ama bunu B2B entegrasyonları için — teknik ekipleri ve AWS hesapları olan daha büyük zincirler için — kullanabiliriz. Köşedeki küçük restoran değil, ama bir mühendislik ekibi olan ve doğrudan API’mizle entegre olan 50 lokasyonlu hamburger zinciri. O segment için Requester-Pays mantıklı.”
+
+“Peki gerisi için?”
+
+“Onlara, önceden imzalanmış S3 URL’leri kullanan bir indirme portalı veririz. Aktarım hâlâ AWS üzerinden gider, maliyet hâlâ bizim — ama bu da ortak fiyatlandırmasına zaten dahil edilmiş. Requester-Pays seçeneği, daha büyük ortaklar için sözleşme görüşmelerine dahil edeceğimiz bir şey, bugün dağıtacağımız bir şey değil.”
+
+Tom bunu tabloya “gelecekteki optimizasyonlar” altına ekledi: AWS hesapları olan kurumsal ortaklar için S3 Requester-Pays. %20 kurumsal müşterili 2.000 restoranda, aylık 2 GB indirmede: potansiyel olarak ortaklara kaydırılabilecek 72 dolar/ay. O ölçekte küçük, ama varlık paketleri büyüdükçe aynı örüntü anlamlı hale gelir. Ortak sayısı 1.000’i aştığında veya kurumsal ortaklar daha büyük mevsimsel paketler çekmeye başladığında gözden geçirin.
+
+“Ders her zamanki gibi aynı,” dedi Tom. “Ölçekte olmadan önce maliyetin ölçekte ne olacağını bilin. Bugünkü 5 dolarlık sorun, üç yıl içinde 1.800 dolarlık sorundur. Bunun için şimdi tasarlamak hiçbir şeye mal olmaz.”
+
+**Yönetişim: Otomatik-Sil vs Yalnızca-Uyar**
+
+Otomasyon sorusu, en çok anlaşmazlık yaratan soruydu.
+
+“Bağlı olmayan EBS birimlerini 14 gün sonra otomatik silmeli miyiz?” diye sordu Tom. “AWS Config kuralları onları işaretleyebilir. Lambda onları otomatik olarak silebilir.”
+
+“Hayır,” dedi Priya hemen.
+
+“Neden olmasın?”
+
+“Çünkü otomatik silme, eninde sonunda bir nedenle bağlı olmayan bir şeyi sileceğimiz anlamına gelir. Belki biri bir birimi farklı bir instance’a taşımak için ayırdı ve bir değişiklik gözden geçirilirken 12 gündür duruyor. 14. günde otomatik silme o veriyi yok eder.”
+
+“Yani yalnızca uyarı mı?” dedi Tom. “Bir bildirim alıyoruz ama otomatik olarak silmiyoruz.”
+
+“Önce uyar,” dedi Priya. “Bir insanı kararı vermeye zorla. Uyarı şu: ‘Bu birim 14 gündür bağlı değil. İhtiyacın varsa `keep: true` olarak etiketle, yoksa bir sonraki incelemede silinmek üzere işaretlenecek.’ İnsan kararı sonra etiketin varlığı veya yokluğuyla belgelenir.”
+
+“Bu daha yavaş,” dedi Leo.
+
+“Daha yavaş ve veriyi yok etme olasılığı daha düşük,” dedi Priya. “İhmal yüzünden zaten 3.200 dolar kaybettik. Otomasyona hiç veri kaybetmedik. Hangisini sürdürmeyi tercih edeceğimi biliyorum.”
+
+Tom bir melez çözüme vardı: 7 günde otomatik uyarı, gelecekteki uyarıları bastırmak için bir `keep: true` etiketi gerektir ve ekibin birlikte gözden geçirmesi için tüm etiketsiz-ve-bağlı-olmayan birimlerin haftalık bir raporunu çalıştır. Otomatik silme yok.
+
+**Varyasyon: Temizlik Tasarruf Ettiğinden Fazlasına Mal Olduğunda**
+
+Ekstra snapshot’ların güvenliğine ihtiyacınız varsa, onları saklayın — ama erişimi olmayan 90 günden eski her snapshot, yerini hak etmeli. Ödünleşim asimetriktir: ihtiyaç duyduğunuz bir snapshot’ı silmek bir olaya mal olur; ihtiyaç duymadığınız bir snapshot’ı saklamak yalnızca küçük bir aylık ücrete mal olur. Uyumluluğa duyarlı veriler için, eski snapshot’ları saklamanın maliyeti gerçektir ama genellikle bir denetçi sorduğunda onlara sahip olmamanın maliyetinden azdır. 14 ay önce çalışan bir testten kalan geliştirme snapshot’ları için, hesap diğer yöne gider.
+
+Belirsiz erişim örüntüleri olan dosyalar için EFS Intelligent-Tiering’i etkinleştirirseniz, otomatik katmanlama para tasarrufu sağlar ve sürekli müdahale gerektirmez. Dosyalar tahmin edilebilir şekilde arşiv erişimine doğru eskiyorsa, doğrudan bir yaşam döngüsü kuralı daha basittir. Etkinleştirmeden önce ölçün.
+
+SAA-C03 bağlantısı: Sınav, bir erişim sıklığı senaryosu verildiğinde S3 depolama sınıfları (Standard, IA, Glacier) arasında seçim yapıp yapamadığınızı test eder. Aynı mantık burada da geçerlidir — doğru sınıf, verilere ne sıklıkla erişildiğine bağlıdır.
+
+**İhmalin Maliyeti**
+
+Tom bir tablo oluşturdu. Nimbus’un şunlara ne kadar harcadığını hesapladı:
+
+- Bağlı olmayan EBS birimleri (16 ay): 3.200 dolar
+- Eski S3 snapshot’ları (keşfedilip silindi): 890 dolar
+- Gereksiz sağlanmış IOPS: 816 dolar
+- gp2’den gp3’e geçiş tasarrufları (daha erken yapılsaydı, öngörülen): 18 ayda 346 dolar
+- Biriken noncurrent S3 sürümleri: 1.340 dolar
+- Tamamlanmamış multipart yüklemeler: 94 dolar
+
+Belirlenen toplam israf: 18 ayda yaklaşık 6.700 dolar.
+
+“Altı bin yedi yüz dolar,” dedi Maya.
+
+“İhmalden,” dedi Tom. “Yanlış mimari kararlar vermekten değil. Temizlik yapmamaktan.”
+
+“Sistematik çözüm ne?”
+
+“Ve,” diye ekledi Tom, “maliyet hijyenini dağıtım sürecinin bir parçası yap. Bir mühendis bir EC2 instance’ını sonlandırdığında, açıkça vazgeçmedikçe EBS birimi otomatik olarak silinir.”
 
 ## Güçlü Yönler ve Sınırlamalar
 
-**Maliyet Optimizasyonu Disiplini**:
+**Maliyet optimizasyonu disiplini**:
 
-- Düzenli incelemeler, önemli hale gelmeden önce birikmiş boşa haramayı yakalar
-- Etiketleme, hesap verebilirliği sağlar - ekipler kendi maliyetlerini görür
-- Otomatik uyarılar, faturalama sürprizlerini önler
-- Yaşam döngüsü politikaları ve boyutlandırma genellikle ayarlanıp unutulabilen tasarruflardır
+- Düzenli incelemeler, önemli hale gelmeden önce biriken israfı yakalar
+- Etiketleme hesap verebilirliği sağlar — ekipler kendi maliyetlerini görür
+- Otomatik uyarılar faturalama sürprizlerini önler
+- Yaşam döngüsü politikaları ve doğru boyutlandırma genellikle ayarla-ve-unut tasarruflarıdır
 
-**Karmaşıklıkta Olduğu Yer**:
+**Karmaşık hale geldiği yer**:
 
-- Birçok ekibin olduğu büyük bir hesapta boşa haramları belirlemek için merkezi araçlar gerekir
-- Bazı boşa haramlar amaçlıdır (ekstra anlık görüntüleri "sadece şansınız olsun" olarak tutmak) - maliyet/risk dengesi bir yargıdır
-- gp3 geçişi dikkatli doğrulama gerektirir (IOPS ve akış değerleri gp2'nin bazı kenar durumlarında farklı davranabileceği için değişebilir)
-- Maliyet tahsis etiketleri, tüm ekipler arasında disiplin gerektirir - tutarsız etiketleme verileri eksik hale getirir
+- Birçok ekibin olduğu büyük bir hesapta israfı belirlemek merkezi araçlar gerektirir
+- Bazı israflar kasıtlıdır (ekstra snapshot’ları “her ihtimale karşı” saklamak) — maliyet/risk ödünleşimi bir muhakeme meselesidir
+- gp3 geçişi dikkatli doğrulama gerektirir (IOPS ve işlem hacmi varsayılanları bazı uç durumlarda gp2 davranışından farklı olabilir)
+- Maliyet tahsis etiketleri tüm ekipler arasında disiplin gerektirir — tutarsız etiketleme veriyi eksik kılar
+- Otomatik silme otomasyonu depolama için tehlikelidir — birimler ve snapshot’lar için uyar-ve-gözden-geçir daha güvenlidir
 
 ## Özet
 
-- **Depolama maliyetleri görünmez bir şekilde birikir** - düzenli denetimler gereklidir.
-- **Bağlantısız EBS hacimleri** yaygın bir boşa harama kaynağıdır. Silin (veya örnekler sona erdiğinde otomatik olarak silin)
-- **EBS boyutlandırması**: gp2'yi gp3'e geçirin (tipik olarak %20 tasarruf sağlar). Fazla provisioned IOPS'yi kaldırın.
-- **S3 sürüteleme maliyetleri**: Geçerli olmayan sürümler depolanır ve geçerli sürümler gibi aynı hızda ücretlendirilir. Sürüteleme havuzlarında sürüteleme tarihlerini geçersiz kılan yaşam döngüsü kuralları, sürüteleme maliyetlerini kontrol etmek için kritiktir.
-- **EFS Akıllı Katmanlama**: Dosyaları daha düşük maliyetli katmanlara erişim sıklığına göre otomatik olarak taşır.
-- **Maliyet Tahsis Etiketleri**: Ekip/proje/ortam metadata'sı ile kaynakları etiketleyerek maliyet görünürlüğünü ve hesap verebilirliğini sağlar.
-- **AWS Bütçeleri**: Maliyetler eşikleri yaklaştığında proaktif uyarılar. Aylık faturalarda şaşırmayın.
+Depolama denetimi iki gün sürmüştü. Ortaya çıkardığı israf — 18 aylık görünmez birikimde 6.700 dolar — bir karar verme başarısızlığından çok bir dikkat başarısızlığıydı. Hiçbir şey bilerek yanlış yapılandırılmamıştı. Snapshot’lar, bağlı olmayan birimler, biriken sürüm geçmişi, tamamlanmamış multipart yüklemeler: her biri o zaman mantıklıydı ve sadece bir daha hiç ziyaret edilmedi. Ders, belirli AWS hizmetleriyle ilgili değildi. Bakma alışkanlığını oluşturmakla ilgiliydi.
+
+- **Depolama maliyetleri görünmez bir şekilde birikir** — düzenli denetimler elzemdir.
+- **Bağlı olmayan EBS birimleri** yaygın bir israf kaynağıdır. Onları silin (veya instance’lar sonlandığında silmeyi otomatikleştirin).
+- **EBS doğru boyutlandırma**: gp2’yi gp3’e geçirin (tipik olarak %20 tasarruf). Fazla sağlanmış IOPS’ı kaldırın.
+- **S3 sürümleme**: Sınırsız sürüm geçmişi için ödeme yapmamak adına noncurrent sürümler için yaşam döngüsü kuralları etkinleştirin.
+- **Tamamlanmamış multipart yüklemeler**: Her bucket’a bir `AbortIncompleteMultipartUpload` yaşam döngüsü kuralı ekleyin. Bu sıklıkla gözden kaçar ve sessizce birikir.
+- **EFS Intelligent-Tiering**: Erişim sıklığına göre dosyaları daha düşük maliyetli katmanlara otomatik olarak taşır. Tahmin edilebilir erişim örüntüleri için manuel yaşam döngüsü kuralları daha ucuz olabilir.
+- **Yönetişim**: Bağlı olmayan birimler için 7-14 gün sonra uyarın; bastırmak için açık etiketleme gerektirin. Depolama kaynakları için otomatik silmeden kaçının.
 
 ## Sınav İpuçları
 
-*SAA-C03 Alanı: Maliyet Optimizasyonlu Mimarileri Tasarla (Alan 4, Görev 4.1)*
+*SAA-C03 Alanı: Maliyet Optimize Edilmiş Mimariler Tasarlama (Alan 4, Görev 4.1)*
 
-- **Maliyet tahsis etiketleri**: Faturalama konsolunda kullanıcı tanımlı etiketleri etkinleştirin; ardından kaynakları etiketleyin. Maliyet Avcısı, etiketlere göre bölünmüş gösterimleri görüntüler. Sınav senaryosu: "en çok S3 maliyetini üreten departmanın hangisi olduğunu belirleyin" → maliyet tahsis etiketleri.
-- **AWS Güvenilir Danışman**: Kullanılmayan EC2 örneklerini, bağlantısız EBS hacimlerini, boş yük dengeleyicileri ve diğer boşa haramları belirler. Temel kontroller ücretsizdir; tam kontroller İş/Kurumsal Desteği gerektirir.
-- **EBS maliyet bileşenleri**: Depolama (her GB), provisioned IOPS (eğer io1/io2 veya ekstra gp3 ise), akış (eğer ekstra gp3 ise). Hangi bileşenlerin boyutlandırılabilmesi gerektiğini bilin.
-- **S3 sürüteleme maliyetleri**: Geçerli olmayan sürümler depolanır ve geçerli sürümler gibi aynı hızda ücretlendirilir. Sürüteleme tarihlerini geçersiz kılan yaşam döngüsü kuralları, sürüteleme maliyetlerini kontrol etmek için kritiktir.
-- **AWS Compute Optimizer**: EC2 kullanımını analiz eder ve uygun örnek türlerini önerir. Sınav işareti: "EC2 maliyetlerini doğru örnek türünü seçerek azaltın" → Compute Optimizer.
-- **AWS Maliyet Anormallik Tespiti**: Olağan dışı harcama kalıplarını tespit etmek için ML'yi kullanır. Sınav işareti: "beklenmedik maliyet artışlarını otomatik olarak tespit edin" → Maliyet Anormallik Tespiti.
+- **Maliyet tahsis etiketleri**: Faturalama konsolunda maliyet tahsisi için Kullanıcı Tanımlı Etiketleri etkinleştirin; sonra kaynakları etiketleyin. Cost Explorer, etikete göre dökümler gösterir. Sınav senaryosu: “en çok S3 maliyetini hangi departmanın oluşturduğunu belirle” → maliyet tahsis etiketleri.
+- **AWS Trusted Advisor**: Yetersiz kullanılan EC2 instance’larını, bağlı olmayan EBS birimlerini, boştaki yük dengeleyicileri ve diğer israfları belirler. Temel kontroller ücretsiz; tam kontroller Business/Enterprise Support gerektirir.
+- **EBS maliyet bileşenleri**: Depolama (GB başına), sağlanmış IOPS (io1/io2 veya fazladan gp3 ise), işlem hacmi (fazladan gp3 ise). Hangi bileşenlerin doğru boyutlandırılabileceğini bilin.
+- **S3 sürümleme maliyetleri**: Noncurrent sürümler saklanır ve güncel sürümlerle aynı oranda ücretlendirilir. Noncurrent sürümlerin süresini dolduran yaşam döngüsü kuralları, sürümlenmiş bucket’larda maliyet kontrolü için kritiktir.
+- **AWS Compute Optimizer**: EC2 kullanımını analiz eder ve doğru boyutlandırılmış instance türleri önerir. Sınav sinyali: “doğru instance türünü seçerek EC2 maliyetlerini azalt” → Compute Optimizer.
+- **AWS Cost Anomaly Detection**: Olağandışı harcama örüntülerini tespit etmek için ML kullanır. Sınav sinyali: “beklenmedik maliyet artışlarını otomatik olarak tespit et” → Cost Anomaly Detection.
+- **Maliyet araçları dizilimi**: interaktif grafikler/tahminler → Cost Explorer. Eşik uyarıları → Budgets. “Özel analiz için (Athena/QuickSight) S3’e teslim edilen en granüler, kaynak düzeyinde/saatlik faturalama verisi” → **Cost and Usage Report (Data Exports)**.
+- **Requester Pays**: “büyük bir S3 veri kümesini paylaş; tüketiciler kendi indirme maliyetlerini ödesin” → S3 Requester Pays (sahip yalnızca depolama ödemeye devam eder; isteği yapanlar bir AWS hesabıyla kimlik doğrulamalı).
 
-## Uygulamalar
+## Alıştırmalar
 
-**Uygulama 1 - Hatırlama**
+**Alıştırma 1 — Hatırlama**
 
-## Açıklama: Bağımsız EBS Hacimlerinin Maliyet Oluşturmasının Nedenleri ve EC2 İstemcisi Kullanılmadığında Maliyetlerin Oluşması
+Bağlı olmayan EBS birimlerinin, hiçbir EC2 instance’ı onları kullanmamasına rağmen neden maliyet oluşturduğunu açıklayın. Mühendisler bu israfı önlemek için bir EC2 instance’ını sonlandırırken hangi süreci izlemeli?
 
-Neden bağımsız EBS hacimleri hiçbir EC2 istemcisi tarafından kullanılmadığına rağmen maliyet oluşturuyor? Mühendislerin bu israfı önlemek için bir EC2 istemcisini sonlandırmadan önce izlemeleri gereken süreç nedir?
+*(İpucu: EBS birimleri verileri fiziksel diskte saklar ve o disk, okunup okunmadığına bakılmaksızın paraya mal olur.)*
 
-*(İpucu: EBS hacimleri fiziksel diske veri depolar ve diskin okunması para harcamaya neden olur, isterse.)*
+**Alıştırma 2 — SAA-C03 Senaryosu**
 
-**Egzersiz 2 — Sınav Uygulaması**
+*Senaryo*: Bir şirketin AWS faturası altı ayda 5.000 dolardan 9.000 dolar/aya yükseldi, ama yeni hizmetler eklemediler. Mühendislik ekibi sorunun depolama maliyetleri olduğundan şüpheleniyor. Maliyet artışını belirlemek ve açıklamak için AWS araçlarının hangi kombinasyonu EN İYİ olur?
 
-*Senaryo*: Bir şirketin AWS faturaları, yeni hizmetler eklenmeden önce 5.000 $'dan 9.000 $'a yükseldi. Mühendislik ekibi depolama maliyetlerinin sorun olduğunu düşünmektedir. Bu artışı en iyi şekilde belirlemek ve açıklamak için hangi AWS araçlarının kombinasyonu kullanılabilir?
+A) Kaynakları kimin oluşturduğunu belirlemek için API çağrılarını gözden geçirmek üzere AWS CloudTrail  
+B) Hizmet düzeyinde maliyet dökümü için AWS Cost Explorer ve boştaki ve bağlı olmayan kaynak tespiti için AWS Trusted Advisor  
+C) Kaynak kullanımını izlemek ve maliyet alarmları oluşturmak için Amazon CloudWatch  
+D) Tüm kaynakları ve uyumluluk durumlarını belirlemek için AWS Config
 
-A) AWS CloudTrail, API çağrılarını gözden geçirerek kaynakları kimin oluşturduğunu belirlemek için.
-B) AWS Cost Explorer, hizmet bazlı maliyet analizi için ve AWS Trusted Advisor, kullanılmayan ve bağımsız kaynakları tespit etmek için.
-C) Amazon CloudWatch, kaynak kullanımını izlemek ve maliyet uyarıları oluşturmak için.
-D) AWS Config, tüm kaynakları ve uyumluluk durumlarını belirlemek için.
+**İpucu 1**: “Maliyet artışını belirle” → hizmete göre maliyet dökümünü görselleştir.
 
-**İpucu 1**: "Maliyet artışını belirle" → hizmet bazında maliyet dağılımını görselleştir.
+**İpucu 2**: “Boştaki ve bağlı olmayan kaynaklar” → belirli bir araç bunları proaktif olarak belirler.
 
-**İpucu 2**: "Kullanılmayan ve bağımsız kaynaklar" → belirli bir araç bu kaynakları proaktif olarak tespit eder.
-
-**İpucu 3**: CloudTrail günlükleri API çağrılarını kaydeder; Cost Explorer maliyet trendlerini gösterir. Maliyet analizi için hangisi daha faydalıdır?
+**İpucu 3**: CloudTrail API çağrılarını loglar; Cost Explorer maliyet eğilimlerini gösterir. Maliyet analizi için hangisi daha yararlı?
 
 **Cevap**: B
 
-**Açıklama**: AWS Cost Explorer, hizmet, bölge ve kullanım türüne göre maliyet trendlerini göstererek hangi hizmetin artışı yönlendirdiğini belirlemek için mükemmeldir. AWS Trusted Advisor'ın maliyet optimizasyon kontrolleri, bağımsız EBS hacimleri, boşta EC2 örneklerini, yetersiz kullanılan yük dengeleyicileri ve diğer yaygın israf kaynaklarını tespit eder.
+**Açıklama**: AWS Cost Explorer, hizmete, bölgeye ve kullanım türüne göre dökülmüş maliyet eğilimlerini gösterir — hangi hizmetin artışı yönlendirdiğini belirlemek için mükemmel. AWS Trusted Advisor’ın maliyet optimizasyonu kontrolleri, bağlı olmayan EBS birimlerini, boştaki EC2 instance’larını, yetersiz kullanılan yük dengeleyicileri ve diğer yaygın israf kaynaklarını belirler.
 
-**Neden A?** CloudTrail, kaynakların kim tarafından oluşturulduğu ve ne zaman oluşturulduğu kaydını tutar, ancak maliyet trendlerini doğrudan göstermez veya israfı tespit etmez.
+**Neden A değil?** CloudTrail, kaynakları kimin ne zaman oluşturduğunu loglar ama doğrudan maliyet eğilimlerini göstermez veya israfı belirlemez.
 
-**Neden C?** CloudWatch, CPU, bellek gibi kaynak performansını izler — sağlama boyutlandırması için faydalıdır, ancak biriken depolama israfını tespit etmek için değildir.
+**Neden C değil?** CloudWatch, kaynak performansını (CPU, bellek) izler — doğru boyutlandırma için yararlı ama biriken depolama israfını belirlemek için değil.
 
-**Neden D?** AWS Config, kaynak yapılandırmalarını ve uyumluluğu izler, ancak bir maliyet analizi aracı değildir.
+**Neden D değil?** AWS Config, kaynak yapılandırmalarını ve uyumluluğu izler ama bir maliyet analizi aracı değildir.
 
-*SAA-C03 Alanı: Maliyeti Optimizleştirilmiş Mimarileri Tasarla — Görev 4.1*
+*SAA-C03 Alanı: Maliyet Optimize Edilmiş Mimariler Tasarlama — Görev 4.1*
 
-**Egzersiz 3 — Mimari Zorluk** *(İsteğe Bağlı)*
+**Alıştırma 3 — Mimari Zorluğu** *(İsteğe Bağlı)*
 
-Nimbus'un S3 faturaları, "yedekler" adlı bir bucket için 340$/aydır. Bucket, versioning etkinleştirilmiş ve aşağıdaki verileri içerir:
+Nimbus’un S3 faturası, “backups” etiketli bir bucket için 340 dolar/ay gösteriyor. Bucket’ta sürümleme etkin ve şunları içeriyor:
 
-- Günlük veritabanı anlık görüntüleri (politika için 7 gün yeterlidir)
-- Haftalık tam yedeklemeler (3 ay boyunca saklanır)
-- Çeyreklik arşivler (vergi uyumluluğu için 7 yıl saklanır)
+- Günlük veritabanı snapshot’ları (politikaları için 7 gün yeterli)
+- Haftalık tam yedeklemeler (3 ay saklanır)
+- Üç aylık arşivler (vergi uyumluluğu için 7 yıl saklanır)
 
-Bu bucket için yaşam döngüsü politikası tasarlayın ve bu gereksinimleri karşılarken maliyeti en aza indirin. Her tür veriye hangi depolama sınıfı kullanılmalıdır? Sürümleme, eski sürümlerin birikmesini önlemek için nasıl ele alınmalıdır?
+Bu bucket için, saklama gereksinimlerini karşılarken maliyeti en aza indiren bir yaşam döngüsü politikası tasarlayın. Her veri türü hangi depolama sınıfını kullanmalı? Eski sürümlerin birikmesini önlemek için sürümlemeyi nasıl ele alırsınız?
 
-*(Tek bir doğru cevap yoktur. Amaç, yaşam döngüsü politikası tasarımını uygulamaktır.)*
+*(Tek bir doğru cevap yoktur. Amaç, yaşam döngüsü politikası tasarımı pratiği yapmaktır.)*
 
-## Ekran Sonrası Sahnesi
+## Jenerik Sonrası Sahne
 
-Tom, maliyet denetim bulgularını ekibe yayınladı.
+Tom, maliyet denetimi bulgularını ekibe yayınladı.
 
-Tespit edilen israf: 18 ayda 8.800$.
-Uygulanmış değişikliklerden elde edilecek beklenen yıllık tasarruf: 6.200$.
+Belirlenen israf: 18 ayda 6.700 dolar.
+Uygulanan değişikliklerden beklenen yıllık tasarruf: 6.200 dolar.
 
-Sonra en alt satıra şu satırı ekledi: "Bu, Savings Plans'tan (14.200$/yıl) veya S3 yaşam döngüsü politikalarından (7.800$/yıl) elde edilen tasarrufları içermiyor." Birleşik yıllık optimizasyon etkisi yaklaşık olarak 28.200$'dır.
+Sonra en alta bir satır ekledi: “Bu, Tasarruf Planları’ndan (14.200 dolar/yıl) veya S3 yaşam döngüsü politikalarından (7.800 dolar/yıl) elde edilen tasarrufları içermiyor. Birleşik yıllık optimizasyon etkisi: yaklaşık 28.200 dolar.”
 
 Maya bunu iki kez okudu.
 
-"Yani neredeyse bir genç mühendis maaşının değeri," dedi.
+“Bu neredeyse bir junior mühendis maaşı,” dedi.
 
-"İsrafda," Tom onayladı.
+“İsraf olarak,” diye onayladı Tom.
 
-"Veya," Leo dedi, "bu optimizasyonların daha erken yapılması, o genç mühendisin finansmanını sağlayacaktı."
+“Ya da,” dedi Leo, “bu optimizasyonları daha erken yapmanın o junior mühendisi finanse edeceğinin kanıtı.”
 
 Tom ona baktı.
 
-"Bu düşünmenin doğru yolu," dedi. "Maliyet optimizasyonu kesmekle ilgili değildir. Değer yarattığı için ödenmemesiyle ilgilidir."
+“Bu konuyu düşünmenin doğru yolu,” dedi. “Maliyet optimizasyonu kesintiyle ilgili değildir. Değer yaratmayan şeyler için ödeme yapmamakla ilgilidir.”
 
-Maya, belgeyi şirketin wiki'sına yapıştırdı.
+Maya, belgeyi şirket wiki’sine sabitledi.
 
-Bir sonraki bölüm: Veritabanı katmanı aynı şekilde ele alınacak ve Tom, aslında yatırım yapmadığı tek yerin keşfedileceği.
+Bir sonraki bölümde: veritabanı katmanı aynı muameleyi görüyor ve Tom, aslında yetersiz yatırım yaptığı tek yeri keşfediyor.

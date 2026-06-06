@@ -1,104 +1,116 @@
 # Bölüm 31: Bulut Mimarisi İçin İnşaat Denetçisi
 
-Ayaklarınızı kaldırın. Esnemek, ihtiyacınız varsa gerçek bir mola verin.
+Ayağa kalkın. Esneyin. İhtiyacınız varsa gerçek bir mola verin.
 
-Bu bölüm önceki olanlardan farklıdır. 30 bölüm boyunca belirli hizmetler ve desenler hakkında bilgi edinmiştik. Şimdi geriye adım atıp tüm resmi görüyorsunuz.
+Bu bölüm öncekilerden farklı. 30 bölüm boyunca belirli hizmetler ve desenler hakkında bilgi biriktirdik. Şimdi geriye adım atıp bütüne bakıyoruz.
 
-*İyi* bir bulut mimarisi nasıl görünür? Bir mimarinin gerçekten iyi tasarlanıp olmasa da işe yarayıp yaramadığını sistematik bir şekilde değerlendirebilir miyiz?
+*İyi* bir bulut mimarisi gerçekte neye benzer? İnşa ettiğiniz şeyin gerçekten iyi tasarlanmış mı yoksa sadece işlevsel mi olduğunu değerlendirmenin sistematik bir yolu var mı?
 
-Var. AWS bunu "İyi Tasarlanmış Çerçevesi" olarak adlandırıyor.
+Var. AWS buna Well-Architected Framework diyor.
 
-Nimbus iki yıldır çalışıyordu. Takım, bazıları bilinçli, bazıları şans eseri, bazıları baskı altında yüzlerce mimari karar vermişti. Sistem çalışıyordu. Ancak Maya bir soru sordu.
+**Özet: Sayıların Ardından Gelen Soru**
 
-"Mimarimiz gerçekten *iyi* mi?" diye sordu. "Sadece işe yarayan bir şey olmak 말고, iyi."
+Üç aylık maliyet optimizasyonu, hepsini şaşırtan bir sayı üretmişti: yıllık 35.904 $ tasarruf, belirlenen ve çoğu uygulanan. EC2 Savings Plans, S3 yaşam döngüsü politikaları, depolama temizliği, kullanılmayan veritabanı replikaları, NAT Gateway uç noktaları — her biri ayrı bir keşif, ayrı bir düzeltme olmuştu. Ama o sürecin bir yerinde Maya farklı bir soru sormaya başlamıştı. "İsraf nerede?" değil, "bu en başta nasıl birikti?" Maliyet sorunları bir şeyin belirtileriydi. Well-Architected Framework, o şeyin ne olduğunu adlandırmak için bir sözcük dağarcığıydı.
+
+Nimbus iki yıldır çalışıyordu. Ekip yüzlerce mimari karar vermişti — bazısı bilinçli, bazısı kazara, bazısı baskı altında. Sistem çalışıyordu. Ama Maya'nın bir sorusu vardı.
+
+"Mimarimiz gerçekten *iyi* mi?" diye sordu. "Sadece işlevsel değil. İyi."
 
 Kimse hemen cevap vermedi.
 
-"Çünkü İyi Tasarlanmış Bir İnceleme hakkında duyuyorum," diye devam etti. "AWS bunu müşterilere sunuyor. Bazı yatırımcılarımız tarafından bahsedildi. Bunu yapmamız gerektiğini düşünüyorum."
+"Çünkü bir Well-Architected Review'dan söz edildiğini duyuyorum," diye devam etti. "AWS bunu müşterilerine sunuyor. Bazı yatırımcılarımız bahsetti. Bence bir tane yapmalıyız."
 
-"Bu nedir?" Leo sordu.
+"Bu nedir?" diye sordu Leo.
 
-"AWS'nin bulut mimarilerini değerlendirmek için kullandığı çerçeve," dedi Priya. "Altı temel. Her biri için bir dizi soru ve en iyi uygulamalar var. Mimarinizin hepsine karşı değerlendirilmesini ve eksik olanları belirlemesini sağlıyor."
+"AWS'nin bulut mimarilerini değerlendirmek için kullandığı çerçeve," dedi Priya. "Altı sütun. Her biri için bir dizi soru ve en iyi uygulama. Mimarinizi hepsine karşı değerlendirip neyin eksik olduğunu belirliyorsunuz."
 
-"Bir bina denetimine benziyor," dedi Tom. "Binaların çalıştığını biliyorsunuz. Denetim, depremde başarısız olma potansiyelini belirlemenizi sağlıyor."
+"Bina denetimi gibi," dedi Tom. "Binanın çalıştığını biliyorsun. Denetim, yönetmeliklere uygun olup olmadığını ve depremde neyin çökebileceğini söyler."
 
-**Altı Temel**
+**Altı Sütun**
 
-AWS İyi Tasarlanmış Çerçevesi, altı temel üzerine kuruludur. Her temel, bir dizi tasarım ilkesi, en iyi uygulamalar ve mimarinizi değerlendirmek için sorular içerir.
+AWS Well-Architected Framework altı sütun etrafında düzenlenmiştir. Her sütunun bir dizi tasarım ilkesi, en iyi uygulaması ve mimarinizi değerlendirmek için soruları vardır.
 
 **1. Operasyonel Mükemmellik**
 
-*Odak*: İş değerini sağlayan ve süreçleri ve prosedürleri sürekli iyileştiren sistemleri çalıştırmayı ve izlemeyi içerir.
+*Odak*: İş değeri sunmak için sistemleri çalıştırmak ve izlemek, süreçleri ve prosedürleri sürekli iyileştirmek.
 
 Temel alanlar:
 
-- Değişiklikleri nasıl dağıtıyorsunuz? (CI/CD, altyapı kodu, otomatik dağıtımlar)
-- Sistem hakkında ne zaman bir şey ters giderse, sistemi nasıl izliyorsunuz?
-- Başarısızlıklardan nasıl öğreniyorsunuz? (sonuç raporları, çalışma kitapları, suçsuz kültür)
+- Değişiklikleri nasıl dağıtıyorsunuz? (CI/CD, kod olarak altyapı, otomatik dağıtımlar)
+- Sistemi nasıl izliyor ve bir şeyin ne zaman ters gittiğini nasıl biliyorsunuz?
+- Başarısızlıklardan nasıl öğreniyorsunuz? (post-mortem'ler, runbook'lar, suçlamasız kültür)
 - Ölçekte değişiklikleri nasıl ele alıyorsunuz?
 
 Nimbus değerlendirmesi:
 
-- Mevcut: Otomatik dağıtımlarla CI/CD boru hattı
-- Mevcut: CloudWatch uyarıları ve GuardDuty
-- Mevcut: Çeyreklik kaos mühendisliği testleri
-- Uyarı: Sonuç raporlama süreci resmileştirilmedi — olaylar incelendi ancak öğrenmeler sistematik olarak belgelenmedi
+- Mevcut: Otomatik dağıtımlı CI/CD veri hattı
+- Mevcut: CloudWatch alarmları ve GuardDuty
+- Mevcut: Üç aylık kaos mühendisliği testleri
+- Uyarı: Post-mortem süreci resmileştirilmedi — olaylar araştırıldı ama öğrenilenler sistematik olarak belgelenmedi
 
 **2. Güvenlik**
 
-*Odak*: Risk değerlendirmesi ve azaltma stratejileri yoluyla bilgi, sistemler ve varlıkları korumak.
+*Odak*: Risk değerlendirmesi ve azaltma stratejileri yoluyla bilgileri, sistemleri ve varlıkları korumak.
 
 Temel alanlar:
 
-- Kim neye erişebilir ve en az ayrıcalıkla mı?
-- Veriler dinlenme ve aktarım sırasında şifreleniyor mu?
-- Tehditler nasıl tespit edilir ve bunlara nasıl yanıt verilir?
+- Kim neye, mümkün olan en az ayrıcalıkla erişebilir?
+- Veriler beklemede ve aktarımda nasıl şifrelenir?
+- Tehditleri nasıl tespit eder ve yanıt verirsiniz?
 - Otomatik güvenlik kontrolleri var mı?
 
 Nimbus değerlendirmesi:
 
-- Mevcut: En az ayrıcalıkla (14. Bölüm'deki temizlikten sonra) IAM
-- Mevcut: Veri şifrelemesi için KMS, kimlik bilgilerini için Secrets Manager
+- Mevcut: En az ayrıcalıkla IAM (Bölüm 14'teki temizlikten sonra)
+- Mevcut: Veri şifreleme için KMS, kimlik bilgileri için Secrets Manager
 - Mevcut: GuardDuty, WAF, Shield Standard
-- Mevcut: Özel alt ağlarla VPC, güvenlik grupları
-- Uyarı: EC2 örneklerinde güvenlik yamalama tamamen otomatik değil (Priya aylardır bunu işaretlemişti, henüz çözülmedi)
+- Mevcut: Özel alt ağlı VPC, güvenlik grupları
+- Uyarı: EC2 örneklerinde güvenlik yamalaması tam otomatik değil (Priya aylar önce bunu işaretledi, henüz çözülmedi)
+
+"Dur — ama *neden* öyle yapalım ki?" diye sordu Maya, güvenlik yamalaması açığı gündeme geldiğinde. "Dağıtımları otomatikleştirdik. Yedeklemeleri otomatikleştirdik. Yamalamayı neden manuel bıraktık?"
+
+"Çünkü yamalama, kod dağıtmaktan farklı hissettiriyordu," dedi Priya. "Yamalamanın bir şeyi bozmasından endişeleniyorduk. Bu yüzden kontrolü korumak için onu manuel tuttuk."
+
+"Ve manuel tutarak, onu tutarsız hale getirdik," dedi Maya. "Ki bu daha kötü."
+
+"Evet," dedi Priya. "AWS Systems Manager Patch Manager bunu çözer. Bunu altı ay önce yapmalıydık."
 
 **3. Güvenilirlik**
 
-*Odak*: Bir sistemin amaçlandığı şekilde doğru ve tutarlı bir şekilde çalıştığının ve arızalara karşı başarısızlık durumunda kurtarma yeteneğine sahip olduğunun sağlanması.
+*Odak*: Bir sistemin amaçlanan işlevini doğru ve tutarlı bir şekilde yerine getirmesini ve arızalardan kurtulabilmesini sağlamak.
 
 Temel alanlar:
 
-- Bir bileşende bir arıza nasıl ele alınır?
-- Bölgesel arızalardan nasıl kurtulursunuz?
+- Sistem bileşen düzeyindeki arızaları nasıl ele alır?
+- Bölgesel arızalardan nasıl kurtulur?
 - Talep nasıl yönetilir?
-- Bir arızanın test edilmesi nasıl yapılır?
+- Sistem arıza için nasıl test edilir?
 
 Nimbus değerlendirmesi:
 
-- Mevcut: Tüm kritik bileşenler için Çoklu Bölge
-- Mevcut: Aurora Serverless ile otomatik geçiş
-- Mevcut: Yük için Auto Scaling (EC2 ve ECS)
-- Mevcut: Chaos mühendisliği testleri (çeyreklik)
-- Uyarı: Çok bölge dağıtımı yok (sıcak yedek henüz uygulanmadı — önümüzdeki çeyrekte planlanıyor)
+- Mevcut: Tüm kritik bileşenler için Multi-AZ
+- Mevcut: Otomatik yük devretmeli Aurora Serverless
+- Mevcut: EC2 ve ECS için Auto Scaling
+- Mevcut: Kaos mühendisliği testleri (üç aylık)
+- Uyarı: Çok bölgeli dağıtım yok (sıcak yedek henüz uygulanmadı — gelecek çeyrek için planlandı)
 
 **4. Performans Verimliliği**
 
-*Odak*: IT ve bilgi işlem kaynaklarını verimli bir şekilde kullanmak.
+*Odak*: BT ve bilgi işlem kaynaklarını verimli kullanmak.
 
 Temel alanlar:
 
-- Yük için doğru örnek türü ve veritabanı türü kullanılıyor mu?
-- Ölçekleme doğru şekilde yapılandırılmış mı?
-- Kullanıcılar için veriler en uygun konumdan mı teslim ediliyor?
+- İş yükü için doğru örnek türü ve veritabanı türü mü kullanılıyor?
+- Ölçekleme doğru yapılandırılmış mı?
+- Veri kullanıcılara en uygun konumdan mı sunuluyor?
 
 Nimbus değerlendirmesi:
 
-- Mevcut: Küresel içerik teslimi için CloudFront
+- Mevcut: Küresel içerik dağıtımı için CloudFront
 - Mevcut: Veritabanı okuma hızlandırması için ElastiCache
 - Mevcut: Aurora okuma replikaları
 - Mevcut: Uygun iş yükleri için Lambda
-- Uyarı: Bazı EC2 örnekleri ilk dağıtımından beri yeniden boyutlandırılmamış
+- Uyarı: Bazı EC2 örnekleri ilk dağıtımdan beri hiç doğru boyutlandırılmadı
 
 **5. Maliyet Optimizasyonu**
 
@@ -106,216 +118,522 @@ Nimbus değerlendirmesi:
 
 Temel alanlar:
 
-- Kaynaklar uygun şekilde boyutlandırılıyor mu?
+- Kaynaklar uygun şekilde boyutlandırılmış mı?
 - Kullanılmayan kaynaklar devre dışı bırakılıyor mu?
 - Uygun fiyatlandırma modelleri kullanılıyor mu?
 - Harcama anormallikleri tespit ediliyor mu?
 
 Nimbus değerlendirmesi:
 
-- Mevcut: Tasarruf Planları uygulanıyor (27. Bölüm)
-- Mevcut: S3 yaşam döngüsü politikaları (23. Bölüm)
+- Mevcut: Savings Plans uygulandı (Bölüm 27)
+- Mevcut: S3 yaşam döngüsü politikaları (Bölüm 23)
 - Mevcut: DynamoDB Auto Scaling
-- Mevcut: AWS Bütçeleri ile uyarılar
-- Mevcut: Çeyreklik maliyet incelemeleri
+- Mevcut: Uyarılı AWS Budgets
+- Mevcut: Üç aylık maliyet incelemeleri
+
+"Bu tam olarak ayda ne kadar tutuyor — henüz doğru boyutlandırmadığımız her şey?" diye sordu Tom. "Hiç değerlendirilmemiş EC2 örnekleri. Hâlâ birinci yılda sağladığımız boyutta olanlar."
+
+"Bilmiyorum," dedi Leo. "Mesele de bu."
+
+"İşte Performans Verimliliği açığı bu," dedi Priya. "Bildiğimiz şeyleri optimize ettik. Henüz bakmadığımız şeyler için bir sayımız yok."
 
 **6. Sürdürülebilirlik**
 
-*Odak*: Bulut iş yüklerinin çalışmasının çevresel etkilerini en aza indirmek.
+*Odak*: Bulut iş yüklerini çalıştırmanın çevresel etkilerini en aza indirmek.
 
 Temel alanlar:
 
-- Kullanım en üst düzeye çıkarılıyor mu (boş kaynaklar önleniyor mu)?
-- Enerji verimli örnek türleri seçiliyor mu?
-- Veriler yalnızca ihtiyaç duyulduğunda saklanıyor mu?
+- Kullanım maksimize ediliyor mu (boşta kaynaklardan kaçınmak)?
+- Örnek türleri enerji verimliliği için mi seçiliyor?
+- Veri yalnızca gerektiği kadar saklanıyor mu?
 
 Nimbus değerlendirmesi:
 
-- **Sunuluyum:** Lambda ve Fargate, sunless/konteynerleştirilmiş iş yükleri için (ayrı EC2'ye göre daha iyi kaynak verimliliği)
-- **Sunuluyum:** S3 yaşam döngüsü politikaları (daha uzun süre ihtiyaç duyulmayan verileri silme)
-- **Uyarı:** Bazı graviton tabanlı örneklemeler henüz benimsenmedi (AWS Graviton daha enerji verimli ve daha ucuz)
+- Mevcut: Sunucusuz/konteynerleştirilmiş iş yükleri için Lambda ve Fargate (özel EC2'den daha iyi kaynak verimliliği)
+- Mevcut: S3 yaşam döngüsü politikaları (artık gerekmediğinde veriyi sil)
+- Uyarı: Bazı Graviton tabanlı örnekler henüz benimsenmedi (AWS Graviton daha enerji verimli ve daha ucuzdur)
 
-**İyi Yapılmış Mimari İnceleme Süreci**
+**Well-Architected İnceleme Süreci**
 
-İnceleme, geçip geçemeyeceğin bir test değildir. Bu, 60'tan fazla sorudan oluşan altı temel üzerine odaklanmış mimariniz hakkında yapılandırılmış bir konuşmadır.
+İnceleme, geçtiğiniz ya da kaldığınız bir test değildir. Altı sütun boyunca 60'tan fazla soruyla yönlendirilen, mimariniz hakkında yapılandırılmış bir konuşmadır.
 
-Her soru, bir en iyi uygulamayı tanımlar. Mimariniz bunu takip ediyorsa, bu bir güçlü yanıdır. Yapmazsa, bu bir "sorun"dur - risk seviyesine göre kategorize edilir (yüksek, orta, düşük).
+Her soru bir en iyi uygulamayı belirler. Mimariniz onu izliyorsa, bu bir güçlü yöndür. İzlemiyorsa, bir "sorun"dur — risk düzeyine göre kategorize edilir (yüksek, orta, düşük).
 
-Çıktı: iyileştirme önerilerinin önceliklendirilmiş bir listesidir. Her şeyi hemen düzeltmesi gerekmez. Bu çerçeve, her boşluğun getirdiği ödünleri anlamanıza ve neyi önceliklendireceğinizi belirlemenize yardımcı olur.
+Çıktı: önceliklendirilmiş bir iyileştirme önerileri listesi. Her şeyin hemen düzeltilmesi gerekmez. Çerçeve, her açığın ödünleşimlerini anlamanıza ve önce neyi ele alacağınıza karar vermenize yardımcı olur.
 
-AWS'nin İyi Yapılmış Mimari Aracı (AWS konsolunda ücretsiz olarak mevcut), soru çerçevesini sağlar ve önerilerle bir rapor üretir.
+AWS'nin Well-Architected Tool'u (AWS konsolunda mevcut, ücretsiz) soru çerçevesini sağlar ve önerilerle bir rapor üretir.
 
-Nimbus için, Maya yarım günlük bir atölye düzenledi. Dört takım üyesi de her temel üzerinde birlikte inceledi. Sonunda, 12 "sorun" listelediler - üçü yüksek risk, beş tanesi orta risk, dört tanesi düşük risk.
-
-**Yüksek Riskli Sorunlar:**
-
-1. Çok bölgeye sahip olmayan bir afet kurtarma planı yok (güvenilirlik)
-2. EC2 güvenlik yamalaması otomatikleştirilmedi (güvenlik)
-3. Resmi bir olay yanıt süreci yok (operasyonel mükemmellik)
-
-**Orta Riskli Sorunlar:**
-
-5 öğe dahil: Graviton benimsenmemesi, bazı EC2 örneklemeleri doğru boyutlandırılmamış, veritabanı geçişi için resmi bir çalışma kitabı yok
-
-**Düşük Riskli Sorunlar:**
-
-4 öğe dahil: CloudFront önbellek hit oranı, ayarlanmış TTL'lerle daha yüksek olabilir, güvenlik grupları gereğinden fazla geniş
+Nimbus için Maya, altı sütunun tamamını kapsayan yarım günlük bir inceleme oturumu planladı — ve onu tek başına yürütmemeye karar verdi. Oturumun kendisi ve ürettiği bulgular listesi, bu bölümün gittiği yer.
 
 **Lens: İncelemeyi Uzmanlaştırma**
 
-Temel İyi Yapılmış Mimari Çerçevesi, teknolojiden bağımsızdır. AWS ayrıca çerçeveyi belirli kullanım durumları veya endüstriler için uzantılar olarak yayınlayan **Lensler**'i yayınlar:
+Temel Well-Architected Framework teknolojiden bağımsızdır. AWS ayrıca **Lens'ler** de yayınlar — çerçevenin belirli kullanım durumları ya da sektörler için uzantıları:
 
-- **Sunless Lens:** Lambda'ya dayalı mimariler için ek sorular
-- **SaaS Lens:** Çok kiracı SaaS uygulamaları için
-- **Makine Öğrenimi Lens:** ML eğitimi ve çıkarım iş yükleri için
-- **Finansal Hizmetler Lens:** FinTek için düzenleyici ve uyumluluk soruları
-- **Sağlık Hizmetleri Lens:** HIPAA hususları
+- **Serverless Lens**: Lambda ağırlıklı mimariler için ek sorular
+- **SaaS Lens**: Çok kiracılı SaaS uygulamaları için
+- **Machine Learning Lens**: ML eğitimi ve çıkarım iş yükleri için
+- **Financial Services Lens**: FinTech için düzenleyici ve uyumluluk soruları
+- **Healthcare Lens**: HIPAA hususları
 
-Nimbus için SaaS Lens'i alakalıydı. Kiralık alan yalıtımı, onboarding otomasyonu ve kiracı başına maliyet tahsisi konularına odaklanıyordu - hepsi Nimbus'un aktif olarak geliştirdiği alanlardı.
+Şunu merak ediyor olabilirsiniz: lansmandan önce altı sütunun tamamına karşı tam Well-Architected incelemesini yürütmeniz gerekir mi? Hayır. Değer sorularda, puanda değil. Lansman öncesindeyseniz, durumunuza en alakalı iki sütunu seçin — Güvenlik ve Güvenilirlik neredeyse her zaman doğru başlangıç noktasıdır — ve yalnızca o soruları çözün. Gerçekten yapılan kısmi bir inceleme, mimari "hazır" olana kadar ertelenen eksiksiz bir incelemeden daha değerlidir.
 
-**İyi Tasarlanmış ve Sadece Çalışan Arasındaki Fark**
+Nimbus için SaaS Lens alakalıydı. Kiracı izolasyonu, onboarding otomasyonu ve kiracı başına maliyet tahsisi hakkında sorular ekledi — hepsi Nimbus'un aktif olarak geliştirdiği alanlar.
 
-Leo, inceleme sonrası "Sistemimiz çalışıyor," dedi. "Ama bu kadar çok şeyi 'yeterince iyi' yaptığımızı ve onlara devam ettiğimizi fark etmemiştim."
+**Well-Architected İnceleme Oturumu: Carlos Kolaylaştırıyor**
 
-"Normal," Priya dedi. "Zaman baskısı altında inşa etmek, pratik seçimler yapmanıza neden olur. İyi Yapılmış Mimari incelemesi, bunları gözden geçirmek için planlanmış zamandır."
+Maya, bir AWS topluluk etkinliğinde tanıştığı ve onlarınki gibi ekipler için Well-Architected incelemeleri yürüten kıdemli bir mimar olan Carlos'u oturumu yönetmeye davet etmişti. Dizüstü bilgisayarında Well-Architected Tool açık ve tek bir not defteriyle geldi. Gündem yok. Sadece sorular.
 
-"Bu boşlukların retrospektif olarak açık olduğunu gördüm," diye devam etti. "Güvenlik yamalaması - biz bunu otomatikleştirmediğimizi biliyorduk. Sadece düzeltmeyi önceliklendirmeyi unuttum."
+"Ben soracağım, siz dürüstçe cevaplayacaksınız," dedi. "Dürüst cevap 'bilmiyoruz' ise, bunu söyleyin. Bu bir bulgudur."
 
-"Çünkü 'çalışıyor' ve 'iyi tasarlanmış' aynı gün içinde hissettirir," dedi Maya. "Fark sadece bir şey yanlış giderdiğinde ortaya çıkar."
+Operasyonel Mükemmellik ile başladı.
 
-Bir kıdemli mühendis için bu, olayların olmaması anlamına gelmiyor ki riskin de olmaması anlamına geliyor. Risk henüz tetiklenmemiş demektir.
+"İlk beş olayınız için runbook'larınız var mı?"
 
-**İşletme Mükemmelliği İçin Altyapı Olarak Kod: Bir Enleyici**
+Tom Leo'ya baktı. Leo tavana baktı.
 
-Çok sayıda temel boyunca bir tema: **Altyapı Olarak Kod (IaC)**.
+"İki olay için runbook'umuz var," dedi Priya. "Veritabanı bağlantı limiti ihlali ve CloudFront origin zaman aşımı. Diğer üçü — yoğun zamanda EC2 örnek arızası, DynamoDB kısıtlaması ve Stripe webhook arızası — bunları anlık olarak hallediyoruz."
 
-Altylarınız konsol aracılığıyla manuel olarak yapılandırılıyorsa, o zaman:
+Carlos şunu yazdı: *OPS-1: İlk 5 olay için runbook'lar. Mevcut: 2/5. Açık: 3.*
 
-- DR senaryosunda yeniden oluşturmak yavaştır ve hataya eğilimlidir
-- Değişiklikleri denetlemek imkansızdır (kim neyi değiştirdi ve ne zaman?)
-- Kötü bir değişikliği geri almak manuel olarak geri alınmalıdır
-- Dev/staging/production ortamları arasında tutarlılık, disiplin gerektirir
+"Mevcut runbook'ları bir tatbikatta en son ne zaman baştan sona çalıştırdınız?"
 
-**AWS CloudFormation**, altyapıyı YAML/JSON şablonlarında tanımlamanıza olanak tanır. **AWS CDK (Cloud Development Kit)**, altyapıyı programlama dillerinde (Python, TypeScript, Java) tanımlamanıza olanak tanır. **Terraform**, popüler bir üçüncü taraf alternatiftir.
+Sessizlik.
 
-Nimbus, Terraform kullanarak IaC'ye yavaş yavaş geçiyordu. İyi Yapılmış Mimari incelemesi zamanına kadar, altyapılarının yaklaşık %60'ı kodda tanımlanmıştı. İnceleme, %100'e ulaşılması tavsiye edildi.
+"Çalıştırmadık," dedi Priya. "Onları olaylardan sonra yazdık. Hâlâ doğru olup olmadıklarını hiç test etmedik."
 
-"Kalan %40 neden?" diye sordu Leo.
+*OPS-2: Runbook doğrulaması. Son test: asla.*
 
-"Kalan %40, kritik altyapımızdır," dedi Priya. "Koddan yeniden oluşturamadığımızı, bir bölgesel felaket durumunda kurtarmak için yeniden oluşturamıyoruz."
+Carlos devam etti. Güvenlik.
+
+"Şu anda kimde root hesabı erişimi var?"
+
+"Root mu?" dedi Leo. "Sadece Maya'da. Ve sanırım hesabı kurduğumuzdan beri Tom'da hâlâ root kimlik bilgileri var — ama Bölüm 14'ten sonra onları döndürdük." Durakladı. "Tom, IAM temizliğinden sonra root'u döndürdük mü?"
+
+Tom bir 1Password girdisini açtı. "Parolayı değiştirdik ve MFA ekledik. Ama root kimlik bilgileri hâlâ paylaşılan 1Password kasasında. O kasaya üç kişinin erişimi var: ben, Maya ve Leo."
+
+"Yani üç kişinin root erişimi var," dedi Carlos. "AWS'nin yönlendirmesi, root'un yalnızca kısa, belgelenmiş bir görev listesi için kullanılması gerektiğidir — yaklaşık on hesap düzeyinde işlem, hepsi nadir ve çoğu yalnızca acil durum. Bu işlemlerden sonra root oturumu sonlandırılmalıdır. Root erişimi ayrı olarak kaydediliyor mu?"
+
+"CloudTrail kaydediyor," dedi Priya.
+
+"Root kullanıldığında bir uyarı var mı?"
+
+Bir başka duraklama.
+
+"Hayır," dedi Tom.
+
+Carlos şunu yazdı: *SEC-1: Root hesabı erişim kontrolü. Mevcut: paylaşılan kasada 3 kullanıcı, kullanım uyarısı yok. Açık: Root kullanımı anında bir SNS uyarısı tetiklemelidir. Hedef: acil durum dışı 0 root oturumu.*
+
+"Sıradaki: IAM izin değişikliklerini kim inceliyor? Yeni IAM rolleri ya da politika genişletmeleri için bir akran inceleme süreci var mı?"
+
+"Priya inceliyor," dedi Leo. "O fiilen güvenlik denetçisi."
+
+"Priya tatildeyken ne oluyor?"
+
+Kimse cevap vermedi.
+
+"Bu bir süreç açığı," dedi Carlos, yargılamadan. "Priya'nın yeteneğinde bir açık değil — süreç tasarımında bir açık. Tek bir kişinin müsaitliğine bağlı bir güvenlik incelemesi, güvenlik duruşunuzda tek bir arıza noktasıdır."
+
+*SEC-2: IAM inceleme süreci. Mevcut: tek inceleyici, yedek yok. Açık: Bir yedek inceleyici tanımla ve inceleme kriterlerini belgele.*
+
+Carlos Güvenilirlik'e döndü.
+
+"Aurora Multi-AZ yük devretmesini yük altında test ettiniz mi?"
+
+"Boştayken test ettik," dedi Tom. "Sistem sakinken yük devretme komutunu çalıştırdık ve replikanın 45 saniye içinde yükseltildiğini doğruladık."
+
+"O sırada yük neydi?"
+
+"Belki zirvenin %5'i."
+
+"Yük devretme sırasında %80 zirve yükünde bağlantı havuzuna ne olur?"
+
+Tom düşündü. "DNS uç noktası güncellenir. Yazar uç noktasını kullanan uygulamalar geçiş penceresi sırasında bağlantı hataları görür — tipik olarak 20-45 saniye. %5 yükte on aktif bağlantımız vardı. Zirvede 300 olurdu. Önünde RDS Proxy varken, proxy yeniden bağlanmayı yönetir."
+
+"RDS Proxy, Multi-AZ yük devretmesi sırasında gerçekten şeffaf bir şekilde yeniden bağlanıyor mu?"
+
+Tom Priya'ya baktı. "Sanırım. Ama test etmedim."
+
+"Bu, 'evet'ten farklı bir cevap," dedi Carlos. "Yüksek kullanılabilirlik tasarımınızda test edilmemiş bir varsayım, bir bulgudur."
+
+*REL-1: Yük altında Aurora Multi-AZ yük devretmesi. Test edildi: yalnızca boşta. Açık: RDS Proxy yerinde %70 zirve yükünde test et. Yük devretme penceresi sırasında bağlantı havuzu davranışını doğrula.*
+
+"Yük devretme 45 yerine 90 saniye sürerse ne olur diye düşündün mü?" diye sordu Priya, Carlos yerine Tom'a hitap ederek. Zaten işi yapıyordu.
+
+"90 saniyede, yeniden denenemeyecek istekler için uygulama zaman aşımlarımız olur," dedi Tom. "Sipariş verme akışında yeniden deneme mantığı var. Onay akışında — daha az. Akşam yoğunluğu sırasında 90 saniyelik bir yük devretme, bir kısım onayın başarısız olması, restoranların siparişi almaması, müşterinin geri ödeme alması anlamına gelir."
+
+"İşte etki yarıçapı bu," dedi Carlos. "Güzel. Şimdi neye karşı koruduğunuzu ve onu nasıl ölçeceğinizi biliyorsunuz. Test hem yük devretme süresini hem de geçiş penceresi sırasındaki uygulama davranışını doğrulamalı."
+
+Performans Verimliliği'ne geçti.
+
+"EC2 örneklerinizi doğru boyutlandırıyor musunuz?"
+
+"Maliyet incelemesi sırasında doğru boyutlandırdık," dedi Tom. "Savings Plans mevcut örnek türlerine taahhüt edildi."
+
+"Compute Optimizer'ın önerilerine en son ne zaman baktınız?"
+
+Tom onu açtı. AWS Compute Optimizer üç örneği potansiyel olarak fazla sağlanmış olarak işaretlemişti: iki c6g.medium arka plan işlemcisi ve bir t3.medium VPN sunucusu. VPN sunucusu önerisi bir t3.small'a küçültmekti. İşlemciler %82 güvenle "fazla sağlanmış" olarak işaretlenmişti.
+
+"Bunu kurduğumuzdan beri buna bakmadık," diye kabul etti Tom.
+
+"Compute Optimizer ne zamandır öneri üretiyor?"
+
+Tom kontrol etti. "Altı hafta."
+
+Carlos şunu yazdı: *PERF-1: Compute Optimizer ile EC2 doğru boyutlandırma. Mevcut: öneriler mevcut, incelenmedi. Açık: Compute Optimizer çıktısının aylık incelemesi; staging doğrulamasından sonra önerileri uygula.*
+
+"Bir tane daha," dedi Carlos. "Bu, tüm sütunlar arası." Beyaz tahtaya yazdı:
+
+*Olaysız olmak, iyi tasarlanmış olmakla aynı şey değildir.*
+
+Bir süre orada bırakdı.
+
+"Sisteminiz iki yıldır müşteriye dönük büyük bir kesinti olmadan çalışıyor," dedi. "Bu gerçekten iyi. Ama bunun size ne söylediğini — ve ne söylemediğini — fark etmenizi istiyorum."
+
+"Bize şanslı olduğumuzu mu söylüyor?" diye önerdi Leo.
+
+"Size, karşılaştığınız arıza modlarının, bugün sahip olduğunuz mimari göz önüne alındığında ele alma yeteneğiniz dahilinde olduğunu söyler. Mimarinin sağlam olduğunu söylemez. Henüz başarısız olmamış bir sistemin dayanıklı olduğu kanıtlanmamıştır. Yalnızca zayıflıklarını ortaya çıkaracak belirli koşullarla karşılaşmadığı kanıtlanmıştır."
+
+"Yani başarısız olmamak, savunmasız olmamak demek değil," dedi Maya.
+
+"Doğru. Well-Architected incelemesi geçmiş başarısızlıkların kanıtını aramıyor. Gelecekteki maruziyeti arıyor. Test edilmemiş yük devretme. Var olmayan runbook'lar. Çok geniş olan IAM rolü. Bunların hiçbiri henüz bir olaya neden olmadı. Hepsi olabilirdi."
+
+"Yamalama açığının önemli olmasının nedeni bu," dedi Priya. "Yamalanmamış bir EC2 örneği üzerinden ihlal edilmedik. Bu, edilmeyeceğimiz anlamına gelmez."
+
+"Aynen," dedi Carlos. "Zararın yokluğu, güvenliğin kanıtı değildir. Ele alınmamış bir güvenlik açığının varlığı, riskin kanıtıdır — riskin gerçekleşip gerçekleşmediğine bakılmaksızın."
+
+Kalemin kapağını kapattı.
+
+"İyi tasarlanmış bir sistemle şanslı bir sistem arasındaki fark budur."
+
+
+**IAM Aşırı İzin Bulgusu**
+
+Carlos, güvenlik sütunu incelemesi sırasında daha derin bir incelemeyi gerektiren ikinci bir bulgu işaretledi.
+
+"Sipariş bildirimlerini yöneten Lambda fonksiyonunuz — hangi IAM izinlerine sahip?"
+
+Leo yürütme rolünü açtı. Onu bulması olması gerekenden otuz saniye daha uzun sürdü — rol Nimbus'un başlangıcında oluşturulmuş ve genel bir adla adlandırılmıştı.
+
+"S3 tam erişimi," dedi, bulduğunda.
+
+Carlos bekledi.
+
+"Hangi paket?" diye sordu.
+
+"Tüm paketler," dedi Leo. Politikayı okudu. "`arn:aws:s3:::*`. Ona S3 tam erişimi verdik."
+
+"Fonksiyon S3 ile gerçekte ne yapıyor?"
+
+"Tek bir paketten restoran yapılandırması okuyor," dedi Leo. "`nimbus-restaurant-config` paketi. Özellikle `restaurants/{restaurant_id}/config.json` nesneleri. Onları okuyor. Hepsi bu."
+
+"Yani fonksiyonun `arn:aws:s3:::nimbus-restaurant-config/restaurants/*/config.json` üzerinde `s3:GetObject`'e ihtiyacı var," dedi Carlos. "Sahip olduğu şey, hesaptaki her paket üzerinde tam S3 izinleri."
+
+"Dahil," dedi Priya, "Aurora anlık görüntü paketi. CloudTrail günlükleri paketi. Müşteri sipariş geçmişi paketi."
+
+"Bu Lambda fonksiyonu ele geçirilirse," dedi Carlos, "bir saldırgan hesaptaki her S3 paketine tam erişime sahip olur. Herhangi bir veriyi okuyabilir, yazabilir ya da silebilir."
+
+"Onu zaten dağıtmıştım — ah," dedi Leo. Politikayı okuyordu. "Bunu iki yıl önce yazdım. Bildirim sistemini çalıştırmak için aceleydim. Henüz neye ihtiyacı olduğundan emin olmadığım için geniş erişim verdim. Ve onu daraltmak için hiç geri dönmedim."
+
+"Bu, production sistemlerinde aşırı iznin en yaygın kaynağıdır," dedi Carlos, suçlamadan. "Kasıtlı ihmal değil — zaman baskısı altında alınan, hiç yeniden ele alınmayan bir kestirme."
+
+Tom çoktan Lambda yürütme rollerinin tam listesine bakıyordu.
+
+"Lambda fonksiyonlarımızdan kaçının aşırı geniş izinleri var?" diye sordu Maya.
+
+Yirmi dakikalık incelemeden sonra cevap: 23 Lambda fonksiyonundan 7'sinin, belgelenmiş amacının gerektirdiğinden daha geniş izinleri vardı. En endişe verici olanı: ödeme onayı Lambda'sının tüm tablolarda `dynamodb:*` izni vardı. Yalnızca orders tablosunda `dynamodb:GetItem` ve `dynamodb:PutItem`'e ihtiyacı vardı.
+
+"Yedisinin hepsini düzeltmek için üç saatlik iş," diye tahmin etti Priya. "En az ayrıcalık politikalarını yaz, ekle, geniş olanları kaldır."
+
+"Bu şimdiye kadarki en yüksek riskli bulgu mu?" diye sordu Maya Carlos'a.
+
+"Runbook açığıyla berabere," dedi. "IAM sorunu bir etki yarıçapı sorunu — bu fonksiyonlardan herhangi biri ele geçirilirse, saldırganın erişimi olması gerekenden çok daha büyük. Runbook sorunu bir kurtarma süresi sorunu — bir şey ters gittiğinde, test edilmiş bir prosedürü izlemek yerine doğaçlama yapıyorsunuz. İkisi de gerçekten yüksek risk."
+
+Maya ikisini de takip belgesinde P1 olarak işaretledi.
+
+"Peki ya birisi içeri girmeye çalışırsa?" dedi Priya. "Harici saldırganlar hakkında endişeleniyorduk. Ama aşırı izinli bir Lambda, dahili bir arızanın — yanlış yapılandırma, bağımlılık güvenlik açığı, tedarik zinciri saldırısı — aynı etki yarıçapına sahip olabileceği anlamına gelir."
+
+"Derinlemesine savunma, her katmanın gerekli minimum erişime sahip olduğunu varsayar," dedi Carlos. "Bir katman ihtiyacından fazla erişime sahip olduğunda, derinlemesine savunma tasarlandığı gibi çalışmayı durdurur. Ele geçirilmiş bir katmanınız olur, ama o katmanın diğer üç katmanın anahtarları vardır."
+
+Priya, IAM aşırı izin bulgusunu, bir haftalık bir teslim tarihiyle, birinci sütunda P1 olarak işaretledi.
+
+
+**Bulguları Sıralama: P1, P2, P3**
+
+Oturumun sonunda ekibin tahtada 14 bulgusu vardı. Carlos onlardan ayrılmadan önce önceliklendirmelerini istedi.
+
+"Bu listedeki her bulgunun bir önceliği olmalı," dedi. "Her şey eşit derecede önemli değil. Şunlara göre önceliklendirin: bu başarısız olursa etki yarıçapı nedir? Başarısız olma olasılığı nedir? Düzeltmek ne kadar zor?"
+
+14 bulgu:
+
+1. İlk 5 olayın 3'ü için runbook yok (OPS)
+2. Runbook'lar hiç test edilmedi (OPS)
+3. Runbook'ların ötesinde resmi olay müdahale süreci yok (OPS)
+4. Paylaşılan kasada root erişimi, kullanım uyarısı yok (SEC)
+5. IAM inceleme sürecinde yedek inceleyici yok (SEC)
+6. 7 Lambda fonksiyonu aşırı izinli (SEC) ← Leo'nun bildirim Lambda'sı
+7. Birkaç güvenlik grubu kuralı gereğinden geniş (SEC)
+8. Aurora yük devretmesi yük altında test edilmedi (REL)
+9. Çok bölgeli DR planı uygulanmadı (REL)
+10. Güvenlik yamalaması otomatikleştirilmedi (SEC)
+11. EC2 doğru boyutlandırması lansmandan beri incelenmedi (PERF)
+12. Graviton örnekleri benimsenmedi (SUST)
+13. CloudFront önbellek TTL'leri ayarlanmadı (PERF)
+14. Altyapının %40'ı IaC'de değil (OPS)
+
+"Bariz olanlarla başlayın," dedi Carlos. "Yalnızca bir haftanız olsa hangi üçünü önce düzeltirdiniz?"
+
+Maya hemen söyledi: "Root erişim uyarısı. Lambda aşırı izinleri. Güvenlik yamalaması otomasyonu."
+
+"Neden?" diye sordu Carlos.
+
+"Çünkü bu üçü, net bir etki yarıçapına sahip güvenlik açıkları. Diğerleri güvenilirlik ve operasyonel iyileştirmeler — önemli, ama onlarla yaşadık ve bir olaya neden olmadılar. Güvenlik açıkları, düzeltmediğimiz her gün sessizce katlanıyor."
+
+Tom hafifçe katılmadı. "Lambda aşırı izinleri acil. Ama güvenlik yamalamasını Aurora yük devretme testiyle değiştirirdim. Multi-AZ kurulumumuzun yük altında doğru çalıştığını hiç doğrulamadık. Bir cuma akşam yoğunluğu sırasında başarısız olursa ve bunun için test edilmiş bir runbook'umuz yoksa, başımız belada."
+
+"İkisi de P1 olabilir," dedi Priya. "Bir haftamız var. Beş iş günü. Lambda izinleri fonksiyon başına iki saatlik bir düzeltme. Root erişim uyarısı otuz dakikalık bir CloudWatch olay kuralı. Güvenlik yamalaması otomasyonu iki günlük Systems Manager kurulumu ve testi. Aurora yük devretme testi, salı günü gece 2'de planlanan yarım gün."
+
+Carlos başını salladı. "Önceliklendirmenin doğru yolu bu. Yalnızca 'en önemli ne' değil, 'bu hafta gerçekte ne yapabiliriz ve hangi sırayla?'"
+
+Nihai önceliklendirme:
+
+**P1 (bu hafta)**:
+- Lambda yürütme rolü en az ayrıcalık düzeltmesi (7 fonksiyon)
+- Root hesabı CloudWatch uyarısı
+- Yük altında Aurora Multi-AZ yük devretme testi (gelecek salı gece 2'ye planla)
+
+**P2 (bu ay)**:
+- Systems Manager ile güvenlik yamalaması otomasyonu
+- İlk 3 olay için eksik runbook'lar
+- Resmi olay müdahale süreci belgelendi
+- %40 IaC göçü — hangi kaynaklar olduğunu belirle, göç planı oluştur
+
+**P3 (bu çeyrek)**:
+- Runbook doğrulama tatbikatı
+- IAM inceleme süreci yedek inceleyici belgelendi
+- Çok geniş güvenlik grubu kuralları sıkılaştırıldı
+- Compute Optimizer ile EC2 doğru boyutlandırma incelemesi
+- Graviton benimseme planı
+- CloudFront TTL ayarı
+
+"İşte sahipleri, teslim tarihleri ve öncelikleri olan on dört bulgu," dedi Maya. "Teknik borç konusunda hiç bu kadar düzenli olmadık."
+
+"İncelemenin amacı bu," dedi Carlos. "Açıklar hakkında kötü hissetmenizi sağlamak için değil. Size, gerçekten uygulayabileceğiniz bir sözcük dağarcığı ve bir liste vermek için."
+
+
+**İyi Tasarlanmış İle Sadece Çalışan Arasındaki Fark**
+
+"Sistemimiz çalışıyor," dedi Leo incelemeden sonra. "Ama ne kadar çok şeyi 'yeterince iyi' yapıp devam ettiğimizi fark etmemiştim."
+
+"Bu açıkları bırakmaya devam edersek ne olur diye düşündük mü?" diye sordu Priya. "Yamalama sorunu aylardır açık. Olay müdahale süreci yok. Bunlar küçük şeyler değil — bir cuma gecesi kesintisinin 20 dakikalık bir düzeltme mi yoksa dört saatlik bir felaket mi olacağını belirleyen şeyler."
+
+"İşte bu yüzden incelemeyi yapıyoruz," dedi Maya.
+
+"Bu normal," dedi Priya. "Zaman baskısı altında inşa etmek, pragmatik seçimler yapmanız demektir. Well-Architected incelemesi, onları yeniden ele almak için planlanmış zamandır."
+
+"Bu açıkların bazıları geriye dönüp bakınca bariz görünüyor," diye devam etti. "Güvenlik yamalaması — onu otomatikleştirmediğimizi biliyordum. Sadece düzeltmeyi hiç önceliklendirmedim."
+
+"Çünkü 'çalışıyor' ile 'iyi tasarlanmış' günlük olarak aynı hissettiriyor," dedi Maya. "Fark yalnızca bir şey ters gittiğinde görünür hale geliyor."
+
+Bu, kıdemli bir mühendisin anladığı en önemli şeylerden biridir: olayların yokluğu, riskin yokluğu anlamına gelmez. Riskin henüz tetiklenmediği anlamına gelir.
+
+**Kod Olarak Altyapı: Operasyonel Mükemmellik Sağlayıcısı**
+
+Birden çok sütun boyunca tek bir tema: **Kod Olarak Altyapı (IaC)**.
+
+Altyapınız konsol aracılığıyla manuel olarak yapılandırılmışsa, o zaman:
+
+- DR senaryosunda yeniden oluşturmak yavaş ve hataya açıktır
+- Değişiklikleri denetlemek imkânsızdır (kim neyi, ne zaman değiştirdi?)
+- Kötü bir değişikliği geri almak manuel tersine çevirme gerektirir
+- Ortamlar (dev/staging/production) arasında tutarlılık disiplin gerektirir
+
+**AWS CloudFormation**, altyapıyı YAML/JSON şablonlarında tanımlamanıza olanak tanır. **AWS CDK (Cloud Development Kit)**, altyapıyı programlama dilleriyle (Python, TypeScript, Java) tanımlamanıza olanak tanır. **Terraform** popüler bir üçüncü taraf alternatiftir.
+
+Nimbus, Terraform kullanarak kademeli olarak IaC'ye geçiyordu. Well-Architected incelemesi zamanında altyapılarının yaklaşık %60'ı kodda tanımlanmıştı. İnceleme %100'e ulaşmayı önerdi.
+
+"Neden kalan %40?" diye sordu Leo.
+
+"Kalan %40, kritik altyapımızın yaşadığı yer," dedi Priya. "Onu koddan yeniden oluşturamazsak, bölgesel bir felaketten güvenilir şekilde kurtulamayız."
+
+Leo listeye baktı. "Kalan %40 — evet. Sorun olmaz, gelecek sprint'te göç ettiririz."
+
+Priya bakışlarını ekrana sabitledi. "Bu kritik altyapı. Çok bölgeli yük devretme yapılandırması. IAM rol hiyerarşisi. Gece 3'te sıfırdan yeniden oluşturmak zorunda kalırsak, tam olarak doğru olduklarını bilmemiz gereken şeyler."
+
+Leo bunu bir an düşündü.
+
+"...Haklısın," dedi sessizce. "Zaten herkesin yazdığından sapmış manuel yapılandırmamız var. Onu sıfırdan yeniden oluşturmak zorunda kalsaydık, tahmin yürütürdük."
+
+"İşte bu yüzden inceleme onu buldu," dedi Maya. "Suç atfetmek için değil. Önemli hale gelmeden önce düzeltmek için."
+
+**Derinlemesine CloudFormation: AWS Yerel IaC Aracı**
+
+Nimbus Terraform'u benimsemiş olsa da, Well-Architected incelemesi ekibin AWS CloudFormation'ı — CDK, SAM (sunucusuz uygulama modeli) ve Service Catalog gibi hizmetleri destekleyen yerel AWS IaC hizmetini — hiç tam olarak anlamadığını da ortaya çıkardı. Sınav özellikle CloudFormation'ı test eder ve birkaç AWS hizmeti onu anlamayı gerektirir.
+
+Carlos'un oturumun başında adlandırdığı sorun somuttu: Leo ortamlar oluşturmak için konsolda manuel olarak tıklayıp duruyordu. Her seferinde 45 dakika sürüyordu ve staging ile production arasındaki herhangi bir tutarsızlık, bir şey bozulana kadar görünmezdi. Geçen yılki beş production olayından üçü, production'da staging ile eşleşmeyen bir yapılandırmadan kaynaklanmıştı — farklı güvenlik grubu kuralları, farklı ortam değişkenleri, farklı bir örnek türü.
+
+"Konsol tek yönlü bir kapıdır," dedi Carlos. "İçeri girip bir şeyleri değiştirebilirsin, ama kolayca geri çıkıp tam olarak neyin değiştiğini göremez ya da dünün durumunu yeniden üretemezsin."
+
+CloudFormation bunun cevabıdır. İşte nasıl çalışır:
+
+**Şablon (Template)**: İstediğiniz AWS altyapısını bildiren bir YAML ya da JSON dosyası. Onu nasıl oluşturacağınıza dair talimatlar değil — neye benzemesi gerektiğine dair bir bildirim. "Şu CIDR aralıklarına sahip bir VPC, iki genel alt ağ, iki özel alt ağ, bir İnternet Ağ Geçidi ve şu rota tablolarını istiyorum." CloudFormation şablonu okur ve gerçek altyapıyı bildirimle eşleştirmeyi nasıl yapacağını çözer.
+
+Bir şablonu bir ortam tarifi olarak düşünün. Tarif değişmez. Ondan oluşturulan her ortam aynıdır. Staging ve production aynı şablonu kullanır, farklı parametrelerle (farklı örnek boyutları, farklı alan adları). Yapısal kararlar — hangi alt ağların var olduğu, hangi güvenlik grupları, hangi IAM rolleri — aynıdır.
+
+**Yığın (Stack)**: Bir şablonun dağıtılmış örneği. Leo `aws cloudformation deploy --template-file infrastructure.yaml` çalıştırdığında, CloudFormation bir Yığın oluşturur — şablonun tanımladığı gerçek AWS kaynaklarının adlandırılmış bir koleksiyonu. Yığın hangi kaynakları oluşturduğunu hatırlar ve onları bir birim olarak yönetir. Şablonu güncelleyin ve Yığını yeniden dağıtın: CloudFormation mevcut durum ile yeni şablon arasındaki farkı hesaplar ve yalnızca gereken değişiklikleri uygular. Yığını silin: CloudFormation oluşturduğu her kaynağı, doğru sırada, siz onları hatırlamak zorunda kalmadan söker.
+
+"Yani Yığın dağıtımdır, şablon değil?" diye sordu Maya.
+
+"Şablon tariftir. Yığın yemektir. Aynı tariften aynı yemeği istediğiniz kadar yapabilirsiniz. Her seferinde aynıdır."
+
+**Değişiklik Kümesi (Change Set)**: Çalışan bir Yığına bir güncelleme uygulamadan önce bir Değişiklik Kümesi oluşturabilirsiniz — CloudFormation'ın ne yapacağının bir önizlemesi. Yeni bir kaynak mı ekliyorsun? Değişiklik Kümesi onu gösterir. Bir güvenlik grubunu mu değiştiriyorsun? Değişiklik Kümesi önce ve sonra durumunu gösterir. Bir RDS örneğini mi değiştiriyorsun? Değişiklik Kümesi, sen taahhüt etmeden önce bunu bir değiştirme — ki bu kesinti demektir — olarak işaretler.
+
+"Uygulamadan önce farkı gör," dedi Priya. "Leo konsolda bir şeylere tıkladığında kaçırdığımız şey bu."
+
+Nimbus için politika şu hale geldi: production'a yapılan tüm altyapı değişiklikleri bir Değişiklik Kümesi incelemesinden geçmeli. Doğrudan konsol düzenlemesi yok. Değişiklik Kümesi, altyapı için akran inceleme sürecidir.
+
+**Sapma Tespiti (Drift Detection)**: Zamanla insanlar konsolda bir şeylere tıklar. Bir olay sırasında eklenen bir güvenlik grubu kuralı. Bir dağıtımın ortasında değiştirilen bir ortam değişkeni. Planlanan düzeltme çok uzun sürdüğünde manuel olarak yükseltilen bir örnek türü. CloudFormation buna **sapma (drift)** der — bir kaynağın gerçek durumu artık Yığının şablonunun söylediğiyle eşleşmediğinde.
+
+CloudFormation'ın sapma tespiti, Yığının kaynaklarını tarar ve gerçek durum ile şablon tanımlı durum arasındaki farkları raporlar. Leo mevcut Nimbus yığınlarında sapma tespitini ilk kez çalıştırdığında, on bir sapmış kaynak buldu. Yedisi güvenlik grubu değişiklikleriydi. Üçü IAM politika değişiklikleriydi. Biri, altı ay önce yaşam döngüsü politikası doğrudan konsolda değiştirilen ve hiç şablona yansıtılmayan bir S3 paketiydi.
+
+"Gerçek altyapı ile şablonun anlaşamadığı on bir kaynak," dedi Priya. "Staging ile production arasında bilmediğimiz on bir potansiyel tutarsızlık."
+
+Leo hiçbir şey söylemedi. O değişikliklerden bazıları onundu.
+
+Sonraki haftayı sapmış kaynakları şablonlarla uzlaştırarak geçirdi. Manuel değişikliklerin üçü hataydı — hiç uygulanmaması gereken yapılandırma. Geri kalanı, yalnızca hiç şablona geri taahhüt edilmemiş meşru değişikliklerdi.
+
+**Well-Architected Framework İçin Neden Önemli**: Kod Olarak Altyapı, Operasyonel Mükemmellik (tekrarlanabilir dağıtımlar, sürüm kontrollü altyapı, her değişikliğin denetlenebilirliği), Güvenilirlik (bir Bölge başarısız olursa, ortamı hafızadan değil şablondan yeniden oluşturabilirsiniz) ve Güvenlik (IAM rolleri ve güvenlik grubu kuralları, sonradan konsolda keşfedilmek yerine kodda incelenir) kesişiminde yer alır. Bir "olsa iyi olur" değildir — çerçevenin tutarlı olarak önerdiği temel uygulamalardan biridir.
+
+---
+
+> **Sınav İpucu — CloudFormation**
+>
+> *SAA-C03 Alanı: Alanlar arası — Operasyonel Mükemmellik ve Güvenilirlik*
+>
+> - **CloudFormation = AWS'de bildirimsel IaC.** İstenen durumu bir şablonda bildirirsiniz; CloudFormation kaynakları oluşturur ve yönetir. Sınav sinyali: "tekrarlanabilir dağıtımlar", "kod olarak altyapı", "tutarlı ortamlar".
+> - **Şablon** → **Yığın**: şablon bildirimdir; Yığın dağıtılan kaynaklardır. Bir Yığın bir birim olarak oluşturulabilir, güncellenebilir ya da silinebilir.
+> - **Değişiklik Kümesi**: Çalışan bir Yığına bir güncelleme uygulamadan önce neyin değişeceğini önizleyin. "Uygulamadan önce farkı gör." Sınav sinyali: "dağıtmadan önce altyapı değişikliklerini incele" → Değişiklik Kümesi.
+> - **Sapma Tespiti**: CloudFormation dışında manuel olarak değiştirilmiş kaynakları belirler. "Birisi konsolda bir şeye tıkladı" → Sapma Tespiti.
+> - **DeletionPolicy özniteliği**: Yığını silindiğinde bir kaynağa ne olacağını kontrol eder. `Retain` — kaynak korunur (kaybetmek istemediğiniz veriye sahip S3 paketleri için faydalı). `Delete` — kaynak yok edilir (varsayılan). `Snapshot` — RDS ve bazı diğer hizmetler için, CloudFormation silmeden önce son bir anlık görüntü alır. Sınav sinyali: "yığın silindiğinde bir RDS veritabanının silinmesini önle" → `DeletionPolicy: Snapshot` ya da `DeletionPolicy: Retain`.
+> - **CloudFormation StackSets**: Aynı Yığını tek bir işlemle birden çok AWS hesabı ve bölgede dağıtın. Sınav sinyali: "bir kuruluştaki tüm hesaplarda aynı altyapıyı dağıt".
+
+**Varyasyon: Çerçeve Sizi Yanılttığında**
+
+Bir Well-Architected incelemesinde her kutuyu işaretleseniz ama arıza kurtarmanızı staging'de doğrulamadıysanız, yüksek kullanılabilirlik mimariniz ilk gerçek olayda başarısız olacaktır — çünkü dayanıklılığın belgelenmesi, test edilmiş dayanıklılıkla aynı şey değildir. Çerçeve "Multi-AZ'niz var mı?" diye sorar, "yük devretmenin sizin özel yapılandırmanızda gerçekten doğru çalıştığını doğruladınız mı?" diye değil.
+
+Çerçeveyi, sistemi iyileştirmek için bir düşünme aracı olarak değil de bir denetçiyi tatmin etmek için bir kontrol listesi olarak kullanırsanız, tam olarak anlamadığınız bir mimarinin doğru belgelerini üretirsiniz. Sorular, bulmayı beklemediğiniz açıkları ortaya çıkardıklarında en değerlidir.
 
 ## Güçlü Yönler ve Sınırlamalar
 
-**İyi Yapılmış Mimari Çerçevesi İyi Başarır:** Takımlara, mimari ödünler hakkında ortak bir sözcük havuzu sağlamak, personel değişikliklerine ve satıcı sohbetlerine dayanmayan bir dil sağlar. İyi Yapılmış Mimari İncelemesi yürütmek, diğer zamanlarda görünmeyen risklerin açık bir şekilde kabul edilmesini zorlar: "Evet, tek bir arıza noktası olduğunu biliyoruz; başarının beklenen maliyetinden daha fazla olduğu için ortadan kaldırmayı ortadan kaldırmak için gereken maliyetin üstesinden gelene kadar bu ödünle kabul ettik." Bu tür belgelenmiş, amaçlı bir ödün, iyi bir incelemeden elde edilen bir çıktıdır.
+**Well-Architected Framework'ün iyi yaptığı şey**: Ekiplere mimari ödünleşimleri tartışmak için ortak bir sözcük dağarcığı verir — personel değişikliklerine ve satıcı konuşmalarına dayanan bir dil. Bir Well-Architected İncelemesi yürütmek, aksi takdirde görünmez olan risklerin açıkça kabul edilmesini zorlar: "Evet, burada tek bir arıza noktamız olduğunu biliyoruz; onu ortadan kaldırmanın maliyeti arızanın beklenen maliyetini aştığı için o ödünleşimi kabul ettik." Bu tür belgelenmiş, kasıtlı bir ödünleşim, iyi bir incelemenin çıktısıdır.
 
-**Ne Yapamaz**: Çerçeve, tanımlayıcı, önleyici değildir. İyi tasarlanmış sistemlerin özelliklerini tanımlar — size nasıl inşa edeceklerini söylemez. İyi Tasarım İncelemesindeki her kutuyu işaretlemek, iyi bir mimariyi garanti etmez. Bir sistem yüksek kullanılabilirlik, operasyonel mükemmellik, maliyet optimizasyonu ve yanlış sorunu çözebilir. Çerçeve, bir şablon değil, bir mercek gibidir. Doğru soruları ortaya çıkarmak için kullanın, cevaplamak için değil.
+**Yapamayacağı şey**: Çerçeve tanımlayıcıdır, kuralcı değildir. İyi tasarlanmış sistemlerin özelliklerini tanımlar — onları nasıl inşa edeceğinizi söylemez. Bir Well-Architected İncelemesinde her kutuyu işaretlemek iyi bir mimariyi garanti etmez. Bir sistem yüksek kullanılabilir, operasyonel olarak mükemmel, maliyet optimize edilmiş olabilir ve yine de yanlış sorunu çözebilir. Çerçeve bir lenstir, bir plan değil. Onu doğru soruları ortaya çıkarmak için kullanın, onları cevaplamak için değil.
 
-## Özeti
+## Özet
 
-- **AWS İyi Tasarım Çerçevesi** altı sütundan oluşur: Operasyonel Mükemmellik, Güvenlik, Güvenilirlik, Performans Verimliliği, Maliyet Optimizasyonu ve Sürdürülebilirlik.
-- Her sütun, yapılandırılmış bir soru seti aracılığıyla tasarım ilkelerini ve en iyi uygulamaları değerlendirir.
-- **İyi Tasarım Aracı** (AWS konsolunda ücretsiz), incelemeyi yönlendirir ve bir rapor oluşturur.
-- Çıktı, riske göre sınıflandırılmış mimari iyileştirme listelerinin önceliklendirilmiş bir listesidir.
-- **Mercekler**, belirli alanlar için çerçeveyi uzmanlaştırır (sunucusuz, SaaS, sağlık, ML).
-- **Altyapı olarak Kod**, bir sütun arasında bir aktarımdır — Operasyonel Mükemmellik, Güvenlik ve Güvenilirlik sütunları tarafından önerilir.
-- İyi Tasarım incelemesi, geçme/kalma testi değildir. Yapılandırılmış bir iyileştirme sohbetidir.
+Well-Architected incelemesi onlara 14 madde bıraktı — üçü acil dikkat gerektiriyordu, geri kalanı bir plan gerektiriyordu. Yüksek riskli bulgular tam olarak sürpriz değildi; ekibin bildiği ama henüz ulaşamadığı şeylerdi. İnceleme onlara o açıkları açıkça kabul etmenin, riske göre önceliklendirmenin ve bir zaman çizelgesine taahhüt etmenin yapılandırılmış bir yolunu verdi. Bu hesap verebilirlik, herhangi bir tek bulgudan daha çok, değerin kendisiydi.
+
+- **AWS Well-Architected Framework**'ün altı sütunu vardır: Operasyonel Mükemmellik, Güvenlik, Güvenilirlik, Performans Verimliliği, Maliyet Optimizasyonu ve Sürdürülebilirlik.
+- Her sütunun, yapılandırılmış bir soru kümesiyle değerlendirilen tasarım ilkeleri ve en iyi uygulamaları vardır.
+- **Well-Architected Tool** (AWS konsolunda ücretsiz) incelemeyi yönlendirir ve bir rapor üretir.
+- Çıktı, riske göre kategorize edilmiş önceliklendirilmiş bir mimari iyileştirmeler listesidir.
+- **Kod Olarak Altyapı** bir sütunlar arası sağlayıcıdır — Operasyonel Mükemmellik, Güvenlik ve Güvenilirlik sütunları tarafından önerilir.
 
 ## Sınav İpuçları
 
-*SAA-C03 Alanı: Çoklu Alan*
+*SAA-C03 Alanı: Alanlar arası — tüm alanlar*
 
-- **Altı sütunu ve her birinin ana odağını bilin**. Sınav, bir senaryo (örn. "takım sistemlerinin AZ arızalarından kurtulabilmesini sağlamak istiyor") tanımlayacak ve hangi sütunun altında olduğunu soracaktır (Güvenilirlik).
+- **Altı sütunu ve birincil odaklarını bilin**. Sınav bir senaryo tanımlar (örn. "ekip sistemlerinin AZ arızalarından kurtulabilmesini sağlamak istiyor") ve hangi sütuna girdiğini sorar (Güvenilirlik).
 - **Sütun eşlemesi**:
-  - "Değişiklikleri güvenilir bir şekilde dağıt, hatalardan ders çıkar, izle" → Operasyonel Mükemmellik
+  - "Değişiklikleri güvenilir şekilde dağıt, arızalardan öğren, izle" → Operasyonel Mükemmellik
   - "IAM, şifreleme, ağ kontrolleri, tehdit tespiti" → Güvenlik
-  - "HA, geçiş, ölçekleme, DR" → Güvenilirlik
+  - "HA, yük devretme, ölçekleme, DR" → Güvenilirlik
   - "Doğru boyutlandırma, CDN, doğru teknoloji seçimi" → Performans Verimliliği
   - "Fiyatlandırma modelleri, kullanılmayan kaynaklar, maliyet görünürlüğü" → Maliyet Optimizasyonu
   - "Enerji verimliliği, kaynak kullanımı, veri yaşam döngüsü" → Sürdürülebilirlik
-- **Altyapı olarak Kod**: Tekrarlanabilirlik, denetlenebilirlik ve kurtarma için çerçeve tarafından önerilen AWS'nin yerel araçlarıdır. CloudFormation, CDK ve SAM AWS'nin yerel araçlarıdır.
-- **İyi Tasarım Aracı**: İnceleme sürecini yönlendiren AWS konsol aracıdır. Kullanmak ücretsizdir. İyileştirme planları oluşturur.
-- **AWS Güvenilir Danışman**: Çerçeve ile benzer, ancak otomatik olan — hesabınızı tarar ve maliyet, performans, güvenlik ve hata toleransı açısından önerilerde bulunur. Kesişim gerçekte mevcuttur: Güvenilir Danışman, çerçeve tarafından manuel olarak değerlendirilen bazı şeyleri otomatikleştirir.
+- **Kod Olarak Altyapı**: Tekrarlanabilirlik, denetlenebilirlik ve kurtarma için çerçeve tarafından önerilir. CloudFormation, CDK ve SAM AWS yerel IaC araçlarıdır.
+- **Well-Architected Tool**: İnceleme sürecini yönlendiren AWS konsol aracı. Kullanımı ücretsiz. İyileştirme planları üretir.
+- **AWS Trusted Advisor**: Well-Architected çerçevesine benzer ama otomatik — hesabınızı tarar ve maliyet, performans, güvenlik ve hata toleransı boyunca öneriler sunar. Örtüşme gerçektir: Trusted Advisor, çerçevenin manuel olarak değerlendirdiği şeylerin bir kısmını otomatikleştirir.
 
-## Uygulamalar
+## Alıştırmalar
 
-**Uygulama 1 — Hatırlama**
+**Alıştırma 1 — Hatırlama**
 
-AWS İyi Tasarım Çerçevesinin altı sütununu adlandırın ve her birinin ana endişesini bir cümleyle tanımlayın.
+AWS Well-Architected Framework'ün altı sütununu adlandırın ve her birinin birincil endişesini bir cümleyle tanımlayın.
 
-*(Bu konuda hatırlamaya çalışın. Zorlanıyorsanız, hangi sütunların daha fazla dikkat gerektirdiğini bilmek faydalı olacaktır.)*
+*(Bunu hafızadan yapmaya çalışın. Zorlanırsanız, bu hangi sütunların daha fazla dikkat gerektirdiği hakkında faydalı bir bilgidir.)*
 
-**Uygulama 2 — Sınav Uygulaması**
+**Alıştırma 2 — SAA-C03 Senaryosu**
 
-*Senaryo*: Bir mühendislik ekibi İyi Tasarım incelemesi için hazırlanıyor. Uygulamaları EC2 üzerinde ve RDS Çoklu-AT ile çalışıyor. Son zamanlarda şunları keşfettiler:
+*Senaryo*: Bir mühendislik ekibi bir Well-Architected incelemesine hazırlanıyor. Uygulamaları EC2 üzerinde RDS Multi-AZ ile çalışıyor. Yakın zamanda şunları keşfettiler:
 
-- Dağıtım süreci bazen EC2 örneklerinde farklı kütüphane sürümleri (konfigürasyon sapması) bırakıyor
-- RDS geçişi tetiklendiğinde otomatik uyarıları yok
-- IAM kullanıcıları tümü için AdministratorAccess'i kullanıyor
-- Yedekleme geri yükleme süreçlerini 14 ay boyunca test etmediler
+- Dağıtım süreçleri bazen EC2 örneklerini farklı kütüphane sürümleriyle bırakıyor (yapılandırma sapması)
+- RDS yük devretmesi tetiklendiğinde otomatik uyarıları yok
+- IAM kullanıcılarının hepsinde AdministratorAccess var
+- Yedekleme geri yükleme süreçlerini 14 aydır test etmediler
 
-Her sorunu en alakalı İyi Tasarım sütunuyla eşleştirin.
+Her sorunu EN alakalı Well-Architected sütunuyla eşleştirin.
 
-A) Konfigürasyon sapması: Operasyonel Mükemmellik; RDS geçişi uyarıları yok: Güvenilirlik; AdministratorAccess: Güvenlik; Yedekleme geri yükleme testi yapılmadı: Güvenilirlik
+A) Yapılandırma sapması: Operasyonel Mükemmellik; RDS yük devretme uyarısı yok: Güvenilirlik; AdministratorAccess: Güvenlik; Yedekleme geri yükleme testi yok: Güvenilirlik
 
-B) Konfigürasyon sapması: Güvenlik; RDS geçişi uyarıları yok: Performans Verimliliği; AdministratorAccess: Operasyonel Mükemmellik; Yedekleme geri yükleme testi yapılmadı: Maliyet Optimizasyonu
+B) Yapılandırma sapması: Güvenlik; RDS yük devretme uyarısı yok: Performans Verimliliği; AdministratorAccess: Operasyonel Mükemmellik; Yedekleme geri yükleme testi yok: Maliyet Optimizasyonu
 
-C) Konfigürasyon sapması: Güvenilirlik; RDS geçişi uyarıları yok: Performans Verimliliği; AdministratorAccess: Güvenlik; Yedekleme geri yükleme testi yapılmadı: Operasyonel Mükemmellik
+C) Yapılandırma sapması: Güvenilirlik; RDS yük devretme uyarısı yok: Performans Verimliliği; AdministratorAccess: Güvenlik; Yedekleme geri yükleme testi yok: Operasyonel Mükemmellik
 
-D) Konfigürasyon sapması: Güvenlik; RDS geçişi uyarıları yok: Güvenilirlik; AdministratorAccess: Maliyet Optimizasyonu; Yedekleme geri yükleme testi yapılmadı: Güvenlik
+D) Yapılandırma sapması: Güvenlik; RDS yük devretme uyarısı yok: Güvenilirlik; AdministratorAccess: Maliyet Optimizasyonu; Yedekleme geri yükleme testi yok: Güvenlik
 
-**İpuçları 1**: "Konfigürasyon sapması" dağıtım sürecinde → hangi sütun dağıtım uygulamalarını kapsar?
+**İpucu 1**: Dağıtım sürecinde "yapılandırma sapması" → hangi sütun dağıtım uygulamalarını kapsar?
 
-**İpuçları 2**: "AdministratorAccess" tüm kullanıcılar için → hangi sütun erişim kontrolünü kapsar?
+**İpucu 2**: Tüm kullanıcılar için "AdministratorAccess" → hangi sütun erişim kontrolünü kapsar?
 
-**İpuçları 3**: "Yedekleme geri yükleme testi yapılmadı" → hangi sütun kurtarma mekanizmalarınızı test etme konusunu kapsar?
+**İpucu 3**: "Yedekleme geri yükleme test edilmedi" → hangi sütun kurtarma mekanizmalarınızı test etmeyi kapsar?
 
 **Cevap**: A
 
-**Açıklama**: Dağıtım süreçlerindeki (tutarsız ortamlar) konfigürasyon sapması, Operasyonel Mükemmellik sorundur — güvenilir, tutarlı bir dağıtım uygulamasıdır. RDS geçişi uyarıları yok, bu nedenle HA mekanizmalarının tetiklendiğini bilmezsiniz — Güvenilirlik sorundur (sisteminizin sağlığını bilmek). Tüm kullanıcılar için AdministratorAccess, en az ayrıcalık ilkesini ihlal eder — Güvenlik sorundur. Test edilmemiş bir yedekleme geri yükleme, Güvenilirlik mekanizmalarınızın (DR) doğrulanmadığını gösterir.
+**Açıklama**: Dağıtımlardaki yapılandırma sapması (tutarsız ortamlar) bir Operasyonel Mükemmellik sorunudur — güvenilir, tutarlı dağıtım uygulamalarıyla ilgilidir. RDS yük devretmesinde uyarı olmaması, HA mekanizmalarının ne zaman tetiklendiğini bilmediğiniz anlamına gelir — bir Güvenilirlik sorunu (sisteminizin sağlığını bilmek). Tüm kullanıcılar için AdministratorAccess en az ayrıcalığı ihlal eder — bir Güvenlik sorunu. Test edilmemiş yedekleme geri yükleme, Güvenilirlik mekanizmalarınızın (DR) doğrulanmadığı anlamına gelir.
 
-**Neden B?** B, yapılandırma kaymalarını Güvenliğe (tutarsız kütüphane sürümleri bir dağıtım operasyonları sorunudur, bir güvenlik tehdidi değil) atıyor ve YöneticİEriErişi'ni Operasyonel Mükemmellik'e (erişim kontrolü bir Güvenlik meselesidir, bir operasyon süreci değil) atıyor.
+**Neden B değil?** B, yapılandırma sapmasını Güvenliğe (tutarsız kütüphane sürümleri bir güvenlik tehdidi değil, bir dağıtım operasyonları sorunudur) ve AdministratorAccess'i Operasyonel Mükemmellik'e (erişim kontrolü bir operasyon süreci değil, bir Güvenlik kaygısıdır) yanlış atar.
 
-**Neden C?** C, YöneticİEriErişi'ni Güvenliğe doğru yerleştiriyor ancak yapılandırma kaymalarını Güvenilirlik'e (dağıtım tutarlılığı Operasyonel Mükemmellik) atıyor ve test edilmemiş yedek geri yüklemeyi Operasyonel Mükemmellik'e (geri dönüş testleri Güvenilirlik meselesidir - sisteminizin kurtarabileceğini doğruluyorsunuz, süreçlerinizin tutarlı olduğunu değil) atıyor.
+**Neden C değil?** C, AdministratorAccess'i doğru şekilde Güvenliğe yerleştirir ama yapılandırma sapmasını Güvenilirlik'e (dağıtım tutarlılığı Operasyonel Mükemmellik'tir) ve test edilmemiş yedekleme geri yüklemeyi Operasyonel Mükemmellik'e (kurtarma testi bir Güvenilirlik kaygısıdır — süreçlerinizin tutarlı olduğunu değil, sisteminizin kurtulabileceğini doğruluyorsunuz) yanlış atar.
 
-**Neden D?** D, YöneticİEriErişi'ni Mali Optimizasyon'a atıyor (aşırı geniş izinler maliyetle hiçbir ilgisi yok) ve test edilmemiş yedek geri yüklemeyi Güvenliğe (bir yedekten kurtarılamamak bir Güvenilirlik başarısızlığıdır, bir güvenlik açığı değil) atıyor.
+**Neden D değil?** D, AdministratorAccess'i Maliyet Optimizasyonu'na (aşırı geniş izinlerin maliyetle ilgisi yoktur) ve test edilmemiş yedekleme geri yüklemeyi Güvenliğe (bir yedeği geri yükleyememek bir güvenlik açığı değil, bir Güvenilirlik başarısızlığıdır) atar.
 
-*SAA-C03 Alanı: Çoklu Alan*
+*SAA-C03 Alanı: Alanlar arası*
 
-**Egzersiz 3 — Mimari Zorluğu** *(İsteğe Bağlı)*
+**Alıştırma 3 — Mimari Meydan Okuma** *(İsteğe Bağlı)*
 
-Bildiğiniz veya oluşturduğunuz bir uygulama için mini bir İyi Mimari incelemesi yapın. Altı temel için şunları yazın:
+Bildiğiniz ya da inşa ettiğiniz bir uygulamanın mini bir Well-Architected incelemesini yürütün. Altı sütunun her biri için şunları yazın:
 
 - Uygulamanın iyi yaptığı bir şey
-- Uygulamanın iyileştirilebilecek bir şey
+- Uygulamanın iyileştirebileceği bir şey
 
-Daha sonra iyileştirme öğelerinizi risk (bir olaydan ne kadar olasıdır veya ne kadar boşa harcarlar?) ve önceliğe (düzeltilirse en büyük etkiyi yaratacak ne olur?) açısından sıralayın.
+Sonra iyileştirme maddelerinizi risk (bir olaya ya da israfa neden olma olasılığı en yüksek olan ne?) ve önceliğe (düzeltilirse en büyük etkiyi yaratacak olan ne?) göre sıralayın.
 
-*(Bu egzersiz, görünüşte olduğu kadar değerli olabilir. Mimariyi birden fazla açıdan sistematik olarak değerlendirme pratiği, bir kıdemli mühendisin temel bir becerisidir.)*
+*(Bu alıştırma göründüğünden daha değerlidir. Mimariyi birden çok açıdan sistematik olarak değerlendirme pratiği, temel bir kıdemli mühendis becerisidir.)*
 
-**Kredilerden Sonraki Sahne**
+## Jenerik Sonrası Sahne
 
-İyi Mimari incelemesinden üç hafta sonra, ekip en yüksek riskli üç düzeltmeyi uygulamıştı.
+Well-Architected incelemesinden üç hafta sonra, ekip üç P1 düzeltmesini uygulamıştı — yedi Lambda rolü en az ayrıcalıklıydı, root kullanımı bir uyarı tetikliyordu ve Aurora yük devretmesi salı günü gece 2'de yük altında test edilmişti — ve P2 çalışması devam ediyordu.
 
-EC2 yamalaması, AWS Sistem Yöneticisi Yama Yöneticisi aracılığıyla otomatikleştirildi. Bir olay yanıtı süreci dokümanı vardı (mükemmel değil, yazılmış ve paylaşılmış). Çoklu bölge sıcak yedek planı taslandı ve bir sonraki çeyrek için uygulanması planlandı.
+EC2 yamalaması artık AWS Systems Manager Patch Manager aracılığıyla otomatikleştirilmişti. Bir olay müdahale süreci belgesi vardı (mükemmel değil, ama yazılmış ve paylaşılmıştı). Çok bölgeli sıcak yedek planı taslak haline getirilmiş ve gelecek çeyrek için uygulanması planlanmıştı.
 
-Priya, İyi Mimari Aracı raporunu gözden geçirdi. Yüksek riskli sayım: 0. Orta riskli: 3. Düşük riskli: 4.
+Priya Well-Architected Tool raporunu inceledi. P1 bulguları kapatılmış ya da kanıtla atanmıştı. Orta ve düşük riskli maddeler, sahipleri ve tarihleriyle azalıyordu.
 
-"Daha iyi durumda olduğumuzdan emin olabiliriz," dedi.
+"Olduğumuzdan daha iyi durumdayız," dedi.
 
-"Bu iyi mi?" Leo sordu.
+"Bu iyi mi?" diye sordu Leo.
 
-"İlerlemedir," dedi. "Bir İyi Mimari incelemesi bitirmezsiniz. İlerleme yaparsınız, sonra altı ayda tekrar incelemiş olursunuz."
+"İlerleme," dedi. "Bir Well-Architected incelemesini bitirmezsiniz. İlerleme kaydedersiniz, sonra altı ayda bir tekrar incelersiniz."
 
 Maya bir şey düşünüyordu.
 
-"Bunu 31 bölüm boyunca ayrı ayrı AWS hizmetlerini öğrendik," dedi. "Ve şimdi tüm sisteme bakıyoruz. Bu, mimarların düşündüğü gibidir."
+"31 bölüm boyunca bireysel AWS hizmetlerini öğrendik," dedi. "Ve şimdi tüm sisteme bakmaya başlıyoruz. Mimarların düşünme şekli bu."
 
-"Mimarlar gibi düşünüyoruz," dedi Leo.
+"Bir süredir mimarlar gibi düşünüyoruz," dedi Leo.
 
-"Mimari kararlar alıyoruz," dedi Maya. "Bu farklıdır. Bir mimar gibi düşünmek, kararların yapıldığı *sonra*, değil, önce değerlendirmektir."
+"Mimari kararlar veriyorduk," dedi Maya. "Bu farklı. Bir mimar gibi düşünmek, kararları verdikten *sonra* değil, vermeden *önce* değerlendirmek demektir."
 
-"Fark nedir?" Tom sordu.
+"Fark nedir?" diye sordu Tom.
 
-"Bir sonraki bölüm'de," dedi, "bu cevabı vermeye çalışacağız."
+"Sonraki bölümde," dedi, "bunu cevaplamaya çalışıyoruz."
 
-Bir sonraki bölümde: gerçek bir mimari incelemesinin nasıl görüneceği, ilk ilkelerden.
+Sonraki bölümde: gerçek bir mimari incelemesinin ilk ilkelerden neye benzediği.

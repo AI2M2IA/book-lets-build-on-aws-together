@@ -1,247 +1,380 @@
-# Mimarın Anlamı
+# Sonsöz: Mimarın Anlamı
 
-Cafenin köşeki masa, en iyi ışığı sağlıyordu. Pencereden, öğleden sonra yavaş ve uslu bir şekilde dışarıdaki caddenin üzerindeki ışığı değiştiriyordu.
+*Bu bölüm bir sonsözdür. Alıştırma, sınav ipucu ya da jenerik sonrası sahne yoktur — çünkü bir sonraki bölüm yoktur.*
 
-Maya çayını içmişti. Tom espresso, Priya ise “girdikleri anda ne yapıldığını” sadece “o şekilde” tanımladığı bir şey sipariş etmişti. Leo, 20 dakikalık gecikmeyle gelmişti, bu da tutarlıydı.
+Köşe masası kafenin en iyi ışığına sahipti. Pencereden, öğleden sonra dışarıdaki sokağa yavaş ve telaşsız bir şeyler yapıyordu.
 
-Seri A’dan 14 ay geçmişti.
+Maya çay sipariş etmişti. Tom espresso sipariş etmişti. Priya yalnızca "içeri girdiğimde ne yapıyorlardıysa" diye tanımladığı bir şey sipariş etmişti. Leo yirmi dakika geç kalmıştı, ki bu tutarlıydı.
 
-Mühendislik ekibi şimdi 19 kişiydi. İki zaman dilimi vardı. Bir platform ekibi, bir ürün ekibi, bir veri ekibi vardı. Haftalık mimari incelemesi 90 dakika sürüyordu ve genellikle daha fazlasına ihtiyaç duyuyordu.
+Series A'dan bu yana on dört ay geçmişti.
 
-Leo, bir dizüstü bilgisayar çantasını ve sabah 9’dan önce üç aramaya katıldığını gösteren bir bakışla oturdu. Bir kahve sipariş etti. “Tamam. Ne yapıyoruz?” dedi.
+Mühendislik ekibi artık on dokuz kişiydi. İki saat dilimi vardı. Bir platform ekibi, bir ürün ekibi, bir veri ekibi vardı. Doksan dakika süren ve genellikle daha fazlasına ihtiyaç duyan haftalık bir mimari inceleme vardı. Finansman, finansmanın yaptığını yapmıştı: Maya'nın yatırımcılara sunduğu 947 restoran ortağı 3.000 olmuştu, "açılıyor" olan iki şehir üç tane daha ile birlikte aktifti ve bir zamanlar tek bir aile restoranına hizmet veren platform, artık bir uçtan diğerine bir cuma akşam yoğunluğunu çalıştırıyordu.
 
-“Düşünüyorsun,” dedi Maya.
+Leo bir dizüstü bilgisayar çantası ve sabah 9'dan önce üç telefon görüşmesi yapmış birinin ifadesiyle geldi. Oturdu. Kahve sipariş etti. Şöyle dedi: "Tamam. Ne yapıyoruz?"
 
-“Ne hakkında?”
+"Düşünüyoruz," dedi Maya.
 
-O trenle inerken bir yeni işe başlayanın söylediği bir şeyi düşünüyordu. İyi bir mühendis – dikkatli, hassas, iyi sorular soran. Cuma günü, ilk mimari incelemesinin sonunda şöyle dedi: “Bir gün mimar olmak istiyorum.”
+"Ne hakkında?"
 
-“Sen zaten mimari kararlar veriyorsun,” dedi.
+Trenle gelirken, yeni bir işe alınmış birinin ilk haftasında söylediği bir şeyi düşünüyordu. İyi bir mühendisti — dikkatli, hassas, iyi sorular soruyordu. Cuma günü, ilk mimari incelemesinin sonunda şöyle demişti: "Bir gün mimar olmak istiyorum."
 
-Şüpheyle baktı. “Ama ben sadece bir junior’um.”
+O da şöyle demişti: "Sen zaten mimari kararlar veriyorsun."
 
-“Sen de oldun,” dedi. “Sen ve bu odadaki herkes, bir zamanlar.”
+Belirsiz görünmüştü. "Ama ben sadece bir junior'um."
 
-Bu hikayeyi masaya anlattı. Bitirdikten sonra Tom, “Bunu ne demek istedin?” dedi.
+"Ben de öyleydim," demişti. "Bu odadaki herkes de bir zamanlar öyleydi."
 
-“Belki açıklamayı tam olarak yapmadım,” dedi Maya. “İşte bu yüzden buradayız.”
+Bu hikâyeyi masaya anlattı. Bitirdiğinde Tom şöyle dedi: "Bununla ne demek istedin?"
 
-Ve sorunun tüm hafta boyunca onu takip etmesi nedeniyle.
+"Onu iyi açıkladığımdan emin değilim," dedi Maya. "Bu yüzden buradayız."
 
-Yani, yeni olmasının kibar bir istek olduğu için değil.
+Ve soru tüm hafta sonu aklından çıkmadığı için.
 
-Çünkü bu tür bir soru, doğru bir şekilde cevaplandığında kendi geleceğini gören birinin yolunu değiştiren bir şeydi.
+Sorulmak gurur okşadığı için değil.
+
+Çünkü bu, iyi cevaplarsan birinin kendi geleceğini görme biçimini değiştiren türden bir soruydu.
 
 **Soru**
 
-Bir mimar ne demektir?
+Bir mimar nedir?
 
-Başlık değil. Organizasyon şeması değil. İş tanımında listelenen yıllar değil. Gerçek şey.
+Unvan değil. Organizasyon şeması değil. Bir iş tanımında listelenen deneyim yılları değil. Asıl şey.
 
-Finansman turundan itibaren 14 ayın ardından, onlardan dördü, resmi veya gayri resmi olarak, Nimbus’taki mimari kararlardan sorumlu hale geldi. Maya resmi olarak CTO’ydu. Tom Altyapı Başındaydı. Priya platform ekibini yönetiyordu. Leo Baş Mühendis’ti, yani her şeye danışılyordu ve hiçbir şeye özel olarak sahip olmuyordu, bu da onu hem özgürleştiriyor hem de bazen çılgınlığa sürüklüyordu.
+Finansman turundan bu yana geçen on dört ayda, dördü de resmi ya da gayri resmi olarak Nimbus'taki mimari kararlardan sorumlu hale gelmişti. Maya resmi olarak CTO'ydu. Tom Altyapı Başkanıydı. Priya platform ekibini yönetiyordu. Leo Principal Mühendisti, bu da her şeye danışıldığı ve belirli hiçbir şeye sahip olmadığı anlamına geliyordu, ki bunu hem özgürleştirici hem de ara sıra çıldırtıcı buluyordu.
 
-Hiç buraya gelmeyi beklemediler. Maya bir geliştiriciydi. Tom bir sistem yöneticisiydi ve kendisinin bir sistem yöneticisi olarak kalacağını düşündü. Priya bilgisayar bilimlerinde bir yüksek dereceli diplomaya sahipti ve iki yıl boyunca mobil uygulamalar yazmıştı. Leo matematik programından ayrıldı ve kodlamayı kendisi öğretti.
+Hiçbiri buraya gelmeyi beklememişti. Maya işletme okumuş ve ailesinin restoranını işletmişti — bu başladığında hiç production kodu yazmamıştı. Tom sekiz yılını bir sistem yöneticisi olarak geçirmiş ve öyle kalacağını düşünmüştü. Priya'nın bilgisayar bilimi diploması ve bir güvenlik şirketinde stajı vardı. Leo kendi kendine kod yazmayı öğrenmiş, ilk uygulamasını on altı yaşında yayınlamıştı.
 
-Hiçbir şey “mimar” iş tanımına dahil değildi.
+Bunların hiçbiri "mimar" iş tanımı değildi.
 
-“Bana düşündüğüm şeyi söyleyeyim,” dedi Priya. “Bir mimar, kararlarının sonuçlarından sorumlu olduğunu kabul eden biridir – sadece karar değil.”
+"Bence şu," dedi Priya. "Bir mimar, kararlarının sonuçlarından sorumlu olduğunu kabul etmiş biridir — yalnızca kararın kendisinden değil."
 
-“Daha fazla söyle,” dedi Leo.
+"Daha fazla anlat," dedi Leo.
 
-“Erken kariyerinde bir karar verir ve devam edersin. Uygulamanı veya yapmazsın. Başka biri bunu gözden geçirir, onaylar, devreye sokar. Yanlış olduğunda sonuç, daha yukarıda olan kişinin hatayı fark etmesidir.”
+"Kariyerinin başındayken, bir karar verir ve devam edersin. Onu uygularsın ya da uygulamazsın. Başka biri onu inceler, onaylar, dağıtır. Yanılmanın sonucu, yukarıdaki birinin hatayı yakalamasıdır."
 
-“Ve sonra?”
+"Peki sonra?"
 
-“Sonra kimse daha yukarıda değildir. Karar gönderilir. Sonuç üretimdir.”
+"Sonra kimse yukarıda değildir. Karar dağıtılır. Sonuç, production'dır."
 
-Tom yavaşça başını salladı. “Bu, farklı düşünmeye başladığınız zamandır – daha fazlasını biliyor olsanız bile, çünkü yanlış olduğunuzda etkilenme yarıçapı değişir.”
+Tom yavaşça başını salladı. "İşte o zaman farklı düşünmeye başlarsın. Daha çok bildiğin için değil — gerçi öyledir — ama yanılmanın etki yarıçapı değiştiği için."
 
-**Junior’dan Mimara: Gerçek İlerleme**
+**Junior'dan Mimara: Gerçek İlerleme**
 
-Junior mühendislerden mimara geçiş, bir bilgi birikim hattı değildir. Bu, çalışmanın nasıl algıladığınızın bir değişim serisidir.
+Junior mühendisten mimara ilerleme, birikmiş bilginin düz bir çizgisi değildir. İşinizi nasıl anladığınızdaki bir dizi kaymadır.
 
-*Junior mühendisler* sorar: Bunu nasıl yapabilirim? Temel soru, uygulamadır. Bir gereklilik verildiğinde, çalışan bir sistem oluşturmak için nasıl üretirim? Bu temel beceridir. Her şey bundan dayanır.
+*Junior mühendisler* sorar: Bunu nasıl çalıştırırım? Birincil soruları uygulamadır. Bir gereksinim verildiğinde, işleyen bir sistemi nasıl üretirim? Bu, temel ilk beceridir. Diğer her şey onun üzerine oturur.
 
-*Orta düzeydeki mühendisler* sorar: Bunu nasıl doğru bir şekilde yapabilirim? Soru, sadece “çalışıyor mu” değil, “kenar durumları, hata koşulları, beklenmedik girişler” gibi “doğru mu” da içerir. Test etmeyi ve bakımı düşünmeye başlarlar.
+*Orta seviye mühendisler* sorar: Bunu nasıl doğru çalıştırırım? Soru doğruluğu içerecek şekilde genişler — yalnızca "çalışıyor mu" değil, "uç durumları, hata koşullarını, beklenmedik girdileri ele alıyor mu". Test etmeyi düşünmeye başlarlar. Bakımı düşünmeye başlarlar.
 
-*Senior mühendisler* sorar: Bunu nasıl doğru ve sürdürülebilir bir şekilde yapabilirim? Zaman ufku uzatılır. Bu kodun bir yıl sonraki mühendisini, sistemin mevcut yükü on katına çıktığında ne olacağını düşünürler. Bir bağımlılığın değiştiğinde ne olur?
+*Senior mühendisler* sorar: Bunu nasıl doğru *ve* sürdürülebilir şekilde çalıştırırım? Zaman ufku uzar. Bu kodu bir yıl sonra okuyacak mühendisi düşünürler. Mevcut yükün on katını taşıyacak sistemi düşünürler. Bir bağımlılık değiştiğinde ne olacağını düşünürler.
 
-*Staff ve principal mühendisler* sorar: Bunu neden yapıyoruz? Uygulamadan geri adım atarlar ve önermeyi sorgularlar. Bu çözmek için doğru sorun mu? Bu doğru zamanda çözülüyor mu? Daha sofistike bir yaklaşım, dayanıklılık için karmaşıklığı göz ardı eder?
+*Staff ve principal mühendisler* sorar: Bunu neden inşa ediyoruz ki? Uygulamadan geri adım atar ve öncülü sorgularlar. Bu çözülecek doğru sorun mu? Onu çözmek için doğru zaman mı? Sofistikasyondan hayatta kalabilirlik karşılığında vazgeçen daha basit bir yaklaşım var mı?
 
-*Mimarlar* sorar: Bir önce gelir, bunu nasıl biliriz ve yapıldığında birisi 3 AM’de ne yapar?
+*Mimarlar* sorar: İlk ne bozulur, bunu nasıl biliriz ve bozulduğunda biri gece 3'te ne yapar?
 
-“3 AM sorusu,” dedi Leo. “Carlos bunu kullandı.”
+"Gece 3 sorusu," dedi Leo. "Carlos onu kullanmıştı."
 
-“Çünkü doğrudur,” dedi Priya. “Bu testtir. Birinin yarım uyku halinde ve baskı altında olduğunda adımlarını yazabilecek kadar kodu yazabilir misin?”
+"Çünkü doğru," dedi Priya. "Test bu. Runbook'u yazabilir misin? Yarı uykulu ve baskı altında olan biri için adımları yazacak kadar arıza modlarını iyi anlıyor musun?"
 
-**Değişmeyenler**
+**Değişmeyen Şey**
 
-There are things architects know that junior engineers don't. Service-specific behavior. Failure characteristics at scale. The organizational dynamics of getting decisions approved. The history of decisions made in similar contexts that didn't work.
+Mimarların bildiği, junior mühendislerin bilmediği şeyler vardır. Hizmete özgü davranış. Ölçekte arıza özellikleri. Kararları onaylatmanın organizasyonel dinamikleri. Benzer bağlamlarda verilen ve işe yaramayan kararların geçmişi.
 
-But the knowledge isn't the thing.
+Ama bilgi asıl şey değildir.
 
-The thing is the default question set. The mental model that activates when someone describes a problem.
+Asıl şey, varsayılan soru kümesidir. Biri bir sorunu tanımladığında devreye giren zihinsel modeldir.
 
-Junior engineers hear a problem and think about solutions. Architects hear a problem and think about constraints, failure modes, and the gap between what the business says it needs and what it actually needs.
+Junior mühendisler bir sorun duyar ve çözümleri düşünür. Mimarlar bir sorun duyar ve kısıtlamaları, arıza modlarını ve işin ihtiyacı olduğunu söylediği şey ile gerçekte ihtiyacı olan şey arasındaki uçurumu düşünür.
 
-Not because they are colder.
+Daha soğuk oldukları için değil.
 
-Because they are trying to protect the people who will have to live inside the consequences.
+Sonuçların içinde yaşamak zorunda kalacak insanları korumaya çalıştıkları için.
 
-“It’s not that we know more,” Tom said. “We ask different questions first.”
+"Daha çok bildiğimizden değil," dedi Tom. "Önce farklı sorular soruyoruz."
 
-Maya had been quiet for a while. She said: “When I talked to that new engineer, I realized what I was actually trying to say. He asked how to become an architect. And I wanted to say: start by noticing what breaks. Not just when something is broken — but before. During design. During the review. Ask: what breaks first? How will we know? Who do we call?”
+Maya bir süredir sessizdi. Şöyle dedi: "O yeni mühendisle konuştuğumda, aslında ne söylemeye çalıştığımı fark ettim. Nasıl mimar olunacağını sordu. Ve şunu söylemek istedim: neyin bozulduğunu fark ederek başla. Yalnızca bir şey bozulduğunda değil — daha önce. Tasarım sırasında. İnceleme sırasında. Sor: İlk ne bozulur? Nasıl bileceğiz? Kimi ararız?"
 
-“That’s not a title,” Leo said. “That’s a habit.”
+"Bu bir unvan değil," dedi Leo. "Bir alışkanlık."
 
-“Yes.”
+"Evet."
 
-**Ownership**
+**Sahiplenme**
 
-The other thing, they agreed, was ownership.
+Diğer şey, üzerinde anlaştıkları, sahiplenmeydi.
 
-Not ownership in the legal sense. Ownership in the psychological sense: the feeling that if this system degrades, you will be the one who cares most.
+Yasal anlamda sahiplik değil. Psikolojik anlamda sahiplenme: bu sistem bozulursa, en çok umursayan kişinin sen olacağın hissi.
 
-Early in a career, this is not the expected posture. You’re responsible for your tickets, your PRs, your assigned stories. The system belongs to someone else.
+Kariyerin başında, beklenen duruş bu değildir. Biletlerinden, PR'larından, sana atanan hikâyelerinden sorumlusun. Sistem başka birine aittir.
 
-Later, the boundary dissolves. The system is yours. Not yours alone — shared, always shared — but yours in the sense that you feel its failures personally. A production incident at 2 AM is not an interruption to your life. It’s a part of your work.
+Sonra, sınır çözülür. Sistem senindir. Yalnızca senin değil — paylaşılan, her zaman paylaşılan — ama arızalarını kişisel olarak hissettiğin anlamda senin. Gece 2'deki bir production olayı, hayatına bir kesinti değildir. İşinin bir parçasıdır.
 
-“That’s the shift that I couldn’t have taught anyone,” Tom said. “You have to feel a few outages. You have to be the one who didn’t catch the failure mode before it hit production. That’s when the question changes.”
+"İşte kimseye öğretemeyeceğim kayma bu," dedi Tom. "Birkaç kesinti hissetmen gerekir. Arıza modunu production'a çarpmadan önce yakalayamayan kişi olman gerekir. İşte o zaman soru değişir."
 
-“Some people don’t make that shift,” Priya said. “Good engineers. Excellent engineers. They do excellent work within a defined scope and are careful and reliable within it. They don’t feel the ownership. That’s not a moral failing — it’s just a different relationship to the work.”
 
-“And architects need to feel it,” Maya said.
+Kayma hakkında fark ettikleri diğer şey, onun belirli bir anda değil, bir dizi olay boyunca gerçekleştiğiydi.
 
-“Architects feel it by default,” Priya said. “Even when they’re off-duty. Especially then.”
+Tom için bu, etiketsiz bir EBS biriminin faturada ilk göründüğü ve kimsenin ne için olduğunu bilmediği andı. Onu izlemek için iki saat harcamıştı. Onu bulmuştu. Onu silmişti. Ve sonra — devam etmek yerine — etiketleme hakkında bir politika yazmış ve altyapının geri kalanının ona uyduğundan emin olmak için bir öğleden sonra daha harcamıştı. Kimse ondan bunu yapmasını istememişti. Yapmıştı çünkü yapmamak düşüncesi onu rahatsız etmişti.
 
-**Technical Breadth vs. Depth**
+Priya için bu, bir GuardDuty bulgusu için gece 2'de ilk kez çağrıldığı andı. İlk başta sinirlenmişti. Sonra bulguyu okumuştu. Bir IAM kullanıcısı, normalde erişmediği bir uç noktaya 47 başarısız API çağrısı yapmıştı. Yanlış yapılandırılmış bir otomasyon betiği olduğu ortaya çıkmıştı. Ama bulguyu izlemek için harcadığı 20 dakika, kendine şunu sormasıyla bitmişti: bu gerçek bir ele geçirme olsaydı, ne görebilirdik? Cevap: çok az. Sonraki sprint'i, o soruyu cevaplayacak günlükleme ve uyarı altyapısını inşa ederek geçirmişti.
 
-There is a question that gets asked at every architecture interview: are you a generalist or a specialist?
+Leo için bu, bildirim sistemiydi. Olay sırasında değil — ondan sonraki iki hafta boyunca. Geceleri mimari hakkında, kimse izlediği için değil, içindeki bir şey neyi yanlış inşa ettiğini ve nedenini anlayana kadar bırakamadığı için düşünme şekli.
 
-The honest answer is: neither alone is sufficient.
+Hiçbirine bu kadar umursaması söylenmemişti. En önemli şeylerin çoğunun geldiği gibi gelmişti: kademeli olarak, duyurusuz, sıradan işin ortasında.
 
-Architects need enough depth to know what they don’t know — to recognize when a problem is at the edge of their knowledge, when to bring in someone with more specific expertise. You cannot know when to call a database expert if you don’t understand databases well enough to know what you’re missing.
 
-And architects need enough breadth to connect things. The systems they design span domains: storage and compute and network and security and observability and cost. Decisions in one area have consequences in another. You cannot optimize networking costs without understanding application behavior. You cannot design a data model without understanding access patterns. You cannot choose a deployment model without understanding failure modes.
 
-“It’s not depth or breadth,” Leo said. “It’s depth in a few things and awareness of everything.”
+"Bazı insanlar o kaymayı yapmaz," dedi Priya. "İyi mühendisler. Mükemmel mühendisler. Tanımlanmış bir kapsam içinde mükemmel iş yaparlar ve onun içinde dikkatli ve güvenilirdirler. Sahiplenmeyi hissetmezler. Bu ahlaki bir kusur değil — yalnızca işle farklı bir ilişki."
 
-“T-shaped,” Priya said.
+"Ve mimarların onu hissetmesi gerekir," dedi Maya.
 
-“I’ve always hated that metaphor,” he said. “But yes.”
+"Mimarlar onu varsayılan olarak hisseder," dedi Priya. "Mesai dışındayken bile. Özellikle o zaman."
 
-**Trade-off Reasoning**
+**Teknik Genişlik ve Derinlik**
 
-The most common thing architects say is: it depends.
+Her mimari mülakatta sorulan bir soru vardır: genelci misiniz yoksa uzman mı?
 
-The mistake is saying it without finishing the sentence.
+Dürüst cevap şudur: ikisi de tek başına yeterli değildir.
 
-*It depends on the access pattern.* It depends on the scale. It depends on the failure consequence. It depends on the team’s operational capacity. It depends on the cost constraint. It depends on how long you expect the system to remain in its current form.
+Mimarların, ne bilmediklerini bilecek kadar derinliğe ihtiyacı var — bir sorunun bilgilerinin sınırında olduğunu ne zaman fark edeceklerini, daha spesifik uzmanlığa sahip birini ne zaman dahil edeceklerini tanımak için. Neyi kaçırdığınızı bilecek kadar veritabanlarını anlamıyorsanız, bir veritabanı uzmanını ne zaman arayacağınızı bilemezsiniz.
 
-Completing the sentence is the work. Every completed sentence reveals a dimension of the problem that was previously invisible. Every dimension made visible is a decision that can be made deliberately instead of accidentally.
+Ve mimarların şeyleri birbirine bağlayacak kadar genişliğe ihtiyacı var. Tasarladıkları sistemler alanlara yayılır: depolama ve hesaplama ve ağ ve güvenlik ve gözlemlenebilirlik ve maliyet. Bir alandaki kararların başka bir alanda sonuçları olur. Uygulama davranışını anlamadan ağ maliyetlerini optimize edemezsiniz. Erişim desenlerini anlamadan bir veri modeli tasarlayamazsınız. Arıza modlarını anlamadan bir dağıtım modeli seçemezsiniz.
 
-Priya had written a list, some months ago, of the decisions that Nimbus had made accidentally — not maliciously, not negligently, but without fully understanding the decision was being made. She reviewed it sometimes. It was a useful document.
+"Derinlik ya da genişlik değil," dedi Leo. "Birkaç şeyde derinlik ve her şeyin farkındalığı."
 
-“The best architectural decisions I’ve seen,” she said, “are the ones where someone said: here are the four options, here are the trade-offs, here’s what I recommend, here’s what would make me change the recommendation.”
+"T-şeklinde," dedi Priya.
 
-“An ADR,” Leo said.
+"Bu metafordan her zaman nefret ettim," dedi. "Ama evet."
 
-“An ADR,” she agreed. “Or just a sentence in a Slack message. The format doesn’t matter. The reasoning does.”
+**Ödünleşim Muhakemesi**
 
-“Because the reasoning survives even when the decision is revisited,” Tom said.
+Mimarların en sık söylediği şey şudur: duruma bağlı.
 
-“Because the reasoning is the knowledge,” Maya said. “The decision is just the output.”
+Hata, cümleyi bitirmeden onu söylemektir.
 
-**Ne Zaman Olmayacağı**
+*Erişim desenine bağlı.* Ölçeğe bağlı. Arıza sonucuna bağlı. Ekibin operasyonel kapasitesine bağlı. Maliyet kısıtlamasına bağlı. Sistemin mevcut biçiminde ne kadar kalmasını beklediğine bağlı.
 
-Ten years çalışmak, mimari yargı geliştirmemeniz anlamına gelmez. Üç yılda bir mimar gibi düşünebilirsiniz. Zaman, şeyle zayıf bir şekilde ilişkilidir.
+Cümleyi tamamlamak asıl iştir. Tamamlanan her cümle, sorunun daha önce görünmeyen bir boyutunu ortaya çıkarır. Görünür kılınan her boyut, kazara değil, bilinçli olarak verilebilecek bir karardır.
 
-Her şeyi bilmek anlamına gelmez. AWS kataloğundaki hizmetlerden hiç kimsenin hiç kullanmadığı var – belirli sektörler için özel teklifler, henüz ihtiyaç duyulmamış olarak duyurulan özellikler. Bu sorun değil. Katalog geniştir. İş, ne bildiğinizden prensipli akıl yürütmekten ibarettir, ezberlemekten değil.
+Priya birkaç ay önce, Nimbus'un kazara verdiği kararların bir listesini yazmıştı — kötü niyetle değil, ihmalle değil, ama bir kararın verildiğini tam olarak anlamadan. Bazen onu gözden geçiriyordu. Faydalı bir belgeydi.
 
-Şüphe olmaması anlamına gelmez. Mimarlar sürekli şüphe duyar. Junior mühendisler gibi kararlarında ağırlıkları daha az olan kararlar verirler çünkü beklenmedik durumlarda başarısız olan iyi kararların ne kadar çok olduğunu bildikleri için güvenleri bağlamsaldır. "Bu kısıtlamalar altında bu şekilde güveniyorum" demek doğrudur. "Ben haklıyım" demek değil.
+"Gördüğüm en iyi mimari kararlar," dedi, "birinin şunu söylediği kararlardır: işte dört seçenek, işte ödünleşimler, işte önerim, işte öneriyi değiştirmeme ne neden olur."
 
-Yanlış olduğunuzu olmaması anlamına gelmez. Carlos, ilk mimari incelemede tasarım ettiği sistemin felaketle sonuçlanması nedeniyle yanlış hata analizi yaptığını onlara anlatmıştı. Bunu savunmasız olmadan açıkça tanımladı. "Yanılmıştım," dedi. "Onu öğrendik. Bir sonraki sistemde o hata modu yoktu."
+"Bir ADR," dedi Leo.
 
-"Bu, onu güvenilir kılan şeydi," dedi Maya, hikayeyi yeni işe başlayan kişiye anlatırken. "Hiç yanlış yapmadığı için değil, yanlış yaptığında bunu anladığı ve onu ilerlettiği için."
+"Bir ADR," diye onayladı. "Ya da yalnızca bir Slack mesajındaki bir cümle. Format önemli değil. Muhakeme önemli."
 
-**Junior'dan Mimara Geçiş**
+"Çünkü karar yeniden ele alındığında bile muhakeme hayatta kalır," dedi Tom.
 
-Bu okuyan herkes için, hala junior veya orta seviyede olan, bu düşünce tarzına doğru ilerleyen herkes için:
+"Çünkü muhakeme bilgidir," dedi Maya. "Karar yalnızca çıktıdır."
 
-Bu geçiş bir sınavın geçilmesi değildir. Yavaş yavaş alacağınız bir duruşun kendisidir ve onu bırakmamalısınız.
+**Kıdemin Ne Olmadığı**
 
-Başarısızlık sorusunu sormaya başlayın. Her tasarımda, her incelemede, her dokunduğunuz sistem için: *Ne ilk kırılır?* İhtiyatlı olarak değil, adım adım ilerleyin. Zinciri takip edin. Yük dengeleyici bir istek alır. Uygulama sunucusu onu işler. Veritabanı sorguyu alır. Yük altında ilk ne kırılır? Bir bağımlı yavaşsa ne kırılır? 10x mevcut trafiğe ne kırılır?
+Görev süresi değildir. Bir yerde on yıl çalışıp mimari muhakeme geliştirmeyebilirsiniz. Üç yıllık olup bir mimar gibi düşünebilirsiniz. Zaman, o şeyle zayıf bir şekilde ilişkilidir.
 
-Teslim ettikten sonra sahip olduğunuz şeyleri sahiplenin. Bir şeyi devreye soktuğunuzda, onu devralıp geçmeyin. Bir hafta boyunca izleyin. Metrikleri kontrol edin. Hata günlüklerini kontrol edin. Maliyeti kontrol edin. Sisteminizin beklentilerinize uygun davranıp davranmadığını sorun. Eğer değilse, neden değil?
+Her şeyi bilmek değildir. AWS'nin kataloğunda hiçbirinin hiç kullanmadığı hizmetler var — belirli sektörler için özelleşmiş teklifler, duyurulan ve henüz ihtiyaç duyulmayan özellikler. Bu sorun değil. Katalog uçsuz bucaksız. İş, ansiklopedik bilgi değil; bildiğinizden ilkesel muhakemedir.
 
-Kararları açıkça yapın. Bir yaklaşım seçtiğinizde, alternatifleri reddetmenizin nedenini açıklayın. Hatta kısaca yazın. "X'i Y'yi tercih ettim çünkü Z." Bu açıklama mimari akıl yürütmenin başlangıcını oluşturur.
+Şüphenin yokluğu değildir. Mimarlar sürekli şüphe duyar. Kararlarını junior mühendislerden daha hafif tutarlar, çünkü güvenin durumsal olduğunu bilecek kadar iyi kararın beklenmedik koşullarda başarısız olduğunu görmüşlerdir. "Mevcut kısıtlamalar göz önüne alındığında bundan eminim" doğru duruştur. "Haklıyım" değil.
 
-Ön raporlamaları eğitim olarak, kovalamaca olarak görmeye başlayın. Herkes onları yayınlar – AWS, Cloudflare, Stripe, GitHub. İç olanları okuyun. Sorun neydi? Hangi varsayım yanlış çıktı? Farklı ne yapabilirdim?
+Yanılma yetersizliği değildir. Carlos onlara, o ilk mimari incelemede, arıza modu analizini yanlış yaptığı için felaket niteliğinde başarısız olan, tasarladığı bir sistemden bahsetmişti. Onu savunmacı olmadan, düz bir şekilde anlattı. "Onu kaçırdım," dedi. "Ondan ders aldık. Bir sonraki sistemde o arıza modu yoktu."
 
-Junior'dan mimara geçiş, bildiklerinize değil, neyin farkına vardığınıza bağlıdır.
+Geleceğe dair kesinlik değildir. En deneyimli mimarlar, şunu söylemekte en rahat olanlardır: 10 kat trafikte bunun nasıl davranacağını bilmiyorum. Hadi test edelim. Belirsizliği kabul etme — ve yanılmaya dayanabilen sistemler tasarlama — istekliliği, zayıflığın değil, olgunluğun bir işaretidir.
 
-**Köşe Masasının Görüntüsü**
+"Onu güvenilir kılan şey buydu," dedi Maya, hikâyeyi yeni işe alınana anlatırken. "Hiç yanılmamış olması değil. Yanılmış olması, nedenini anlamış olması ve onu ileriye taşımış olması."
 
-Kahve bitmişti. Pencereden gelen öğleden sonra ışığı konuşurken yaptığı gibi değişmişti – farkında olmadığınızda olduğu gibi.
+**Senior'a Geçiş**
 
-Leo dedi: "İlk olaydan düşünürüm. Veritabanının akşam yorgunluğunda çökmesi ve elimizde bir çalışma kitabı olmaması ve 40 dakika boyunca ne olduğunu bilmememiz nedeniyle."
+Bunu okuyan, hâlâ junior ya da orta seviye olan, bu tür bir düşünceye doğru yolda olan herkes için:
 
-"Uygulamayı düşündük," dedi Priya.
+Geçiş, geçtiğin bir sınav değildir. Yavaş yavaş benimsediğin ve sonra vazgeçmediğin bir duruştur.
 
-"CDN'yi düşündük," dedi Tom.
+Arıza sorusunu sormaya başla. Her tasarımda, her incelemede, dokunduğun her sistem için: *İlk ne bozulur?* Varsayımsal olarak değil — adım adım gez. Zinciri takip et. Yük dengeleyici bir istek alır. Uygulama sunucusu onu işler. Veritabanı sorguyu alır. Yük altında ilk ne bozulur? Bir bağımlılık yavaşsa ilk ne bozulur? Mevcut trafiğin 10 katında ilk ne bozulur?
 
-"Veritabanı bağlantı havuzuydu," dedi Maya. "Ve hiçbiri bunu ilk olarak aramamak gerektiğini bilmiyordu."
+Şeyleri teslimatlarından sonra sahiplenmeye başla. Bir şeyi dağıttığında, onu devredip devam etme. Onu bir hafta izle. Metriklere bak. Hata günlüklerine bak. Maliyete bak. Sor: bu sistem beklediğim gibi mi davranıyor? Değilse, neden değil?
 
-"Bu yüzden düşünüyorum," dedi Leo. "Utanç verici olmasından değil. Hala neyi bilmediğimi hissetmemden. Ve beş yıl sonra, şimdi ne bildiğimi hissedeceğimi biliyorum. Ve bu durumdaki mevcut kısıtlamalarla ne yapacağımı bilirim."
+Ödünleşimleri açık hale getirmeye başla. Bir yaklaşım seçtiğinde, alternatifleri neden reddettiğini ifade et. Kısaca da olsa yaz. "Y yerine X'i seçtim çünkü Z." O ifade, mimari muhakemenin başlangıcıdır.
 
-"Doğru hissetmek," dedi Priya.
+Post-mortem'leri kovuşturma değil, eğitim olarak ele almaya başla. Her olay bir vaka çalışmasıdır. Herkese açık olanları oku — AWS, Cloudflare, Stripe, GitHub hepsi yayınlar. Dahili olanları oku. Sor: arıza modu neydi? Hangi varsayım yanlış çıktı? Ben farklı ne yapardım?
+
+Junior'dan mimara ilerleme öncelikle ne bildiğinizle ilgili değildir. Neyi fark ettiğinizle ilgilidir.
+
+**Köşe Masasından Görünüm**
+
+Kahve bitmişti. Pencereden gelen öğleden sonra ışığı, onlar konuşurken kaymıştı — fark etmeyi bıraktığında olduğu gibi.
+
+Leo şöyle dedi: "O ilk olayı düşünüyorum. Veritabanının akşam yoğunluğu sırasında çöktüğü, runbook'umuzun ve izlememizin olmadığı ve neyin yanlış olduğunu bilmeden kırk dakika geçirdiğimiz olayı."
+
+"Uygulama olduğunu düşündük," dedi Priya.
+
+"CDN olduğunu düşündük," dedi Tom.
+
+"Veritabanı bağlantı havuzuydu," dedi Maya. "Ve hiçbirimiz oraya önce bakmayı bilmiyorduk."
+
+"İşte düşündüğüm bu," dedi Leo. "Utanç verici olduğu için değil. Çünkü o zaman bildiğim ile şimdi bildiğim arasındaki uçurumu hâlâ hissedebiliyorum. Ve farkındayım ki beş yıl içinde, şimdi ile o zaman arasında aynı uçurumu hissedeceğim."
+
+"Sahip olunacak doğru his bu," dedi Priya.
 
 "Bunun bir adı var mı?"
 
-"Kalibre edilmiş alçakgönüllülük," dedi. "Ne bildiğinizi bilmek. Bu da önce neyi bilmediğinizi bilmeyi gerektirir."
+"Kalibre edilmiş alçakgönüllülük," dedi. "Ne bilmediğini bilmek. Ki bu önce ne bildiğini bilmeyi gerektirir."
 
-Maya caddeyi izledi.
 
-"Yeni mühendis, mimar olmak için nasıl olunacağını sordu," dedi. "Buna cevap vermek yerine söylemem gereken şey: Bir şeyin ne kırıldığını bilmek gibi bir şey bilmeye çalışın. Diğer her şey bundan gelir."
+Sonra Leo bir süredir göğsünde duran bir şey söyledi.
 
-Bir süre kimse konuşmadı.
+"En çok düşündüğümü size anlatabilir miyim?"
 
-Bunu doldurmaya ihtiyaç duymayan bir sessizlikti.
+Kimse ona anlatmamasını söylemedi.
 
-Dışarıda, iki adet kağıt torbada take-out yemeği taşıyan biri geçti. Tom önce fark etti ve güldü.
+"Bildirim sistemi," dedi. "SQS kuyruğu. 40 restoranımız olduğunda inşa ettiğim."
 
-"Tam da döngü tamamlandı," dedi.
+Priya ona baktı. Bu hikâyeyi biliyordu. Onu düzelten kişi oydu.
 
-Maya gülümsedi. "Evet," dedi. "Tam da döngü tamamlandı."
+"Bizi baştan al," dedi Maya.
+
+Leo, Series Seed atılımı sırasında uzun bir hafta sonunda restoran bildirim sistemini inşa etmişti. Gereksinim basitti: bir sipariş verildiğinde, restoranı hemen bilgilendir. Seçtiği mekanizma SQS'ydi — bir Standard kuyruk, tüketici olarak bir Lambda fonksiyonu, varsayılan eşzamanlılık ayarları. Hemen, güvenilir bir şekilde ve sorunsuz çalışmıştı — iki yıldan fazla bir süre boyunca, 40 restoran sessizce yüzlerce, yüzlerce binlerce olurken.
+
+Ta ki 3.000 restorana sahip olana kadar.
+
+"3.000 restoranda cuma yoğunluğu," dedi Leo. "O zamana kadar her sipariş bir avuç mesaj üretiyordu — yeni sipariş bildirimi, onay, alıma hazır güncellemesi. Akşam 6'da kuyruk dakikada yaklaşık 2.000 mesaj alıyordu. Normalde bu hiçbir şeydi: her çağrı iki saniyenin altında bitiyordu, dolayısıyla aynı anda altmış-yetmişten fazla Lambda çalışmıyordu. Ama o cuma, tablet push sağlayıcısı bozuldu. İki saniye süren çağrılar, fonksiyonun 30 saniyelik zaman aşımına çarpana kadar asılı kalmaya başladı."
+
+"Ve Lambda kısıtlamaya başladı," dedi Priya.
+
+"İşte canı yanana kadar kimsenin yapmadığı aritmetik bu," dedi Leo. "Eşzamanlılık, varış hızı çarpı süredir. Saniyede otuz üç mesaj çarpı iki saniye, yaklaşık yetmiş eşzamanlı yürütme demektir. Saniyede otuz üç mesaj çarpı otuz saniye, bin demektir — hesabın sahip olduğu her eşzamanlılık birimi. Hesap düzeyindeki varsayılan limit 1.000 eşzamanlı yürütmedir. Bunu hiç düşünmemiştik çünkü 40 restoranda ona yaklaşamamıştık bile. 3.000 restoranda bir cuma akşam 6'da, yavaş bir aşağı akış bağımlılığıyla, ona yedi dakikada çarptık."
+
+Bir Lambda fonksiyonu eşzamanlılık limitine çarptığında, ek mesajları işlemez. Mesajlar SQS kuyruğunda kalır. Bir Standard kuyrukla, SQS yeniden denemeye devam eder — ama onları işleyecek ek eşzamanlılık yoktur. Mesajlar yığılır. Bildirimler birikir. Restoranlar sipariş bildirimlerini almaz. Mutfak zamanlayıcıları başlamaz. Siparişler geç kalır ya da kaçırılır.
+
+"Restoran ortakları aramaya başlamadan ne kadar süre geçti?" diye sordu Tom.
+
+"Kısıtlama başladıktan on bir dakika sonra," dedi Leo. "430 bildirimimiz birikmişti."
+
+"İlk ne yaptın?" diye sordu Maya.
+
+Leo biraz utanmış görünme nezaketini gösterdi. "Lambda zaman aşımını 30 saniyeden 5 dakikaya çıkardım. Fikir, her çağrı daha uzun çalışabilirse belki birikmiş işi daha hızlı işleyebileceğiydi."
+
+"Bu durumu kötüleştirdi mi?" diye sordu Tom.
+
+"Kötüleştirdi. Birikmiş mesajlar, orijinal çağrılar uzatılmış zaman aşımıyla hâlâ çalışırken yeniden deneniyordu. Zaten limitteki eşzamanlılığın uzun süre çalışan fonksiyonlar tarafından tutulduğu, yeni mesajların gelip işlenmediği bir durum yaratmıştım."
+
+"Hatırlıyorum," dedi Priya sessizce.
+
+"İkinci girişimim," diye devam etti Leo. "İkinci bir Lambda fonksiyonu ekledim. Aynı kuyruk, yeni tüketici. Tüketicileri ikiye katlarsam verimi de ikiye katlayacağımı düşündüm."
+
+"Ama eşzamanlılık fonksiyon başına değil, hesap başınadır," dedi Priya.
+
+"Doğru. İki Lambda fonksiyonu, ikisi de aynı hesap düzeyindeki eşzamanlılık tavanına çarpıyordu. Toplam verim: tek bir fonksiyonla aynı. Birikmiş iş: hâlâ büyüyordu. İkinci Lambda yalnızca aynı sınırlı kapasiteyi iki fonksiyon arasında böldü."
+
+Tom masaya bakıyordu. "Doğru çözüm ne?"
+
+"Priya buldu," dedi Leo.
+
+"Gece 2'de," diye ekledi Priya. Yatakta, telefon parlaklığı sonuna kadar kısılmış halde Lambda belgelerini okuyordu.
+
+"Reserved concurrency," dedi. "Her Lambda fonksiyonuna reserved concurrency atanabilir — hesabın toplam eşzamanlılık limitinin, o fonksiyon için özel olarak garanti edilen ve başka hiçbir fonksiyona kullanılamayan bir bölümü. Bildirim Lambda'sına 400 reserved concurrency birimi verseydim, hesabın diğer Lambda'larının paylaşacak 600 birimi olurdu ve bildirim Lambda'sı diğer fonksiyonlar tarafından açlığa terk edilemezdi."
+
+"Bu düzeltti mi?" diye sordu Tom.
+
+"Açlık sorununu düzeltti," dedi Priya. "Ama bildirim Lambda'sında hâlâ bir verim tavanı vardı. 400 eşzamanlı çağrı, her biri bir seferde bir mesaj işliyor. Mesaj başına iki saniyede, dakikada 2.000 mesaj için bu fazlasıyla yeterli. Ama bir aşağı akış bağımlılığı çağrı başına on iki saniyenin ötesinde yavaşladığı an, bizi 1.000'de bozan aynı aritmetik bizi 400'de bozar. 400 birim, o haftanın trafiği için yeterli boşluğa sahipti. O hafta için."
+
+"Geçici bir düzeltmeydi," dedi Leo.
+
+"Tırmanan bir dizinin üçüncü düzeltmesiydi," dedi Priya. "Her düzeltme bir belirtiyi ele aldı. Hiçbiri mimariyi ele almadı."
+
+Doğru çözümün — ki onu sonraki iki haftada inşa ettiler — üç parçası vardı.
+
+"FIFO kuyrukları," dedi Priya, "restoran katmanına göre. Restoranlar üç katmana ayrıldı: enterprise, growth ve standard. Her katman kendi SQS FIFO kuyruğunu aldı. Her kuyruğun kendi reserved concurrency tahsisiyle kendi Lambda tüketicisi vardı."
+
+"Neden FIFO?" diye sordu Tom. "Standard kuyruklar daha ucuz."
+
+"Çünkü FIFO kuyrukları mesaj grubu sıralamasını garanti eder," dedi Priya. "Restoran bildirimleri için mesajların sırası önemlidir. Bir sipariş güncellemesi orijinal sipariş bildiriminden önce gelirse, restoran kafa karıştırıcı bir sıra görür. Restoran başına bir mesaj grubu kimliğiyle FIFO kuyrukları, her restoranın mesajlarının gönderildikleri sırada işlenmesini garanti eder."
+
+"Peki katman ayrımı?" diye sordu Tom.
+
+"İzole edilmiş etki yarıçapları," dedi Priya. "Enterprise katman kuyruğunda bir işleme sorunu olursa, standard katmanı bozmaz. Enterprise restoranları en yüksek SLA gereksinimlerine sahip — geciken bir bildirimin Nimbus'a sözleşme cezalarında gerçek para kaybettirdiği restoranlar onlar. Onları ayırmak, kuyruklarının standard restoran trafiğiyle dolamayacağını garanti eder."
+
+"Ve DLQ," diye ekledi Leo.
+
+"Her FIFO kuyruğunda bir dead-letter kuyruğu," dedi Priya. "Üç denemeden sonra işlemede başarısız olan mesajlar DLQ'ya taşınır. DLQ derinliği sıfırı aştığında bir CloudWatch alarmı tetiklenir. Nöbetçi mühendis başarısız mesajları inceler ve yeniden işleme mi yoksa araştırma mı gerektirdiklerine karar verir."
+
+"DLQ alarmından önce," dedi Leo, "başarısız bildirimleri bir restoran ortağı aradığında öğreniyorduk. DLQ alarmı, aramadan önce öğrendiğimiz anlamına geliyor."
+
+Konuşma bir an sessizleşti. Öğleden sonra ışığı kafe penceresinden yavaş kaymasına devam etmişti.
+
+"Düşündüğüm şey," dedi Leo, "inşa ettiğim şey ile şimdi inşa edeceğim şey arasındaki uçurum. Öz eleştiri olarak değil. Ölçüm olarak. Çünkü o uçurum, bir şey öğrendiğimi bilme şeklim."
+
+"Baştan ne inşa ederdin?" diye sordu Maya.
+
+"İlk günden katmanlı FIFO kuyrukları," dedi Leo. "40 restoranımız olduğunda üç katmana ihtiyacım olduğu için değil. Ama tasarım, dönüştüğümüz şey için doğru olurdu. Bir yerine üç kuyruğun maliyeti ihmal edilebilirdi. Ölçekte başarısız olan tek bir kuyruğun maliyeti, üç saatlik cuma gecesi olayları ve iki haftalık düzeltmeydi."
+
+"Onu inşa ettiğinde 3.000 restorana ölçekleneceğini bilmiyordun," dedi Priya. Bir savunma değildi. Bir açıklamaydı.
+
+"Hayır," dedi Leo. "Ama büyüme hırsları olan bir restoran platformu için bir bildirim sistemi inşa ettiğimizi biliyordum. Sormadığım soru şuydu: bu 10 katta neye benzer? 100 katta? Büyüdüğümüzde ilk bozulan şey nedir?"
+
+"Eşzamanlılık limiti," dedi Tom.
+
+"Eşzamanlılık limiti," diye onayladı Leo. "Ki o Lambda belgelerinde var. Belgeleri okumuştum. Sadece ilgili bölümü ilgili kılacak soruyu hiç sormamıştım."
+
+"İşte mimari alışkanlık bu," dedi Priya. "Doğru belgeyi ilgili kılan soru. Her satırı okuyamazsın. Ama 'ölçekte ne bozulur?' diye sorarsan, sonunda doğru satırları okursun."
+
+Maya bir süredir konuşmadan dinliyordu. Şöyle dedi: "Bugün bunun hakkında konuşmak istememin nedeni — hepinizi gelmeye çağırmamın nedeni — yeni mühendislere ne öğretebileceğimizi anlamaya çalışıyor olmam. Hizmetleri değil. Hizmetleri öğrenecekler. Olması gerekenden daha uzun sürede öğrenilen şey nedir?"
+
+Kimse hemen cevap vermedi.
+
+"O soru," dedi Leo sonunda. "Ölçekte neyin bozulduğuyla ilgili olan. Onu artık refleksle soruyoruz. Başladığımızda refleksle sormuyorduk. Önce ölçekte bozulan birkaç şey inşa etmelerine izin vermeden birine onu refleksle sormayı nasıl öğretirsin bilmiyorum."
+
+"Öğretemezsin," dedi Tom. "Ama öğrenme için ortamı daha güvenli kılabilirsin. Arızanın görünür, kontrol altında ve izlenebilir olduğu sistemler inşa edebilirsin. Post-mortem'in bir suçlama belgesi değil, bir öğrenme belgesi olmasını sağlayabilirsin. Cevabı bilsen bile ölçek sorusunu kod incelemesinde sorabilirsin, çünkü kodu yazan kişinin onun sorulduğunu duyması gerekir."
+
+"Ve hikâyeler anlatabilirsin," dedi Priya. "Bunun gibi."
+
+
+Maya sokağı izledi.
+
+"Yeni mühendis nasıl mimar olunacağını sordu," dedi. "Söylemem gereken şey şuydu: neyin bozulduğunu umursayan biri ol. Diğer her şey bundan çıkar."
+
+Bir an kimse konuşmadı.
+
+Doldurulmaya ihtiyaç duymayan o sessizliklerden biriydi.
+
+Dışarıda biri, iki kâğıt torba paket servisi taşıyarak sokağı geçti. Tom önce fark etti ve güldü.
+
+"Tam bir döngü," dedi.
+
+Maya gülümsedi. "Evet," dedi. "Tam bir döngü."
 
 ---
 
-## Junior'dan Mimara Geçiş
+## Junior'dan Mimara İlerleme
 
-| Aşama           | Temel Soru                                            | Zaman Ufku       | Sorumluluk     |
-|-----------------|-------------------------------------------------------|------------------|----------------|
-| Junior          | Bunu nasıl yapacağım?                                | Mevcut bilet     | Benim PR       |
-| Orta Seviye      | Bunu nasıl doğru ve sürdürülebilir hale getireceğim?   | Bu sprint        | Benim bileşenim |
-| Yaşlı          | Bu zamanla ve ölçekte nasıl dayanır?                    | Bir sonraki çeyrek | Bu hizmet      |
-| Personel/Başlı | Bunu neden yapıyoruz ve daha basit bir yol var mı?     | Bir sonraki yıl   | Bu sistem      |
-| Mimari         | Birinci ne kırılır, bunu nasıl biliriz ve ne yaparız? | Belirsiz          | Ürün           |
+| Aşama           | Birincil Soru                                          | Zaman Ufku        | Sahiplenme    |
+|-----------------|--------------------------------------------------------|-------------------|---------------|
+| Junior          | Bunu nasıl çalıştırırım?                               | Mevcut bilet      | Benim PR'ım   |
+| Orta seviye     | Bunu nasıl doğru ve sürdürülebilir kılarım?            | Bu sprint         | Bileşenim     |
+| Senior          | Bu zamanla ve ölçekte nasıl dayanır?                   | Gelecek çeyrek    | Bu hizmet     |
+| Staff/Principal | Bunu neden inşa ediyoruz ve daha basit bir yol var mı? | Gelecek yıl       | Bu sistem     |
+| Mimar           | İlk ne bozulur, nasıl biliriz ve ne yaparız?           | Belirsiz          | Ürün          |
 
 ---
 
 ## Büyüdükçe Ne Değişir
 
-**Uygulamadan Sonuçlara:** Junior mühendisler "çalışıyor mu?" diye sorar. Yaşlı mühendisler "devamlı çalışır mı?" diye sorar. Mimarlar "bittiğinde ne olur?" diye sorar.
+**Uygulamadan sonuca.** Junior mühendisler "çalışıyor mu?" diye sorar. Senior mühendisler "çalışmaya devam ediyor mu?" diye sorar. Mimarlar "durduğunda ne olur?" diye sorar.
 
-**Özelliklerden Sistemlere:** Junior mühendisler özellikler ekler. Mimarlar on kadar özellik eklendikten sonra sistemin nasıl şekilleneceğini düşünür. Mevcut kararların gelecekteki kararlarda zaten görünür bir şekli vardır.
+**Özelliklerden sistemlere.** Junior mühendisler özellikler ekler. Mimarlar, on özellik eklendiğinde sistemin ne hale geldiğini düşünür. Gelecekteki kararların şekli, mevcut kararlarda zaten görünürdür.
 
-**Doğru Olmaktan Kararlara:** Bir özelliğin "en doğru" uygulaması genellikle vardır. Bir mimarinin "en doğru" uygulaması nadiren vardır. Kararlar vardır ve en iyi mimarlar bunları açıkça ve bilinçli bir şekilde, tesadüfen değil yapar.
+**Doğruluktan ödünleşimlere.** Genellikle bir özelliğin "en doğru" uygulaması vardır. Bir mimarinin "en doğru" hali nadiren vardır. Ödünleşimler vardır ve en iyi mimarlar onları kazara değil, açıkça ve bilinçli olarak yapar.
 
-**Güvendenden Kalibrasyona:** Junior mühendisler genellikle ya özgüvensizdir (doğru kararlar konusunda emin değildir) ya da aşırı özgüvendendir (bilmediklerini bilmezler). Deneyimli mimarlar kalibre edilmiştir: Bilgilerinin kapsamını ve sınırlarını bilirler ve sonuçlarını uygun düzeyde kesinlikle tutarlar.
+**Güvenden kalibrasyona.** Junior mühendisler genellikle ya yetersiz güvenlidir (doğru kararlardan emin değil) ya da aşırı güvenlidir (ne bilmediklerinin farkında değil). Deneyimli mimarlar kalibre edilmiştir: bilgilerinin kapsamını ve sınırlarını bilirler ve sonuçlarını uygun kesinlik düzeyinde tutarlar.
 
-**Bilgiden Yargıya:** Bilgi, DynamoDB'nin bölüm anahtarlarını kullandığını bilmektir. Yargı, bu kullanım durumunun erişim deseninin sıcak bölümleri tetkoluğunu ve bunun ölçeklendirilmiş projeksiyonda başarısızlık modunun iş etkisi nedeniyle tasarımınızı gözden geçirmelisinizdir.
+**Bilgiden muhakemeye.** Bilgi, DynamoDB'nin bölüm anahtarları kullandığını bilmektir. Muhakeme, bu özel kullanım durumunun erişim deseninin sıcak bölümlere neden olacağını ve öngörülen ölçekte o arıza modunun iş etkisinin, tasarımı şimdi yeniden gözden geçirmeniz gerektiği anlamına geldiğini bilmektir.
 
 ---
 
-*Yılın aynı zamanı mı?*
+*Okuduğunuz için teşekkürler.*
 
-*AI(2)M(2)IA*
+*AWS Solutions Architect Associate sınavı (SAA-C03), Pearson VUE test merkezlerinde ve uzaktan test sistemleri aracılığıyla çevrimiçi olarak mevcuttur. Kayıt olmak için aws.amazon.com/certification adresini ziyaret edin.*
+
+*Nimbus'un hikâyesi kurgusaldır. Bu kitapta anlatılan AWS hizmetleri, fiyatlandırma modelleri ve en iyi uygulamalar gerçektir. İkisi de değişebilir — AWS hizmetlerini sık sık günceller. Güncel fiyatlandırmayı ve hizmet yeteneklerini her zaman aws.amazon.com adresinden doğrulayın.*
+
+*Bol şans.*
+
+---
+
+*Gelecek yıl aynı zaman mı?*

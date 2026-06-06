@@ -1,307 +1,363 @@
-# Ekipman B: SAA-C03 Alan Haritası
+# Ek B: SAA-C03 Alan Haritası
 
-AWS Çözüm Mimarı Yardımcısı sınavı (SAA-C03), dört alana göre düzenlenmiştir. Bu ek, kitabın her bölümünün ilgili alana ve göreve eşleştirilmesini sağlayarak, bölüm sırasına göre değil, sınav alanına göre çalışmanıza olanak tanır.
-
----
-
-## Alan Genel Bakışı
-
-| Alan                                          | Ağırlık | Açıklama                                            |
-|-----------------------------------------------|---------|--------------------------------------------------------|
-| Alan 1: Güvenli Mimari Tasarımı                | %30    | IAM, ağ güvenliği, veri koruma                     |
-| Alan 2: Dayanıklı Mimari Tasarımı             | %26    | Yüksek kullanılabilirlik, hata toleransı, felaket kurtarma |
-| Alan 3: Yüksek Performanslı Mimari Tasarımı   | %24    | Hesaplama, depolama, veritabanı, ağ performansı        |
-| Alan 4: Maliyet Optimizasyonlu Mimari Tasarımı | %20    | Fiyatlandırma modelleri, maliyet yönetimi, kaynak optimizasyonu |
+AWS Solutions Architect Associate sınavı (SAA-C03) dört alana (domain) ayrılmıştır. Bu ek, kitaptaki her bölümü ilgili alan ve göreve eşler, böylece bölüm sırası yerine sınav alanına göre çalışabilirsiniz.
 
 ---
 
-## Alan 1: Güvenli Mimari Tasarımı (%30)
+## Alanlara Genel Bakış
 
-**Görev 1.1 — AWS kaynaklarına güvenli erişim tasarlayın**
-
-Temel kavramlar: IAM kullanıcıları, grupları, roller, politikalar. En az ayrıcalık ilkesi. Hesaplar arası erişim. Hizmet rolleri. AWS Organizasyonlardaki Hizmet Kontrol Politikaları (SCP).
-
-| Bölüm    | Konu                                                                        |
-|------------|------------------------------------------------------------------------------|
-| Bölüm 3  | IAM temelleri: kullanıcılar, gruplar, roller, politikalar, politika değerlendirmesi |
-| Bölüm 14 | IAM gelişmiş: hizmetler için roller, izin sınırları, hesaplar arası roller |
-| Bölüm 3  | Politika değerlendirme mantığı: açık reddet > açık izin > örtülü reddet      |
-| Bölüm 14 | AWS Organizasyonları ve SCP'ler                                                   |
-
-Temel sınav kalıpları:
-
-- "EC2, S3'e hardkodlanmış kimlik bilgiler olmadan erişmesi gerekiyor" → S3 politikası ile EC2 örneği profiline takılan bir IAM rolü
-- "Farklı hesaplar kaynakları paylaşmalı" → Hesaplar arası güvenilirlik politikası olan bir IAM rolü
-- "Bir OU'daki tüm IAM kullanıcılarını bir hizmetten engellemek" → AWS Organizasyonlarındaki SCP'de bir SCP
+| Alan                                            | Ağırlık | Açıklama                                               |
+|-------------------------------------------------|---------|--------------------------------------------------------|
+| Alan 1: Güvenli Mimariler Tasarlama             | %30     | IAM, ağ güvenliği, veri koruma                         |
+| Alan 2: Dayanıklı Mimariler Tasarlama           | %26     | Yüksek kullanılabilirlik, hata toleransı, felaket kurtarma |
+| Alan 3: Yüksek Performanslı Mimariler Tasarlama | %24     | Hesaplama, depolama, veritabanı, ağ performansı        |
+| Alan 4: Maliyet Optimize Edilmiş Mimariler Tasarlama | %20 | Fiyatlandırma modelleri, maliyet yönetimi, kaynak optimizasyonu |
 
 ---
 
-**Görev 1.2 — Güvenli iş yükleri ve uygulamalar tasarlayın**
+## Alan 1: Güvenli Mimariler Tasarlama (%30)
 
-Temel kavramlar: VPC tasarımı, güvenlik grupları vs. NACL'ler, ağ yalıtımı, DDoS koruması, WAF, GuardDuty.
+**Görev 1.1 — AWS kaynaklarına güvenli erişim tasarlama**
 
-| Bölüm    | Konu                                                                              |
-|------------|------------------------------------------------------------------------------------|
-| Bölüm 11 | VPC tasarımı: halka açık/özel alt ağlar, NAT Gateway, İnternet Gateway, rota tabloları |
-| Bölüm 15 | Güvenlik grupları (durum bilgili, örnek düzeyinde) vs. NACL'ler (durumsuz, alt ağ düzeyinde) |
-| Bölüm 17 | Shield (DDoS koruması), WAF (uygulama güvenlik duvarı), GuardDuty (tehdit tespiti) |
-| Bölüm 25 | Direct Connect, VPN, Transit Gateway, Özel Bağlantı                                  |
+Temel kavramlar: IAM kullanıcıları, grupları, rolleri, politikaları. En az ayrıcalık ilkesi. Hesaplar arası erişim. Hizmet rolleri. AWS Organizations'da SCP (Service Control Policies).
 
-Temel sınav kalıpları:
+| Bölüm      | Konu                                                                          |
+|------------|-------------------------------------------------------------------------------|
+| Bölüm 3    | IAM temelleri: kullanıcılar, gruplar, roller, politikalar, politika değerlendirme |
+| Bölüm 14   | İleri IAM: hizmetler için roller, permission boundary'ler, hesaplar arası roller |
+| Bölüm 3    | Politika değerlendirme mantığı: açık reddetme > açık izin > örtük reddetme     |
+| Bölüm 14   | AWS Organizations, SCP'ler, Control Tower, Account Factory                     |
+| Bölüm 14   | Cognito: User Pool'lar (uygulama oturum açma, JWT'ler) ve Identity Pool'lar (geçici AWS kimlik bilgileri) |
 
-- "Bir alt ağdan belirli bir IP adresini engelle" → NACL reddi kuralı
-- "HTTP'yi içeriye, otomatik olarak HTTP yanıtını dışarıya izin ver" → Güvenlik grubu (durum bilgili)
-- "SQL enjeksiyonuna karşı web uygulamasını koru" → WAF ile SQL enjeksiyonu kuralı
-- "İstemci kimlik bilgilerini tespit et" → GuardDuty
+Anahtar sınav kalıpları:
+
+- "EC2'nin sabit kodlanmış kimlik bilgileri olmadan S3'e erişmesi gerekiyor" → EC2 örnek profiline (instance profile) eklenmiş S3 politikalı IAM rolü
+- "Farklı hesapların kaynak paylaşması gerekiyor" → hesaplar arası güven politikalı (trust policy) IAM rolü
+- "Bir OU'daki tüm IAM kullanıcılarının bir hizmete erişmesini engelle" → AWS Organizations'da SCP
 
 ---
 
-**Görev 1.3 — Uygun veri güvenliği kontrollerini belirleyin**
+**Görev 1.2 — Güvenli iş yükleri ve uygulamalar tasarlama**
 
-Temel kavramlar: Dinlenme ve iletimde şifreleme, KMS, Secrets Manager, Parametre Deposu, S3 sunucu tarafında şifreleme.
+Temel kavramlar: VPC tasarımı, security group'lar ve NACL'ler, ağ izolasyonu, DDoS koruması, WAF, GuardDuty.
 
-| Bölüm    | Konu                                                                    |
+| Bölüm      | Konu                                                                                       |
+|------------|--------------------------------------------------------------------------------------------|
+| Bölüm 11   | VPC tasarımı: genel/özel alt ağlar, NAT Gateway, Internet Gateway, yönlendirme tabloları    |
+| Bölüm 15   | Security group'lar (durum bilgili, örnek düzeyi) ve NACL'ler (durum bilgisiz, alt ağ düzeyi) |
+| Bölüm 17   | Shield (DDoS), WAF (uygulama güvenlik duvarı), GuardDuty (tehdit algılama), Inspector (CVE taraması) |
+| Bölüm 17   | Macie: S3'te hassas veri keşfi (PII, kimlik bilgileri)                                      |
+| Bölüm 25   | Direct Connect, VPN, Transit Gateway, PrivateLink                                           |
+
+Anahtar sınav kalıpları:
+
+- "Belirli bir IP'yi alt ağdan engelle" → NACL reddetme kuralı
+- "HTTP'yi içeri al, HTTP yanıtını otomatik olarak dışarı izin ver" → Security group (durum bilgili)
+- "Web uygulamasını SQL injection'dan koru" → SQL injection kurallı WAF
+- "Ele geçirilmiş IAM kimlik bilgilerini algıla" → GuardDuty
+
+---
+
+**Görev 1.3 — Uygun veri güvenliği kontrollerini belirleme**
+
+Temel kavramlar: Durağan ve aktarımda şifreleme, KMS, Secrets Manager, Parameter Store, S3 sunucu tarafı şifreleme.
+
+| Bölüm      | Konu                                                                      |
 |------------|--------------------------------------------------------------------------|
-| Bölüm 16 | KMS: müşteri yönetilen anahtarlar, anahtar döndürme, zarf şifrelemesi            |
-| Bölüm 16 | Secrets Manager: otomatik kimlik bilgisi döndürme, çalışma zamanında sır erişimi |
-| Bölüm 5  | S3 şifreleme seçenekleri: SSE-S3, SSE-KMS, SSE-C                            |
-| Bölüm 8  | RDS dinlenme şifrelemesi (oluşturulurken etkinleştirilmelidir)                     |
+| Bölüm 16   | KMS: müşteri tarafından yönetilen anahtarlar, anahtar rotasyonu, zarf şifreleme |
+| Bölüm 16   | Secrets Manager: otomatik kimlik bilgisi rotasyonu, çalışma zamanında gizli bilgi alma |
+| Bölüm 16   | ACM (AWS Certificate Manager): ALB, CloudFront için SSL/TLS sertifikaları |
+| Bölüm 5    | S3 şifreleme seçenekleri: SSE-S3, SSE-KMS, SSE-C                          |
+| Bölüm 8    | RDS durağan şifreleme (oluşturma sırasında etkinleştirilmeli)            |
 
-Temel sınav kalıpları:
+Anahtar sınav kalıpları:
 
-- "Veritabanı kimlik bilgilerini otomatik olarak döndür" → Secrets Manager ile RDS entegrasyonu
-- "Anahtarları hesaplar arasında kontrol et" → KMS anahtar politikası
-- "Sır olmayan yapılandırma değerlerini sakla" → SSM Parametre Deposu (Secrets Manager değil)
-- "S3 nesnelerini şirket yönetilen anahtarlarla şifrele" → SSE-KMS ile CMK
-
----
-
-## Alan 2: Dayanıklı Mimari Tasarımı (26%)
-
-**Görev 2.1 — Ölçeklenebilir ve gevşek bağlı mimariler tasarlayın**
-
-Temel kavramlar: Otomatik Ölçekleme, yük dengeleyiciler, SQS/SNS ayrımı, Lambda olay tetikleyicileri, ECS/EKS, Step Functions.
-
-| Chapter    | Topic                                                              |
-|------------|--------------------------------------------------------------------|
-| Chapter 7  | Otomasör Grupları (ASG), Uygulama Yük Dengeleyici (ALB), ölçekleme politikaları |
-| Chapter 19 | SQS (servisler arası ayrılma kuyrukları), SNS (fan-out bildirimleri)        |
-| Chapter 20 | Lambda: sunucusuz hesaplama, olay tetikleyicileri, eşzamanlılık          |
-| Chapter 21 | ECS ve EKS: kapalı mikroservisler                                  |
-| Chapter 22 | Step Functions: iş akışı orkestrasyonu                               |
-| Chapter 26 | Kinesis: gerçek zamanlı veri akışı                                  |
+- "Veritabanı kimlik bilgilerini otomatik döndür" → RDS entegrasyonlu Secrets Manager
+- "Hesaplar arasında şifreleme anahtarlarını kimin kullanabileceğini kontrol et" → KMS key policy
+- "Gizli olmayan yapılandırma değerlerini sakla" → SSM Parameter Store (Secrets Manager değil)
+- "S3 nesnelerini şirket tarafından yönetilen anahtarlarla şifrele" → CMK ile SSE-KMS
 
 ---
 
-**Görev 2.2 — Yüksek Erişilebilirlik ve/veya Toleranslı Mimariler Tasarlayın**
+## Alan 2: Dayanıklı Mimariler Tasarlama (%26)
 
-Temel kavramlar: Çoklu Bölge (AZ), Çoklu Bölge, Route 53 geçişi, RDS okuma replikaları, Aurora Küresel Veritabanı, yedekleme ve kurtarma.
+**Görev 2.1 — Ölçeklenebilir ve gevşek bağlı mimariler tasarlama**
 
-| Chapter    | Topic                                                                                        |
-|------------|----------------------------------------------------------------------------------------------|
-| Chapter 2  | AWS küresel altyapısı: Bölgeler, AZ'ler, kenar konumları                                      |
-| Chapter 7  | ALB birden fazla AZ'de, ASG sağlıksız örnekleri değiştirir                                    |
-| Chapter 8  | RDS Çoklu-AZ: senkron replikasyon, otomatik geçiş                                    |
-| Chapter 12 | Route 53: geçiş yönlendirme, gecikme yönlendirme, sağlık kontrolleri                                   |
-| Chapter 18 | Çoklu-AZ vs. Çoklu-Bölge: RTO/RPO, afet kurtarma stratejileri (pilot ışık, sıcak bekleme, aktif-aktif) |
-| Chapter 24 | Aurora Küresel Veritabanı: bölge arası okuma replikaları, < 1s replikasyon gecikmesi                     |
-
----
-
-## Alan 3: Yüksek Performanslı Mimarileri Tasarlayın (24%)
-
-**Görev 3.1 — Yüksek Performanslı ve/veya Ölçeklenebilir Depolama Çözümleri Belirleyin**
-
-Temel kavramlar: S3 vs. EBS vs. EFS, depolama sınıfı seçimi, S3 Transfer Hızlandırma, çoklu yükleme, CloudFront için varlıklar.
-
-| Chapter    | Topic                                                              |
-|------------|--------------------------------------------------------------------|
-| Chapter 5  | S3: nesne depolama, depolama sınıfları, sürümleme, yaşam döngüsü         |
-| Chapter 6  | EBS: blok depolama türleri (gp3, io2, st1), EFS: paylaşımlı dosya depolama |
-| Chapter 23 | S3 depolama sınıfı geçişleri, Glacier kurtarma seçenekleri            |
-| Chapter 28 | EBS boyutlandırma, gp2→gp3 göçü, anlık görüntü yönetimi           |
-
----
-
-**Görev 3.2 — Yüksek Performanslı ve/veya Ölçeklenebilir Hesaplama Çözümleri Belirleyin**
-
-Temel kavramlar: EC2 örnek aileleri, Graviton işlemciler, Otomasör Grupları, Lambda, Fargate, Spot Örnekleri.
-
-| Chapter    | Topic                                                                                   |
-|------------|-----------------------------------------------------------------------------------------|
-| Chapter 4  | EC2 örnek türleri: hesaplama odaklı (c), bellek odaklı (r), genel amaçlı (m, t) |
-| Chapter 7  | Otomasör Grupları: web katmanları için yatay ölçekleme                                          |
-| Chapter 20 | Lambda: eşzamanlılık, tutarlı eşzamanlılık (sabit gecikme için)                   |
-| Chapter 21 | ECS Fargate: sunucusuz kapalı uygulamalar                                                      |
-| Chapter 27 | Spot Örnekleri için toleranslı toplu iş yükleri                                       |
-
----
-
-**Görev 3.3 — Yüksek Performanslı Veritabanı Çözümleri Belirleyin**
-
-Temel kavramlar: RDS vs. DynamoDB vs. Aurora vs. Redshift vs. ElastiCache, erişim kalıpları, okuma replikaları, DAX.
-
-| Chapter    | Topic                                                              |
-|------------|--------------------------------------------------------------------|
-| 8. Bölüm    | RDS: yönetilen ilişkisel veritabanları, RDBMS kullanımında ne zaman kullanılır |
-| 9. Bölüm    | DynamoDB: NoSQL, bölüm anahtarları, GSI, DAX (bellek içi önbellek)        |
-| 10. Bölüm   | ElastiCache: Redis ile Memcached karşılaştırması, önbellekleme stratejileri |
-| 24. Bölüm   | Aurora: performans, Sunucusuz v2, okuma replikaları, Küresel Veritabanı |
-| 29. Bölüm   | DynamoDB talep üzerine vs. otomatik ölçeklendirme ile tahsis edilmiş kapasite |
-
----
-
-**Görev 3.4 — Yüksek performanslı ve/veya ölçeklenebilir ağ mimarilerini belirleyin**
-
-Temel kavramlar: CloudFront, Global Accelerator, Direct Connect, VPN, yerleşim grupları, geliştirilmiş ağlar.
+Temel kavramlar: Auto Scaling, yük dengeleyiciler, SQS/SNS ayrıştırma, Lambda olay tetikleyicileri, ECS/EKS, Step Functions.
 
 | Bölüm      | Konu                                                              |
-|------------|------------------------------------------------------------------|
-| 12. Bölüm   | Route 53: yönlendirme politikaları: gecikmeye dayalı, coğrafi konum, ağırlıklı |
-| 13. Bölüm   | CloudFront: CDN, kenar önbellekleme, Lambda@Edge                       |
-| 25. Bölüm   | Direct Connect: özel, özel bağlantı                               |
-| 25. Bölüm   | AWS Global Accelerator: en yakın AWS uç noktasına anycast yönlendirmesi |
-| 30. Bölüm   | VPC Uç Noktaları: AWS hizmetlerine özel bağlantı                    |
+|------------|-------------------------------------------------------------------|
+| Bölüm 7    | Auto Scaling Group'lar, Application Load Balancer, ölçekleme politikaları |
+| Bölüm 19   | SQS (kuyruklarla ayrıştırma), SNS (fan-out bildirimleri)          |
+| Bölüm 20   | Lambda: sunucusuz hesaplama, olay tetikleyicileri, eş zamanlılık  |
+| Bölüm 20   | API Gateway: yönetilen REST/HTTP/WebSocket API'leri, tek başına veya + Lambda |
+| Bölüm 21   | ECS ve EKS: konteynerli mikroservisler                            |
+| Bölüm 22   | Step Functions: iş akışı orkestrasyonu                            |
+| Bölüm 26   | Kinesis: gerçek zamanlı veri akışı                                |
 
-Temel sınav kalıpları:
+Anahtar sınav kalıpları:
 
-- "Dinamik API yanıtlarına erişen küresel kullanıcılar için gecikmeyi azaltın" → Global Accelerator (CloudFront, önbelleğe alınabilen içerik için en iyisidir)
-- "Global olarak statik varlıklar için gecikmeyi azaltın" → CloudFront
-- "On-premises'ten AWS'ye tutarlı özel bağlantı" → Direct Connect
-- "S3 bucket'ınıza dünya çapındaki müşterilerden hızlı yükleme" → S3 Transfer Acceleration
+- "Sipariş işlemeyi envanter güncellemesinden ayrıştır" → hizmetler arasında SQS kuyruğu
+- "Yeni bir sipariş verildiğinde birden fazla hizmeti bilgilendir" → SQS abonelikli SNS konusu (fan-out)
+- "S3 yüklemelerini otomatik işle" → S3 olay bildirimi → Lambda
+- "Yeniden deneme mantığıyla çok adımlı bir iş akışı çalıştır" → Step Functions
 
 ---
 
-**Görev 3.5 — Yüksek performanslı veri girişi ve dönüşüm çözümlerini belirleyin**
+**Görev 2.2 — Yüksek kullanılabilir ve/veya hata toleranslı mimariler tasarlama**
 
-Temel kavramlar: Kinesis Data Akışları, Kinesis Firehose, Glue, Athena, EMR.
+Temel kavramlar: Multi-AZ, Multi-Region, Route 53 failover, RDS read replica'lar, Aurora Global Database, yedekle ve geri yükle.
+
+| Bölüm      | Konu                                                                                         |
+|------------|----------------------------------------------------------------------------------------------|
+| Bölüm 2    | AWS küresel altyapısı: Region'lar, AZ'ler, kenar konumları                                   |
+| Bölüm 7    | Birden fazla AZ'de ALB, ASG sağlıksız örnekleri değiştirir                                   |
+| Bölüm 8    | RDS Multi-AZ: eş zamanlı çoğaltma, otomatik yük devretme                                     |
+| Bölüm 12   | Route 53: failover yönlendirme, gecikme yönlendirme, sağlık kontrolleri                      |
+| Bölüm 18   | Multi-AZ ve Multi-Region: RTO/RPO, DR stratejileri (pilot light, warm standby, active-active) |
+| Bölüm 18   | AWS Backup (merkezi, hesaplar arası yedeklemeler), Elastic Disaster Recovery (yönetilen pilot light) |
+| Bölüm 24   | Aurora Global Database: bölgeler arası read replica'lar, < 1 sn çoğaltma gecikmesi          |
+
+Anahtar sınav kalıpları:
+
+- "Birincil RDS arızalanırsa otomatik yük devret" → RDS Multi-AZ (Read Replica değil)
+- "Küresel olarak düşük gecikmeyle okuma sun" → Aurora Global Database
+- "Birincil kullanılamazsa trafiği ikincil bölgeye yönlendir" → Failover yönlendirme + sağlık kontrollü Route 53
+- "RTO 1 dakika, RPO 0" → Multi-AZ dağıtımı (Multi-Region değil)
+- "RTO 15 dakika, bölgeler arası" → Pilot Light stratejisi
+
+---
+
+## Alan 3: Yüksek Performanslı Mimariler Tasarlama (%24)
+
+**Görev 3.1 — Yüksek performanslı ve/veya ölçeklenebilir depolama çözümleri belirleme**
+
+Temel kavramlar: S3 ve EBS ve EFS, depolama sınıfı seçimi, S3 Transfer Acceleration, multipart upload, varlıklar için CloudFront.
+
+| Bölüm      | Konu                                                                   |
+|------------|-------------------------------------------------------------------------|
+| Bölüm 5    | S3: nesne depolama, depolama sınıfları, sürümleme, yaşam döngüsü        |
+| Bölüm 6    | EBS: blok depolama tipleri (gp3, io2, st1), EFS: paylaşımlı dosya depolama |
+| Bölüm 6    | Storage Gateway: hibrit şirket içinden S3'e köprü (File, Volume, Tape)   |
+| Bölüm 23   | S3 depolama sınıfı geçişleri, Glacier getirme seçenekleri               |
+| Bölüm 25   | DataSync (çevrimiçi dosya senkronizasyonu), Transfer Family (yönetilen SFTP→S3), Snow Family (çevrimdışı toplu transfer — eski: Kasım 2025'te yeni müşterilere kapatıldı; AWS artık DataSync ve Data Transfer Terminals'a yönlendiriyor), MGN (sunucu rehost) |
+| Bölüm 28   | EBS doğru boyutlandırma, gp2→gp3 geçişi, anlık görüntü yönetimi          |
+
+Anahtar sınav kalıpları:
+
+- "Birden fazla EC2 örneğinden erişilebilen paylaşımlı dosya sistemi" → EFS (EBS değil; EBS tek bir örneğe bağlanır)
+- "Veritabanı iş yükü için yüksek IOPS" → io2 EBS
+- "90 gündür erişilmeyen dosyalar için maliyeti azalt" → S3 yaşam döngüsü politikası → Glacier
+- "Uzak konumlardan büyük dosyaları daha hızlı yükle" → S3 Transfer Acceleration
+- "Sınırlı bant genişliğinde haftalarca transfer" → SAA-C03 sınavı, Snow Family'nin 2025'te yeni müşterilere kapanmasına rağmen hâlâ Snowball'u bekliyor
+
+---
+
+**Görev 3.2 — Yüksek performanslı ve/veya ölçeklenebilir hesaplama çözümleri belirleme**
+
+Temel kavramlar: EC2 örnek aileleri, Graviton işlemcileri, Auto Scaling, Lambda, Fargate, Spot Instances.
+
+| Bölüm      | Konu                                                                                   |
+|------------|-----------------------------------------------------------------------------------------|
+| Bölüm 4    | EC2 örnek tipleri: hesaplama odaklı (c), bellek odaklı (r), genel amaçlı (m, t)         |
+| Bölüm 7    | Auto Scaling: web katmanları için yatay ölçekleme                                       |
+| Bölüm 20   | Lambda: eş zamanlılık, tedarik edilmiş eş zamanlılık (tutarlı gecikme için)             |
+| Bölüm 21   | ECS Fargate: sunucusuz konteynerler                                                     |
+| Bölüm 21   | AWS Batch: Docker konteynerleri için yönetilen toplu hesaplama, Spot destekli           |
+| Bölüm 27   | Hata toleranslı toplu iş yükleri için Spot Instances                                    |
+
+Anahtar sınav kalıpları:
+
+- "ML eğitimi iş yükü, maliyeti en aza indir, kesintiye uğrayabilir" → Spot Instances
+- "Tutarlı 100 ms altı Lambda yanıtı" → Tedarik edilmiş eş zamanlılık (soğuk başlangıcı ortadan kaldırır)
+- "Konteynerli mikroservis, altyapı yönetimi yok" → ECS Fargate
+
+---
+
+**Görev 3.3 — Yüksek performanslı veritabanı çözümleri belirleme**
+
+Temel kavramlar: RDS ve DynamoDB ve Aurora ve Redshift ve ElastiCache, erişim kalıpları, read replica'lar, DAX.
+
+| Bölüm      | Konu                                                              |
+|------------|-------------------------------------------------------------------|
+| Bölüm 8    | RDS: yönetilen ilişkisel veritabanları, ne zaman RDBMS kullanılır |
+| Bölüm 9    | DynamoDB: NoSQL, partition key'ler, GSI, DAX (bellek içi önbellek) |
+| Bölüm 10   | ElastiCache: Redis ve Memcached, önbellek stratejileri            |
+| Bölüm 10   | MemoryDB for Redis: dayanıklı, Redis uyumlu birincil veritabanı    |
+| Bölüm 24   | Aurora: performans, Serverless v2, read replica'lar, Global Database |
+| Bölüm 29   | DynamoDB on-demand ve Auto Scaling ile provisioned kapasite       |
+
+Anahtar sınav kalıpları:
+
+- "Oturum deposu için mikrosaniye okumalar" → ElastiCache Redis veya DAX (DynamoDB arka uçluysa)
+- "Esnek şemalı yüksek verimli anahtar-değer erişimi" → DynamoDB
+- "Karmaşık birleştirmeler (joins) ve ACID işlemleri" → Aurora veya RDS
+- "Petabaytlarca yapılandırılmış veri üzerinde analitik" → Redshift (detaylı ele alınmadı ama ipucu: "veri ambarı" → Redshift)
+
+---
+
+**Görev 3.4 — Yüksek performanslı ve/veya ölçeklenebilir ağ mimarileri belirleme**
+
+Temel kavramlar: CloudFront, Global Accelerator, Direct Connect, VPN, yerleşim grupları, gelişmiş ağ (enhanced networking).
+
+| Bölüm      | Konu                                                              |
+|------------|-------------------------------------------------------------------|
+| Bölüm 7    | NLB (Katman 4) ve GWLB (ağ cihazları için Gateway Load Balancer)  |
+| Bölüm 11   | Client VPN: bireysel cihazdan VPC'ye şifreli erişim               |
+| Bölüm 12   | Route 53: yönlendirme politikaları: gecikme tabanlı, geolocation, ağırlıklı |
+| Bölüm 13   | CloudFront: CDN, kenar önbellekleme, Lambda@Edge                  |
+| Bölüm 25   | AWS Global Accelerator: AWS omurgasına Anycast yönlendirme        |
+| Bölüm 25   | Direct Connect: özel ayrılmış bağlantı                            |
+| Bölüm 30   | VPC Endpoints: AWS hizmetlerine özel bağlantı                     |
+
+Anahtar sınav kalıpları:
+
+- "Dinamik API yanıtlarına erişen küresel kullanıcılar için gecikmeyi azalt" → Global Accelerator (CloudFront değil, ki o önbelleğe alınabilir içerik için en iyisidir)
+- "Statik varlıklar için gecikmeyi küresel olarak azalt" → CloudFront
+- "Şirket içinden AWS'ye tutarlı özel bağlantı" → Direct Connect
+- "Dünya çapındaki müşterilerden S3 bucket'ınıza hızlı yükleme" → S3 Transfer Acceleration
+
+---
+
+**Görev 3.5 — Yüksek performanslı veri alımı ve dönüştürme çözümleri belirleme**
+
+Temel kavramlar: Kinesis Data Streams, Amazon Data Firehose, Glue, Athena, EMR.
 
 | Bölüm      | Konu                                                               |
 |------------|---------------------------------------------------------------------|
-| 26. Bölüm   | Kinesis Data Akışları: sıralı, olay bazlı gerçek zamanlı işleme          |
-| 26. Bölüm   | Kinesis Data Firehose: S3, Redshift, OpenSearch'e yönetilen teslimat |
-| 26. Bölüm   | AWS Glue: sunucusuz ETL, Veri Kataloğu, Tarayıcılar                   |
-| 26. Bölüm   | Athena: S3 üzerinde sunucusuz SQL                                      |
+| Bölüm 26   | Kinesis Data Streams: gerçek zamanlı sıralı olay işleme            |
+| Bölüm 26   | Amazon Data Firehose (eski adıyla Kinesis Data Firehose): S3, Redshift, OpenSearch'e yönetilen teslimat |
+| Bölüm 26   | AWS Glue: sunucusuz ETL, Data Catalog, Crawler'lar                  |
+| Bölüm 26   | Athena: S3'te sunucusuz SQL                                        |
+| Bölüm 26   | QuickSight: yönetilen BI panoları, SPICE bellek içi motoru          |
+| Bölüm 26   | Lake Formation: ince ayrıntılı veri gölü erişim kontrolü            |
 
-Temel sınav kalıpları:
+Anahtar sınav kalıpları:
 
-- "Tıklama akış verilerini gerçek zamanlı olarak işle" → Kinesis Data Akışları + Lambda veya KDA
-- "Akış verilerini daha sonra analiz için S3'e teslim et" → Kinesis Firehose
-- "Birden çok kaynaktan verileri dönüştür ve katalogla" → AWS Glue
-- "S3'te depolanan geçmiş verileri SQL ile sorgula" → Athena
+- "Clickstream verisini gerçek zamanlı işle" → Kinesis Data Streams + Lambda veya Managed Service for Apache Flink (eski adıyla Kinesis Data Analytics)
+- "Akış verisini sonradan analiz için S3'e teslim et" → Amazon Data Firehose
+- "Birden fazla kaynaktan veriyi dönüştür ve katalogla" → AWS Glue
+- "S3'te saklanan geçmiş veriyi SQL ile sorgula" → Athena
 
 ---
 
-## Alan 4: Maliyet Optimizasyonlu Mimarileri Tasarlayın (20%)
+## Alan 4: Maliyet Optimize Edilmiş Mimariler Tasarlama (%20)
 
-**Görev 4.1 — Maliyet Optimizasyonlu Depolama Çözümleri Tasarlayın**
+**Görev 4.1 — Maliyet optimize edilmiş depolama çözümleri tasarlama**
 
 | Bölüm      | Konu                                                              |
-|------------|--------------------------------------------------------------------|
-| 23. Bölüm   | S3 yaşam döngüsü politikaları, depolama sınıfı geçişleri                |
-| 28. Bölüm   | EBS boyutlandırması, gp2->gp3 göçü, S3 sürümleme yaşam döngüsü kuralları |
-| 28. Bölüm   | EFS Akıllı Katmanlama, maliyet tahsis etiketleri, AWS Bütçeleri        |
+|------------|-------------------------------------------------------------------|
+| Bölüm 23   | S3 yaşam döngüsü politikaları, depolama sınıfı geçişleri           |
+| Bölüm 28   | EBS doğru boyutlandırma, gp2→gp3 geçişi, S3 sürümleme yaşam döngüsü kuralları |
+| Bölüm 28   | EFS Intelligent-Tiering, maliyet tahsis etiketleri, AWS Budgets    |
 
-Temel sınav kalıpları:
+Anahtar sınav kalıpları:
 
-- "S3 maliyetlerini en çok üreten ekibi belirle" → Maliyet tahsis etiketleri + Maliyet İzleyicisi
-- "Nadiren erişilen nesneler için maliyetleri otomatik olarak azalt" → S3 Akıllı Katmanlama
-- "Aylık maliyetlerin 10.000$'ı aştığında uyarı al" → AWS Bütçeleri
+- "Hangi ekibin en çok S3 maliyeti ürettiğini belirle" → Maliyet tahsis etiketleri + Cost Explorer
+- "Seyrek erişilen nesneler için maliyetleri otomatik azalt" → S3 Intelligent-Tiering
+- "Aylık maliyetler 10.000 $'ı aştığında uyar" → AWS Budgets
 
 ---
 
-**Görev 4.2 — Maliyet Optimizasyonlu Hesaplama Çözümleri Tasarlayın**
+**Görev 4.2 — Maliyet optimize edilmiş hesaplama çözümleri tasarlama**
 
 | Bölüm      | Konu                                                                            |
 |------------|----------------------------------------------------------------------------------|
-| 27. Bölüm   | EC2 fiyatlandırması: Talep Üzerinde, Rezervasyonlu, Tasarruf Planları, Spot, Özel Hostlar |
-| 20. Bölüm   | Lambda: çağırmaya göre ödeme (boşta bekleme maliyeti yok)                               |
+| Bölüm 2    | Outposts: şirket içi AWS rafı (sermaye maliyeti ve bulut opex dengesi)           |
+| Bölüm 2    | Wavelength: 5G kenar hesaplama (telekom iş birliği, gecikme odaklı yerleşim)      |
+| Bölüm 27   | EC2 fiyatlandırması: On-Demand, Reserved Instances, Savings Plans, Spot, Dedicated Hosts |
+| Bölüm 20   | Lambda: çağrı başına ödeme (sıfır boşta maliyet)                                 |
 
-Temel sınav kalıpları:
+Anahtar sınav kalıpları:
 
-- "Sabit üretim iş yükleri için maliyeti azalt" → Tasarruf Planları (daha esnek) veya Rezervasyonlu
-- "Kesilebilir toplu işleri en aza indirin" → Spot Instances
-- "Boşta bekleme maliyeti olmayan olay odaklı işleme" → Lambda
+- "Sabit durumlu üretim iş yükleri için maliyeti azalt" → Savings Plans (daha esnek) veya Reserved Instances
+- "Kesintiye uğrayabilen toplu işler için maliyeti en aza indir" → Spot Instances
+- "Sıfır boşta maliyetle olay odaklı işleme" → Lambda
 
 ---
 
-**Görev 4.3 — Maliyet Optimizasyonlu Veritabanı Çözümleri Tasarlayın**
+**Görev 4.3 — Maliyet optimize edilmiş veritabanı çözümleri tasarlama**
 
-| Bölüm      | Konu                                             |
+| Bölüm      | Konu                                              |
 |------------|---------------------------------------------------|
-| 29. Bölüm   | DynamoDB talep üzerine vs. tahsis edilmiş + Otomatik Ölçeklendirme |
-| 29. Bölüm   | RDS ve ElastiCache Rezervasyonlu Instance/Knotları      |
-| 29. Bölüm   | RDS anlık görüntü yönetimi                           |
+| Bölüm 29   | DynamoDB on-demand ve provisioned + Auto Scaling  |
+| Bölüm 29   | RDS ve ElastiCache Reserved Instances/Nodes       |
+| Bölüm 29   | RDS anlık görüntü yönetimi                         |
 
-Temel sınav kalıpları:
+Anahtar sınav kalıpları:
 
-- "Öngörülemeyen DynamoDB trafiği" → On-Demand Kapasite Modu
-- "Tutarlı DynamoDB trafiği bilinen zirvelerle" → Tahmin Edilmiş + Otomatik Ölçekleme
-- "RDS maliyetlerini istikrarlı bir iş yükü için azaltın" → Rezervasyonlu Turlar (1 veya 3 yıl)
+- "Öngörülemeyen DynamoDB trafiği" → On-demand kapasite modu
+- "Bilinen tepe noktalarıyla tutarlı DynamoDB trafiği" → Provisioned + Auto Scaling
+- "Kararlı iş yükü için RDS maliyetlerini azalt" → Reserved Instances (1 veya 3 yıl)
 
 ---
 
-**Görev 4.4 — Maliyet Optimizasyonlu Ağ Mimarileri Tasarlayın**
+**Görev 4.4 — Maliyet optimize edilmiş ağ mimarileri tasarlama**
 
-| Bölüm    | Konu                                                                                         |
+| Bölüm      | Konu                                                                                          |
 |------------|-----------------------------------------------------------------------------------------------|
-| Bölüm 30 | Veri aktarım ücretleri: giriş (ücretsiz), aynı bölge içi ($0,01/GB), farklı bölgeler arası, internet ($0,09/GB) |
-| Bölüm 30 | NAT Geçidi ($0,045/GB) vs. VPC Uç Noktaları (Geçidi: ücretsiz; Arayüz: fiyatlandırılmış)                  |
-| Bölüm 30 | İçerik Dağıtım Maliyetlerini Optimize Eden CloudFront                                                    |
+| Bölüm 30   | Veri transferi fiyatlandırması: gelen (ücretsiz), AZ'ler arası (0,01 $/GB), bölgeler arası, internet (0,09 $/GB) |
+| Bölüm 30   | NAT Gateway (0,045 $/GB) ve VPC Endpoints (Gateway: ücretsiz; Interface: ücretli)             |
+| Bölüm 30   | Veri transferi maliyet optimize edici olarak CloudFront                                       |
 
-Temel sınav kalıpları:
+Anahtar sınav kalıpları:
 
-- "Özel alt ağdaki EC2, S3'e çağrı yapar — NAT Geçidi maliyetlerini ortadan kaldırın" → S3 Geçidi Uç Noktası (ücretsiz)
-- "Özel alt ağdaki EC2, SQS'ye çağrı yapar — NAT Geçidi maliyetlerini azaltın" → SQS Uç Noktası
-- "Küresel içerik dağıtımı için veri aktarım maliyetlerini azaltın" → CloudFront (kaynak isteklerini azaltan önbellekleme)
+- "Özel alt ağdaki EC2, S3'ü çağırır — NAT Gateway maliyetlerini ortadan kaldır" → S3 Gateway Endpoint (ücretsiz)
+- "Özel alt ağdaki EC2, SQS'i çağırır — NAT Gateway maliyetlerini azalt" → SQS Interface Endpoint
+- "Küresel içerik dağıtımı için veri transfer maliyetlerini azalt" → CloudFront (önbellekleme kaynak isteklerini azaltır)
 
 ---
 
-## Çoklu Alan Konuları
+## Alanlar Arası Konular
 
 Bazı konular birden fazla alanda görünür:
 
-| Konu                              | Alanlar | Bölümler     |
+| Konu                               | Alanlar | Bölümler     |
 |------------------------------------|---------|--------------|
-| İyi Yapılmış Mimari Çerçevesi         | Tüm     | 31           |
-| Mimari İncelemeleri ve ADR'ler      | Tüm     | 32           |
-| Karar Verme Mantığı ("it depends") | Tüm     | 33           |
-| Çoklu Bölge Tasarımı                | 2, 3    | 7, 8, 18, 24 |
-| İzleme ve Gözetim                | 1, 2    | Tüm Bölümler   |
+| Well-Architected Framework         | Tümü    | 31           |
+| Mimari incelemeler ve ADR'ler      | Tümü    | 32           |
+| Dengeleme akıl yürütmesi ("duruma bağlı") | Tümü | 33         |
+| Multi-AZ tasarımı                  | 2, 3    | 7, 8, 18, 24 |
+| İzleme ve gözlemlenebilirlik       | 1, 2    | Kitap boyunca |
 | CloudFront                         | 3, 4    | 13, 30       |
 
 ---
 
 ## Sınav Öncesi Kontrol Listesi
 
-SAA-C03'e oturmadan önce:
+SAA-C03'e girmeden önce:
 
-**Yüksek Ağırlıklı Alanlar (En Çok Görünecek)**
+**Yüksek ağırlıklı alanlar (görünme olasılığı en yüksek)**
 
-- [ ] IAM politika mantığı değerlendirmesi (açık reddetme → açık izin → örtülü reddetme)
-- [ ] VPC bileşenleri: alt ağlar, yönlendirme tabloları, IGW, NAT Geçidi, güvenlik grupları, NACL'ler
-- [ ] S3 depolama sınıfları ve her birini ne zaman kullanacağınız
-- [ ] RDS Çoklu Bölge vs. Okuma Taklidi (failover vs. okuma ölçeklendirme)
-- [ ] SQS vs. SNS vs. EventBridge (çekme vs. itme vs. olay yönlendirme)
-- [ ] EC2 fiyatlandırma modelleri: Spot arıza toleranslı iş yükleri için, Tasarruf Planları taahhütlü iş yükleri için
-- [ ] Lambda tetikleyicileri ve işlevler (konum)
-- [ ] DynamoDB vs. Aurora vs. Redshift (erişim modeli seçiminizi belirler)
-- [ ] CloudFront: statik içerik için CDN, dinamik içerik için Global Accelerator
+- [ ] IAM politika değerlendirme mantığı (açık reddetme → açık izin → örtük reddetme)
+- [ ] VPC bileşenleri: alt ağlar, yönlendirme tabloları, IGW, NAT Gateway, security group'lar, NACL'ler
+- [ ] S3 depolama sınıfları ve her birinin ne zaman kullanılacağı
+- [ ] RDS Multi-AZ ve Read Replica (yük devretme ve okuma ölçeklemesi)
+- [ ] SQS ve SNS ve EventBridge (çekme ve itme ve olay yönlendirme)
+- [ ] EC2 fiyatlandırma modelleri: hata toleranslı için Spot, taahhütlü iş yükleri için Savings Plans
+- [ ] Lambda tetikleyicileri ve eş zamanlılık
+- [ ] DynamoDB ve Aurora ve Redshift (erişim kalıbı seçimi belirler)
+- [ ] CloudFront: statik için CDN, dinamik için Global Accelerator
 
-**Ortak Tuzaklar**
+**Yaygın tuzaklar**
 
-- [ ] EBS bir örneğe bağlanır; EFS paylaşılır
-- [ ] RDS Okuma Taklidi okuma ölçeklendirme için, otomatik failover değildir (bu Çoklu Bölge'dir)
-- [ ] NACL'ler durumsuzdur (hem giriş hem de çıkış kuralları gerekir)
-- [ ] Geçidi Uç Noktaları ücretsizdir ve yalnızca S3 ve DynamoDB için kullanılır
-- [ ] Kinesis tutar ve oynatır; SQS tüketim üzerine silinir
-- [ ] "Çoğalt" her zaman SQS'yi ifade etmez — SNS fan-out ve EventBridge de çoğaltma kalıplarıdır
-- [ ] Shield Standart ücretsiz ve otomatik; Advanced ücretli bir abonelik
+- [ ] EBS BİR örneğe bağlanır; EFS paylaşımlıdır
+- [ ] RDS Read Replica'lar okuma ölçeklemesi içindir, otomatik yük devretme DEĞİL (bu Multi-AZ'dir)
+- [ ] NACL'ler durum bilgisizdir (hem gelen hem giden kural gerektirir)
+- [ ] Gateway Endpoint'ler ücretsizdir ve yalnızca S3 ve DynamoDB içindir
+- [ ] Kinesis saklar ve yeniden oynatır; SQS tüketimde siler
+- [ ] "Ayrıştırma" her zaman SQS anlamına gelmez — SNS fan-out ve EventBridge de ayrıştırma kalıplarıdır
+- [ ] Shield Standard ücretsiz ve otomatiktir; Advanced ücretli bir aboneliktir
+- [ ] ElastiCache ve MemoryDB: ElastiCache = önbellek (veri kaybı sorun değil). MemoryDB = dayanıklı birincil veritabanı.
+- [ ] Client VPN ve Site-to-Site VPN: Client VPN = bireysel cihazlar. Site-to-Site = ağdan ağa.
+- [ ] Outposts ve Wavelength: Outposts = şirket içi AWS rafı. Wavelength = 5G kenarı.
+- [ ] DMS: homojen = doğrudan DMS. Heterojen = önce SCT, sonra DMS.
+- [ ] DataSync *dosyaları* taşır; DMS *veritabanlarını* taşır; MGN *bütün sunucuları* taşır.
 
-**Sınav Yapısı**
+**Sınav yapısı**
 
 - 65 soru, 130 dakika (2 saat 10 dakika)
-- Çoktan seçmeli (tek doğru) ve çoktan seçmeli (doğru N sayıda seçin)
-- Geçme puanı: 720'den 1000'e
-- Değerlendirilmemiş sorular gömülüdür, hangilerinin olduğunu bilemezsiniz
-- Zamanı yönetin: ~2 dakika/soru; zor olanları işaretleyin ve geri dönün
+- Çoktan seçmeli (bir doğru) ve çoklu yanıt (N doğru seçin)
+- Geçme puanı: 1000 üzerinden 720
+- Puanlanmayan sorular gömülüdür; hangileri olduğunu söyleyemezsiniz
+- Zamanı yönet: soru başına ~2 dakika; zor olanları işaretleyin ve geri dönün
