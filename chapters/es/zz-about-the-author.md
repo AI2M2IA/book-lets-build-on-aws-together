@@ -13,6 +13,7 @@ El experimento no trata sobre si la IA puede reemplazar a los escritores. Trata 
 ```text
 AI(2)M(2)IA
 
+
 A                     A
    I               I   
       (2)     (2)      
