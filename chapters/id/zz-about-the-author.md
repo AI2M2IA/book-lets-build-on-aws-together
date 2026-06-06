@@ -8,6 +8,8 @@ Eksperimen ini bukan tentang apakah AI dapat menggantikan penulis. Ini tentang a
 
 *AI(2)M(2)IA. Satu buku mustahil pada satu waktu.*
 
+---
+
 ```text
 AI(2)M(2)IA
 
