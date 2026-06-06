@@ -1,99 +1,278 @@
-# باب 4: کسی اور کی عمارت میں ایک computer
+# باب 4: کسی اور کی عمارت میں ایک کمپیوٹر
 
-Nimbus app Tom کے laptop پر چل رہی تھی۔
+CPU گراف پسِ منظر کی موسیقی بن چکا تھا۔
 
-Investors کو demo دکھانے کے لیے یہ ٹھیک تھا۔ یہ ٹھیک نہیں تھا جب Maya نے "launch" دبایا اور پہلے ہفتے میں 200 restaurants sign up ہو گئے۔ Tom کا laptop اب real orders، real menus، اور real customers handle کر رہا تھا — Tom کی desk کے نیچے رکھا ہوا، office Wi-Fi پر چلتا ہوا، ایک ایسی power strip میں plug تھا جو ایک space heater اور coffee maker کو بھی power دے رہی تھی۔
+Tom کا لیپ ٹاپ اس کی میز کے کونے پر کھلا پڑا تھا، CloudWatch ہر منٹ ریفریش ہو رہا تھا، استعمال کی لکیر ایک ایسے ڈھلوان پر چڑھ رہی تھی جس کا مطلب تھا کہ کوئی چیز سخت محنت کر رہی ہے۔ Maya نے اسے تین دن پہلے نوٹ کیا تھا اور کسی کو نہیں بتایا تھا۔ وہ اس کے بجائے آرڈر queue دیکھ رہی تھی۔
 
-"ہمیں server چاہیے،" Maya نے کہا۔ "ایک real server۔ ایسی جگہ چلتا ہوا جو تمہاری desk کے نیچے نہ ہو۔"
+IAM اپنی جگہ پر تھا۔ Credentials ترتیب میں تھے۔ Priya کے پاس ہر چیز پر MFA تھا۔ ٹیم نے پہلی بار محسوس کیا کہ وہ تھوڑا ذمہ دار ہو رہے ہیں۔ لیکن ذمہ داری نے وہ مسئلہ حل نہیں کیا جو Maya دیکھ رہی تھی: آرڈر ڈیش بورڈ پر اعداد چڑھتے ہوئے جبکہ CPU لکیر ان کے ساتھ چڑھ رہی تھی۔
 
-Tom نے اپنے laptop کو دیکھا۔ Fan کی آواز کمرے کے دوسری طرف سے سنائی دے رہی تھی۔
+Nimbus ایپ اس instance پر چل رہی تھی جسے Leo نے سوچے سمجھے بغیر لانچ کیا تھا — وہی جسے اس نے "کہیں deploy کر دیا" تھا اس وقت سے پہلے جب کسی کو معلوم تھا کہ Region کیا ہے۔
 
-تب انہوں نے دیکھنا شروع کیا کہ computer rent کرنے کا اصل مطلب کیا ہے۔
+یہ سرمایہ کاروں کو ایک demo دکھانے کے لیے ٹھیک تھا۔ یہ ٹھیک نہیں تھا جب Maya نے "launch" دبایا اور پہلے ہفتے میں دو سو sign-ups آ گئے — سینتالیس ریستوران روزانہ فعال طور پر آرڈر لے رہے تھے۔ Leo کا فوری بنایا گیا instance اب حقیقی آرڈرز، حقیقی مینوز، اور حقیقی گاہک سنبھال رہا تھا — ایک ایسی مشین جو حادثاتی طور پر چنی گئی، ڈیفالٹ سے sized کی گئی، ایک ایسے شخص کی طرف سے کنفیگر کی گئی جو ٹائپ کرتے ہوئے AWS سیکھ رہا تھا۔
 
-**وہ abstraction جسے کوئی explain نہیں کرتا**
+"ہمیں ایک سرور چاہیے،" Maya نے کہا۔ "ایک حقیقی۔ ایک جسے کسی نے دراصل جان بوجھ کر چنا ہو۔"
 
-جب لوگ کہتے ہیں کہ ان کی application "cloud پر چلتی ہے"، تو عام طور پر ان کا مطلب ہوتا ہے کہ وہ ایک virtual machine پر چلتی ہے — ایک ایسا computer جو dedicated hardware کے طور پر physically موجود نہیں ہوتا، مگر ہر طرح سے ایسے behave کرتا ہے جیسے موجود ہو۔
+Tom نے CPU گراف دیکھا۔ لکیر کمرے کے دوسری طرف سے نظر آ رہی تھی۔
 
-Mechanism یہ ہے۔
+تب انہوں نے یہ دیکھنا شروع کیا کہ کمپیوٹر کرائے پر لینے کا دراصل کیا مطلب ہے۔
 
-AWS data center میں ایک physical server کے پاس بہت سے resources ہوتے ہیں: CPU cores، memory، disk، اور network bandwidth۔ AWS اس physical server کو **hypervisor** نامی software کے ذریعے تقسیم کرتا ہے۔ Hypervisor کئی virtual machines بناتا ہے، جن میں سے ہر ایک ایسا لگتا ہے جیسے اس کے پاس اپنی dedicated CPU، memory، اور disk ہے — لیکن حقیقت میں وہ underlying physical hardware share کر رہی ہوتی ہیں۔
+**وہ abstraction جسے کوئی نہیں سمجھاتا**
 
-ان virtual machines میں سے ہر ایک کو AWS **EC2 instance** کہتا ہے۔
+جب لوگ کہتے ہیں کہ ان کی ایپلیکیشن "cloud پر چلتی ہے"، تو عام طور پر ان کا مطلب ہوتا ہے کہ یہ ایک ورچوئل مشین پر چلتی ہے — ایک ایسا کمپیوٹر جو dedicated ہارڈ ویئر کے طور پر جسمانی طور پر موجود نہیں ہوتا، لیکن ہر طرح سے ایسے برتاؤ کرتا ہے جیسے ہو۔
 
-EC2 کا مطلب Elastic Compute Cloud ہے۔ "Elastic" والا حصہ اہم ہے، اور ہم اس تک پہنچیں گے۔ ابھی کے لیے: EC2 instance ایک computer ہے جسے آپ hourly rent کرتے ہیں۔ اس کے پاس operating system، network connection، اور computing power ہوتی ہے۔ یہ آپ کی application ویسے ہی چلاتا ہے جیسے physical server چلاتا۔
+میکانزم یہ ہے۔
 
-Analogy: ایک بڑی building میں apartment rent کرنا، house خریدنے کے بجائے۔
+AWS ڈیٹا سینٹر میں ایک جسمانی سرور کے پاس بہت سے resources ہوتے ہیں: CPU cores، میموری، ڈسک، اور نیٹ ورک بینڈوتھ۔ AWS اس جسمانی سرور کو لیتا ہے اور **hypervisor** نامی سافٹ ویئر کا استعمال کرتے ہوئے اسے تقسیم کرتا ہے — سافٹ ویئر جو ایک عمارت کے سپرنٹنڈنٹ کی طرح کام کرتا ہے، جسمانی سرور کے resources کو متعدد ورچوئل کرایہ داروں میں تقسیم کرتا ہے۔ hypervisor متعدد ورچوئل مشینیں بناتا ہے، ہر ایک ایسی لگتی ہے جیسے اس کے پاس اپنی dedicated CPU، میموری، اور ڈسک ہے — لیکن دراصل بنیادی جسمانی ہارڈ ویئر شیئر کر رہی ہوتی ہیں۔
 
-Building owner (AWS) physical structure، plumbing، electrical، security maintain کرتا ہے۔ آپ کو ایک unit ملتا ہے۔ آپ اسے جیسے چاہیں furnish کرتے ہیں۔ آپ monthly (یا hourly) pay کرتے ہیں۔ جب آپ کو زیادہ space چاہیے، آپ بڑے unit میں move کرتے ہیں۔ جب آپ move out کرتے ہیں، آپ pay کرنا بند کر دیتے ہیں۔
+اسے ایک بڑی عمارت میں اپارٹمنٹ کرائے پر لینے کی طرح سوچیں، گھر خریدنے کے بجائے۔
 
-**اپنی instance چننا: size matter کرتا ہے**
+عمارت کا مالک (AWS) جسمانی ڈھانچہ برقرار رکھتا ہے — plumbing، بجلی، سیکیورٹی۔ آپ کو ایک یونٹ ملتا ہے۔ آپ اسے جیسے چاہیں سجاتے ہیں۔ آپ ماہانہ (یا گھنٹہ وار) ادائیگی کرتے ہیں۔ جب آپ کو زیادہ جگہ چاہیے، آپ بڑے یونٹ میں منتقل ہوتے ہیں۔ جب آپ نکلتے ہیں، آپ ادائیگی روک دیتے ہیں۔
 
-تمام EC2 instances ایک جیسی نہیں ہوتیں۔ AWS hundreds of instance types offer کرتا ہے، جنہیں اس بنیاد پر families میں organize کیا گیا ہے کہ وہ کس چیز کے لیے optimized ہیں۔
+ان ورچوئل مشین کرایوں میں سے ہر ایک کو AWS **EC2 instance** کہتا ہے — Elastic Compute Cloud۔
 
-**General purpose** (مثلاً `t3`, `m6i`): CPU اور memory balanced۔ زیادہ تر web applications کے لیے اچھی default choice۔
+EC2 کا مطلب Elastic Compute Cloud ہے۔ "elastic" والا حصہ اہم ہے، اور ہم اس تک پہنچیں گے۔ ابھی کے لیے: ایک EC2 instance ایک کمپیوٹر ہے جسے آپ گھنٹہ وار کرائے پر لیتے ہیں۔ اس کے پاس ایک آپریٹنگ سسٹم، ایک نیٹ ورک کنکشن، اور کمپیوٹنگ طاقت ہوتی ہے۔ یہ آپ کی ایپلیکیشن ویسے ہی چلاتا ہے جیسے ایک جسمانی سرور چلاتا۔
 
-**Compute optimized** (مثلاً `c7g`): Memory کے مقابلے میں زیادہ CPU۔ Video encoding، scientific modeling، batch processing کے لیے اچھا۔
+**اپنا instance چننا: سائز اہمیت رکھتا ہے**
 
-**Memory optimized** (مثلاً `r7i`): CPU کے مقابلے میں زیادہ memory۔ Databases، caching، in-memory analytics کے لیے اچھا۔
+تمام EC2 instances ایک جیسی نہیں ہوتیں۔ AWS سینکڑوں instance types پیش کرتا ہے، جنہیں اس بنیاد پر families میں منظم کیا گیا ہے کہ وہ کس چیز کے لیے optimized ہیں۔
 
-**Storage optimized** (مثلاً `i3`): High-speed local storage۔ Data-intensive workloads کے لیے اچھا جنہیں بہت fast disk I/O چاہیے۔
+**General purpose** (مثلاً `t3`، `m6i`): متوازن CPU اور میموری۔ زیادہ تر ویب ایپلیکیشنز کے لیے اچھی ڈیفالٹ چوائس۔ `t3` family burstable ہے — یہ کم استعمال کے ادوار کے دوران CPU credits جمع کرتی ہے اور انہیں bursts کے دوران خرچ کرتی ہے۔ development ماحول اور متغیر CPU مانگ والے workloads کے لیے بہترین۔ `m6i` family مستقل، غیر-burstable کارکردگی فراہم کرتی ہے — مستقل CPU ضروریات والے production workloads کے لیے بہتر۔
 
-**Accelerated computing** (مثلاً `p4`): GPUs attached۔ Machine learning training اور graphics rendering کے لیے اچھا۔
+**Compute optimized** (مثلاً `c7g`): میموری کے مقابلے میں زیادہ CPU۔ ویڈیو encoding، scientific modeling، batch processing کے لیے اچھا۔ `c7g` میں "g" لاحقہ کا مطلب ہے کہ instance AWS Graviton processors استعمال کرتی ہے — ARM پر مبنی chips جو AWS نے خود ڈیزائن کیے، جو بہت سے workloads کے لیے مساوی x86 instances سے بہتر price-to-performance پیش کرتے ہیں۔
 
-ہر family میں sizes ہوتی ہیں۔ `t3.micro` میں 2 virtual CPUs اور 1 GB memory ہوتی ہے۔ `t3.xlarge` میں 4 virtual CPUs اور 16 GB۔ آپ workload کے لیے صحیح size چنتے ہیں۔
+**Memory optimized** (مثلاً `r7i`): CPU کے مقابلے میں زیادہ میموری۔ ڈیٹابیسز، caching، in-memory analytics کے لیے اچھا۔ اگر آپ ایک ایسا ڈیٹابیس چلا رہے ہیں جہاں زیادہ ڈیٹا RAM میں رکھنے سے کارکردگی ڈرامائی طور پر بہتر ہوتی ہے، تو R family صحیح ابتدائی نقطہ ہے۔
 
-Leo نے `t3.micro` چنی تھی۔
+**Storage optimized** (مثلاً `i3`): تیز رفتار مقامی اسٹوریج۔ ڈیٹا-سے بھرپور workloads کے لیے اچھا جنہیں بہت تیز ڈسک I/O چاہیے۔ ان instances پر مقامی NVMe اسٹوریج EBS سے نمایاں طور پر تیز ہے — لیکن یہ عارضی بھی ہے۔ اسے عارضی ڈیٹا کے لیے استعمال کریں، کسی ایسی چیز کے لیے نہیں جسے آپ کھونے کے متحمل نہیں ہو سکتے۔
 
-"`t3.micro` کتنے users handle کر سکتی ہے؟" Tom نے پوچھا۔
+**Accelerated computing** (مثلاً `p4`): GPUs منسلک۔ مشین لرننگ training اور graphics rendering کے لیے اچھا۔ یہ instances مہنگی ہیں — ایک `p3.8xlarge` $12 فی گھنٹہ سے زیادہ پڑتی ہے — لیکن ان workloads کے لیے جو GPU parallelism سے فائدہ اٹھاتے ہیں، کوئی متبادل نہیں۔
 
-"Application پر depend کرتا ہے،" Leo نے کہا۔ "لیکن شاید hundred concurrent users نہیں جو image uploads اور database queries کر رہے ہوں۔"
+ہر family کی sizes ہوتی ہیں۔ ایک `t3.micro` میں 2 ورچوئل CPUs اور 1 GB میموری ہوتی ہے۔ ایک `t3.xlarge` میں 4 ورچوئل CPUs اور 16 GB۔ ایک `t3.2xlarge` دوبارہ دوگنا کرتی ہے۔ نام رکھنے کا پیٹرن مستقل ہے: لاحقہ `nano`، `micro`، `small`، `medium`، `large`، `xlarge`، `2xlarge`، `4xlarge`، `8xlarge`، اور آگے جاتا ہے۔
 
-Tom نے whiteboard پر "t3.micro" لکھا اور اس کے ساتھ sad face بنا دیا۔
+Leo نے ایک `t3.micro` چنی تھی۔
 
-**AMI: آپ کی machine کی starting state**
+"ایک `t3.micro` کتنے صارفین سنبھال سکتی ہے؟" Tom نے پوچھا۔ "اور ایک بڑی والی کتنا زیادہ پڑتی ہے؟"
 
-EC2 instance launch کرنے سے پہلے، آپ اس کا operating system اور initial configuration چنتے ہیں۔ AWS میں اسے **Amazon Machine Image** (AMI) کہتے ہیں۔
+"ایپلیکیشن پر منحصر ہے،" Leo نے کہا۔ "لیکن شاید سو بیک وقت صارفین نہیں جو image uploads اور ڈیٹابیس queries چلا رہے ہوں۔"
 
-AMI ایک template ہے۔ یہ define کرتا ہے:
+"یہ ماہانہ کتنا پڑتا ہے؟" Tom نے instance type کے موازنے کا صفحہ دیکھتے ہوئے پوچھا۔
 
-- Operating system (Amazon Linux، Ubuntu، Windows Server، وغیرہ)
-- Pre-installed software
-- Initial disk state
+Leo نے AWS pricing صفحہ کھولا۔ t3.micro تقریباً $8 ماہانہ پڑتی تھی۔ t3.small $17 تھی۔ t3.medium $33 تھی۔ t3.large تقریباً $60 تھی۔ جیسے جیسے آپ اوپر جاتے، فرق تیزی سے بڑھتا تھا — خطی طور پر نہیں، بلکہ ہر size کے قدم کے ساتھ تقریباً دوگنا۔ Tom نے اعداد لکھ لیے، یہ نوٹ کرتے ہوئے کہ ہر size کا قدم میموری دوگنا کرتا ہے — لیکن، عجیب بات یہ ہے کہ CPU کی تعداد نہیں۔ micro سے large تک ہر t3 میں وہی 2 vCPUs تھے؛ تعداد xlarge تک نہیں بڑھتی تھی۔ ہر قدم کے ساتھ جو بڑھتا تھا وہ **CPU credit baseline** تھا — ان vCPUs کا وہ حصہ جسے instance اپنے burst credits کو ختم کیے بغیر مسلسل استعمال کر سکتی تھی۔
 
-جب آپ AMI سے instance launch کرتے ہیں، AWS اس template کی ایک fresh copy صرف آپ کے لیے بناتا ہے۔ آپ اپنی AMIs بھی create کر سکتے ہیں — اگر آپ ایک server کو بالکل اپنی مرضی کے مطابق configure کرتے ہیں، تو آپ اس state کو custom AMI کے طور پر "save" کر سکتے ہیں اور identical servers جلدی launch کرنے کے لیے استعمال کر سکتے ہیں۔ Scale پر consistent environments deploy کرنے کا یہی طریقہ ہے۔
+Tom نے وائٹ بورڈ پر "t3.micro" لکھا اور اس کے ساتھ ایک اداس چہرہ بنا دیا۔
 
-AMI کو recipe کی طرح سوچیں۔ Recipe meal کو describe کرتی ہے۔ ہر بار جب آپ recipe follow کرتے ہیں، آپ کو وہی meal ملتا ہے۔ اگر آپ meal کو permanently بدلنا چاہتے ہیں، تو recipe update کرتے ہیں۔
+**Right-Sizing کی گفتگو**
 
-**Key Pairs: server access کرنے کا صحیح طریقہ**
+t3.micro تقریباً ایک ماہ چلی اس سے پہلے کہ جمعے کی رات کی ٹریفک نے اسے کچل دیا۔ Leo نے جلدی میں اپ گریڈ کیا — سیدھا t3.large پر، یہ استدلال کرتے ہوئے کہ بہت بڑا، نیچے سے زیادہ محفوظ ہے۔ t3.large پر منتقلی کے دو ہفتے بعد، Tom نے کچھ نشان زد کیا۔
 
-پچھلے chapter کی "Admin123" disaster یاد ہے؟
+"CPU 9% پر ہے،" اس نے کہا۔ "اوسط۔ پچھلے سات دنوں میں۔"
 
-EC2 instance میں log in کرنے کا صحیح طریقہ **key pair** ہے۔
+Leo نے CloudWatch گراف دیکھا۔ 9% اوسط CPU۔ جمعے کے کھانے کے دوران شاید 35% کی چوٹیاں۔ باقی وقت: بمشکل ٹک ٹک۔
 
-Key pair ایک cryptographic pair ہے: public key (جو AWS server پر store کرتا ہے) اور private key (ایک file جسے آپ download کرتے ہیں اور secret رکھتے ہیں)۔ Log in کرنے کے لیے، آپ SSH — ایک secure protocol — کے ساتھ اپنی private key استعمال کرتے ہیں۔ Password نہیں ہوتا۔ اگر آپ private key کھو دیں، آپ access کھو دیتے ہیں۔ SSH کے لیے "forgot my password" نہیں ہوتا۔
+"ہم ایک $60-ماہانہ سرور چلا رہے ہیں،" Tom نے کہا، "اس کی صلاحیت کے 9% پر۔"
+
+"لیکن جمعے کی چوٹیوں کا کیا؟" Leo نے کہا۔ "ہمیں headroom چاہیے۔"
+
+"جمعے کی چوٹیاں 35% پر پہنچتی ہیں،" Tom نے کہا۔ "ایک t3.small کے وہی دو vCPUs ہیں — جو چھوٹا ہے وہ credit baseline ہے، تقریباً 20% مستقل۔ ہماری اوسط 9% ہے۔ اس کا مطلب ہے کہ ہم سارا دن، ہر دن CPU credits بینک کر رہے ہوں گے، اور جمعے کی راتوں کو چند گھنٹوں کے لیے ان میں سے کچھ خرچ کر رہے ہوں گے۔ میں نے `CPUCreditBalance` کا حساب چیک کیا — balance کبھی خالی کے قریب نہیں آتا۔ یہ $17 ماہانہ ہے۔ ہمارے پاس headroom ہے۔"
+
+Leo نے اعداد دیکھے۔ اس نے گراف دیکھا۔ اس نے ایک ایسے انجینیئر کی بے چینی محسوس کی جس نے over-provision کیا ہے اور یہ جانتا ہے۔
+
+"لیکن اگر ہمیں کوئی spike آ جائے؟" اس نے کہا۔
+
+"تو میٹرکس ہمیں نقصان پہنچنے سے پہلے بتا دیں گے،" Priya نے کہا۔ "اور بالآخر ہم Auto Scaling سیٹ اپ کریں گے — یہ لفظی طور پر اسی کے لیے ہے۔ ایک بار جب نظام خودکار طور پر instances شامل کر سکے تو آپ کو spike کے لیے دستی طور پر provision کرنے کی ضرورت نہیں ہوگی۔"
+
+انہوں نے t3.small پر کم کر دیا۔ ماہانہ بل $40 گر گیا۔ ایک سال میں، یہ $480 تھا — کچھ نہیں نہیں، خاص طور پر ایک اسٹارٹ اپ کے لیے۔ Tom نے اسے اپنی اسپریڈ شیٹ میں ایک ایسے شخص کے خاموش اطمینان کے ساتھ نوٹ کیا جو دو ہفتے سے یہ نکتہ بنانے کا انتظار کر رہا تھا۔
+
+اس پیٹرن کا ایک نام ہے: **right-sizing**۔ اس کا مطلب ہے instance کے سائز کو اصل workload سے ملانا، نہ کہ تصوراتی بدترین صورت سے۔ AWS Compute Optimizer اور CloudWatch میٹرکس جیسے AWS اوزار right-sizing کو ایک اندازے کے بجائے ڈیٹا پر مبنی فیصلہ بناتے ہیں۔
+
+**AMI: آپ کی مشین کی ابتدائی حالت**
+
+EC2 instance لانچ کرنے سے پہلے، آپ اس کا آپریٹنگ سسٹم اور ابتدائی کنفیگریشن چنتے ہیں۔ AWS میں، اسے **Amazon Machine Image** (AMI) کہتے ہیں۔
+
+ایک AMI ایک template ہے۔ یہ یہ define کرتا ہے:
+
+- آپریٹنگ سسٹم (Amazon Linux، Ubuntu، Windows Server، وغیرہ)
+- پہلے سے انسٹال شدہ سافٹ ویئر
+- ابتدائی ڈسک حالت
+
+جب آپ کسی AMI سے instance لانچ کرتے ہیں، AWS اس template کی ایک تازہ کاپی صرف آپ کے لیے بناتا ہے۔ آپ اپنی AMIs بھی بنا سکتے ہیں — اگر آپ ایک سرور کو بالکل اپنی مرضی کے مطابق کنفیگر کرتے ہیں، تو آپ اس حالت کو ایک custom AMI کے طور پر "save" کر سکتے ہیں اور ایک جیسے سرور جلدی لانچ کرنے کے لیے استعمال کر سکتے ہیں۔ پیمانے پر مستقل ماحول deploy کرنے کا یہی طریقہ ہے۔
+
+ایک AMI کو ایک recipe کی طرح سوچیں۔ recipe کھانے کو بیان کرتی ہے۔ ہر بار جب آپ recipe پر عمل کرتے ہیں، آپ کو وہی کھانا ملتا ہے۔ اگر آپ کھانے کو مستقل طور پر بدلنا چاہتے ہیں، تو آپ recipe اپڈیٹ کرتے ہیں۔
+
+AWS AMIs کا ایک marketplace فراہم کرتا ہے — کچھ AWS کی طرف سے برقرار رکھے جاتے ہیں (Amazon Linux 2، Amazon Linux 2023)، کچھ بڑی Linux distributions کی طرف سے برقرار رکھے جاتے ہیں (Ubuntu، Red Hat، SUSE)، اور کچھ تیسرے فریق کے vendors سے آتے ہیں (پہلے سے کنفیگر شدہ ڈیٹابیس سرورز، سیکیورٹی appliances، تجارتی سافٹ ویئر)۔ زیادہ تر ویب ایپلیکیشنز کے لیے، ایک AWS کی برقرار رکھی گئی Amazon Linux AMI یا Ubuntu LTS AMI صحیح ابتدائی نقطہ ہے۔
+
+Nimbus کے لیے، Leo نے ایک custom AMI بنایا جو تازہ ترین Amazon Linux 2023 base سے شروع ہوتا تھا اور Node.js runtime، ایپلیکیشن کی سسٹم dependencies، اور ایپلیکیشن process کے لیے ایک پہلے سے بنائی گئی service file شامل کرتا تھا۔ اس AMI سے لانچ کیے گئے نئے instances 90 سیکنڈ سے کم میں ٹریفک پیش کرنا شروع کر دیتے تھے — اس چار منٹ کے boot time سے نمایاں طور پر تیز جب ہر چیز کو شروع سے انسٹال کرنے کے لیے UserData scripts استعمال کرتے تھے۔
+
+ایک ٹریڈ آف ہے: custom AMIs کو برقرار رکھنے کی ضرورت ہوتی ہے۔ ہر بار جب آپ کسی سسٹم dependency یا runtime ورژن کو اپڈیٹ کرتے ہیں، آپ کو AMI دوبارہ بنانے کی ضرورت ہوتی ہے۔ وہ ٹیمیں جو اپنی AMIs کو باسی ہونے دیتی ہیں خود کو پرانے سافٹ ویئر کے ساتھ instances چلاتے پاتی ہیں — ایک سیکیورٹی خطرہ۔ Priya نے ماہانہ انجینیئرنگ چیک لسٹ میں "تازہ ترین packages کے ساتھ AMI دوبارہ بنائیں" ڈال دیا۔
+
+"AMIs محفوظ کرنے کی کتنی قیمت ہے؟" Tom نے پوچھا۔
+
+AMIs EBS snapshots کے طور پر محفوظ ہوتی ہیں — آپ AMI کے سائز کے لیے EBS snapshot ریٹ (تقریباً $0.05 فی GB فی ماہ) ادا کرتے ہیں۔ Nimbus ایپلیکیشن اسٹیک کے ساتھ ایک عام Amazon Linux AMI تقریباً 4 GB پڑتی تھی۔ $0.05/GB پر: فی AMI $0.20 ماہانہ۔ rollback مقاصد کے لیے پانچ تاریخی AMIs رکھنا: $1/ماہ۔ کوئی معنی خیز لاگت نہیں۔
+
+**UserData: bootstrap اسکرپٹ**
+
+EC2 پر ایک اور کنفیگریشن اختیار ہے جسے Leo نے دریافت کیا جب وہ ہر بار ایپلیکیشن کوڈ بدلنے پر ایک نیا AMI بنانے سے بچنے کی کوشش کر رہا تھا۔
+
+جب آپ ایک EC2 instance لانچ کرتے ہیں، آپ ایک **UserData script** فراہم کر سکتے ہیں — ایک shell اسکرپٹ جو instance کے پہلی بار شروع ہونے پر خودکار طور پر چلتا ہے۔ یہ root کے طور پر چلتا ہے، اس سے پہلے کہ instance کو "تیار" سمجھا جائے۔
+
+Nimbus کے لیے، UserData اسکرپٹ کچھ ایسا نظر آتا تھا:
+
+```bash
+#!/bin/bash
+yum update -y
+yum install -y nodejs npm git
+git clone https://github.com/nimbus-app/server.git /opt/nimbus
+cd /opt/nimbus
+npm install
+systemctl enable nimbus
+systemctl start nimbus
+```
+
+وہ اسکرپٹ Node.js انسٹال کرتا ہے، تازہ ترین ایپلیکیشن کوڈ کھینچتا ہے، dependencies انسٹال کرتا ہے، اور ایپلیکیشن سروس شروع کرتا ہے۔ ہر نیا instance جو base AMI سے لانچ ہوتا ہے یہ اسکرپٹ چلاتا ہے اور ایپلیکیشن کے موجودہ ورژن کے ساتھ سامنے آتا ہے — خودکار طور پر۔
+
+اس نقطہ نظر کا مطلب ہے کہ AMI سادہ رہتا ہے (صرف ایک base OS)، اور UserData ایپلیکیشن سیٹ اپ سنبھالتا ہے۔ ٹریڈ آف: UserData scripts چلنے میں وقت لیتے ہیں۔ ایک instance boot ہونے اور تیار ہونے میں تین سے پانچ منٹ لے سکتا ہے۔ ان ایپلیکیشنز کے لیے جہاں startup time اہم ہو — Auto Scaling کے لیے، جہاں آپ کو نئے instances کا جلدی تیار ہونا ضروری ہو — ایپلیکیشن کو ایک custom AMI میں پہلے سے pre-bake کرنا boot time کو نمایاں طور پر کم کرتا ہے۔
+
+"یہ ٹھیک ہو جائے گا،" Leo نے کہا، جب Priya نے boot time کے بارے میں پوچھا۔
+
+"boot time کیا ہے؟" اس نے پوچھا۔
+
+"چار منٹ۔"
+
+"اور ان چار منٹوں کے دوران، instance چل رہا ہوتا ہے لیکن ٹریفک پیش نہیں کر رہا ہوتا؟"
+
+"ہاں۔"
+
+"تو کسی اچانک ٹریفک spike کے دوران، ہمارے پاس چار منٹ ہو سکتے ہیں جہاں نئے instances ابھی مدد نہیں کر رہے؟"
+
+Leo نے اپنے UserData اسکرپٹ کو دیکھا۔ اس نے یہ دیکھنا شروع کیا کہ ایک custom AMI کیسے بنایا جائے۔
+
+**Key Pairs: سرور تک رسائی کا صحیح طریقہ**
+
+پچھلے باب کی "Admin123" تباہی یاد ہے؟
+
+EC2 instance میں لاگ ان کرنے کا صحیح طریقہ ایک **key pair** ہے۔
+
+ایک key pair ایک cryptographic جوڑا ہے: ایک public key (جو AWS سرور پر محفوظ کرتا ہے) اور ایک private key (ایک فائل جسے آپ download کرتے ہیں اور خفیہ رکھتے ہیں)۔ لاگ ان کرنے کے لیے، آپ SSH — ایک محفوظ protocol — اپنی private key کے ساتھ استعمال کرتے ہیں۔ کوئی password نہیں ہوتا۔ اگر آپ private key کھو دیں، آپ رسائی کھو دیتے ہیں۔ SSH کے لیے کوئی "میرا password بھول گیا" نہیں ہوتا۔
 
 یہ اس لیے اہم ہے کیونکہ key pairs:
 
-- آپ کے لیے unique ہوتے ہیں
-- Cryptographically guess کرنا ناممکن ہوتے ہیں
-- AWS کے پاس store نہیں ہوتے (private key آپ رکھتے ہیں)
-- Revoking آسان ہوتا ہے (server سے key delete کریں، نئی pair generate کریں)
+- آپ کے لیے منفرد ہوتے ہیں
+- cryptographically اندازہ لگانا ناممکن ہوتے ہیں
+- AWS کے پاس محفوظ نہیں ہوتے (private key آپ رکھتے ہیں)
+- منسوخ کرنا آسان ہوتا ہے (سرور سے key حذف کریں، ایک نیا جوڑا generate کریں)
 
-Priya نے Nimbus server پر پہلے ہی key-based access set up کر دیا تھا۔ Admin123 server decommission ہو گیا۔ کسی کو افسوس نہیں ہوا۔
+Priya نے Nimbus سرور پر پہلے ہی key پر مبنی رسائی سیٹ اپ کر دی تھی۔ Admin123 سرور decommission ہو گیا۔ کسی کو اس کا افسوس نہیں ہوا۔
 
-**Instance lifecycle: forever نہیں**
+"اور اگر کوئی توڑ پھوڑ کرنے کی کوشش کرے اور راستے میں کسی key pair کو روک لے تو؟" Priya نے پوچھا۔ اس نے پہلے ہی جواب نکال لیا تھا: private key کبھی نیٹ ورک پر سفر نہیں کرتی۔ آپ اسے ایک بار download کرتے ہیں۔ آپ اسے مقامی طور پر رکھتے ہیں۔ یہ کبھی آپ کی مشین نہیں چھوڑتی۔
 
-یہ چیز بہت سے beginners miss کرتے ہیں۔
+**اگر آپ key pair کھو دیں تو کیا ہوتا ہے**
 
-EC2 instances default طور پر permanent نہیں ہوتیں۔ جب آپ instance stop کرتے ہیں، compute resource release ہو جاتا ہے۔ جب آپ اسے دوبارہ start کرتے ہیں، وہ different physical hardware پر run ہو سکتی ہے۔ Instance itself پر stored data (اس کے root volume پر) stop/start cycle survive کرتا ہے — لیکن public IP address بدل جاتا ہے۔
+Leo نے یہ سوال تیسرے ہفتے میں پوچھا، اس مخصوص توانائی کے ساتھ جو ایسے شخص کی ہوتی ہے جس نے ابھی تک اپنا key pair نہیں کھویا لیکن اس کے بارے میں سوچ رہا ہے۔
 
-جب آپ instance کو *terminate* کرتے ہیں، وہ ختم ہو جاتی ہے۔ جب تک separate storage attached نہ ہو (جسے ہم Chapter 6 میں cover کرتے ہیں)، instance پر موجود data غائب ہو جاتا ہے۔
+"اگر میں private key فائل کھو دوں، تو کیا ہوتا ہے؟"
 
-یہ "ephemerality" دراصل feature ہے، bug نہیں۔ اس کا مطلب ہے آپ servers spin up کر سکتے ہیں، use کر سکتے ہیں، اور throw away کر سکتے ہیں۔ یہ horizontal scaling enable کرتا ہے۔ لیکن اس کا مطلب یہ بھی ہے کہ important data کبھی EC2 instance itself *پر* store نہیں کرنا چاہیے۔
+"آپ instance تک SSH رسائی کھو دیتے ہیں،" Priya نے کہا۔
 
-پھر data کہاں رہتا ہے؟
+"مستقل طور پر؟"
 
-Separate storage میں۔ ہم اگلے دو chapters میں وہاں پہنچتے ہیں۔
+"ضروری نہیں۔ لیکن ریکوری کا عمل ناخوشگوار ہے۔"
+
+ریکوری کا عمل: instance روکیں، اس کا root EBS volume detach کریں، اسے کسی مختلف instance سے attach کریں جس تک آپ کے پاس رسائی *ہے*، volume mount کریں، mounted volume پر `authorized_keys` فائل میں ایک نیا public key شامل کریں، اسے detach کریں اور اصل instance سے دوبارہ attach کریں، دوبارہ شروع کریں۔
+
+یہ کام کرتا ہے۔ اس میں تیس سے ساٹھ منٹ لگتے ہیں اور احتیاط سے عمل درکار ہوتا ہے۔ ایک غلط قدم اور آپ چیزیں بدتر کر سکتے ہیں۔
+
+متبادل، اگر آپ کی ایپلیکیشن root volume پر کچھ اہم محفوظ نہیں کرتی (کیونکہ آپ اس کتاب کے مشورے پر عمل کر رہے ہیں اور ڈیٹا S3 اور EBS میں محفوظ کر رہے ہیں): instance terminate کریں اور AMI سے ایک تازہ لانچ کریں۔ ایسا کرتے وقت ایک نیا key pair generate کریں۔
+
+"private key کہیں محفوظ جگہ پر رکھیں،" Priya نے کہا۔ "اور کبھی کسی EC2 instance پر نہیں۔"
+
+Leo نے اپنا ڈیسک ٹاپ folder دیکھا جس کا لیبل `AWS_keys` تھا۔ پھر Priya کو۔ پھر اس نے folder کو اپنے encrypted password manager میں منتقل کر دیا۔
+
+**Security Groups: آپ کے instance کا فائر وال**
+
+جب ایک EC2 instance لانچ ہوتا ہے، اسے ایک **security group** کی ضرورت ہوتی ہے — ایک ورچوئل فائر وال جو کنٹرول کرتا ہے کہ کون سی نیٹ ورک ٹریفک اس تک پہنچ سکتی ہے اور کون سی ٹریفک یہ باہر بھیج سکتا ہے۔
+
+ایک security group کے قواعد کے دو سیٹ ہوتے ہیں: **inbound** (اندر آنے والی ٹریفک) اور **outbound** (باہر جانے والی ٹریفک)۔
+
+ڈیفالٹ طور پر، ایک نیا security group تمام inbound ٹریفک کو روکتا ہے اور تمام outbound ٹریفک کی اجازت دیتا ہے۔ آپ مخصوص ذرائع کے لیے مخصوص ports کھولنے کے لیے inbound قواعد شامل کرتے ہیں۔
+
+Nimbus web server کے لیے، Priya نے کنفیگر کیا:
+
+- `0.0.0.0/0` (پورے انٹرنیٹ) سے TCP port 443 (HTTPS) کی اجازت دیں
+- `0.0.0.0/0` (پورے انٹرنیٹ) سے TCP port 80 (HTTP) کی اجازت دیں (ایپلیکیشن میں 443 پر redirect)
+- صرف دفتر کے IP پتے سے TCP port 22 (SSH) کی اجازت دیں — انٹرنیٹ سے نہیں
+
+"ٹھہریں — لیکن ہم SSH کو صرف دفتر کے IP تک *کیوں* محدود کریں گے؟" Maya نے پوچھا۔
+
+"کیونکہ اگر SSH پورے انٹرنیٹ کے لیے کھلا ہو،" Priya نے کہا، "تو خودکار bots دن کے چوبیس گھنٹے credential combinations آزماتے ہوئے port 22 پر آئیں گے۔ ہمارے logs ناکام کوششوں سے بھر جائیں گے۔ اور اگر کبھی خود SSH daemon میں کوئی کمزوری ہو، تو دنیا کا ہر حملہ آور اسے exploit کرنے کی کوشش کر سکتا ہے۔"
+
+"لیکن اگر Leo کو گھر سے لاگ ان کرنا ہو؟"
+
+"VPN،" Priya نے کہا۔
+
+Leo کے پاس پہلے ہی ایک VPN سیٹ اپ تھا۔ اس کے چہرے پر ایسے شخص کا تاثر تھا جس سے یہ سوال پہلے بھی پوچھا گیا تھا۔
+
+ڈیٹابیس ابھی بھی ایپلیکیشن کی اسی مشین پر رہتا تھا — لیکن Priya نے اس دن کے لیے ایک الگ security group تیار کیا جب ایسا نہیں ہوگا: ڈیٹابیس port صرف web server کے security group سے ٹریفک کے لیے کھلا — انٹرنیٹ سے نہیں، SSH سے نہیں (براہِ راست DB رسائی کے لیے)، کہیں اور سے نہیں۔ اس دوران، اس نے یقینی بنایا کہ shared instance کا security group ڈیٹابیس port کو انٹرنیٹ کے سامنے بالکل بھی expose نہ کرے۔ ڈیٹابیس ہر چیز کے لیے غیر مرئی ہوگا سوائے اس ایپلیکیشن کے جسے اس کی ضرورت ہے۔
+
+ڈیٹابیس تک براہِ راست پہنچنے کے لیے، ایک حملہ آور کو پہلے web server کو سمجھوتہ کرنا ہوگا۔ یہ دفاع کی پہلی پرت تھی۔
+
+"اور دوسری پرت؟" Tom نے پوچھا۔
+
+"ڈیٹابیس کے لیے IAM authentication۔ اور encryption in transit۔"
+
+اس نے دونوں کو سیٹ اپ چیک لسٹ میں شامل کیا۔
+
+**EC2 Instance Metadata اور IMDSv2**
+
+EC2 سیکیورٹی کا ایک اور حصہ ہے جو عمل میں اہم ہے، چاہے یہ تعارفی مواد میں شاذ و نادر ہی سمجھایا جائے۔
+
+جب کوئی ایپلیکیشن EC2 instance پر چلتی ہے، تو یہ instance کے بارے میں معلومات حاصل کرنے کے لیے ایک خاص اندرونی endpoint `http://169.254.169.254/latest/meta-data/` پر query کر سکتی ہے: اس کی instance ID، اس کا Region، اس کا availability zone، اور — اہم بات — کسی بھی منسلک IAM Role سے وابستہ عارضی IAM credentials۔
+
+اسی طرح EC2 instance پر ایپلیکیشن hardcoded credentials کے بغیر AWS سروسز کو call کرتی ہے۔ یہ metadata service سے پوچھتی ہے: "مجھے ابھی کون سے credentials استعمال کرنے چاہئیں؟" metadata service عارضی credentials واپس کرتا ہے جو خودکار طور پر ختم ہوتے اور گھومتے ہیں۔
+
+سیکیورٹی مسئلہ: اس metadata service کے پرانے ورژن (IMDSv1) instance پر کسی بھی process کی کسی بھی درخواست کا جواب دیتے۔ اگر کسی ایپلیکیشن میں server-side request forgery (SSRF) کمزوری ہوتی — ایک bug جہاں ایک حملہ آور سرور کو اپنی پسند کا URL fetch کرا سکتا — تو حملہ آور اس کمزوری کا استعمال کرتے ہوئے `http://169.254.169.254/latest/meta-data/iam/security-credentials/` fetch کر سکتا اور instance کے IAM credentials حاصل کر سکتا۔
+
+یہ حملہ حقیقی خلاف ورزیوں میں استعمال ہوا ہے۔
+
+**IMDSv2** (Instance Metadata Service version 2) اسے metadata service کے جواب دینے سے پہلے ایک session token کی ضرورت کے ذریعے ٹھیک کرتا ہے۔ token ایک PUT درخواست کے ذریعے حاصل کیا جاتا ہے۔ SSRF حملے، جو عام طور پر GET درخواستیں استعمال کرتے ہیں، PUT قدم مکمل نہیں کر سکتے — تو وہ token نہیں حاصل کر سکتے، اور metadata واپس نہیں ہوتا۔
+
+"کیا ہمیں IMDSv2 فعال کرنا چاہیے؟" Leo نے پوچھا۔
+
+"یہ اب نئے instances کے لیے ڈیفالٹ ہے،" Priya نے کہا۔ "لیکن موجودہ instances کے لیے، آپ کو opt in کرنا ہوگا۔"
+
+اس نے اسی دوپہر تمام موجودہ Nimbus instances پر اسے فعال کر دیا۔
+
+**Instance Lifecycle: ہمیشہ کے لیے نہیں**
+
+یہ کچھ ایسا ہے جسے بہت سے ابتدائی افراد چھوڑ دیتے ہیں۔
+
+EC2 instances ڈیفالٹ طور پر مستقل نہیں ہوتیں۔ جب آپ ایک instance روکتے ہیں، تو compute resource جاری ہو جاتا ہے۔ جب آپ اسے دوبارہ شروع کرتے ہیں، تو یہ مختلف جسمانی ہارڈ ویئر پر چل سکتی ہے۔ *خود instance پر* محفوظ کوئی بھی ڈیٹا (اس کے root volume پر) ایک stop/start cycle میں زندہ رہتا ہے — لیکن public IP پتہ بدل جاتا ہے۔
+
+جب آپ کسی instance کو *terminate* کرتے ہیں، یہ ختم ہو جاتی ہے۔ جب تک آپ کے پاس الگ اسٹوریج منسلک نہ ہو (جسے ہم باب 6 میں کور کرتے ہیں)، instance پر کوئی بھی ڈیٹا غائب ہو جاتا ہے۔
+
+چار حالتیں جن میں ایک EC2 instance ہو سکتی ہے:
+
+**Pending**: instance شروع ہو رہی ہے۔ اسے ہارڈ ویئر مختص ہو گیا ہے لیکن boot ہونا ختم نہیں ہوا۔ UserData اسکرپٹ چل رہا ہے۔
+
+**Running**: instance فعال اور قابلِ رسائی ہے۔ آپ اس کے لیے ادائیگی کر رہے ہیں۔
+
+**Stopping/Stopped**: instance بند ہے۔ EBS root volume محفوظ ہے۔ آپ compute کے لیے ادائیگی نہیں کر رہے، لیکن آپ ابھی بھی منسلک EBS اسٹوریج کے لیے ادائیگی کر رہے ہیں۔
+
+**Shutting-down/Terminated**: instance حذف ہو رہی ہے۔ جب تک آپ نے EBS volumes کو برقرار رہنے کے لیے کنفیگر نہ کیا ہو، ان کا ڈیٹا ختم ہو جاتا ہے۔
+
+یہ "ephemerality" دراصل ایک خصوصیت ہے، کوئی bug نہیں۔ اس کا مطلب ہے آپ سرور spin up کر سکتے ہیں، انہیں استعمال کر سکتے ہیں، اور انہیں پھینک سکتے ہیں۔ یہ horizontal scaling کو ممکن بناتا ہے۔ لیکن اس کا مطلب یہ بھی ہے کہ آپ کو کبھی اہم ڈیٹا *خود* EC2 instance پر محفوظ نہیں کرنا چاہیے۔
+
+پھر ڈیٹا کہاں رہتا ہے؟
+
+الگ اسٹوریج میں۔ ہم اگلے دو ابواب میں اس تک پہنچتے ہیں۔
+
+آپ سوچ رہے ہوں گے: اگر ہر بار دوبارہ شروع ہونے پر instance کو ایک نیا IP پتہ ملتا ہے، تو آپ کی ایپلیکیشن کیسے ایک مستحکم پتہ برقرار رکھتی ہے؟ AWS کے پاس Elastic IP نامی ایک حل ہے — ایک static public IP جس کے آپ مالک ہیں اور جو دوبارہ شروع ہونے کے بعد بھی وہی رہتا ہے۔ لاگت پر ایک نوٹ: فروری 2024 سے، AWS ہر public IPv4 پتے کے لیے ایک چھوٹی گھنٹہ وار فیس وصول کرتا ہے — Elastic IPs (منسلک ہوں یا نہ ہوں) اور instances پر خودکار طور پر تفویض کردہ public IPs دونوں۔ Public IPv4 اب مفت نہیں ہے، جو instances کو load balancer کے پیچھے private subnets میں رکھنے کی ایک اور وجہ ہے۔
+
+load balancer کے پیچھے ایپلیکیشنز کے لیے — جو کسی بھی production ویب ایپلیکیشن کے لیے صحیح آرکیٹیکچر ہے — آپ کو Elastic IPs کی بالکل ضرورت نہیں ہوتی۔ صارفین load balancer کے مستحکم DNS نام سے جڑتے ہیں۔ load balancer instances سے VPC کے اندر ان کے private IP پتوں سے جڑتا ہے۔ Instances آ اور جا سکتی ہیں، نئے IPs حاصل کر سکتی ہیں، اندر اور باہر اسکیل کر سکتی ہیں — load balancer یہ سب شفاف طریقے سے سنبھالتا ہے۔ Elastic IPs مخصوص استعمال کے مواقع کے لیے ہیں: ایک سرور جس سے کلائنٹس براہِ راست IP سے جڑتے ہیں، ایک مستحکم پتے والا bastion host، ایک ایسی ایپلیکیشن جو کسی مخصوص وجہ سے load balancer کے پیچھے نہیں ہے۔
+
+Leo نے ابتدائی طور پر Nimbus web servers کے لیے Elastic IPs استعمال کرنے کا منصوبہ بنایا۔ Priya نے نشاندہی کی کہ load balancer کے ساتھ، web servers کے IP پتے بیرونی کلائنٹس کے لیے غیر متعلق تھے۔ load balancer کے پاس مستحکم DNS نام تھا۔ اس کے پیچھے instances ڈیزائن کے لحاظ سے قابلِ تصرف تھیں۔
+
+"تو Elastic IPs استثنا کے لیے ہیں، اصول کے لیے نہیں،" Leo نے کہا۔
+
+"درست،" Priya نے کہا۔ "اور اگر آپ خود کو ایک کی طرف ہاتھ بڑھاتے دیکھیں، تو پوچھیں کہ کیا آرکیٹیکچر میں اس کے بجائے ایک load balancer ہونا چاہیے۔"
 
 **"Elastic" کا مطلب کیا ہے**
 
@@ -101,113 +280,162 @@ Separate storage میں۔ ہم اگلے دو chapters میں وہاں پہنچت
 
 دو چیزیں:
 
-**Vertical elasticity**: آپ instance کا size بدل سکتے ہیں۔ Instance stop کریں، اسے `t3.micro` سے `t3.xlarge` میں change کریں، restart کریں۔ زیادہ CPU اور memory، وہی application، وہی setup۔
+**Vertical elasticity**: آپ کسی instance کا سائز بدل سکتے ہیں۔ instance روکیں، اسے `t3.micro` سے `t3.xlarge` میں بدلیں، دوبارہ شروع کریں۔ زیادہ CPU اور میموری، وہی ایپلیکیشن، وہی سیٹ اپ۔
 
-**Horizontal elasticity**: آپ مزید instances add کر سکتے ہیں۔ ایک large server کے بجائے، load balancer کے پیچھے دس medium servers چلائیں۔ جب traffic کم ہو، instances remove کریں اور ان کے لیے pay کرنا بند کریں۔
+**Horizontal elasticity**: آپ مزید instances شامل کر سکتے ہیں۔ ایک بڑے سرور کے بجائے، load balancer کے پیچھے دس درمیانے سرور چلائیں۔ جب ٹریفک گرتی ہے، instances ہٹائیں اور ان کے لیے ادائیگی روک دیں۔
 
-دونوں approaches "ایک server، بہت زیادہ traffic" کا مسئلہ solve کرتی ہیں۔ ان کے trade-offs مختلف ہیں، جنہیں ہم Chapter 7 میں explore کریں گے جب story میں Auto Scaling add کریں گے۔
+دونوں نقطہ نظر "ایک سرور، بہت زیادہ ٹریفک" کا مسئلہ حل کرتے ہیں۔ ان کے مختلف ٹریڈ آفس ہیں، جنہیں ہم باب 7 میں دریافت کرتے ہیں جب ہم کہانی میں Auto Scaling شامل کرتے ہیں۔
 
-Key insight: EC2 کے ساتھ، computing power ایسی چیز ہے جسے آپ *dial* کرتے ہیں، ایسی چیز نہیں جسے آپ *buy* کرتے ہیں۔ زیادہ چاہیے؟ Dial اوپر کریں۔ کم چاہیے؟ نیچے کریں۔ اسی حساب سے pay کریں۔
+اہم بصیرت: EC2 کے ساتھ، کمپیوٹنگ طاقت ایسی چیز ہے جسے آپ خریدنے کے بجائے *dial* کرتے ہیں۔ زیادہ چاہیے؟ dial اوپر کریں۔ کم چاہیے؟ اسے نیچے کریں۔ اسی حساب سے ادائیگی کریں۔
 
-## Strengths and Limitations
+Maya نے instance type کی جدول دیکھی۔ "اگر ہم بس سرور کو بڑا کر سکتے ہیں، تو دس درمیانے والوں کی زحمت کیوں؟"
 
-**EC2 powerful کیوں ہے**:
+"کیونکہ،" Leo نے کہا، "ایک بڑا سرور پھر بھی ایک سرور ہے۔ اگر یہ نیچے چلا جائے، تو سب کچھ نیچے چلا جاتا ہے۔ دس درمیانے سرورز کا مطلب ہے ایک ناکام ہو سکتا ہے اور نو چلتے رہتے ہیں۔"
 
-- Full control۔ آپ OS، software، configuration چنتے ہیں۔ یہ آپ کا computer ہے۔
-- Flexible sizing۔ ہر use case کے لیے hundreds of instance types۔
-- Hardware manage نہیں کرنا۔ AWS physical layer handle کرتا ہے۔
-- Pay-per-second billing (زیادہ تر instance types کے لیے)۔ آپ instance stop کرتے ہیں، آپ pay کرنا بند کرتے ہیں۔
-- ہر چیز کے ساتھ کام کرتا ہے۔ EC2 وہ foundation ہے جس پر زیادہ تر AWS services build ہوتی ہیں۔
+"اور،" Priya نے مزید کہا، "آپ کسی سرور کو دوبارہ شروع کیے بغیر بڑا نہیں کر سکتے۔ دس چھوٹے والوں کا مطلب ہے کہ آپ چلتے ہوئے والوں کو چھوئے بغیر مزید شامل کر سکتے ہیں۔"
 
-**یہاں یہ complicated ہو جاتا ہے**:
+Tom پہلے ہی اپنی نوٹ بک میں "restart = downtime" لکھ چکا تھا۔
 
-- Operating system patch اور update کرنا آپ کی responsibility ہے۔ (Shared Responsibility Model — یہ "in the cloud" والا حصہ ہے جو آپ کا ہے۔)
-- Scale پر EC2 manage کرنے کا مطلب instance state، AMIs، security patches، اور lifecycle manage کرنا ہے، ممکنہ طور پر ہزاروں machines پر۔ یہ operational overhead ہے۔
-- EC2 ہر چیز کا صحیح answer نہیں ہے۔ Event-driven code کے لیے جو infrequently run ہوتا ہے، Lambda (Chapter 20) cheaper اور simpler ہے۔ Containerized workloads کے لیے، ECS اور EKS (Chapter 21) بہتر resource efficiency دیتے ہیں۔
-- Unused instances پھر بھی money cost کرتی ہیں۔ اگر آپ instance stop کرتے ہیں، compute کے لیے pay کرنا بند کرتے ہیں — لیکن اگر storage attached ہے، اس کے لیے پھر بھی pay کرتے ہیں۔
+## طاقتیں اور حدود
 
-## Summary
+**EC2 طاقتور کیوں ہے**:
 
-- **EC2 instance** ایک virtual machine ہے جسے آپ AWS میں rent کرتے ہیں۔ اس کے پاس OS، network access، اور compute resources ہوتے ہیں۔
-- Instance types use case کے حساب سے organize ہوتے ہیں: general purpose، compute optimized، memory optimized، storage optimized، accelerated computing۔ اپنے workload کے لیے صحیح family اور size چنیں۔
-- **AMI** (Amazon Machine Image) آپ کی instance کے OS اور initial configuration کا template ہے۔ Custom AMIs consistent، repeatable deployments enable کرتی ہیں۔
-- **Key pairs** EC2 instances access کرنے کا secure طریقہ ہیں۔ Passwords نہیں۔
-- EC2 instances default طور پر permanent نہیں ہوتیں۔ Terminated instances اپنا data کھو دیتی ہیں۔ Important data separate storage services میں store کریں۔
-- "Elastic" کا مطلب ہے آپ compute کو up اور down scale کر سکتے ہیں — vertically (bigger instances) اور horizontally (more instances) دونوں طریقوں سے۔
+- مکمل کنٹرول۔ آپ OS، سافٹ ویئر، کنفیگریشن چنتے ہیں۔ یہ آپ کا کمپیوٹر ہے۔
+- لچکدار sizing۔ ہر استعمال کے موقع کے لیے سینکڑوں instance types۔
+- انتظام کرنے کے لیے کوئی ہارڈ ویئر نہیں۔ AWS جسمانی پرت سنبھالتا ہے۔
+- Amazon Linux، Windows، اور Ubuntu AMIs کے لیے 60 سیکنڈ کم سے کم کے ساتھ pay-per-second billing۔ (کچھ تجارتی Linux AMIs، جیسے RHEL اور SUSE، ابھی بھی فی گھنٹہ bill کرتے ہیں — AMI کی billing شرائط چیک کریں۔) آپ instance روکتے ہیں، آپ ادائیگی روک دیتے ہیں۔
+- ہر چیز کے ساتھ کام کرتا ہے۔ EC2 وہ بنیاد ہے جس پر زیادہ تر دیگر AWS سروسز بنتی ہیں۔
+- متعدد pricing ماڈلز (On-Demand، Reserved، Spot) قابلِ پیش گوئی یا لچکدار workloads کے لیے نمایاں
+  لاگت کی اصلاح کی اجازت دیتے ہیں — باب 27 میں تفصیل سے کور کیا گیا۔
+
+**جہاں یہ پیچیدہ ہو جاتا ہے**:
+
+- آپ آپریٹنگ سسٹم کو پیچ اور اپڈیٹ کرنے کے ذمہ دار ہیں۔ (Shared Responsibility
+  Model — یہ "in the cloud" والا حصہ ہے جو آپ کا ہے۔)
+- OS پیچنگ اختیاری نہیں ہے۔ بغیر پیچ کے EC2 instances cloud خلاف ورزیوں میں سب سے عام
+  حملہ کے راستوں میں سے ایک ہیں۔ AWS Systems Manager Patch Manager اسے خودکار کر سکتا ہے
+  — لیکن آپ کو اسے کنفیگر اور اس کی نگرانی کرنی ہوگی۔
+- پیمانے پر EC2 کا انتظام کرنے کا مطلب instance state، AMIs، سیکیورٹی پیچز، اور
+  lifecycle کا انتظام کرنا ہے، ممکنہ طور پر ہزاروں مشینوں پر۔ یہ آپریشنل overhead ہے۔
+- EC2 ہر چیز کا صحیح جواب نہیں ہے۔ event-driven کوڈ کے لیے جو کبھی کبھار
+  چلتا ہے، Lambda (باب 20) سستا اور آسان ہے۔ containerized
+  workloads کے لیے، ECS اور EKS (باب 21) بہتر resource efficiency پیش کرتے ہیں۔
+- غیر استعمال شدہ instances پھر بھی پیسہ خرچ کرتی ہیں۔ اگر آپ کوئی instance روکتے ہیں، تو آپ compute کے لیے
+  ادائیگی روک دیتے ہیں — لیکن اگر آپ کے پاس اسٹوریج منسلک ہے، تو آپ اس کے لیے پھر بھی ادا کرتے ہیں۔
+
+**EC2 کب استعمال نہ کرنے کا فیصلہ**: EC2 آپ کو زیادہ سے زیادہ کنٹرول دیتا ہے — لیکن کنٹرول کی ایک آپریشنل لاگت ہے۔ ہر EC2 instance جو آپ چلاتے ہیں وہ کچھ ہے جسے آپ کو پیچ، نگرانی، اور بالآخر تبدیل کرنا ہوتا ہے۔ ایسی ایپلیکیشنز کے لیے جو کبھی کبھار چلتی ہیں (Lambda سستا ہے)، ایسی ایپلیکیشنز کے لیے جنہیں درجنوں یا سینکڑوں instances تک افقی طور پر اسکیل کرنے کی ضرورت ہے (containers زیادہ مؤثر ہیں)، یا ڈیٹابیسز اور دیگر managed workloads کے لیے (RDS، ElastiCache)، مکمل طور پر managed سروسز ایک معمولی لاگت پریمیم پر نمایاں آپریشنل overhead کو ختم کرتی ہیں۔ EC2 صحیح انتخاب ہے جب آپ کو وہ کنٹرول چاہیے جو یہ فراہم کرتا ہے — ڈیفالٹ سے نہیں۔
+
+Priya کے پاس ایک قاعدہ تھا: "اگر ہم ایک managed سروس سے خوش ہوتے جو وہ کرتی ہے جس کی ہمیں ضرورت ہے، تو managed سروس استعمال کریں۔ EC2 تب استعمال کریں جب managed اختیار موجود نہ ہو یا فٹ نہ ہو۔"
+
+Leo نے ابتدائی طور پر اس پر اعتراض کیا۔ "لیکن EC2 ہمیں زیادہ اختیارات دیتا ہے۔"
+
+"اختیارات overhead ہیں،" Priya نے کہا۔ "ہمیں ہر اختیار کی ضرورت نہیں۔ ہمیں صحیح کنفیگریشن چاہیے، قابلِ اعتماد طور پر برقرار۔"
+
+**EC2 Placement Groups: کنٹرول کرنا کہ instances کہاں اترتی ہیں**
+
+EC2 آپ کو اس بات پر کنٹرول دیتا ہے کہ آپ کا instance کیا ہے — اس کا سائز، اس کا OS، اس کی کنفیگریشن۔ یہ آپ کو **placement groups** نامی ایک خصوصیت کے ذریعے اس پر محدود کنٹرول بھی دیتا ہے کہ یہ جسمانی طور پر *کہاں* اترتی ہے۔
+
+ڈیفالٹ طور پر، AWS دستیابی کو زیادہ سے زیادہ کرنے کے لیے instances کو جسمانی ہارڈ ویئر میں پھیلاتا ہے۔ لیکن بعض workloads کے لیے، آپ اس ڈیفالٹ کو override کرنا چاہتے ہیں — یا تو instances کو زیادہ قریب لانے کے لیے، یا اس بات کی ضمانت دینے کے لیے کہ وہ دور رہیں۔
+
+تین placement group اقسام:
+
+**Cluster**: instances کو ایک واحد Availability Zone کے اندر قریب پیک کرتا ہے، عام طور پر اسی جسمانی rack یا ملحقہ ہارڈ ویئر پر۔ نتیجہ group میں instances کے درمیان سب سے کم نیٹ ورک latency اور سب سے زیادہ نیٹ ورک throughput ہے — instances کے درمیان 10 Gbps یا اس سے زیادہ کے نیٹ ورک throughput کے ساتھ (اسے Enhanced Networking/ENA سے نہ ملائیں، جو placement groups سے آزاد ایک per-instance نیٹ ورکنگ خصوصیت ہے)۔ یہ HPC (high-performance computing)، بڑے پیمانے پر ML training کے کاموں، اور سختی سے جڑے ہوئے parallel workloads کے لیے انتخاب ہے جہاں instances ایک دوسرے کو ڈیٹا بھیجنے میں کافی وقت گزارتے ہیں۔ ٹریڈ آف دستیابی ہے: اگر بنیادی ہارڈ ویئر سیگمنٹ ناکام ہو جائے، تو cluster میں تمام instances بیک وقت متاثر ہو سکتی ہیں۔
+
+**Partition**: instances کو منطقی partitions میں تقسیم کرتا ہے، جہاں ہر partition اپنے ہارڈ ویئر کے سیٹ پر بیٹھتا ہے — الگ racks، الگ بجلی، الگ نیٹ ورک switches۔ ایک partition کے اندر instances ایک دوسرے کے ساتھ ہارڈ ویئر شیئر کرتی ہیں، لیکن partitions کبھی دوسرے partitions کے ساتھ ہارڈ ویئر شیئر نہیں کرتے۔ یہ ڈیزائن ایک ہارڈ ویئر ناکامی کے blast radius کو محدود کرتا ہے: ایک rack کا نیچے جانا ایک partition کو متاثر کرتا ہے لیکن دوسروں کو نہیں۔ Partition placement groups بڑے تقسیم شدہ اور نقل شدہ workloads کے لیے بنائے گئے ہیں — Apache Hadoop، Apache Cassandra، Apache Kafka — جہاں آپ اتنا fault isolation چاہتے ہیں کہ ایک rack سطح کی ناکامی آپ کے پورے cluster کو نہ گرا دے۔
+
+**Spread**: ہر instance کو مکمل طور پر الگ بنیادی ہارڈ ویئر پر رکھتا ہے۔ instances کے درمیان زیادہ سے زیادہ isolation۔ اگر آپ کے پاس پانچ اہم ایپلیکیشن instances ہیں جنہیں کبھی ایک جسمانی host شیئر نہیں کرنا چاہیے (کیونکہ ایک واحد ہارڈ ویئر ناکامی کو کبھی ایک سے زیادہ کو نہیں گرانا چاہیے)، تو Spread جواب ہے۔ حد: **فی Availability Zone فی placement group 7 instances**۔ Spread ان اہم instances کی چھوٹی تعداد کے لیے ڈیزائن کیا گیا ہے جو co-location برداشت نہیں کر سکتیں، نہ کہ بڑے fleets کے لیے۔
+
+"تو Cluster رفتار کے لیے ہے، Spread isolation کے لیے ہے، اور Partition تقسیم شدہ نظاموں کے لیے ہے جنہیں کچھ clustering اور کچھ isolation دونوں چاہئیں؟" Maya نے پوچھا۔
+
+"کافی قریب،" Priya نے کہا۔ "Cluster: instances کے درمیان کم latency، ایک بڑا خطرہ۔ Spread: زیادہ سے زیادہ isolation، فی AZ سات کی سخت حد۔ Partition: بڑے تقسیم شدہ نظاموں کے لیے منظم isolation — آپ کنٹرول کرتے ہیں کہ ہر instance کس partition میں جائے۔"
+
+Nimbus کے موجودہ آرکیٹیکچر کے لیے، ان میں سے کوئی ابھی لاگو نہیں ہوتا تھا۔ لیکن یہ جاننا کہ وہ موجود ہیں اس کا مطلب تھا یہ جاننا کہ ان کی طرف کب ہاتھ بڑھانا ہے — اور زیادہ فوری طور پر، یہ جاننا کہ "HPC workloads جنہیں کم inter-node latency چاہیے" کے بارے میں ایک امتحانی سوال دراصل کیا پوچھ رہا تھا۔
+
+## خلاصہ
+
+حادثاتی طور پر لانچ کیا گیا instance کبھی production سرور نہیں بننے والا تھا۔ EC2 کو صحیح طور پر سمجھنا نہ صرف صلاحیت کا مسئلہ حل کرتا تھا — اس نے تصورات کا ایک نیا سیٹ متعارف کرایا جو تقریباً ہر بعد کے باب میں آئے گا۔ Instance types، AMIs، key pairs، security groups، اور right-sizing EC2 کی معمولی باتیں نہیں ہیں؛ وہ وہ ذخیرہ الفاظ ہیں جس پر باقی کتاب بنی ہے۔ انہیں یہاں سیکھیں اور باقی سب کچھ زیادہ معنی رکھنے لگے گا۔
+
+- ایک **EC2 instance** ایک ورچوئل مشین ہے جسے آپ AWS میں کرائے پر لیتے ہیں۔ Instance types استعمال کے موقع کے لحاظ سے منظم ہوتی ہیں: general purpose، compute optimized، memory optimized، storage optimized۔ صحیح family چنیں اور اصل workload میٹرکس کے مطابق right-size کریں — نہ کہ تصوراتی بدترین صورت۔
+- ایک **AMI** (Amazon Machine Image) آپ کے instance کے OS اور ابتدائی کنفیگریشن کا template ہے۔ Custom AMIs مستقل، قابلِ تکرار ڈیپلائمنٹس کو ممکن بناتی ہیں۔
+- **Key pairs** EC2 instances تک رسائی کا محفوظ طریقہ ہیں۔ **Security groups** آپ کے instance کا فائر وال ہیں — SSH کو معلوم IPs تک محدود کریں اور ڈیٹابیس ports کو صرف ایپلیکیشن کے security group تک تالا لگائیں۔
+- **IMDSv2** کو تمام instances پر فعال کیا جانا چاہیے تاکہ instance metadata service سے SSRF پر مبنی credential چوری سے بچا جا سکے۔
+- EC2 instances ڈیفالٹ طور پر مستقل نہیں ہوتیں۔ Terminate شدہ instances اپنا مقامی ڈیٹا کھو دیتی ہیں — اہم ڈیٹا S3 یا EBS میں محفوظ کریں، instance ڈسک پر نہیں۔
 
 ## Exam Tips
 
-*SAA-C03 Domain 3 — Task 3.2 (high-performing compute solutions)*
+*SAA-C03 ڈومین 3 — ٹاسک 3.2 (high-performing compute solutions)*
 
-- **EC2 کے لیے Shared Responsibility**: OS patching آپ کی responsibility ہے۔ AWS physical hardware اور hypervisor maintain کرتا ہے۔ یہ distinction exam میں بار بار test ہوتی ہے۔
-- **Scenario questions میں instance families matter کرتی ہیں۔** اگر scenario high memory requirements mention کرتا ہے (in-memory cache، SAP HANA)، answer غالباً memory-optimized instance ہوگا۔ اگر batch processing یا HPC mention ہو، compute-optimized۔
-- **Stopping ≠ Terminating۔** Instance stop کرنے سے وہ preserve رہتی ہے (آپ restart کر سکتے ہیں)۔ Terminate کرنے سے delete ہو جاتی ہے۔ Exam scenarios test کرتے ہیں کہ آپ یہ distinction جانتے ہیں یا نہیں۔
-- **Restart پر public IP بدل جاتا ہے۔** اگر application کو stable IP address چاہیے، **Elastic IP** استعمال کریں — static public IP جو آپ کے account سے associated رہتا ہے۔ اگر آپ ایک allocate کریں اور use نہ کریں تو یہ money cost کرتا ہے۔
-- **On-Demand، Reserved، اور Spot** pricing models Domain 4 میں heavily test ہوتے ہیں۔ ہم انہیں Chapter 27 میں cover کرتے ہیں۔ ابھی کے لیے، جانیں کہ On-Demand کا مطلب no commitment کے ساتھ per-second pay کرنا ہے۔
+- **EC2 کے لیے Shared Responsibility**: آپ OS کو پیچ کرنے کے ذمہ دار ہیں۔ AWS جسمانی ہارڈ ویئر اور hypervisor برقرار رکھتا ہے۔ یہ امتیاز بار بار آزمایا جاتا ہے۔
+- **منظر نامے کے سوالات کے لیے instance families اہم ہیں۔** اگر کوئی منظر نامہ زیادہ میموری کی ضروریات کا ذکر کرے (in-memory cache، SAP HANA)، تو جواب غالباً ایک memory-optimized instance شامل کرے گا۔ اگر یہ batch processing یا HPC کا ذکر کرے، compute-optimized۔
+- **Stopping ≠ Terminating۔** ایک instance روکنا اسے محفوظ رکھتا ہے (آپ دوبارہ شروع کر سکتے ہیں)۔ Terminate کرنا اسے حذف کرتا ہے۔ امتحانی منظر نامے آزماتے ہیں کہ آیا آپ یہ امتیاز جانتے ہیں۔
+- **دوبارہ شروع ہونے پر Public IP بدل جاتا ہے۔** اگر آپ کی ایپلیکیشن کو ایک مستحکم IP پتہ چاہیے، تو ایک **Elastic IP** استعمال کریں — ایک static public IP جو آپ کے اکاؤنٹ سے وابستہ رہتا ہے۔ فروری 2024 سے، AWS ہر public IPv4 پتے کو گھنٹہ وار bill کرتا ہے — Elastic IPs (منسلک ہوں یا نہ ہوں) اور خودکار طور پر تفویض کردہ public IPs دونوں۔
+- **On-Demand، Reserved، اور Spot** pricing ماڈلز ڈومین 4 میں بھرپور طریقے سے آزمائے جاتے ہیں۔ ہم انہیں باب 27 میں کور کرتے ہیں۔ ابھی کے لیے، جانیں کہ On-Demand کا مطلب کسی عہد کے بغیر فی سیکنڈ ادائیگی کرنا ہے۔
+- **Security groups stateful ہیں۔** اگر آپ کسی port پر inbound ٹریفک کی اجازت دیتے ہیں، تو واپسی کی ٹریفک خودکار طور پر کسی واضح outbound قاعدے کے بغیر اجازت دی جاتی ہے۔ NACLs (باب 15 میں کور کیے گئے) stateless ہیں — انہیں inbound اور outbound دونوں قواعد درکار ہوتے ہیں۔
+- **Placement Groups:** Cluster = instances کے درمیان سب سے کم latency (HPC، ML training — لیکن group کے لیے single-point-of-failure خطرہ)؛ Partition = تقسیم شدہ نظام (Hadoop، Kafka، Cassandra) فی partition failure isolation کے ساتھ؛ Spread = زیادہ سے زیادہ instance isolation، فی AZ زیادہ سے زیادہ 7۔ امتحانی سوال کا پیٹرن: "سختی سے جڑے ہوئے HPC workload کو nodes کے درمیان زیادہ سے زیادہ نیٹ ورک throughput چاہیے" → Cluster placement group۔
 
-## Exercises
+## مشقیں
 
-**Exercise 1 — Recall**
+**مشق 1 — یاد کریں**
 
-اپنے الفاظ میں: EC2 instance کیا ہے؟ AMI کیا ہے؟ ان کے درمیان relationship کیا ہے؟
+اپنے الفاظ میں: EC2 instance کیا ہے؟ AMI کیا ہے؟ ان کے درمیان کیا تعلق ہے؟
 
-*(Hint: recipe analogy کے بارے میں سوچیں — recipe کیا ہے، اور meal کیا ہے؟)*
+*(اشارہ: recipe کی تشبیہ کے بارے میں سوچیں — recipe کیا ہے، اور کھانا کیا ہے؟)*
 
-**Exercise 2 — Exam Practice**
+**مشق 2 — SAA-C03 منظر نامہ**
 
-*Scenario*: ایک company high-traffic web application deploy کر رہی ہے۔ Application product catalog searches handle کرتی ہے جن میں complex filtering logic ہے جو CPU-intensive ہے۔ Team sale events کے دوران significant traffic spikes expect کرتی ہے۔ وہ ensure کرنا چاہتے ہیں کہ وہ صحیح EC2 instance type چنیں اور traffic surges کے لیے تیار رہیں۔
+*منظر نامہ*: ایک کمپنی ایک high-traffic ویب ایپلیکیشن deploy کر رہی ہے۔ ایپلیکیشن product catalog searches سنبھالتی ہے جن میں پیچیدہ filtering logic ہے جو CPU-intensive ہے۔ ٹیم sale events کے دوران نمایاں traffic spikes کی توقع رکھتی ہے۔ وہ یقینی بنانا چاہتے ہیں کہ وہ صحیح EC2 instance type چنیں اور traffic surges کے لیے تیار ہوں۔
 
-کون سی choices کی combination ان requirements کو BEST meet کرتی ہے؟
+کون سی choices کی combination ان کی ضروریات کو **بہترین** طریقے سے پورا کرتی ہے؟
 
-A) Consistent performance ensure کرنے کے لیے fixed number کے ساتھ memory-optimized instances  
-B) Traffic spikes handle کرنے کے لیے Auto Scaling کے ساتھ compute-optimized instances  
+A) مستقل کارکردگی یقینی بنانے کے لیے fixed تعداد کے ساتھ memory-optimized instances  
+B) traffic spikes سنبھالنے کے لیے Auto Scaling کے ساتھ compute-optimized instances  
 C) ایک single large instance size کے ساتھ general-purpose instances  
 D) Storage-optimized instances کیونکہ product catalog کو fast disk access چاہیے
 
-**Hint 1**: Workload کو "CPU-intensive" describe کیا گیا ہے۔ کون سی instance family CPU کے لیے optimized ہے؟
+**اشارہ 1**: workload کو "CPU-intensive" بیان کیا گیا ہے۔ کون سی instance family CPU کے لیے optimized ہے؟
 
-**Hint 2**: Scenario "sale events کے دوران traffic spikes" mention کرتا ہے۔ Fixed number of instances variable traffic efficiently handle نہیں کرے گا۔ کون سا AWS feature یہ handle کرتا ہے؟
+**اشارہ 2**: منظر نامہ "sale events کے دوران traffic spikes" کا ذکر کرتا ہے۔ instances کی fixed تعداد متغیر traffic کو مؤثر طریقے سے نہیں سنبھالے گی۔ کون سا AWS feature یہ سنبھالتا ہے؟
 
-**Hint 3**: Compute-optimized instances CPU-heavy work handle کرتی ہیں۔ Auto Scaling demand کے حساب سے instances add اور remove کرتا ہے۔ Together یہ دونوں requirements کا answer دیتے ہیں۔
+**اشارہ 3**: Compute-optimized instances CPU-heavy کام سنبھالتی ہیں۔ Auto Scaling مانگ کے مطابق instances شامل اور ہٹاتا ہے۔ ساتھ مل کر یہ دونوں ضروریات کا جواب دیتے ہیں۔
 
-**Answer**: B
+**جواب**: B
 
-**Explanation**: Compute-optimized instances (جیسے `c` family) CPU-intensive workloads کے لیے per dollar زیادہ CPU provide کرتی ہیں۔ Auto Scaling load کے حساب سے instances کی تعداد automatically adjust کرتا ہے — sale events کے دوران instances add کرتا ہے، traffic normal ہونے پر remove کرتا ہے۔ یہ combination performance اور cost دونوں optimize کرتی ہے۔
+**وضاحت**: Compute-optimized instances (جیسے `c` family) CPU-intensive workloads کے لیے فی ڈالر زیادہ CPU فراہم کرتی ہیں۔ Auto Scaling load کے مطابق instances کی تعداد خودکار طور پر ایڈجسٹ کرتا ہے — sale events کے دوران instances شامل کرتا ہے، traffic معمول پر آنے پر انہیں ہٹاتا ہے۔ یہ combination کارکردگی اور لاگت دونوں کو optimize کرتی ہے۔
 
-**Why not A?** Memory-optimized instances ان workloads کے لیے design ہوتی ہیں جنہیں large amounts of RAM چاہیے (databases، in-memory caches)۔ یہ CPU-bound workload ہے۔ اور fixed instance counts کا مطلب یا over-provisioning (waste) یا under-provisioning (failure) ہے۔
+**A کیوں نہیں؟** Memory-optimized instances ان workloads کے لیے ڈیزائن کی جاتی ہیں جنہیں بڑی مقدار میں RAM چاہیے (ڈیٹابیسز، in-memory caches)۔ یہ ایک CPU-bound workload ہے۔ اور instances کی fixed تعداد کا مطلب یا تو over-provisioning (ضیاع) یا under-provisioning (ناکامی) ہے۔
 
-**Why not C?** General-purpose instances balance کے لیے کچھ CPU efficiency trade کرتی ہیں۔ Known CPU-intensive workload کے لیے compute-optimized زیادہ appropriate ہے۔ اور single large instance single point of failure ہے۔
+**C کیوں نہیں؟** General-purpose instances توازن کے لیے کچھ CPU efficiency کی قربانی دیتی ہیں۔ ایک معلوم CPU-intensive workload کے لیے، compute-optimized زیادہ مناسب ہے۔ اور ایک single large instance ایک single point of failure ہے۔
 
-**Why not D?** Bottleneck CPU ہے، disk I/O نہیں۔ Storage-optimized instances ان workloads کے لیے design ہوتی ہیں جنہیں local storage تک بہت high throughput چاہیے۔
+**D کیوں نہیں؟** bottleneck CPU ہے، disk I/O نہیں۔ Storage-optimized instances ان workloads کے لیے ڈیزائن کی جاتی ہیں جنہیں مقامی اسٹوریج تک بہت زیادہ throughput چاہیے۔
 
-*SAA-C03 Domain 3 — Task 3.2*
+*SAA-C03 ڈومین 3 — ٹاسک 3.2*
 
-**Exercise 3 — Architecture Challenge** *(Optional)*
+**مشق 3 — آرکیٹیکچر چیلنج** *(اختیاری)*
 
-Nimbus فی الحال پوری application کے لیے ایک single `t3.micro` EC2 instance چلا رہا ہے۔ Team کو decide کرنا ہے: larger instance (`t3.2xlarge`) پر upgrade کریں یا load balancer کے پیچھے مزید `t3.micro` instances add کریں؟
+Nimbus فی الحال پوری ایپلیکیشن کے لیے ایک واحد `t3.micro` EC2 instance چلاتا ہے۔ ٹیم کو فیصلہ کرنا ہے: ایک بڑے instance (`t3.2xlarge`) پر اپ گریڈ کریں یا load balancer کے پیچھے مزید `t3.micro` instances شامل کریں؟
 
-Trade-offs walk through کریں۔ ہر approach کے advantages کیا ہیں؟ Decide کرنے کے لیے آپ کون سے questions پوچھیں گے؟ (Hint: single points of failure، cost، deployment complexity، اور maintenance کے دوران کیا ہوتا ہے، ان کے بارے میں سوچیں۔)
+ٹریڈ آفس سے گزریں۔ ہر نقطہ نظر کے فوائد کیا ہیں؟ فیصلہ کرنے کے لیے آپ کون سے سوالات پوچھیں گے؟ (اشارہ: single points of failure، لاگت، ڈیپلائمنٹ کی پیچیدگی، اور دیکھ بھال کے دوران کیا ہوتا ہے، کے بارے میں سوچیں۔)
 
-*(کوئی ایک correct answer نہیں ہے۔ یہ vertical vs. horizontal scaling کے بارے میں reasoning ہے۔)*
+*(کوئی واحد درست جواب نہیں ہے۔ یہ vertical بمقابلہ horizontal scaling کے بارے میں استدلال کرنے کے بارے میں ہے۔)*
 
-## Post-Credits Scene
+## پوسٹ کریڈٹس سین
 
-Leo نے دوپہر server resize کرنے میں گزاری۔ وہ `t3.micro` سے `t3.large` پر گیا۔ CPU 30% تک گر گیا۔ Pages ایک second سے کم میں load ہونے لگے۔
+Leo نے دوپہر downsize کرنے میں گزاری۔ وہ `t3.large` سے `t3.small` پر گیا، اس right-sizing ڈیٹا کا استعمال کرتے ہوئے جو Tom نے CloudWatch سے جمع کیا تھا۔ CPU عام load کے دوران تقریباً 12% پر جم گیا۔ صفحات ایک سیکنڈ سے کم میں لوڈ ہوئے۔
 
-Tom نے AWS bill کو real time میں update ہوتے دیکھا۔ نئی instance per hour چار گنا زیادہ cost کر رہی تھی۔ اس نے note بنا لیا۔
+Tom نے AWS بل کو ریئل ٹائم میں اپڈیٹ ہوتے دیکھا۔ t3.small پھر بھی فی گھنٹہ اصل micro سے تقریباً دوگنا پڑتی تھی — لیکن اس t3.large کا ایک تہائی جس کے لیے وہ زیادہ ادائیگی کر رہے تھے۔ اس نے ایک نوٹ بنایا: *پچھلی t3.large کے مقابلے $40/ماہ بچائے۔ صحیح فیصلہ۔*
 
-Maya اپنی screen پر کچھ اور دیکھ رہی تھی۔
+Maya اپنی اسکرین پر کچھ اور دیکھ رہی تھی۔
 
-"Leo،" اس نے کہا۔ "جب تم instance resize کر رہے تھے، website بارہ minutes کے لیے down تھی۔"
+"Leo،" اس نے کہا۔ "جب تم instance resize کر رہے تھے، ویب سائٹ بارہ منٹ کے لیے down تھی۔"
 
 Leo نے نظر اٹھائی۔
 
-"ہمارے پاس two hundred unfulfilled orders کی queue تھی۔"
+"ہمارے پاس دو سو غیر تکمیل شدہ آرڈرز کی ایک queue تھی۔"
 
-اس نے screen کو دیکھا۔ پھر ceiling کو۔ پھر دوبارہ screen کو۔
+اس نے اسکرین دیکھی۔ پھر چھت۔ پھر دوبارہ اسکرین۔
 
-"ہمیں اپنی images کے لیے کچھ چاہیے،" اس نے topic تھوڑا سا بدلتے ہوئے کہا۔ "ابھی uploaded menu photos directly server پر save ہوتی ہیں۔ اگر ہم instance resize یا restart کریں، کیا ہم انہیں کھو دیتے ہیں؟"
+"ہمیں اپنی images کے لیے کچھ چاہیے،" اس نے موضوع تھوڑا سا بدلتے ہوئے کہا۔ "ابھی، اپ لوڈ کی گئی مینو تصاویر براہِ راست سرور پر محفوظ ہوتی ہیں۔ اگر ہم instance resize یا دوبارہ شروع کریں، کیا ہم انہیں کھو دیتے ہیں؟"
 
 Priya کو جواب پہلے ہی معلوم تھا۔
 
-اگلے chapter میں: files کہاں رہتی ہیں جب point کرنے کے لیے hard drive نہ ہو۔
+اگلے باب میں: فائلیں کہاں رہتی ہیں جب اشارہ کرنے کے لیے کوئی ہارڈ ڈرائیو نہ ہو۔

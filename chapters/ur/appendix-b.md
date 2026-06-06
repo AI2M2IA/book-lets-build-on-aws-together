@@ -1,328 +1,363 @@
-# الملاحق ب: خريطة المجال SAA-C03
+# ضمیمہ B: SAA-C03 ڈومین نقشہ
 
-امتحان مهندس معماري حلول AWS المساعد (SAA-C03) مُنظم في أربعة مجالات. هذه الملاحق تُخرِج كل فصل في الكتاب إلى المجال ذي الصلة ومهمة، حتى تتمكن من الدراسة حسب منطقة الامتحان بدلاً من ترتيب الفصول.
-
----
-
-## نظرة عامة على المجال
-
-| المجال                                          | الوزن  | الوصف                                                              |
-|-------------------------------------------------|--------|------------------------------------------------------------------|
-| المجال 1: تصميم معماريات آمنة                   | 30%    | IAM، أمن الشبكة، حماية البيانات                                      |
-| المجال 2: تصميم معماريات مرنة                   | 26%    | التوفر العالي، تحمل الأخطاء، استعادة الكوارث                           |
-| المجال 3: تصميم معماريات عالية الأداء            | 24%    | الحوسبة، التخزين، قواعد البيانات، أداء الشبكة                       |
-| المجال 4: تصميم معماريات مُحسّنة التكلفة           | 20%    | نماذج التسعير، إدارة التكاليف، تحسين الموارد                         |
+AWS Solutions Architect Associate امتحان (SAA-C03) چار ڈومینز میں منظم ہے۔ یہ ضمیمہ کتاب کے ہر باب کو متعلقہ ڈومین اور task سے جوڑتا ہے، تاکہ آپ باب کی ترتیب کے بجائے امتحانی شعبے کے لحاظ سے مطالعہ کر سکیں۔
 
 ---
 
-## المجال 1: تصميم معماريات آمنة (30%)
+## ڈومین کا جائزہ
 
-**المهمة 1.1 — تصميم الوصول الآمن إلى موارد AWS**
-
-المفاهيم الأساسية: مستخدمو IAM، المجموعات، الأدوار، السياسات. مبدأ الامتياز الأقل. الوصول بين الحسابات. أدوار الخدمات. سياسات التحكم في الخدمات (SCPs) في AWS Organizations.
-
-| الفصل    | الموضوع                                                              |
-|------------|--------------------------------------------------------------------|
-| الفصل 3  | أساسيات IAM: المستخدمون، المجموعات، الأدوار، السياسات، تقييم السياسات |
-| الفصل 14 | IAM المتقدم: الأدوار للخدمات، حدود التصاريح، الوصول بين الحسابات |
-| الفصل 3  | منطق تقييم السياسات: رفض صريح > السماح صريح > رفض ضمني          |
-| الفصل 14 | AWS Organizations و SCPs                                           |
-
-أنماط الاختبار الرئيسية:
-
-- "يحتاج EC2 إلى الوصول إلى S3 بدون بيانات اعتماد مُخزنة" → دور IAM مع سياسة S3 مُرفقة بملف تعريف EC2
-- "تحتاج الحسابات المختلفة إلى مشاركة الموارد" → دور IAM مع سياسة ثقة بين الحسابات
-- "منع جميع مستخدمي IAM في وحدة تنظيمية (OU) من الوصول إلى خدمة" → SCP في AWS Organizations
+| ڈومین                                          | وزن    | تفصیل                                                   |
+|------------------------------------------------|--------|--------------------------------------------------------|
+| ڈومین 1: محفوظ فن تعمیر ڈیزائن کرنا            | 30%    | IAM، نیٹ ورک سیکیورٹی، ڈیٹا تحفظ                        |
+| ڈومین 2: مضبوط فن تعمیر ڈیزائن کرنا            | 26%    | اعلیٰ دستیابی، fault tolerance، آفات سے بحالی           |
+| ڈومین 3: اعلیٰ کارکردگی والے فن تعمیر ڈیزائن کرنا | 24%    | کمپیوٹ، اسٹوریج، ڈیٹابیس، نیٹ ورک کارکردگی              |
+| ڈومین 4: لاگت کے لحاظ سے بہتر فن تعمیر ڈیزائن کرنا | 20%    | قیمتوں کے ماڈلز، لاگت کا انتظام، وسائل کی اصلاح          |
 
 ---
 
-**المهمة 1.2 — تصميم أحمال العمل والتطبيقات الآمنة**
+## ڈومین 1: محفوظ فن تعمیر ڈیزائن کرنا (30%)
 
-المفاهيم الأساسية: تصميم VPC، مجموعات الأمان مقابل NACLs، عزل الشبكة، حماية DDoS، WAF، GuardDuty.
+**Task 1.1 — AWS وسائل تک محفوظ رسائی ڈیزائن کرنا**
 
-| الفصل    | الموضوع                                                                              |
-|------------|------------------------------------------------------------------------------------|
-| الفصل 11 | تصميم VPC: الشبكات الفرعية العامة/الخاصة، بوابة NAT، الإنترنت، جداول التوجيه    |
-| الفصل 15 | مجموعات الأمان (حالة كاملة، مستوى المثيل) مقابل NACLs (غير حالة كاملة، مستوى الشبكة الفرعية) |
-| الفصل 17 | Shield (حماية DDoS)، WAF (جدار حماية التطبيقات)، GuardDuty (اكتشاف التهديدات) |
-| الفصل 25 | Direct Connect، VPN، Transit Gateway، PrivateLink                                  |
+بنیادی تصورات: IAM users، groups، roles، policies۔ Least privilege کا اصول۔ Cross-account رسائی۔ Service roles۔ AWS Organizations میں SCP (Service Control Policies)۔
 
-أنماط الاختبار الرئيسية:
+| باب        | موضوع                                                                         |
+|------------|------------------------------------------------------------------------------|
+| باب 3      | IAM بنیادیات: users، groups، roles، policies، policy evaluation                |
+| باب 14     | IAM اعلیٰ: خدمات کے لیے roles، permission boundaries، cross-account roles      |
+| باب 3      | Policy evaluation منطق: explicit deny > explicit allow > implicit deny         |
+| باب 14     | AWS Organizations، SCPs، Control Tower، Account Factory                       |
+| باب 14     | Cognito: User Pools (ایپ sign-in، JWTs) اور Identity Pools (عارضی AWS credentials) |
 
-- "حظر عنوان IP محدد من الشبكة الفرعية" → قاعدة رفض NACL
-- "السماح بـ HTTP داخل، السماح بـ HTTP استجابة تلقائيًا خارج" → مجموعة الأمان (حالة كاملة)
-- "حماية تطبيق الويب من حقن SQL" → WAF مع قاعدة حقن SQL
-- "اكتشاف بيانات اعتماد IAM المخترقة" → GuardDuty
+اہم امتحانی patterns:
+
+- "EC2 کو hardcoded credentials کے بغیر S3 تک رسائی درکار" → EC2 instance profile سے منسلک S3 policy کے ساتھ IAM role
+- "مختلف accounts کو وسائل شیئر کرنے کی ضرورت" → cross-account trust policy کے ساتھ IAM role
+- "کسی OU میں تمام IAM users کو کسی خدمت تک رسائی سے روکنا" → AWS Organizations میں SCP
 
 ---
 
-**المهمة 1.3 — تحديد ضوابط أمان البيانات المناسبة**
+**Task 1.2 — محفوظ workloads اور ایپلیکیشنز ڈیزائن کرنا**
 
-المفاهيم الأساسية: التشفير أثناء الراحة وأثناء النقل، KMS، Secrets Manager، Parameter Store، تشفير S3 من جانب الخادم.
+بنیادی تصورات: VPC ڈیزائن، security groups بمقابلہ NACLs، نیٹ ورک isolation، DDoS تحفظ، WAF، GuardDuty۔
 
-| الفصل    | الموضوع                                                                    |
+| باب        | موضوع                                                                                       |
+|------------|--------------------------------------------------------------------------------------------|
+| باب 11     | VPC ڈیزائن: public/private subnets، NAT Gateway، Internet Gateway، route tables             |
+| باب 15     | Security groups (stateful، instance کی سطح) بمقابلہ NACLs (stateless، subnet کی سطح)         |
+| باب 17     | Shield (DDoS)، WAF (ایپ firewall)، GuardDuty (خطرے کی نشاندہی)، Inspector (CVE اسکیننگ)     |
+| باب 17     | Macie: S3 میں حساس ڈیٹا کی دریافت (PII، credentials)                                        |
+| باب 25     | Direct Connect، VPN، Transit Gateway، PrivateLink                                          |
+
+اہم امتحانی patterns:
+
+- "subnet سے کسی مخصوص IP کو بلاک کرنا" → NACL deny rule
+- "HTTP اندر آنے دینا، HTTP جواب کو خودکار طور پر باہر جانے دینا" → Security group (stateful)
+- "ویب ایپلیکیشن کو SQL injection سے بچانا" → SQL injection rule کے ساتھ WAF
+- "خراب IAM credentials کا پتہ لگانا" → GuardDuty
+
+---
+
+**Task 1.3 — مناسب ڈیٹا سیکیورٹی کنٹرولز کا تعین کرنا**
+
+بنیادی تصورات: at rest اور in transit encryption، KMS، Secrets Manager، Parameter Store، S3 server-side encryption۔
+
+| باب        | موضوع                                                                     |
 |------------|--------------------------------------------------------------------------|
-| الفصل 16 | KMS: المفاتيح المُدارة من قبل العميل، تدوير المفاتيح، التشفير بالغطاء            |
-| الفصل 16 | Secrets Manager: تدوير بيانات الاعتماد التلقائي، استرداد البيانات السرية في وقت التشغيل |
-| الفصل 5  | خيارات تشفير S3: SSE-S3، SSE-KMS، SSE-C                               |
-| الفصل 8  | تشفير البيانات أثناء الراحة في RDS (يجب تمكينه عند الإنشاء)                     |
+| باب 16     | KMS: customer-managed keys، key rotation، envelope encryption             |
+| باب 16     | Secrets Manager: خودکار credential rotation، runtime secret retrieval     |
+| باب 16     | ACM (AWS Certificate Manager): ALB، CloudFront کے لیے SSL/TLS certificates |
+| باب 5      | S3 encryption اختیارات: SSE-S3، SSE-KMS، SSE-C                            |
+| باب 8      | RDS at rest encryption (تخلیق کے وقت فعال کرنا ضروری)                      |
 
-أنماط الاختبار الرئيسية:
+اہم امتحانی patterns:
 
-- "تدوير بيانات اعتماد قاعدة البيانات تلقائيًا" → Secrets Manager مع تكامل RDS
-- "التحكم في من يمكنه استخدام مفاتيح التشفير عبر الحسابات" → سياسة مفتاح KMS
-- "تخزين القيم غير السرية لتهيئة الإعداد" → SSM Parameter Store (وليس Secrets Manager)
-- "تشفير كائنات S3 باستخدام مفاتيح مُدارة من قبل الشركة" → SSE-KMS مع CMK
-
----
-
-## المجال 2: تصميم معماريات مرنة (26%)
-
-**المهمة 2.1 — تصميم معماريات قابلة للتطوير وغير مرتبطة بشكل وثيق**
-
-المفاهيم الأساسية: التوسع التلقائي، موازنات التحميل، SQS/SNS فك الارتباط، Lambda مثيرات الأحداث، ECS/EKS، Step Functions.
-
-| Chapter    | Topic                                                              |
-|------------|--------------------------------------------------------------------|
-| Chapter 7  | گروپس (Auto Scaling Groups)، بار لود بائلینسر (Application Load Balancer)، سیاست‌های مقیاس‌بندی (scaling policies) |
-| Chapter 19 | کیو‌اس (SQS) (ترتیب‌بندی با صف‌ها)، این‌اس (SNS) (اطلاع‌رسانی پخش‌شده) |
-| Chapter 20 | لامبدا (Lambda): محاسبات بدون سرور، محرک‌های رویداد، همزمانی (concurrency) |
-| Chapter 21 | ای‌سی‌اس (ECS) و ای‌کی‌اس (EKS): خدمات میکروسرویس‌های کانتینری‌شده (containerized microservices) |
-| Chapter 22 | استپ فنکشنز (Step Functions): هماهنگ‌سازی گردش کار (workflow orchestration) |
-| Chapter 26 | کی‌نی‌س (Kinesis): جریان داده‌های بلادرنگ (real-time data streaming) |
+- "ڈیٹابیس credentials کو خودکار طور پر rotate کرنا" → RDS انضمام کے ساتھ Secrets Manager
+- "کنٹرول کرنا کہ accounts میں کون encryption keys استعمال کر سکتا ہے" → KMS key policy
+- "غیر خفیہ configuration اقدار محفوظ کرنا" → SSM Parameter Store (Secrets Manager نہیں)
+- "کمپنی کے زیر انتظام keys کے ساتھ S3 objects encrypt کرنا" → CMK کے ساتھ SSE-KMS
 
 ---
 
-**ملازمه‌ی آزمایشی 2.2 — طراحی معماری‌های با قابلیت اطمینان بالا و/یا تحمل خطا**
+## ڈومین 2: مضبوط فن تعمیر ڈیزائن کرنا (26%)
 
-مفاهیم اصلی: چند منطقه (Multi-AZ)، چند منطقه (Multi-Region)، Route 53 انتقال، نسخه‌های خواندنی RDS، پایگاه داده Aurora جهانی (Aurora Global Database)، پشتیبان‌گیری و بازیابی.
+**Task 2.1 — قابل اسکیل اور ڈھیلے سے منسلک فن تعمیر ڈیزائن کرنا**
 
-| Chapter    | Topic                                                                                        |
-|------------|----------------------------------------------------------------------------------------------|
-| Chapter 2  | زیرساخت جهانی AWS: مناطق (Regions)، مناطق زیست‌محیطی (AZs)، مکان‌های لبه (edge locations) |
-| Chapter 7  | ALB در چندین منطقه زیست‌محیطی (AZs)، ASG جایگزینی نمونه‌های نامناسب (unhealthy instances) |
-| Chapter 8  | RDS چند منطقه زیست‌محیطی (Multi-AZ): همگام‌سازی همزمان (synchronous replication)، انتقال خودکار (automatic failover) |
-| Chapter 12 | Route 53: انتقال مسیریابی (failover routing)، مسیریابی تاخیر (latency routing)، بررسی سلامت (health checks) |
-| Chapter 18 | چند منطقه زیست‌محیطی در مقابل چند منطقه (Multi-Region): RTO/RPO، استراتژی‌های DR (Pilot Light، Standby گرم، فعال-فعال) |
-| Chapter 24 | پایگاه داده Aurora جهانی (Aurora Global Database): نسخه‌های خواندنی در منطقه دیگر (cross-region read replicas)، تاخیر همگام‌سازی کمتر از 1 ثانیه (replication lag) |
+بنیادی تصورات: Auto Scaling، load balancers، SQS/SNS decoupling، Lambda event triggers، ECS/EKS، Step Functions۔
 
-ملازمه‌ی آزمایشی آزمایشی:
-
-- "انتقال خودکار در صورت خرابی RDS اصلی" → RDS چند منطقه زیست‌محیطی (Multi-AZ) (نه نسخه‌های خواندنی)
-- "ارائه خواندن‌ها با تاخیر کم در سراسر جهان" → پایگاه داده Aurora جهانی (Aurora Global Database)
-- "مسیر ترافیک به منطقه ثانویه در صورت عدم دسترسی منطقه اصلی" → Route 53 با مسیریابی انتقال (Failover routing) + بررسی سلامت (health checks)
-- "RTO 1 دقیقه، RPO 0" → استقرار چند منطقه زیست‌محیطی (Multi-AZ) (نه چند منطقه)
-- "RTO 15 دقیقه، چند منطقه" → استراتژی Pilot Light
-
----
-
-**دامنه 3: طراحی معماری‌های با کارایی بالا (24%)**
-
-**وظیفه 3.1 — تعیین راه‌حل‌های ذخیره‌سازی با کارایی بالا و/یا مقیاس‌پذیر**
-
-مفاهیم اصلی: S3 در مقابل EBS در مقابل EFS، انتخاب کلاس ذخیره‌سازی، تسریع S3 (S3 Transfer Acceleration)، بارگذاری چند قسمتی (multipart upload)، CloudFront برای دارایی‌ها (assets).
-
-| Chapter    | Topic                                                              |
-|------------|--------------------------------------------------------------------|
-| Chapter 5  | S3: ذخیره‌سازی اشیاء (object storage)، کلاس‌های ذخیره‌سازی (storage classes)، نسخه‌بندی (versioning)، چرخه عمر (lifecycle) |
-| Chapter 6  | EBS: انواع ذخیره‌سازی بلوکی (gp3، io2، st1)، EFS: ذخیره‌سازی فایل‌های مشترک (shared file storage) |
-| Chapter 23 | انتقال کلاس‌های ذخیره‌سازی S3 (S3 storage class transitions)، گزینه‌های بازیابی Glacier (Glacier retrieval options) |
-| Chapter 28 | اندازه EBS مناسب (EBS right-sizing)، مهاجرت gp2→gp3، مدیریت اسنپ‌شات (snapshot management) |
-
-ملازمه‌ی آزمایشی آزمایشی:
-
-- "سیستم فایل مشترک قابل دسترسی از چندین نمونه EC2" → EFS (نه EBS، EBS به یک نمونه متصل می‌شود)
-- "IOPS بالا برای بار کاری پایگاه داده" → EBS io2
-- "کاهش هزینه برای فایل‌هایی که در 90 روز استفاده نمی‌شوند" → سیاست چرخه عمر S3 → Glacier
-- "بارگذاری سریع‌تر فایل‌های بزرگ از مکان‌های دورتر" → تسریع S3 (S3 Transfer Acceleration)
-
----
-
-**وظیفه 3.2 — تعیین راه‌حل‌های محاسباتی با کارایی بالا و/یا مقیاس‌پذیر**
-
-مفاهیم اصلی: انواع نمونه‌های EC2، پردازنده‌های Graviton، Auto Scaling، لامبدا (Lambda)، Fargate، نمونه‌های Spot (Spot Instances).
-
-| Chapter    | Topic                                                                                   |
-|------------|-----------------------------------------------------------------------------------------|
-| Chapter 4  | انواع نمونه‌های EC2: بهینه‌سازی محاسبات (c)، بهینه‌سازی حافظه (r)، عمومی هدف (m، t) |
-| Chapter 7  | Auto Scaling: مقیاس‌بندی افقی برای لایه‌های وب (horizontal scaling for web tiers) |
-| Chapter 20 | لامبدا (Lambda): همزمانی (concurrency)، همزمانی پیش‌بینی‌شده (provisioned concurrency) (برای تاخیر ثابت) |
-| Chapter 21 | ECS Fargate: کانتینرهای بدون سرور (serverless containers) |
-| Chapter 27 | نمونه‌های Spot برای بار کاری دسته‌ای بی‌نظم (fault-tolerant batch workloads) |
-
-ملازمه‌ی آزمایشی آزمایشی:
-
-- "بار کاری آموزش ماشین (ML)، حداقل‌سازی هزینه، می‌تواند قطع شود" → نمونه‌های Spot
-- "پاسخ‌گویی ثابت لامبدا با زیر 100 میلی‌ثانیه" → همزمانی پیش‌بینی‌شده (Provisioned concurrency) (حذف می‌کند cold start)
-- "خدمت میکروسرویس کانتینری، بدون مدیریت زیرساخت" → ECS Fargate
-
-| Chapter    | Topic                                                              |
-|------------|--------------------------------------------------------------------|
-| Chapter 8  | RDS: managed relational databases, when to use RDBMS               |
-| Chapter 9  | DynamoDB: NoSQL، partitions keys، GSI، DAX (in-memory cache)        |
-| Chapter 10 | ElastiCache: Redis vs. Memcached، cache strategies                 |
-| Chapter 24 | Aurora: performance، Serverless v2، read replicas، Global Database |
-| Chapter 29 | DynamoDB on-demand vs. provisioned capacity with Auto Scaling      |
-
-Key exam patterns:
-
-- "Microsecond reads for a session store" → ElastiCache Redis أو DAX (إذا كان backend DynamoDB)
-- "High-throughput key-value access with flexible schema" → DynamoDB
-- "Complex joins and ACID transactions" → Aurora أو RDS
-- "Analytics on petabytes of structured data" → Redshift (ليس مفصلًا ولكن إشارة: "مخزن بيانات" → Redshift)
-
----
-
-**Task 3.4 — تحديد بنيات شبكات عالية الأداء و/أو قابلة للتطوير**
-
-المفاهيم الأساسية: CloudFront، Global Accelerator، Direct Connect، VPN، مجموعات التوزيع، شبكات محسنة.
-
-| Chapter    | Topic                                                            |
+| باب        | موضوع                                                             |
 |------------|------------------------------------------------------------------|
-| Chapter 12 | Route 53: سياسات التوجيه: قائمة الانتظار القائمة على التأخير، الموقع الجغرافي، الموزونة |
-| Chapter 13 | CloudFront: CDN، التخزين الحافة، Lambda@Edge                       |
-| Chapter 25 | Direct Connect: اتصال خاص مخصص                                  |
-| Chapter 25 | AWS Global Accelerator: التوجيه غير الموجه إلى أقرب حافة AWS       |
-| Chapter 30 | VPC Endpoints: اتصال خاص بخدمات AWS                             |
+| باب 7      | Auto Scaling Groups، Application Load Balancer، scaling policies   |
+| باب 19     | SQS (queues کے ساتھ decoupling)، SNS (fan-out notifications)       |
+| باب 20     | Lambda: serverless کمپیوٹ، event triggers، concurrency             |
+| باب 20     | API Gateway: منظم REST/HTTP/WebSocket APIs، اکیلے یا + Lambda      |
+| باب 21     | ECS اور EKS: containerized microservices                          |
+| باب 22     | Step Functions: workflow orchestration                            |
+| باب 26     | Kinesis: حقیقی وقت کی ڈیٹا streaming                              |
 
-Key exam patterns:
+اہم امتحانی patterns:
 
-- "تقليل التأخير للمستخدمين العالميين الذين يصلون إلى استجابات API الديناميكية" → Global Accelerator (وليس CloudFront، وهو الأفضل للمحتوى القابل للتخزين المؤقت)
-- "تقليل التأخير للمحتوى الثابت عالميًا" → CloudFront
-- "اتصال خاص ثابت إلى AWS من الشبكات المحلية" → Direct Connect
-- "تحميل سريع من العملاء في جميع أنحاء العالم إلى حاوية S3 الخاصة بك" → S3 Transfer Acceleration
+- "آرڈر پروسیسنگ کو inventory update سے decouple کرنا" → خدمات کے درمیان SQS queue
+- "نیا آرڈر دینے پر متعدد خدمات کو مطلع کرنا" → SQS subscriptions کے ساتھ SNS topic (fan-out)
+- "S3 اپلوڈز کو خودکار طور پر پروسیس کرنا" → S3 event notification → Lambda
+- "retry logic کے ساتھ کثیر مرحلہ workflow چلانا" → Step Functions
 
 ---
 
-**Task 3.5 — تحديد حلول استيعاب وتحويل البيانات عالية الأداء**
+**Task 2.2 — اعلیٰ دستیاب اور/یا fault-tolerant فن تعمیر ڈیزائن کرنا**
 
-المفاهيم الأساسية: Kinesis Data Streams، Kinesis Firehose، Glue، Athena، EMR.
+بنیادی تصورات: Multi-AZ، Multi-Region، Route 53 failover، RDS read replicas، Aurora Global Database، backup and restore۔
 
-| Chapter    | Topic                                                               |
+| باب        | موضوع                                                                                       |
+|------------|----------------------------------------------------------------------------------------------|
+| باب 2      | AWS عالمی بنیادی ڈھانچہ: Regions، AZs، edge locations                                         |
+| باب 7      | متعدد AZs میں ALB، ASG غیر صحت مند instances کی جگہ لیتا ہے                                    |
+| باب 8      | RDS Multi-AZ: synchronous replication، خودکار failover                                        |
+| باب 12     | Route 53: failover routing، latency routing، health checks                                    |
+| باب 18     | Multi-AZ بمقابلہ Multi-Region: RTO/RPO، DR حکمت عملیاں (pilot light، warm standby، active-active) |
+| باب 18     | AWS Backup (مرکزی، cross-account backups)، Elastic Disaster Recovery (منظم pilot light)        |
+| باب 24     | Aurora Global Database: cross-region read replicas، < 1s replication lag                      |
+
+اہم امتحانی patterns:
+
+- "اگر primary RDS ناکام ہو تو خودکار failover" → RDS Multi-AZ (Read Replica نہیں)
+- "عالمی سطح پر کم latency کے ساتھ reads پیش کرنا" → Aurora Global Database
+- "اگر primary region دستیاب نہ ہو تو ٹریفک کو secondary region تک روٹ کرنا" → Failover routing + health checks کے ساتھ Route 53
+- "RTO 1 منٹ، RPO 0" → Multi-AZ deployment (Multi-Region نہیں)
+- "RTO 15 منٹ، cross-region" → Pilot Light حکمت عملی
+
+---
+
+## ڈومین 3: اعلیٰ کارکردگی والے فن تعمیر ڈیزائن کرنا (24%)
+
+**Task 3.1 — اعلیٰ کارکردگی والے اور/یا قابل اسکیل اسٹوریج حل کا تعین کرنا**
+
+بنیادی تصورات: S3 بمقابلہ EBS بمقابلہ EFS، storage class کا انتخاب، S3 Transfer Acceleration، multipart upload، assets کے لیے CloudFront۔
+
+| باب        | موضوع                                                                    |
+|------------|-------------------------------------------------------------------------|
+| باب 5      | S3: object storage، storage classes، versioning، lifecycle              |
+| باب 6      | EBS: block storage اقسام (gp3، io2، st1)، EFS: مشترکہ فائل storage       |
+| باب 6      | Storage Gateway: ہائبرڈ on-premises تا S3 پل (File، Volume، Tape)        |
+| باب 23     | S3 storage class منتقلیاں، Glacier بازیافت اختیارات                      |
+| باب 25     | DataSync (آن لائن فائل sync)، Transfer Family (منظم SFTP→S3)، Snow Family (آف لائن بلک منتقلی — قدیم: نومبر 2025 میں نئے گاہکوں کے لیے بند؛ AWS اب DataSync اور Data Transfer Terminals کی طرف اشارہ کرتا ہے)، MGN (سرور rehost) |
+| باب 28     | EBS right-sizing، gp2→gp3 منتقلی، snapshot انتظام                       |
+
+اہم امتحانی patterns:
+
+- "متعدد EC2 instances سے قابل رسائی مشترکہ فائل سسٹم" → EFS (EBS نہیں؛ EBS ایک instance سے منسلک ہوتا ہے)
+- "ڈیٹابیس workload کے لیے اعلیٰ IOPS" → io2 EBS
+- "90 دن میں رسائی نہ ہونے والی فائلوں کی لاگت کم کرنا" → S3 lifecycle policy → Glacier
+- "دور دراز مقامات سے بڑی فائلوں کو تیزی سے اپلوڈ کرنا" → S3 Transfer Acceleration
+- "محدود bandwidth پر منتقلی کے کئی ہفتے" → SAA-C03 امتحان اب بھی Snowball کو متوقع رکھتا ہے، Snow Family کے 2025 میں نئے گاہکوں کے لیے بند ہونے کے باوجود
+
+---
+
+**Task 3.2 — اعلیٰ کارکردگی والے اور/یا قابل اسکیل کمپیوٹ حل کا تعین کرنا**
+
+بنیادی تصورات: EC2 instance خاندان، Graviton processors، Auto Scaling، Lambda، Fargate، Spot Instances۔
+
+| باب        | موضوع                                                                                  |
+|------------|-----------------------------------------------------------------------------------------|
+| باب 4      | EC2 instance اقسام: compute-optimized (c)، memory-optimized (r)، عام مقصد (m، t)        |
+| باب 7      | Auto Scaling: ویب tiers کے لیے افقی اسکیلنگ                                              |
+| باب 20     | Lambda: concurrency، provisioned concurrency (مستقل latency کے لیے)                      |
+| باب 21     | ECS Fargate: serverless containers                                                      |
+| باب 21     | AWS Batch: Docker containers کے لیے منظم batch کمپیوٹ، Spot-backed                       |
+| باب 27     | Fault-tolerant batch workloads کے لیے Spot Instances                                     |
+
+اہم امتحانی patterns:
+
+- "ML training workload، لاگت کم کریں، تعطل ہو سکتا ہے" → Spot Instances
+- "مستقل ذیلی 100ms Lambda جواب" → Provisioned concurrency (cold start ختم کرتا ہے)
+- "Containerized microservice، کوئی بنیادی ڈھانچہ انتظام نہیں" → ECS Fargate
+
+---
+
+**Task 3.3 — اعلیٰ کارکردگی والے ڈیٹابیس حل کا تعین کرنا**
+
+بنیادی تصورات: RDS بمقابلہ DynamoDB بمقابلہ Aurora بمقابلہ Redshift بمقابلہ ElastiCache، access patterns، read replicas، DAX۔
+
+| باب        | موضوع                                                             |
+|------------|------------------------------------------------------------------|
+| باب 8      | RDS: منظم relational ڈیٹابیسز، RDBMS کب استعمال کریں              |
+| باب 9      | DynamoDB: NoSQL، partition keys، GSI، DAX (in-memory cache)       |
+| باب 10     | ElastiCache: Redis بمقابلہ Memcached، cache حکمت عملیاں           |
+| باب 10     | MemoryDB for Redis: پائیدار Redis مطابق primary ڈیٹابیس           |
+| باب 24     | Aurora: کارکردگی، Serverless v2، read replicas، Global Database   |
+| باب 29     | DynamoDB on-demand بمقابلہ provisioned capacity، Auto Scaling کے ساتھ |
+
+اہم امتحانی patterns:
+
+- "session store کے لیے مائیکرو سیکنڈ reads" → ElastiCache Redis یا DAX (اگر DynamoDB backend)
+- "لچکدار schema کے ساتھ اعلیٰ throughput والی key-value رسائی" → DynamoDB
+- "پیچیدہ joins اور ACID transactions" → Aurora یا RDS
+- "پیٹا بائٹس structured ڈیٹا پر تجزیات" → Redshift (تفصیل سے شامل نہیں لیکن اشارہ: "data warehouse" → Redshift)
+
+---
+
+**Task 3.4 — اعلیٰ کارکردگی والے اور/یا قابل اسکیل نیٹ ورک فن تعمیر کا تعین کرنا**
+
+بنیادی تصورات: CloudFront، Global Accelerator، Direct Connect، VPN، placement groups، enhanced networking۔
+
+| باب        | موضوع                                                             |
+|------------|------------------------------------------------------------------|
+| باب 7      | NLB (Layer 4) اور GWLB (نیٹ ورک appliances کے لیے Gateway Load Balancer) |
+| باب 11     | Client VPN: انفرادی آلے سے VPC encrypted رسائی                    |
+| باب 12     | Route 53: routing policies: latency-based، geolocation، weighted   |
+| باب 13     | CloudFront: CDN، edge caching، Lambda@Edge                        |
+| باب 25     | AWS Global Accelerator: AWS backbone پر Anycast routing           |
+| باب 25     | Direct Connect: وقف شدہ private رابطہ                             |
+| باب 30     | VPC Endpoints: AWS خدمات تک private رابطہ                         |
+
+اہم امتحانی patterns:
+
+- "dynamic API responses تک رسائی کرنے والے عالمی صارفین کے لیے latency کم کرنا" → Global Accelerator (CloudFront نہیں، جو cacheable مواد کے لیے بہترین ہے)
+- "عالمی سطح پر static assets کے لیے latency کم کرنا" → CloudFront
+- "on-premises سے AWS تک مستقل private رابطہ" → Direct Connect
+- "دنیا بھر کے گاہکوں سے آپ کے S3 bucket تک تیز اپلوڈ" → S3 Transfer Acceleration
+
+---
+
+**Task 3.5 — اعلیٰ کارکردگی والے ڈیٹا ingestion اور transformation حل کا تعین کرنا**
+
+بنیادی تصورات: Kinesis Data Streams، Amazon Data Firehose، Glue، Athena، EMR۔
+
+| باب        | موضوع                                                               |
 |------------|---------------------------------------------------------------------|
-| Chapter 26 | Kinesis Data Streams: معالجة أحداث متسلسلة مُرتبة في الوقت الفعلي            |
-| Chapter 26 | Kinesis Data Firehose: تسليم مُدار إلى S3، Redshift، OpenSearch |
-| Chapter 26 | AWS Glue: ETL بدون خادم، دليل البيانات، الماسحات                    |
-| Chapter 26 | Athena: SQL بدون خادم على S3                                        |
+| باب 26     | Kinesis Data Streams: حقیقی وقت کی مرتب event پروسیسنگ              |
+| باب 26     | Amazon Data Firehose (سابقہ Kinesis Data Firehose): S3، Redshift، OpenSearch تک منظم delivery |
+| باب 26     | AWS Glue: serverless ETL، Data Catalog، Crawlers                    |
+| باب 26     | Athena: S3 پر serverless SQL                                        |
+| باب 26     | QuickSight: منظم BI dashboards، SPICE in-memory engine             |
+| باب 26     | Lake Formation: باریک data lake رسائی کنٹرول                       |
 
-Key exam patterns:
+اہم امتحانی patterns:
 
-- "معالجة بيانات تصفح المستخدم في الوقت الفعلي" → Kinesis Data Streams + Lambda أو KDA
-- "تسليم بيانات تدفق إلى S3 لتحليل لاحق" → Kinesis Firehose
-- "تحويل وتصنيف البيانات من مصادر متعددة" → AWS Glue
-- "استعلام البيانات التاريخية المخزنة في S3 باستخدام SQL" → Athena
-
----
-
-## المجال 4: تصميم هياكل مُحسَّنة التكلفة (20٪)
-
-**Task 4.1 — تصميم حلول تخزين مُحسَّنة التكلفة**
-
-| Chapter    | Topic                                                              |
-|------------|--------------------------------------------------------------------|
-| Chapter 23 | سياسات دورة حياة S3، انتقالات فئة التخزين                       |
-| Chapter 28 | EBS right-sizing، نقل gp2→gp3، قواعد دورة حياة الإصدارات من S3 |
-| Chapter 28 | EFS Intelligent-Tiering، علامات تخصيص التكلفة، AWS Budgets         |
-
-Key exam patterns:
-
-- "تحديد أي فريق يولد أكبر قدر من تكاليف S3" → علامات تخصيص التكلفة + Cost Explorer
-- "تقليل التكاليف للملفات الموجودة في فترات الوصول غير المتكررة تلقائيًا" → S3 Intelligent-Tiering
-- "التنبيه عندما تتجاوز التكاليف الشهرية 10000 دولار" → AWS Budgets
+- "حقیقی وقت میں click-stream ڈیٹا پروسیس کرنا" → Kinesis Data Streams + Lambda یا Managed Service for Apache Flink (سابقہ Kinesis Data Analytics)
+- "بعد میں تجزیے کے لیے streaming ڈیٹا S3 تک پہنچانا" → Amazon Data Firehose
+- "متعدد ذرائع سے ڈیٹا تبدیل اور catalog کرنا" → AWS Glue
+- "S3 میں محفوظ تاریخی ڈیٹا کو SQL سے query کرنا" → Athena
 
 ---
 
-**Task 4.2 — تصميم حلول حساب مُحسَّنة التكلفة**
+## ڈومین 4: لاگت کے لحاظ سے بہتر فن تعمیر ڈیزائن کرنا (20%)
 
-| Chapter    | Topic                                                                            |
+**Task 4.1 — لاگت کے لحاظ سے بہتر اسٹوریج حل ڈیزائن کرنا**
+
+| باب        | موضوع                                                             |
+|------------|------------------------------------------------------------------|
+| باب 23     | S3 lifecycle policies، storage class منتقلیاں                     |
+| باب 28     | EBS right-sizing، gp2→gp3 منتقلی، S3 versioning lifecycle rules    |
+| باب 28     | EFS Intelligent-Tiering، cost allocation tags، AWS Budgets        |
+
+اہم امتحانی patterns:
+
+- "کون سی ٹیم سب سے زیادہ S3 لاگت پیدا کر رہی ہے کی شناخت" → Cost allocation tags + Cost Explorer
+- "کم استعمال ہونے والے objects کی لاگت خودکار طور پر کم کرنا" → S3 Intelligent-Tiering
+- "جب ماہانہ لاگت $10,000 سے تجاوز کرے تو alert" → AWS Budgets
+
+---
+
+**Task 4.2 — لاگت کے لحاظ سے بہتر کمپیوٹ حل ڈیزائن کرنا**
+
+| باب        | موضوع                                                                            |
 |------------|----------------------------------------------------------------------------------|
-| Chapter 27 | أسعار EC2: على الطلب، الاشتراكات المحجوزة، خطط التوفير، نقاط التشتت، الخوادم المخصصة |
-| Chapter 20 | Lambda: دفع لكل استدعاء (لا توجد تكاليف خاملة)                                      |
+| باب 2      | Outposts: on-premises AWS rack (capital لاگت بمقابلہ cloud opex سمجھوتہ)          |
+| باب 2      | Wavelength: 5G edge کمپیوٹ (ٹیلی کام شراکت، latency پر مبنی تعیناتی)              |
+| باب 27     | EC2 قیمتیں: On-Demand، Reserved Instances، Savings Plans، Spot، Dedicated Hosts   |
+| باب 20     | Lambda: فی invocation ادائیگی (صفر idle لاگت)                                    |
 
-Key exam patterns:
+اہم امتحانی patterns:
 
-- "تقليل التكاليف للعمليات الإنتاجية المستقرة" → خطط التوفير (أكثر مرونة) أو الاشتراكات المحجوزة
-- "تقليل التكاليف لعمليات الدُفعات التي يمكن إيقافها" → نقاط التشتت
-- "معالجة الأحداث التي لا توجد فيها تكاليف خاملة" → Lambda
+- "مستقل پیداواری workloads کی لاگت کم کرنا" → Savings Plans (زیادہ لچکدار) یا Reserved Instances
+- "قابل تعطل batch jobs کی لاگت کم کرنا" → Spot Instances
+- "صفر idle لاگت کے ساتھ event-driven پروسیسنگ" → Lambda
 
 ---
 
-**Task 4.3 — تصميم حلول قواعد بيانات مُحسَّنة التكلفة**
+**Task 4.3 — لاگت کے لحاظ سے بہتر ڈیٹابیس حل ڈیزائن کرنا**
 
-| Chapter    | Topic                                             |
+| باب        | موضوع                                             |
 |------------|---------------------------------------------------|
-| Chapter 29 | DynamoDB on-demand vs. provisioned + Auto Scaling |
-| Chapter 29 | RDS و ElastiCache Reserved Instances/Nodes      |
-| Chapter 29 | إدارة لقطات RDS                                  |
+| باب 29     | DynamoDB on-demand بمقابلہ provisioned + Auto Scaling |
+| باب 29     | RDS اور ElastiCache Reserved Instances/Nodes      |
+| باب 29     | RDS snapshot انتظام                               |
 
-Key exam patterns:
+اہم امتحانی patterns:
 
-- "غیر متوقع ڈینامو ڈی بی ٹریفک" → آن ڈیماند کی صلاحیت موڈ
-- "ڈینامو ڈی بی کی مستقل ٹریفک جس میں معلوم پچ کے وقت موجود ہیں" → فراہم کردہ + خودکار بڑھایا جا سکتا ہے
-- "ایس آر ڈی ایس کی لاگت کو مستحکم بار بار کے لیے کم کریں" → ریزروڈ انسٹنسز (1- یا 3 سال)
-
----
-
-**ملاوٹ 4.4 — سرفہرست لاگت کے نیٹ ورک کی تعمیرات ڈیزائن کریں**
-
-| باب | موضوع |
-|---|---|
-| باب 30 | ڈیٹا منتقل کرنے کی قیمت: داخل (مفت)، اے زیڈ سے اے زیڈ (0.01/جی بی)، اے زیڈ سے علاقہ، انٹرنیٹ (0.09/جی بی) |
-| باب 30 | این اے ٹی گیٹوی (0.045/جی بی) کے خلاف وی پی سی اینڈپوائنٹس (گیٹوی: مفت؛ انٹرفیس: قیمت دار) |
-| باب 30 | کلاؤڈفرنٹ ڈیٹا منتقل کرنے کی قیمت کو کم کرنے والے کے طور پر |
-
-اہم تحریری نمونے:
-
-- "ایس ای سی 2 پرائیوٹ سب نیٹ میں ایس 3 کال کرتا ہے - این اے ٹی گیٹوی کی لاگت کو ختم کریں" → ایس 3 گیٹویئینڈپوائنٹ (مفت)
-- "ایس ای سی 2 پرائیوٹ سب نیٹ میں ایس ک్యూ ایس کال کرتا ہے - این اے ٹی گیٹوی کی لاگت کو کم کریں" → ایس ک్యూ ایس انٹرفیس اینڈپوائنٹ
-- "عالمی مواد کی تحویل کے لیے ڈیٹا منتقل کرنے کی لاگت کو کم کریں" → کلاؤڈفرنٹ (اورجین کے طلبات کو کم کرنا ذخیرہ سازی کا استعمال کرتا ہے)
+- "غیر متوقع DynamoDB ٹریفک" → On-demand capacity mode
+- "معلوم peaks کے ساتھ مستقل DynamoDB ٹریفک" → Provisioned + Auto Scaling
+- "مستحکم workload کے لیے RDS لاگت کم کرنا" → Reserved Instances (1 یا 3 سال)
 
 ---
 
-## کراس ڈومین موضوعات
+**Task 4.4 — لاگت کے لحاظ سے بہتر نیٹ ورک فن تعمیر ڈیزائن کرنا**
 
-بعض موضوعات متعدد ڈومینز میں نظر آتے ہیں:
+| باب        | موضوع                                                                                         |
+|------------|-----------------------------------------------------------------------------------------------|
+| باب 30     | Data transfer قیمتیں: inbound (مفت)، cross-AZ ($0.01/GB)، cross-region، انٹرنیٹ ($0.09/GB)     |
+| باب 30     | NAT Gateway ($0.045/GB) بمقابلہ VPC Endpoints (Gateway: مفت؛ Interface: قیمت والا)             |
+| باب 30     | CloudFront بطور data transfer لاگت optimizer                                                   |
 
-| موضوع | ڈومینز | باب |
-|---|---|---|
-| بہتر بنانا آرکیٹیکچر کا فریم ورک | سب | 31 |
-| آرکیٹیکچر کے جائزے اور ایڈ آر | سب | 32 |
-| سودا کرنے کی منطق ("یہ بات بدلتی ہے") | سب | 33 |
-| ملٹی اے زیڈ ڈیزائن | 2، 3 | 7، 8، 18، 24 |
-| نگرانی اور مشاہدہ | 1، 2 | ہر جگہ |
-| کلاؤڈفرنٹ | 3، 4 | 13، 30 |
+اہم امتحانی patterns:
+
+- "private subnet میں EC2 S3 کو کال کرتا ہے — NAT Gateway لاگت ختم کریں" → S3 Gateway Endpoint (مفت)
+- "private subnet میں EC2 SQS کو کال کرتا ہے — NAT Gateway لاگت کم کریں" → SQS Interface Endpoint
+- "عالمی مواد delivery کی data transfer لاگت کم کریں" → CloudFront (caching origin درخواستیں کم کرتی ہے)
 
 ---
 
-## امتحان سے پہلے چیک لسٹ
+## بین الڈومین موضوعات
+
+کچھ موضوعات متعدد ڈومینز میں ظاہر ہوتے ہیں:
+
+| موضوع                              | ڈومینز  | ابواب         |
+|------------------------------------|---------|--------------|
+| Well-Architected Framework         | تمام    | 31           |
+| فن تعمیر کے جائزے اور ADRs          | تمام    | 32           |
+| Trade-off استدلال ("یہ منحصر ہے")  | تمام    | 33           |
+| Multi-AZ ڈیزائن                    | 2، 3    | 7، 8، 18، 24 |
+| نگرانی اور مشاہدہ پذیری            | 1، 2    | پوری کتاب میں |
+| CloudFront                         | 3، 4    | 13، 30       |
+
+---
+
+## امتحان سے پہلے کی چیک لسٹ
 
 SAA-C03 میں بیٹھنے سے پہلے:
 
-**اہم علاقوں (سب سے زیادہ ظاہر ہونے کی امید ہے)**
+**زیادہ وزن والے شعبے (ظاہر ہونے کا سب سے زیادہ امکان)**
 
-- [ ] IAM پالیسی کی منطق (صریح طور پر انکار کریں → صریح طور پر اجازت دیں → ضمنی طور پر انکار کریں)
-- [ ] وی پی سی اجزاء: سب نیٹس، روٹنگ ٹیبلز، آئی جی وی، این اے ٹی گیٹوی، سیکورٹی گروپس، این سی ایلز
-- [ ] ایس 3 ذخیرہ کی کلاسیں اور ہر ایک کا استعمال کرنے کا وقت
-- [ ] آر ڈی ایس ملٹی اے زیڈ کے خلاف ریڈ ریپلیکا (فیل اوور کے لیے)
-- [ ] ایس ک్యూ ایس کے خلاف ایس این ایس کے خلاف ایونٹ برج (استخراج کے لیے)
-- [ ] ای سی 2 کی قیمت کے ماڈل: اسپاٹ طوفان کے لیے، بچاؤ کے منصوبے کے لیے
-- [ ] لامبدا ٹ్రిگر اور موازی صلاحیت
-- [ ] ڈینامو ڈی بی کے خلاف آرورا کے خلاف ریڈشِت (دخول کے نمبر کا انتخاب کریں)
-- [ ] کلاؤڈفرنٹ: سٹیٹک کے لیے سی این ڈی، گلوبل ایکسسلریٹر ڈینامک کے لیے
+- [ ] IAM policy evaluation منطق (explicit deny → explicit allow → implicit deny)
+- [ ] VPC اجزاء: subnets، route tables، IGW، NAT Gateway، security groups، NACLs
+- [ ] S3 storage classes اور ہر ایک کب استعمال کریں
+- [ ] RDS Multi-AZ بمقابلہ Read Replica (failover بمقابلہ read اسکیلنگ)
+- [ ] SQS بمقابلہ SNS بمقابلہ EventBridge (pull بمقابلہ push بمقابلہ event routing)
+- [ ] EC2 قیمتوں کے ماڈلز: fault-tolerant کے لیے Spot، عہد شدہ workloads کے لیے Savings Plans
+- [ ] Lambda triggers اور concurrency
+- [ ] DynamoDB بمقابلہ Aurora بمقابلہ Redshift (access pattern انتخاب طے کرتا ہے)
+- [ ] CloudFront: static کے لیے CDN، dynamic کے لیے Global Accelerator
 
-**عام جال**
+**عام پھندے**
 
-- [ ] ای بی ایس ایک انسٹنس کے ساتھ منسلک ہوتا ہے؛ ای ایف ایس مشترکہ ہے
-- [ ] آر ڈی ایس ریڈ ریپلیکا پڑھنے کے لیے ہیں، نہیں کہ خودکار فیل اوور کے لیے (جس میں ملٹی اے زیڈ ہے)
-- [ ] این سی ایلز اسٹیٹلس ہیں (ان کے لیے ان پُوٹ اور آؤٹ پُوٹ قوانین کی ضرورت ہے)
-- [ ] گیٹویئینڈپوائنٹس مفت ہیں اور صرف ایس 3 اور ڈینامو ڈی بی کے لیے ہیں
-- [ ] کینیسز برقرار رکھتا ہے اور اس کی نقل و اتارنا کی حمایت کرتا ہے؛ ایس ک్యూ ایس کا استعمال consumable پر ختم ہو جاتا ہے
-- [ ] "دیکوپل" کا ہمیشہ ایس ک్యూ ایس کا مطلب نہیں ہے - ایس این ایس فین اوٹ اور ایونٹ برج بھی دِکوپلنگ کے نمونے ہیں
-- [ ] اسیلڈ سٹینڈرڈ مفت اور خودکار ہے؛ ایڈوانسڈ ایک سگریج ہے
+- [ ] EBS ایک instance سے منسلک ہوتا ہے؛ EFS مشترکہ ہوتا ہے
+- [ ] RDS Read Replicas read اسکیلنگ کے لیے ہیں، خودکار failover کے لیے نہیں (وہ Multi-AZ ہے)
+- [ ] NACLs stateless ہیں (inbound اور outbound دونوں rules درکار)
+- [ ] Gateway Endpoints مفت ہیں اور صرف S3 اور DynamoDB کے لیے
+- [ ] Kinesis برقرار رکھتا اور replay کرتا ہے؛ SQS استعمال پر حذف کر دیتا ہے
+- [ ] "Decouple" کا مطلب ہمیشہ SQS نہیں — SNS fan-out اور EventBridge بھی decoupling patterns ہیں
+- [ ] Shield Standard مفت اور خودکار ہے؛ Advanced ایک ادا شدہ subscription ہے
+- [ ] ElastiCache بمقابلہ MemoryDB: ElastiCache = cache (ڈیٹا کا نقصان ٹھیک ہے)۔ MemoryDB = پائیدار primary ڈیٹابیس۔
+- [ ] Client VPN بمقابلہ Site-to-Site VPN: Client VPN = انفرادی آلات۔ Site-to-Site = نیٹ ورک سے نیٹ ورک۔
+- [ ] Outposts بمقابلہ Wavelength: Outposts = on-premises AWS rack۔ Wavelength = 5G edge۔
+- [ ] DMS: homogeneous = براہِ راست DMS۔ Heterogeneous = پہلے SCT، پھر DMS۔
+- [ ] DataSync *فائلیں* منتقل کرتا ہے؛ DMS *ڈیٹابیسز* منتقل کرتا ہے؛ MGN *پورے سرورز* منتقل کرتا ہے۔
 
-**ملاوٹ کی ساخت**
+**امتحان کی ساخت**
 
 - 65 سوالات، 130 منٹ (2 گھنٹے 10 منٹ)
-- متعدد انتخاب (ایک درست) اور متعدد جوابات (N درست منتخب کریں)
-- پاس کرنے کا نقطہ: 720 سے 1000 تک
-- غیر استعمال شدہ سوالات شامل کیے گئے ہیں؛ آپ نہیں کہہ سکتے کہ وہ کون سے ہیں
+- Multiple choice (ایک درست) اور multiple response (N درست منتخب کریں)
+- پاس کرنے کا اسکور: 1000 میں سے 720
+- بغیر اسکور والے سوالات شامل ہوتے ہیں؛ آپ نہیں بتا سکتے کہ کون سے ہیں
+- وقت کا انتظام کریں: ~2 منٹ فی سوال؛ مشکل سوالات کو نشان زد کریں اور واپس آئیں
