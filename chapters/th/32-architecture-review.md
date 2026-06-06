@@ -1,14 +1,12 @@
 # บทที่ 32: การปกป้องแผน
 
-คำถามของ Maya ท้ายบทที่ 31: "ความแตกต่างระหว่างการตัดสินใจสถาปัตยกรรมและการคิดเหมือนสถาปนิกคืออะไร?"
+Carlos กลับมา ไม่กี่สัปดาห์หลังจาก Well-Architected session คราวนี้แล็ปท็อปอยู่ในกระเป๋า; เขาหยิบปากกาไวท์บอร์ดแทน ทักทายแต่ละคนในห้อง หาที่ใกล้กระดาน และเปิดฝาปากกามาร์กเกอร์
 
-เธอเชิญแขกคนหนึ่งมาช่วยตอบ
+"เล่าเรื่อง Nimbus ให้ฟัง" เขาพูด ราวกับว่าเขาไม่เคยได้ยินมาก่อน
 
-เขาชื่อ Carlos เขาเป็นวิศวกรมา 20 ปี เป็นผู้จัดการวิศวกรรมมา 7 ปี และเป็นที่ปรึกษา startup มา 3 ปี เขาเป็นคนประเภทที่ได้เห็นระบบสำเร็จและล้มเหลวมากพอจนมีสัญชาตญาณที่ calibrate แล้วเกี่ยวกับทั้งสอง
+**ย้อนความ: จากการตรวจสอบสู่การชำระบัญชี**
 
-เขามาถึงโดยไม่มีอะไรเลย: ไม่มี slides ไม่มี agenda มีแค่ปากกาไวท์บอร์ดและคำถาม
-
-"เล่าเรื่อง Nimbus ให้ฟัง" เขาพูด
+Well-Architected review จากบทที่ 31 ได้เปิดเผยข้อค้นพบที่เสี่ยงสูงสามอันและความตระหนักที่เพิ่มขึ้นของ Maya ว่ามีช่องว่างระหว่างการตัดสินใจที่ทีมทำและการตัดสินใจที่พวกเขา *คิดทบทวน* แล้ว Framework ให้คำศัพท์สำหรับช่องว่างนั้นแก่พวกเขา สิ่งที่มันให้ไม่ได้คือการฝึกปิดมันแบบ real time — ก่อนที่ฟีเจอร์จะส่งมอบ ไม่ใช่หลังจาก นั่นคือสิ่งที่ Carlos มาเพื่อ Maya เชิญเขามาโดยเฉพาะเพราะ Nimbus กำลังจะสร้างบางอย่างสำคัญ และเธอต้องการความท้าทายที่มีโครงสร้างก่อนที่บรรทัดแรกของ production code จะถูกเขียน
 
 การตรวจสอบสถาปัตยกรรมที่ดีเหมือนรายการตรวจสอบก่อนบินของนักบิน เครื่องบินอาจดูพร้อมบินอย่างสมบูรณ์แบบ — เครื่องยนต์ทำงาน เชื้อเพลิงเต็ม ผู้โดยสารขึ้นเครื่อง แต่รายการตรวจสอบมีอยู่เพราะนักบินที่มีประสบการณ์รู้ว่าสิ่งที่น่าจะทำให้เกิดปัญหามากที่สุดคือสิ่งที่รู้สึกดีตลอดเวลาจนกว่าจะไม่เป็นเช่นนั้น รายการตรวจสอบไม่ได้หมายความว่านักบินไม่รู้ว่าตัวเองกำลังทำอะไร มันหมายความว่าพวกเขา internalize แล้วว่าแม้แต่ผู้เชี่ยวชาญก็พลาดสิ่งต่างๆ เมื่อข้ามกระบวนการที่มีโครงสร้าง
 
@@ -112,6 +110,95 @@ Carlos เขียนบนกระดาน: *Unknown: tracking SLA*
 
 "สิ่งนี้สำคัญ" เขาพูด "เพราะ SLA กำหนดการออกแบบ infrastructure ถ้า SLA ของคุณคือ 5 วินาที คุณต้องการโซลูชันที่ต่างจาก 60 วินาที"
 
+"เดี๋ยว — แต่ *ทำไม* เราถึงทำแบบนั้น?" Maya ถาม "ทำไมไม่ใช้กลไก polling ที่แอปตรวจสอบทุกไม่กี่วินาทีแทน real-time push?"
+
+"Latency และต้นทุน" Carlos พูด "วิธี polling ที่ scale — สมมติ 10,000 active orders แต่ละแอป poll ทุก 5 วินาที — คือ 2,000 requests ต่อวินาที หรือ 120,000 requests ต่อนาที Push model ผ่าน Kinesis ส่งการอัปเดตเฉพาะเมื่อสถานะเปลี่ยน Requests น้อยกว่า latency ต่ำกว่า และข้อผูกมัด SLA ตรวจสอบได้ง่ายกว่าจาก event log Polling ทำงานที่ scale เล็ก ที่ scale ที่ Nimbus กำลังมุ่งไป push คือพื้นฐานที่ถูกต้อง"
+
+Leo เงียบตลอดคำอธิบายของ Carlos จากนั้น: "ผมกำลังจะสร้างสิ่งนี้ด้วย WebSockets"
+
+Carlos มองเขา "บอกฉันมา"
+
+"แต่ละคำสั่งซื้อได้ WebSocket connection Client เชื่อมต่อเมื่อคำสั่งซื้อถูกสั่ง Server push การเปลี่ยนสถานะ — confirmed, preparing, en route, delivered — ตามที่มันเกิดขึ้น ไม่มี polling, latency ต่ำ, model ง่าย"
+
+"อะไรรักษา WebSocket connection?"
+
+"API Gateway WebSocket endpoint Lambda functions จัดการ connection และ message events DynamoDB เก็บ connection IDs"
+
+Carlos เขียนมันบนกระดาน "และ failure mode เมื่อเครือข่ายของ client หลุดไป 15 วินาที?"
+
+"Connection ถูกยุติ Client เชื่อมต่อใหม่และขอสถานะปัจจุบัน"
+
+"จากที่ไหน?"
+
+"จาก... Lambda handler ที่อ่านจาก DynamoDB"
+
+"ดังนั้นคุณมีทั้ง push path และ pull path" Carlos พูด "WebSocket push คือ happy path การอ่าน DynamoDB คือ recovery path คุณมั่นใจอย่างไรว่า connection ถูกสร้างใหม่ก่อนที่ลูกค้าจะสังเกตว่าสถานะ stale?"
+
+Leo คิด "Client ตรวจจับการ disconnect และเชื่อมต่อใหม่ภายในไม่กี่วินาที Reconnect logic ตรงไปตรงมา"
+
+"ที่ 10,000 active orders พร้อมกัน — ซึ่งเป็นที่ที่ Nimbus กำลังมุ่งไป — นั่นคือ concurrent WebSocket connections กี่อัน?"
+
+"10,000"
+
+"API Gateway WebSocket มี quota เริ่มต้น 500 **new connections ต่อวินาที** ต่อบัญชี" Carlos พูด "ไม่ใช่ concurrent connections — *อัตรา* connection 10,000 steady connections โอเค ปัญหาคือ reconnect storm: เมื่อ network blip ทำให้ clients หลายพันหลุดพร้อมกันและพวกเขาเชื่อมต่อใหม่ทั้งหมดในสองวินาทีเดียวกัน คุณชน rate quota และ reconnects เริ่มล้มเหลวพอดีตอนที่ผู้ใช้ใส่ใจมากที่สุด คุณสามารถขอเพิ่มได้ แต่มันคือ quota ที่คุณจะต้องกลับมาดูเมื่อคุณเติบโต นอกจากนี้: API Gateway WebSocket คิด $0.25 ต่อล้าน connection-minutes บวก $1.00 ต่อล้าน messages ที่ 10,000 orders ต่อวันด้วยช่วงติดตามเฉลี่ย 40 นาที นั่นคือเพียงประมาณ 400,000 connection-minutes ต่อวัน — เพนนี ที่ 10,000 active orders พร้อมกัน มันคือ scale ที่ต่างออกไป"
+
+"นั่นไม่มาก" Leo พูด
+
+"ไม่ที่ 10,000 active orders" Carlos พูด "ที่ scale นั้น ก็ราว $150 ต่อเดือนด้วยค่า connection-minute และ message ต้นทุนไม่ใช่ข้อโต้แย้งต่อ WebSockets ที่นี่ Connection-rate quota ภายใต้ reconnect storms และ connection-state management ต่างหาก"
+
+"ดังนั้น WebSockets ซับซ้อนที่ scale" Maya พูด
+
+"มันจัดการได้ที่ scale ถ้าคุณ architect สำหรับมัน" Carlos พูด "มันไม่ผิด — มันคือชุดการแลกเปลี่ยนที่ต่างออกไป ตอนนี้ให้ผมแสดงทางเลือก polling"
+
+เขาวาดตัวเลือกที่สอง
+
+"Polling: client ส่ง GET request ไปยัง `/orders/{order_id}/status` ทุก 5 วินาที Backend อ่านจาก DynamoDB คืนสถานะปัจจุบัน"
+
+"นั่น requests เยอะ" Priya พูด
+
+"10,000 active orders × 1 poll ต่อ 5 วินาที = 2,000 requests ต่อวินาที API ของคุณต้องรองรับ 2,000 RPS DynamoDB auto-scale API Gateway รองรับโหลด ต้นทุน: 2,000 RPS × 3,600 วินาที × 24 ชั่วโมง × 30 วัน = 5.18 พันล้าน requests ต่อเดือน API Gateway REST API pricing: $3.50 ต่อล้าน requests = $18,130/เดือน"
+
+ห้องเงียบ
+
+"นั่นไม่ใช่ตัวเลือกที่ใช้ได้ที่ scale" Tom พูด
+
+"ถูกต้อง" Carlos พูด "Polling ที่ช่วง 5 วินาทีคือการ implement ที่ง่ายที่สุดและแพงที่สุดที่ scale มันยังสร้างโหลดตามสัดส่วน active connections ไม่ใช่ตามสัดส่วนการเปลี่ยนสถานะ ถ้าคำสั่งซื้ออยู่ใน 'preparing' 20 นาที polling สร้าง 240 requests ที่คืนสถานะเดียวกันทั้งหมด นั่นคือการสูญเปล่า"
+
+"แล้ว Kinesis?" Maya ถาม
+
+"Kinesis สร้างหนึ่ง event ต่อการเปลี่ยนสถานะ Order confirmation: หนึ่ง event Kitchen acceptance: หนึ่ง event Driver pickup: หนึ่ง event Delivery: หนึ่ง event สี่ events ต่อคำสั่งซื้อ ไม่ว่าแต่ละสถานะใช้เวลานานแค่ไหน Consumer — backend ของคุณ — อ่านจาก Kinesis stream และ push การอัปเดตไปยัง client ผ่านกลไกการส่งใดก็ตามที่คุณเลือก"
+
+"แต่ client ยังต้องการวิธีรับ push" Leo พูด
+
+"ใช่ คุณสามารถใช้ Server-Sent Events, long-poll endpoint หรือ WebSockets สำหรับ last-mile delivery Kinesis จัดการ event stream ที่น่าเชื่อถือ มีลำดับ replay ได้สำหรับ backend ของคุณ กลไกการส่ง client เป็นการตัดสินใจแยกต่างหาก ข้อได้เปรียบสำคัญ: Kinesis decouple event source จาก consumer ระบบติดตามการส่ง ระบบคืนเงิน ระบบแจ้งเตือนร้านอาหาร และจอแสดงสถานะลูกค้าทั้งหมด consume จาก Kinesis stream เดียวกันอย่างอิสระ"
+
+"ดังนั้นมันไม่ใช่ Kinesis แทน WebSockets" Maya พูด "มันคือ Kinesis บวกกลไกการส่ง client ที่เบากว่า"
+
+"ใช่เลย การวิเคราะห์การแลกเปลี่ยน:"
+
+เขาเขียนมัน:
+
+| ตัวเลือก | Latency | ต้นทุน (500 / 10K active orders) | ความซับซ้อน |
+|---|---|---|---|
+| WebSockets อย่างเดียว | ~50ms | $8 / $150 ต่อเดือน | กลาง |
+| Polling (5s) | 0–5s | $906 / $18,130 ต่อเดือน | ต่ำ |
+| Kinesis + SSE | ~200ms | $8 / $75 ต่อเดือน | กลาง-สูง |
+
+"ตัวเลือก polling ถูกตัดออกด้วยต้นทุน" Carlos พูด "WebSockets ใช้ได้แต่ต้องการ connection management ที่ scale Kinesis บวก Server-Sent Events มี latency สูงกว่าเล็กน้อยและต้นทุนเทียบเคียงได้ — สิ่งที่มันซื้อให้คุณคือ durable, replayable event log ที่คุณต้องการสำหรับระบบคืนเงิน และ consumers ที่ decoupled"
+
+"เดี๋ยว — แต่ *ทำไม* เราถึงทำแบบนั้น?" Maya ถาม "ถ้า WebSockets มี latency ต่ำกว่า ทำไมยอมรับ latency สูงกว่าจาก Kinesis บวก SSE?"
+
+"200ms เทียบกับ 50ms รับรู้ได้สำหรับลูกค้าที่ดูการอัปเดตสถานะการส่งไหม?" Carlos ถาม
+
+"ไม่" เธอพูด
+
+"แล้วความต่าง latency ต่ำกว่า perceptual threshold ความต่างต้นทุนที่หนึ่งหมื่น active orders พอประมาณ — $75 เทียบกับ $150 ต่อเดือน ความต่างด้านสถาปัตยกรรมคือข้อโต้แย้งจริง: Kinesis ให้คุณ durable, replayable event log — ซึ่งคุณจะต้องการสำหรับ refund audit trail — และ decouple tracking consumers ของคุณ WebSockets จะต้องให้คุณสร้าง decoupling ใหม่ในภายหลัง"
+
+Leo มองตาราง "เราเกือบส่งเวอร์ชัน WebSocket"
+
+"มันคงทำงานได้" Carlos พูด "นั่นคือสิ่งสำคัญที่ต้องเข้าใจ WebSockets คงทำงานได้ คำถามในสถาปัตยกรรมแทบจะไม่ใช่ 'นี่ทำงานได้ไหม?' คำถามคือ 'นี่มีค่าใช้จ่ายเท่าไหร่เมื่อมันเติบโต และเราต้องสร้างอะไรใหม่ในภายหลัง?'"
+
+
 **คำถามที่สถาปนิกถาม**
 
 ในสองชั่วโมงถัดมา Carlos นำทีมผ่านการตรวจสอบ ตัวอย่างคำถามของเขา:
@@ -138,15 +225,55 @@ Carlos เขียนบนกระดาน: *Unknown: tracking SLA*
 
 แต่ละคำถามเปิดเผยสมมุติฐานที่ทีมกำลังสร้างโดยไม่ตระหนัก
 
-"เราไม่ได้คิดถึงปัญหาการคืนเงินซ้ำ" Leo พูดในภายหลัง "เราแค่จะเรียก payment API"
+"ผม deploy มันไปแล้ว — โอ๊ะ" Leo พูด "Refund endpoint ผมแค่จะเรียก payment API โดยตรง เราไม่ได้คิดถึงการเรียกมันสองครั้ง" เขาหยุด "ดังนั้นถ้าการเรียกครั้งแรกสำเร็จแต่การยืนยันของเราหายระหว่างทาง เราเรียกอีกครั้งและลูกค้าได้รับเงินคืนสองครั้ง"
 
-"นั่นไม่ผิด" Priya พูด "แต่คุณต้องการ idempotency การดำเนินการคืนเงินต้องปลอดภัยที่จะเรียกสองครั้ง"
+"เราคิดถึงสิ่งที่จะเกิดขึ้นถ้า payment API ยอมรับการเรียกครั้งแรกแต่การยืนยันของเราหายระหว่างทางไหม?" Priya ถาม
 
-"Idempotency key — ID เฉพาะต่อการพยายามคืนเงิน เก็บใน DB ก่อนเรียก payment API ถ้าเราเรียกสองครั้งด้วย key เดียวกัน payment API จะละเว้นการเรียกครั้งที่สอง"
+"นั่นคือ idempotency" Carlos พูด
+
+"Idempotency key — ID เฉพาะต่อการพยายามคืนเงิน เก็บใน DB ก่อนเรียก payment API" Priya พูด "ถ้าเราเรียกสองครั้งด้วย key เดียวกัน payment API จะละเว้นการเรียกครั้งที่สอง"
 
 "ซึ่งหมายความว่า" Carlos เสริม "คุณต้องการ persistent state store สำหรับ refund operations ไม่ใช่แค่ event ใน queue"
 
-นี่คือรายละเอียดสถาปัตยกรรมที่ปรากฏในการตรวจสอบที่มีโครงสร้าง และมักไม่ปรากฏเมื่อคุณแค่กำลังสร้าง
+
+"การ monitoring ที่เราคุยกัน" Carlos พูด "ทั้งหมดเป็น infrastructure monitoring CPU Connection count Kinesis lag สิ่งเหล่านี้สำคัญ — แต่มันไม่ใช่ monitoring ที่บอกคุณว่า Nimbus Instant ทำงานหรือไม่"
+
+"Monitoring ที่บอกเราว่ามันทำงานคืออะไร?" Maya ถาม
+
+"P95 confirmation time ต่อร้านอาหาร นานแค่ไหน ที่ percentile ที่ 95 ตั้งแต่การสั่งคำสั่งซื้อไปจนถึงการยืนยันของร้านอาหาร — วัดแยกต่างหากสำหรับพาร์ทเนอร์ร้านอาหารแต่ละราย"
+
+"เราไม่มี metric นั้น" Priya พูด
+
+"นั่นคือช่องว่าง" Carlos พูด "คุณสามารถมี infrastructure ที่สมบูรณ์แบบ — CloudWatch เขียวบนทุก alarm — และยังมีพาร์ทเนอร์ร้านอาหารที่ confirmation latency ของพวกเขาเสื่อมมาสามสัปดาห์เพราะ tablet software ของพวกเขามีบั๊ก Infrastructure โอเค Business SLA กำลังถูกละเมิด และคุณจะไม่รู้จนกว่าร้านอาหารโทรมาร้องเรียน"
+
+"เราจับมันได้อย่างไร?" Leo ถาม
+
+"Emit custom CloudWatch metric หรือ push ไปยัง analytics pipeline ของคุณทุกครั้งที่ได้รับการยืนยันคำสั่งซื้อ Timestamp การสั่งคำสั่งซื้อ Timestamp การยืนยัน คำนวณความต่าง Emit มันโดยติดแท็กด้วย `restaurant_id` สร้าง CloudWatch dashboard ที่แสดง p95 confirmation time ตามร้านอาหารตลอด 7 วันที่ผ่านมา"
+
+"และ alarm เมื่อมันเสื่อม?" Tom ถาม
+
+"Alarm เมื่อ p95 สำหรับร้านอาหารเฉพาะเกิน 90 วินาทีมากกว่า 5 นาทีติดต่อกัน" Carlos พูด "นั่นคือความผิดปกติที่สมควรกับการติดต่อเชิงรุก ไม่ใช่การตอบสนองแบบรอ-ร้องเรียน"
+
+"นี่คือความแตกต่างระหว่างการ monitor infrastructure และการ monitor product" Priya พูด
+
+"ใช่เลย" Carlos พูด "Infrastructure monitoring บอกคุณว่าระบบของคุณสุขภาพดีไหม Business-level monitoring บอกคุณว่าลูกค้าของคุณกำลังประสบกับสิ่งที่คุณสัญญากับพวกเขาไหม คุณต้องการทั้งสอง ทีมส่วนใหญ่มีแค่อันแรก"
+
+Maya เพิ่มมันใน ADR appendix: ติดตาม p95 confirmation time ต่อร้านอาหารนอกเหนือจาก infrastructure health metrics เกณฑ์ alarm จะถูกกำหนดโดยทีม product โดยปรึกษากับทีม restaurant success
+
+"นี่คือที่ที่ cost monitoring และ business monitoring ตัดกันด้วย" Tom พูด "ถ้า confirmation latency ของเราพุ่งสำหรับ subset ของร้านอาหารในเย็นวันศุกร์ สาเหตุรากเหง้าอาจเป็น Lambda cold start ที่ชน shards ของร้านอาหารเหล่านั้นใน Kinesis Business metric เปิดเผยอาการ Infrastructure metrics เปิดเผยสาเหตุ"
+
+"และโซลูชันอาจไม่ใช่ infrastructure มากขึ้น" Carlos พูด "มันอาจเป็น provisioned concurrency บน Lambda function เฉพาะ หรืออาจเป็น shard rebalancing หรืออาจเป็นบั๊กใน confirmation endpoint ของร้านอาหาร คุณไม่สามารถรู้ว่าอันไหนจนกว่าคุณจะมี observability ทั้งสองชั้น"
+
+"เราคิดถึงสิ่งที่จะเกิดขึ้นถ้าเราแก้ infrastructure และ business metric ยังไม่ดีขึ้นไหม?" Priya ถาม
+
+"แล้วสาเหตุรากเหง้าไม่ได้อยู่ใน infrastructure" Carlos พูด "ซึ่งเป็นข้อมูลที่มีค่า ถ้าไม่มี business metric คุณจะไล่ตามการปรับปรุง infrastructure สำหรับปัญหาที่อยู่ที่อื่น"
+
+
+"มันมีค่าใช้จ่ายต่อเดือนเท่าไหร่เมื่อเรามี 500 concurrent deliveries ที่ถูกติดตาม?" Tom ถาม "State store, Kinesis stream, Lambda functions ที่ประมวลผล events?"
+
+Carlos พยักหน้า "นั่นคือคำถามที่ถูกต้องที่จะถามตอนนี้ ขณะที่คุณกำลังออกแบบ ไม่ใช่หลังจากที่คุณสร้างมัน"
+
+นี่คือรายละเอียดสถาปัตยกรรมที่ปรากฏในการตรวจสอบที่มีโครงสร้าง — และมักไม่ปรากฏเมื่อคุณแค่กำลังสร้าง
 
 **Architecture Decision Record**
 
@@ -158,9 +285,92 @@ Carlos เขียนบนกระดาน: *Unknown: tracking SLA*
 - **การแลกเปลี่ยนคืออะไร**
 - **อะไรที่จะทำให้เรากลับมาพิจารณาการตัดสินใจนี้**
 
+คุณอาจสงสัยว่า: ADRs ต้องเป็นเอกสารทางการไหม? ไม่ ADR สามารถเป็นย่อหน้าใน Slack thread ถ้านั่นคือที่ที่ทีมของคุณทำงาน รูปแบบไม่เกี่ยวข้อง การเขียนสิ่งที่คุณตัดสินใจและทำไม — ก่อนที่จะไปต่อ — คือสิ่งที่สร้าง institutional memory
+
 "ADRs ใช้สำหรับตัวคุณเองในอนาคต" Carlos พูด "ใน 18 เดือน คุณจะมองสถาปัตยกรรมส่วนหนึ่งและสงสัยว่าทำไมถึงทำแบบนั้น ถ้าคุณมี ADR คุณจะเข้าใจบริบท ถ้าไม่มี คุณจะปล่อยมันไว้ (เพราะคุณกลัวที่จะแตะ) หรือเปลี่ยนมัน (เพราะคุณไม่เข้าใจว่าทำไมถึงทำแบบนั้น)"
 
 Leo เขียน ADR แรกในบ่ายวันนั้น: การตัดสินใจใช้ Kinesis สำหรับ delivery tracking events พร้อมบริบท ทางเลือกที่พิจารณา (SQS, EventBridge, polling) และการแลกเปลี่ยน
+
+Carlos มอง ADR ที่ Leo ร่างไว้ เขาอ่านมันในสามสิบวินาที จากนั้นเขาพูด: "แสดงให้ทีมเห็นว่า ADR-007 หน้าตาเป็นอย่างไร"
+
+Leo ฉายมัน
+
+---
+
+**ADR-007: Delivery Tracking Event Infrastructure**
+
+**วันที่**: 2025-03-14
+**สถานะ**: Accepted
+**ผู้เขียน**: Leo (พร้อมการ review จาก Carlos, Priya)
+
+---
+
+**ปัญหา**
+
+Nimbus Instant ต้องการการติดตามสถานะการส่ง real-time คำสั่งซื้อต้องอัปเดตสถานะ (confirmed → preparing → en route → delivered) และแสดงการอัปเดตเหล่านั้นต่อแอปมือถือของลูกค้าภายใน 5 วินาทีของการเปลี่ยนสถานะ ระบบคืนเงินยังต้องการ log ของ delivery events ที่ตรวจสอบได้และ replay ได้เพื่อกำหนด SLA compliance
+
+---
+
+**ทางเลือกที่พิจารณา**
+
+**ตัวเลือก 1: API Gateway WebSocket + DynamoDB state**
+- Client รักษา WebSocket connection ต่อคำสั่งซื้อ
+- Backend push การเปลี่ยนสถานะผ่าน connection ที่เปิด
+- เมื่อ reconnect client ดึงสถานะปัจจุบันจาก DynamoDB
+- ต้นทุนที่ประมาณการที่ scale (10K active orders พร้อมกัน): ~$150/เดือน
+- จุดอ่อน: การจัดการ connection limit ที่ scale; ไม่มี replay ในตัวสำหรับ audit
+
+**ตัวเลือก 2: Client polling (ช่วง 5 วินาที)**
+- Client poll `/orders/{order_id}/status` ทุก 5 วินาที
+- Backend อ่านจาก DynamoDB ในแต่ละ poll
+- การ implement ที่ง่ายที่สุด
+- ต้นทุนที่ประมาณการที่ scale (10K active orders พร้อมกัน): $18,130/เดือน
+- ถูกตัดออกเนื่องจากต้นทุน
+
+**ตัวเลือก 3: Kinesis Data Streams + Server-Sent Events**
+- การเปลี่ยนสถานะการส่งถูก publish ไปยัง Kinesis stream ปรับขนาดตาม throughput: หนึ่ง shard ingest 1 MB/s หรือ 1,000 records/s ที่ 10K active orders (~4 state-change events ต่อคำสั่งซื้อ payloads JSON ขนาดเล็ก) peak write rate คือ ~40-50 events/s — เท่ากับหนึ่ง shard provision 3 shards สำหรับ partition spread และ consumer headroom
+- SSE endpoint subscribe Kinesis shard ที่กำหนดให้ order partition
+- Client รับ SSE events; reconnect โดยใช้ standard EventSource API
+- ต้นทุนที่ประมาณการที่ scale (10K active orders พร้อมกัน): ~$75/เดือน
+- ให้ durable, replayable event log; decouple consumers ทั้งหมด
+
+---
+
+**การตัดสินใจ**
+
+ตัวเลือก 3: Kinesis Data Streams + SSE
+
+เหตุผล: ข้อได้เปรียบด้านต้นทุนมีนัยสำคัญที่ scale; Kinesis event log ตอบสนองข้อกำหนด refund audit โดยไม่ต้อง implement audit trail แยกต่างหาก; การจัดการ SSE reconnect ง่ายกว่าการจัดการ WebSocket connection ที่ scale
+
+---
+
+**ผลที่ตามมา**
+
+- *เชิงบวก*: ระบบคืนเงิน ระบบแจ้งเตือนร้านอาหาร และแอปลูกค้าทั้งหมด consume จาก Kinesis stream เดียวกันอย่างอิสระ Consumers ใหม่สามารถเพิ่มได้โดยไม่ต้องแก้ producer
+- *เชิงบวก*: Events สามารถ replay ได้สูงสุด 7 วัน (extended retention ที่เรากำหนด; Kinesis รองรับสูงสุด 365 วันที่ค่าใช้จ่ายเพิ่ม) ถ้า refund processing Lambda ล้มเหลว มันสามารถ replay events ที่พลาด
+- *เชิงลบ*: SSE latency (~200ms) สูงกว่า WebSocket latency (~50ms) ยอมรับได้เพราะความต่างนี้ต่ำกว่า customer perception threshold สำหรับการอัปเดตสถานะ
+- *เชิงลบ*: Kinesis provisioned pricing ขยายตาม shard hours และ extended retention ราวสองเท่าของต้นทุนต่อ shard Throughput headroom ใหญ่ (หนึ่ง shard ingest 1,000 records/s) แต่เมื่อจำนวน consumer และ read load ต่อ consumer เติบโตเกินราว 50K daily active orders จำนวน shard — และกลยุทธ์ re-shard/consumer-fan-out — จะต้องถูกกลับมาพิจารณา
+
+**อะไรที่จะทำให้เรากลับมาพิจารณาการตัดสินใจนี้**: ถ้า order volume เติบโตจนถึงที่ Kinesis shard costs เกิน WebSocket costs ที่ scale ใหม่ หรือถ้า SSE latency 200ms กลายเป็นปัญหา product differentiation
+
+---
+
+"บรรทัดสุดท้าย" Maya พูด "นั่นคืออันที่ผมไม่ได้คิดถึง"
+
+"Trigger สำหรับการกลับมาพิจารณา" Carlos พูด "ทุกการตัดสินใจมีเงื่อนไขที่มันกลายเป็นผิด การเขียนมันลงหมายความว่าคุณจะจำมันได้เมื่อมันปรากฏ"
+
+"แทนที่จะค้นพบมันใน post-mortem" Priya พูด
+
+"แทนที่จะเป็นอย่างนั้น ใช่"
+
+Tom กำลังอ่าน cost consequence "กลยุทธ์ re-shard และ fan-out — เรายังไม่มี"
+
+"คุณไม่ต้องการมันจนกว่า 50K daily active orders" Carlos พูด "ที่ 287 ร้านอาหารและ 4,200 daily orders ปัจจุบันของคุณ คุณมี headroom มาก ADR บอกคุณว่าต้องสร้างอะไรก่อนที่มันจะเร่งด่วน ไม่ใช่ก่อนที่มันจะเกี่ยวข้อง"
+
+Leo จดบันทึก "ADR กำลังทำสองอย่าง" เขาพูด "มันกำลังทำเอกสารสิ่งที่เราตัดสินใจ และมันกำลังทำเอกสารสิ่งที่เราจะต้องตัดสินใจต่อไปถ้าสถานการณ์เปลี่ยน"
+
+"นั่นคือสิ่งที่ทำให้ ADR มีประโยชน์เป็นเวลาสิบแปดเดือน" Carlos พูด "ไม่ใช่การตัดสินใจเอง — การตัดสินใจกลายเป็น stale เหตุผลต่างหาก เหตุผลบอกคุณว่าการตัดสินใจควรกลับมาพิจารณาหรือไม่ แม้เมื่อการตัดสินใจยังคงอยู่"
+
 
 **สิ่งที่ทำให้เป็นสถาปนิก**
 
@@ -182,6 +392,14 @@ Leo เขียน ADR แรกในบ่ายวันนั้น: กา
 
 Carlos พยักหน้า "ทุกคนในที่นี้กำลังทำสิ่งนี้อยู่แล้ว คุณทำมันตั้งแต่บทที่ 1 ความแตกต่างระหว่าง senior engineer และสถาปนิกไม่ใช่ certification หรือตำแหน่ง มันคือนิสัยในการถามคำถามถัดไป — อันที่เปิดเผยสิ่งที่คุณยังไม่ได้คิดถึง"
 
+**ความผันแปร: เมื่อ Architecture Review เพิ่มความเสี่ยงแทนที่จะลดมัน**
+
+ถ้าการตรวจสอบของคุณถูกมองว่าเป็น approval gate มากกว่ากระบวนการเรียนรู้ ทีมจะเริ่มซ่อนตัวเลือกการออกแบบเพื่อหลีกเลี่ยงความล่าช้า — และ failure modes จะยังคงมีอยู่ แค่ไม่มีเอกสาร Architecture review ที่ชะลอการส่งมอบโดยไม่ปรับปรุงคุณภาพแย่กว่าไม่มีการตรวจสอบเลย
+
+ถ้าปัญหา idempotency สำหรับ refund service ถูกมองว่าเป็นความล่าช้าที่ไม่คาดคิดต่อการเปิดตัวฟีเจอร์มากกว่าการค้นพบที่จำเป็น Leo จะส่ง endpoint ดั้งเดิม การคืนเงินซ้ำจะเกิดขึ้นในที่สุด และทีมจะได้เรียนรู้เกี่ยวกับมันจากลูกค้าที่โกรธ การตรวจสอบเปิดเผยปัญหาที่จุดที่การแก้มันมีค่าใช้จ่ายหนึ่งวัน ไม่ใช่ rollback
+
+คุณค่าของการตรวจสอบเป็นสัดส่วนกับว่าทีมเต็มใจให้มันเปลี่ยนการออกแบบแค่ไหน
+
 ## จุดแข็งและข้อจำกัด
 
 **Architecture reviews**:
@@ -195,21 +413,20 @@ Carlos พยักหน้า "ทุกคนในที่นี้กำ�
 
 - ต้องการคนที่มีทักษะพอที่จะถามคำถามที่ถูกต้อง การตรวจสอบดีแค่ผู้ตรวจสอบ
 - สามารถกลายเป็น bureaucratic ถ้าถูกมองว่าเป็น checkbox แทนที่จะเป็นการสนทนา
-- การตัดสินใจสถาปัตยกรรมบางอย่างไม่ต้องการการตรวจสอบเต็มรูปแบบ — การรู้ว่าอันไหนที่ต้องตรวจสอบเป็นทักษะสถาปัตยกรรมในตัวเอง
+- การตัดสินใจสถาปัตยกรรมบางอย่างไม่ต้องการการตรวจสอบเต็มรูปแบบจริงๆ — การรู้ว่าอันไหนที่ต้องตรวจสอบเป็นทักษะสถาปัตยกรรมในตัวเอง
 - ผลลัพธ์ (ADRs, diagrams, decision logs) ต้องได้รับการดูแลเมื่อระบบพัฒนา
 
-ในบทถัดไป: คำตอบที่มีประโยชน์ น่าหงุดหงิด และซื่อสัตย์ที่สุดในวิศวกรรมซอฟต์แวร์ทั้งหมด
-
 ## สรุป
+
+การตรวจสอบกับ Carlos ใช้เวลาสองชั่วโมงและผลิต ADRs สามอัน รายการสิ่งที่ไม่รู้หกอันที่ต้องแก้ก่อนที่ฟีเจอร์จะถูกสร้าง และการเปลี่ยนแปลงสถาปัตยกรรมหนึ่งอย่าง (idempotency state store) ที่จะเจ็บปวดที่จะ retrofit หลังการเปิดตัว อุปมา pre-flight checklist ยืนยันตลอด: ไม่มีอะไรหายนะถูกค้นพบ แต่หลายสิ่งที่จะทำให้เกิดปัญหาในภายหลังถูกจับและทำเอกสารขณะที่มันยังแก้ได้ง่าย
 
 - Architecture reviews เริ่มด้วย **ข้อกำหนดทางธุรกิจ ไม่ใช่เทคโนโลยี**
 - โครงสร้างการตรวจสอบ: constraints → unknowns → options → failure modes → monitoring → runbooks
 - สถาปนิกถาม: อะไรที่แตกก่อน? เราจะรู้ได้อย่างไรว่ามันเสื่อม? ประสบการณ์ผู้ใช้ระหว่างความล้มเหลวเป็นอย่างไร? ต้นทุนในระดับขนาดใหญ่คือเท่าไหร่?
 - **Architecture Decision Records (ADRs)** จับสิ่งที่ตัดสินใจ เหตุผล และอะไรที่จะทำให้กลับมาพิจารณา
 - การคิดเหมือนสถาปนิกคือนิสัย: การถามคำถามถัดไป โดยเฉพาะเกี่ยวกับ failure modes ผลลัพธ์ทางธุรกิจ และ scale economics
-- ความแตกต่างระหว่างการตัดสินใจและการเป็นสถาปนิกคือชุดคำถามเริ่มต้น: สถาปนิก default ไปยังคำถามระดับระบบและความล้มเหลว ไม่ใช่แค่คำถาม implementation
 
-## เคล็ดลับสอบ
+## เคล็ดลับการสอบ
 
 *SAA-C03 Domain: Cross-domain — architectural reasoning*
 
@@ -218,8 +435,10 @@ Carlos พยักหน้า "ทุกคนในที่นี้กำ�
 - **สถานการณ์ SAA-C03** เกือบทั้งหมดอธิบาย business constraint ก่อน ("บริษัทไม่สามารถรับ downtime มากกว่า 1 ชั่วโมงได้") และขอให้คุณเลือกสถาปัตยกรรมที่ตรงตามข้อกำหนด ฝึกแปล business constraints เป็นข้อกำหนดด้านเทคนิค
 - **การคิด failure mode**: คำถามสอบหลายข้ออธิบายระบบและถามว่าเกิดอะไรขึ้นเมื่อ component ล้มเหลว ฝึกถาม "อะไรที่แตกก่อน?" สำหรับสถาปัตยกรรมที่คุณพบ
 - **การคิด trade-off**: สอบแทบจะไม่มีคำตอบ "สมบูรณ์แบบ" มันถามหาคำตอบ *ที่ดีที่สุด* ตาม constraints ชุดหนึ่ง สบายใจกับ "ตัวเลือกนี้ถูกต้องตาม requirements เฉพาะเหล่านี้ แม้ว่าตัวเลือกอื่นจะดีกว่าภายใต้ requirements ที่ต่างออกไป"
-- **Idempotency**: ปัญหา double-refund เป็นความท้าทาย distributed systems จริง Idempotency keys (เฉพาะต่อ operation ตรวจสอบก่อน execution) คือโซลูชันมาตรฐาน รู้ pattern นี้
 - **Architecture Decision Records**: ไม่ใช่บริการ AWS แต่เป็น best practice ที่สะท้อน Operational Excellence pillar ของ Well-Architected Framework
+- **Kinesis สำหรับ real-time event streaming**: ฟีเจอร์ Nimbus Instant ของบทนี้ใช้ Kinesis สำหรับ delivery event streaming สัญญาณสอบ: "real-time event ingestion พร้อม ordered processing" → Kinesis Data Streams "Decouple components, at-least-once delivery" → SQS การรู้ว่าเมื่อไหร่จะหยิบแต่ละอันเป็นรูปแบบสอบที่เกิดซ้ำ
+- **Idempotency เป็น pattern ที่ทดสอบได้**: SAA-C03 มักทดสอบ idempotency ในระบบ distributed Pattern หลัก: สร้าง idempotency key เฉพาะก่อนเรียกระบบภายนอก; persist key และผลลัพธ์; เมื่อ retry ตรวจสอบ key ที่มีอยู่ก่อน re-execute ถ้าพบ คืนผลลัพธ์ที่เก็บไว้ก่อนหน้าโดยไม่ re-execute สิ่งนี้ป้องกัน double-charges, double-sends และ duplicate state mutations เมื่อ retries เกิดขึ้นหลัง network timeout สัญญาณสอบ: "ป้องกัน duplicate operations เมื่อ service call ถูก retry" หรือ "ทำให้แน่ใจว่าประมวลผล payment events แบบ exactly-once" → idempotency key เก็บใน DynamoDB ด้วย conditional write
+- **Server-Sent Events vs WebSockets**: SSE เป็น unidirectional (server ไป client) ใช้ standard HTTP และ reconnect อัตโนมัติผ่าน EventSource API WebSockets เป็น bidirectional ต้องการ connection management และเหมาะสมเมื่อ client ต้อง push ข้อมูลไปยัง server ด้วย สำหรับการอัปเดตสถานะการส่ง (server-to-client เท่านั้น) SSE ง่ายกว่าและถูกกว่า WebSockets ที่ scale
 
 ## แบบฝึกหัด
 
@@ -229,9 +448,9 @@ Carlos ถามหกประเภทคำถามระหว่างก�
 
 *(คำใบ้: พวกมันถูกระบุในส่วน "Architecture Review Structure" ลองจำจากความจำ การพยายาม recall (แม้จะล้มเหลว) ช่วยเสริม long-term retention)*
 
-**แบบฝึกหัดที่ 2 — ฝึกสอบ**
+**แบบฝึกหัดที่ 2 — สถานการณ์ SAA-C03**
 
-*สถานการณ์*: บริษัทกำลังสร้างระบบจัดการ bid real-time สำหรับโฆษณาออนไลน์ Bids ต้องถูกประเมินและตอบสนองภายใน 100 มิลลิวินาที ระบบประมวลผล bids 1 ล้านครั้งต่อวินาทีในช่วง peak ถ้าระบบ bid ล่ม บริษัทสูญเสียรายได้จากโฆษณา ทีมฐานข้อมูลของบริษัทเสนอใช้ RDS Aurora พร้อม read replicas 10 ตัว Solution architect ต้องประเมินข้อเสนอนี้
+*สถานการณ์*: บริษัทกำลังสร้างระบบจัดการ bid real-time สำหรับโฆษณาออนไลน์ Bids ต้องถูกประเมินและตอบสนองภายใน 100 มิลลิวินาที ระบบประมวลผล bids 1 ล้านครั้งต่อวินาทีในช่วง peak ถ้าระบบ bid ล่ม บริษัทสูญเสียรายได้จากโฆษณา ทีมฐานข้อมูลของบริษัทเสนอใช้ RDS Aurora พร้อม read replicas 10 ตัว Solution architect ต้องประเมินว่าข้อเสนอนี้ใช้ได้พื้นฐานหรือไม่ก่อนทบทวนคุณลักษณะรอง
 
 ความกังวลใดที่สถาปนิกควรยกขึ้นก่อน?
 
@@ -240,19 +459,19 @@ B) Aurora read replicas มี replication lag ที่อาจทำให้
 C) Aurora query latency ทั่วไป 1-5ms อาจไม่ตรงตาม SLA response 100ms  
 D) RDS Aurora ไม่รองรับ transaction volumes ที่ 1 ล้าน requests ต่อวินาทีที่ latency requirement นี้
 
-**คำใบ้ที่ 1**: constraint หลักคือ response time รวม 100ms ที่ 1 ล้าน requests/วินาที ความกังวลใดที่คุกคาม constraint นี้โดยตรง?
+**คำใบ้ที่ 1**: constraint หลักคือ response time รวม 100ms ที่ 1 ล้าน requests/วินาที ความกังวลใดที่ ถ้าถูกต้อง ทำให้ข้อเสนอใช้ไม่ได้ไม่ว่าอีกสามอันจะถูกแก้อย่างไร?
 
-**คำใบ้ที่ 2**: Aurora query latency ทั่วไปคือ 1-5ms 1-5ms สำหรับ database query ทิ้งไว้ 95-99ms สำหรับ network, application logic และ serialization SLA 100ms อยู่ในความเสี่ยงไหม?
+**คำใบ้ที่ 2**: Aurora query latency ทั่วไปคือ 1-5ms 1-5ms สำหรับ database query ทิ้งไว้ 95-99ms สำหรับ network, application logic และ serialization constraint 100ms อยู่ในความเสี่ยงไหม?
 
 **คำใบ้ที่ 3**: Aurora สามารถรองรับ IOPS สูงได้ แต่ 1 ล้าน requests ต่อวินาทีเป็นอัตรา extraordinary จะเกิดอะไรขึ้นกับสถาปัตยกรรมที่ scale นั้น?
 
 **คำตอบ**: D
 
-**คำอธิบาย**: แม้ว่า Aurora จะเป็น high-performance แต่ 1 ล้าน requests ต่อวินาทีที่ response time รวม 100ms เป็นข้อกำหนดที่สุดขีด สถาปนิกควรตั้งคำถามก่อนว่า Aurora (หรือ relational database ใดก็ตาม) สามารถทำหน้าที่เป็น primary lookup system ที่ scale และ latency นี้ได้ไหม ระบบแบบนี้โดยทั่วไปใช้ in-memory data stores (Redis) หรือ low-latency databases เฉพาะ ไม่ใช่ relational databases ที่มี SQL semantics เต็มรูปแบบ SLA 100ms สามารถทำได้สำหรับ Aurora queries เพียงอย่างเดียว แต่การรวมกันของ 1M RPS และ SLA รวม 100ms เกิน Aurora throughput characteristics ทั่วไป
+**คำอธิบาย**: แม้ว่า Aurora จะเป็น high-performance แต่ 1 ล้าน requests ต่อวินาทีที่ response time รวม 100ms เป็นข้อกำหนดที่สุดขีด — มันคือตัวขวางทางสถาปัตยกรรมที่กำหนดว่าข้อเสนอสามารถมีอยู่ได้หรือไม่เลย สถาปนิกควรตั้งคำถามก่อนว่า Aurora (หรือ relational database ใดก็ตาม) สามารถทำหน้าที่เป็น primary lookup system ที่ scale และ latency นี้ได้ไหม ระบบแบบนี้โดยทั่วไปใช้ in-memory data stores (Redis) หรือ low-latency databases เฉพาะ ไม่ใช่ relational databases ที่มี SQL semantics เต็มรูปแบบ SLA 100ms สามารถทำได้สำหรับ Aurora queries เพียงอย่างเดียว แต่การรวมกันของ 1M RPS และ SLA รวม 100ms เกิน Aurora throughput characteristics ทั่วไป "ก่อน" หมายถึง feasibility ก่อนการปรับแต่ง: ถ้า engine ไม่สามารถรองรับโหลดได้ ความกังวลอื่นทั้งหมดเกี่ยวกับข้อเสนอก็ไร้ความหมาย
 
 **ทำไมไม่ใช่ A?** ต้นทุนเป็นความกังวลที่ถูกต้อง แต่ความกังวลแรกควรเป็นว่าสถาปัตยกรรมนั้น technically feasible ที่ข้อกำหนดที่ระบุหรือไม่
 
-**ทำไมไม่ใช่ B?** Replication lag ใน Aurora read replicas โดยทั่วไปน้อยกว่า 100ms ซึ่งยอมรับได้สำหรับกรณีการใช้งานส่วนใหญ่ ปัญหา consistency มีจริงแต่รองจากคำถาม feasibility
+**ทำไมไม่ใช่ B?** Replication lag เป็นคุณลักษณะ *รอง* ของข้อเสนอที่มีจริง — คุณสมบัติที่คุณ tune เมื่อสถาปัตยกรรมใช้ได้แล้ว Aurora replica lag โดยทั่วไป <100ms และยอมรับได้สำหรับกรณีการใช้งานส่วนใหญ่; การยกมันก่อนหมายถึงการถกเถียงพฤติกรรม consistency ของระบบที่ไม่สามารถรองรับ throughput ที่ต้องการตั้งแต่แรก คำถาม feasibility (D) ครอบคลุมมัน
 
 **ทำไมไม่ใช่ C?** Aurora latency ที่ 1-5ms อยู่ใน SLA 100ms สำหรับส่วน database query นี่ไม่ใช่ความกังวลหลัก
 
