@@ -1,248 +1,503 @@
 # অধ্যায় ২৫: প্রাইভেট হাইওয়ে
 
-একটু উঠে দাঁড়ান। হাত ঝাড়ুন।
+এক মুহূর্তের জন্য উঠে দাঁড়ান। আপনার হাত ঝাড়ুন।
 
-আমরা ডেটা সরানো নিয়ে কথা বলতে যাচ্ছি। AWS-এর মধ্যে সার্ভিসগুলির মধ্যে নয়, বরং বাস্তব জগৎ এবং AWS-এর মধ্যে — আপনার অফিস এবং আপনার ক্লাউড অবকাঠামোর মধ্যে, মহাদেশগুলির মধ্যে।
+আপনার আঙুলের ডগা এবং দেশের অন্য প্রান্তের কোনো কিছুর মধ্যে দূরত্ব অনুভব করুন। একটি message পাঠানোর কল্পনা করুন যাকে সেই দূরত্ব ভ্রমণ করতে হবে, এক ডজন carrier handoff-এর মধ্য দিয়ে পথ খুঁজে নিতে হবে, এবং আপনি কাজ চালিয়ে যাওয়ার আগে ফিরে আসতে হবে। এখন প্রতি সেকেন্ডে হাজার হাজার বার সেটা করার কল্পনা করুন।
 
-Nimbus-এর অবকাঠামো দল (এখন চার ইঞ্জিনিয়ার) সিয়াটলের একটি শেয়ার্ড অফিস থেকে কাজ করত। তাদের পরিচালিত AWS অবকাঠামোতে অ্যাক্সেস প্রয়োজন ছিল। কিছু অপারেশনের জন্য VPC-এর রিসোর্সগুলিতে সংযোগ প্রয়োজন ছিল।
+সেটাই data transfer আসলে — শারীরিক দূরত্ব, শারীরিক অবকাঠামো, শারীরিক সীমাবদ্ধতা।
 
-বর্তমানে, তারা পাবলিক সাবনেটে বেশন হোস্ট অ্যাক্সেস করতে তাদের ল্যাপটপে একটি VPN ব্যবহার করত, তারপর সেখান থেকে রিসোর্সে SSH করত।
+আমরা data সরানো নিয়ে কথা বলতে যাচ্ছি। AWS-এর মধ্যে service-গুলির মধ্যে নয়, বরং বাস্তব জগৎ এবং AWS-এর মধ্যে — আপনার অফিস এবং আপনার cloud অবকাঠামোর মধ্যে, মহাদেশগুলির মধ্যে।
 
-এটি কাজ করত। ধীর ছিল। VPN সংযোগ পাবলিক ইন্টারনেটের মাধ্যমে রুট হয়েছিল: সিয়াটল → ক্রস-কান্ট্রি ফাইবার → একাধিক ক্যারিয়ার হপ → us-east-1। প্রতিটি রাউন্ড ট্রিপ ছিল ৮০+ মিলিসেকেন্ড।
+---
 
-"দৈনন্দিন SSH-এর জন্য, এটি গ্রহণযোগ্য," Leo বললেন। "কিন্তু আমরা আমাদের অ্যানালিটিক্স ডেটাবেস সরাতে শুরু করতে যাচ্ছি। ৪ টেরাবাইট ঐতিহাসিক অর্ডার ডেটা। এই সংযোগের মাধ্যমে, মাইগ্রেশনে সপ্তাহ লাগবে।"
+Database scale করা এবং storage cost কমানোর সাথে, Tom networking বিলের দিকে ফিরেছিল। কিন্তু Leo-র একটি আরও তাৎক্ষণিক সমস্যা ছিল — ৪ টেরাবাইট ঐতিহাসিক order data AWS-এ সরানো তাদের বর্তমান connection-এর সীমা উন্মোচন করছিল।
 
-"আমাদের আরো ভালো সংযোগ দরকার," Maya বললেন।
+---
 
-"একটি প্রাইভেট সংযোগ," Priya যোগ করলেন। "পাবলিক ইন্টারনেটের মাধ্যমে নয়।"
+Nimbus-এর অবকাঠামো দল (এখন চার engineer) Seattle-এ একটি shared অফিস থেকে কাজ করত। তাদের পরিচালিত AWS অবকাঠামোতে access প্রয়োজন ছিল। কিছু operation-এর জন্য VPC-এর resource-এ সংযোগ প্রয়োজন ছিল।
 
-কাজে যাওয়ার মতো ভাবুন। Site-to-Site VPN হলো পাবলিক রাস্তায় গাড়ি চালানোর মতো: আপনি গাড়ির দরজা লক করেন (এনক্রিপশন), কিন্তু আপনি এখনও সবার সাথে লেন ভাগ করেন, এবং ট্র্যাফিক জ্যাম আপনাকে অপ্রত্যাশিতভাবে ধীর করে দেয়। Direct Connect হলো হাইওয়েতে একটি ডেডিকেটেড প্রাইভেট লেন ভাড়া করার মতো — কোনো শেয়ার্ড ট্র্যাফিক নেই, সামঞ্জস্যপূর্ণ গতি এবং একটি উচ্চতর মাসিক টোল। বেশিরভাগ দিন পাবলিক রাস্তা ঠিক আছে। যখন আপনি টাইট শিডিউলে মূল্যবান কার্গো ভর্তি ট্রাক সরাচ্ছেন, আপনি প্রাইভেট লেনের জন্য অর্থ দেন।
+বর্তমানে, তারা public subnet-এ bastion host access করতে তাদের laptop-এ একটি VPN ব্যবহার করত, তারপর সেখান থেকে resource-এ SSH করত।
+
+এটা কাজ করত। এটা ধীর ছিল। VPN connection public internet-এর মাধ্যমে route হত: Seattle → একাধিক carrier hop → us-west-2। Round trip অসামঞ্জস্যপূর্ণ ছিল — ঘণ্টার উপর নির্ভর করে ৩০ থেকে ৮০ মিলিসেকেন্ড — এবং throughput অফিস uplink এবং public path দ্বারা সীমাবদ্ধ ছিল।
+
+"দৈনন্দিন SSH-এর জন্য, সেটা গ্রহণযোগ্য," Leo বলল। "কিন্তু আমরা আমাদের analytics database সরাতে শুরু করতে যাচ্ছি। ৪ টেরাবাইট ঐতিহাসিক order data। এই connection-এর মাধ্যমে, migration সপ্তাহ নেবে।"
+
+"আমাদের একটি ভালো connection দরকার," Maya বলল।
+
+"একটি private connection," Priya যোগ করল। "Public internet-এর মাধ্যমে নয়। এবং কেউ যদি data transfer-এর সময় ভাঙার চেষ্টা করে? Public internet-এর উপর ৪TB order history — এমনকি encrypted — একটি target-এর মতো অনুভব হয়।"
+
+কাজে যাতায়াতের মতো করে ভাবুন। একটি Site-to-Site VPN হলো public রাস্তায় গাড়ি চালানোর মতো: আপনি আপনার গাড়ির দরজা lock করেন (encryption), কিন্তু আপনি এখনও সবার সাথে lane শেয়ার করেন, এবং traffic jam আপনাকে অপ্রত্যাশিতভাবে ধীর করে। Direct Connect হলো highway-তে একটি dedicated private lane ভাড়া করার মতো — কোনো shared traffic নেই, ধারাবাহিক গতি, এবং একটি উচ্চতর মাসিক টোল। বেশিরভাগ দিন public রাস্তা ঠিক আছে। আপনি যখন একটি tight schedule-এ মূল্যবান cargo ভর্তি একটি truck সরাচ্ছেন, আপনি private lane-এর জন্য পেমেন্ট করেন।
+
+Snow Family হলো সেই option যা বেশিরভাগ মানুষ বিবেচনা করে না: একটি প্রকৃত cargo flight চার্টার করা। এটা সবসময় উপলব্ধ নয়। এটা ছোট load-এর জন্য সঠিক নয়। কিন্তু একটি পূর্ণ truck-এর জন্য, এটা গাড়ি চালানোর চেয়ে দ্রুত পৌঁছায় এবং highway condition-এর উপর মোটেও নির্ভর করে না। Physics পরিবর্তন হয়নি — আপনি এখনও একই bit সরাচ্ছেন — কিন্তু mechanism মৌলিকভাবে ভিন্ন।
 
 **AWS Site-to-Site VPN: দ্রুত বিকল্প**
 
-**AWS Site-to-Site VPN** আপনার অন-প্রিমিসেস নেটওয়ার্ক এবং আপনার VPC-এর মধ্যে একটি এনক্রিপ্টেড টানেল তৈরি করে, পাবলিক ইন্টারনেট অতিক্রম করে।
+**AWS Site-to-Site VPN** আপনার on-premises network এবং আপনার VPC-এর মধ্যে একটি encrypted tunnel তৈরি করে, public internet অতিক্রম করে।
 
-সেটআপ:
+Setup:
 
 1. আপনার VPC-এর সাথে সংযুক্ত একটি Virtual Private Gateway (VGW) তৈরি করুন
-2. আপনার অন-প্রিমিসেস রাউটার প্রতিনিধিত্বকারী একটি Customer Gateway তৈরি করুন
-3. তাদের মধ্যে দুটি VPN টানেল স্থাপন করুন (রিডান্ডেন্সির জন্য)
+2. আপনার on-premises router প্রতিনিধিত্বকারী একটি Customer Gateway তৈরি করুন
+3. তাদের মধ্যে দুটি VPN tunnel স্থাপন করুন (redundancy-র জন্য)
 
-ট্র্যাফিক এনক্রিপ্টেড (AES-256)। এটি পাবলিক ইন্টারনেটের মাধ্যমে ভ্রমণ করে, যার মানে লেটেন্সি ইন্টারনেটের অবস্থার উপর নির্ভর করে। AWS রিডান্ডেন্সির জন্য স্বয়ংক্রিয়ভাবে দুটি টানেল প্রদান করে — যদি একটি টানেলে সমস্যা হয়, ট্র্যাফিক অন্যটিতে শিফট হয়।
+Traffic encrypted (AES-256)। এটা public internet-এর মাধ্যমে ভ্রমণ করে, যার মানে latency internet condition-এর উপর নির্ভর করে। AWS redundancy-র জন্য স্বয়ংক্রিয়ভাবে দুটি tunnel প্রদান করে — একটি tunnel-এ সমস্যা হলে, traffic অন্যটিতে shift হয়।
 
-**Site-to-Site VPN কখন ব্যবহার করবেন**:
+**কখন Site-to-Site VPN ব্যবহার করবেন**:
 
-- দ্রুত সেটআপ (মিনিট থেকে ঘণ্টা)
-- সাশ্রয়ী ($০.০৫/ঘণ্টা প্রতি VPN সংযোগ)
-- ব্যান্ডউইথ: প্রতি টানেলে সর্বোচ্চ ১.২৫ Gbps
-- ব্যবহারের ক্ষেত্রে গ্রহণযোগ্য ইন্টারনেট লেটেন্সি
+- দ্রুত setup (মিনিট থেকে ঘণ্টা)
+- সাশ্রয়ী (প্রতি VPN connection $0.05/hour)
+- Bandwidth: প্রতি tunnel সর্বোচ্চ 1.25 Gbps
+- use case-এর জন্য গ্রহণযোগ্য internet latency
 
-Nimbus-এর ৪TB মাইগ্রেশনের জন্য, সর্বোচ্চ ১.২৫ Gbps-এ ইন্টারনেট-ভিত্তিক VPN লাগবে: ৪TB / ১.২৫ Gbps ≈ ন্যূনতম ৭ ঘণ্টা, বাস্তব-বিশ্বের ওভারহেড সহ কাছাকাছি ১২-২০ ঘণ্টা। গ্রহণযোগ্য, কিন্তু পাবলিক ইন্টারনেট পথে কনজেশন এটিকে অপ্রত্যাশিত করে তোলে।
+**Accelerated Site-to-Site VPN** public internet-এর পরিবর্তে AWS-এর global network-এর উপর VPN traffic route করে — Global Accelerator যে একই optimization প্রদান করে, VPN tunnel-এ প্রয়োগ করা। Latency standard VPN-এর চেয়ে কম এবং বেশি ধারাবাহিক। Cost সামান্য বেশি (Global Accelerator data transfer চার্জ প্রযোজ্য)। যে দলগুলি VPN-এর দ্রুত setup এবং কম cost চায় কিন্তু ভালো latency প্রয়োজন, তাদের জন্য Accelerated VPN standard VPN এবং Direct Connect-এর মধ্যে ব্যবহারিক মধ্যপথ।
 
-"অন্য বিকল্পটি কী?" Tom জিজ্ঞেস করলেন।
+Nimbus-এর ৪TB migration-এর জন্য, সর্বোচ্চ 1.25 Gbps-এ internet-ভিত্তিক VPN নিত: 4TB / 1.25 Gbps ≈ ন্যূনতম ৭ ঘণ্টা, বাস্তব-জগতের overhead সহ ১২-২০ ঘণ্টার কাছাকাছি। গ্রহণযোগ্য, কিন্তু public internet path-এ congestion এটাকে অপ্রত্যাশিত করে।
+
+Leo সংখ্যাগুলি আরও সাবধানে চালাল, কারণ তাত্ত্বিক হিসাব এবং প্রকৃত transfer time তার অভিজ্ঞতায় কখনো একবারও মেলেনি।
+
+**তাত্ত্বিক**: 4 TB = 4,096 GB = 32,768 Gb। 1 Gbps-এ: 32,768 সেকেন্ড ≈ ৯.১ ঘণ্টা। ৯ ঘণ্টায় round করুন।
+
+**প্রকৃত**: Leo আগের সপ্তাহে একটি test transfer চালিয়েছিল — Seattle অফিস থেকে S3-তে 50 GB। তাদের পরিমাপ করা upstream speed-এ (875 Mbps) তাত্ত্বিক সময়: 457 সেকেন্ড। প্রকৃত সময়: 724 সেকেন্ড। Overhead factor: 1.58।
+
+875 Mbps upstream-এ 4TB transfer-এ প্রয়োগ করা: 32,768 Gb / 0.875 Gbps × 1.58 overhead ≈ **59,200 সেকেন্ড ≈ ১৬.৪ ঘণ্টা**।
+
+Overhead কয়েকটি উৎস থেকে এসেছিল: connection establishment-এ TCP slow-start, retransmission প্রয়োজন packet loss (Seattle থেকে us-west-2-এর public path গড়ে 0.2% packet loss — ছোট, কিন্তু লক্ষ লক্ষ packet-এ গুণিত), প্রতিটি multipart upload segment-এর জন্য HTTPS handshake overhead, এবং S3-এর multipart upload একত্রিত করার processing time।
+
+"একটি one-time migration-এর জন্য ষোলো ঘণ্টা ঠিক আছে," Leo বলল। "আসল সমস্যা হলো transfer ১৪তম ঘণ্টায় বাধাগ্রস্ত হলে।"
+
+S3 multipart upload বাধার সমস্যা সমাধান করে: transfer ১৪তম ঘণ্টায় ব্যর্থ হলে, শুধুমাত্র বর্তমান part পুনরায় upload করতে হবে। পূর্ববর্তী part S3-তে store করা এবং transfer resume করতে পারে। কিন্তু multipart upload পরিচালনার overhead মোট transfer time-এ প্রায় ৩% যোগ করেছিল।
+
+চূড়ান্ত বাস্তব-জগতের অনুমান: **1 Gbps internet-এ প্রায় ৯ ঘণ্টা তাত্ত্বিক, প্রায় ১৭ ঘণ্টা প্রকৃত** — তাদের অফিসের 875 Mbps পরিমাপ করা upstream speed, packet loss overhead, এবং multipart upload processing হিসাব করে।
+
+Leo এটা এক মুহূর্ত বিবেচনা করল। তারপর সে Snow Family pricing page দেখল।
+
+"অন্য বিকল্পটা কী?" Tom জিজ্ঞেস করল।
+
+"দাঁড়াও — কিন্তু আমাদের একটি VPN-এর বেশি কিছু কেন দরকার?" Maya জিজ্ঞেস করল। "৪TB migration একটি one-time event।"
+
+"এটা নয়," Priya বলল। "একবার data AWS-এ গেলে, দলের এখনও এটা প্রতিদিন access করতে হবে। এবং VPN latency জমা হয়।"
 
 **AWS Direct Connect: ডেডিকেটেড লাইন**
 
-**AWS Direct Connect** আপনার অবস্থান (বা আপনার কোলোকেশন সুবিধা) এবং AWS-এর মধ্যে একটি ডেডিকেটেড, প্রাইভেট নেটওয়ার্ক সংযোগ স্থাপন করে। ট্র্যাফিক কখনো পাবলিক ইন্টারনেট স্পর্শ করে না।
+**AWS Direct Connect** আপনার location (বা আপনার colocation facility) এবং AWS-এর মধ্যে একটি dedicated, private network connection স্থাপন করে। Traffic কখনো public internet স্পর্শ করে না।
 
-Direct Connect একটি ফিজিক্যাল সংযোগ — আপনার নেটওয়ার্ক থেকে একটি AWS Direct Connect অবস্থানে একটি ফাইবার লাইন। আপনি ফিজিক্যাল সার্কিট স্থাপন করতে একটি টেলিকম প্রদানকারীর সাথে কাজ করেন। AWS তাদের পক্ষে পোর্ট প্রদান করে।
+Direct Connect একটি physical connection — আপনার network থেকে একটি AWS Direct Connect location-এ একটি fiber line। আপনি physical circuit স্থাপন করতে একটি telecom provider-এর সাথে কাজ করেন। AWS তাদের পক্ষে port প্রদান করে।
 
 **সুবিধা**:
 
-- সামঞ্জস্যপূর্ণ, পূর্বাভাসযোগ্য লেটেন্সি (কোনো পাবলিক ইন্টারনেট ভ্যারিয়েন্স নেই)
-- ৫০ Mbps থেকে ১০০ Gbps পর্যন্ত গতি
-- ইন্টারনেটের চেয়ে কম ডেটা ট্রান্সফার খরচ (Direct Connect ডেটা ট্রান্সফার রেট স্ট্যান্ডার্ড AWS ডেটা ট্রান্সফার আউট রেটের চেয়ে সস্তা)
-- আরো নিরাপদ (প্রাইভেট সার্কিট, পাবলিক ইন্টারনেট নয়)
+- ধারাবাহিক, পূর্বানুমেয় latency (কোনো public internet variance নেই)
+- 50 Mbps থেকে 100 Gbps পর্যন্ত গতি (২০২৪ থেকে নির্বাচিত location-এ native 400 Gbps dedicated port সহ)
+- internet-এর চেয়ে কম data transfer cost (Direct Connect data transfer rate standard AWS data transfer out rate-এর চেয়ে সস্তা)
+- বেশি secure (private circuit, public internet নয়)
 
-**ট্রেড-অফ**:
+**Trade-off**:
 
-- সেটআপ সপ্তাহ থেকে মাস নেয় (ফিজিক্যাল অবকাঠামো প্রভিশনিং)
-- VPN-এর চেয়ে উল্লেখযোগ্যভাবে বেশি খরচ ($০.০২৫-০.৩০/ঘণ্টা প্রতি পোর্ট, এছাড়া টেলিকম সার্কিট খরচ — প্রায়ই ন্যূনতম $৫০০-১,০০০+/মাস)
-- কোনো বিল্ট-ইন রিডান্ডেন্সি নেই (আপনি নিজেই রিডান্ডেন্ট সার্কিট স্থাপন করেন)
-- একাধিক সার্কিট ছাড়া ভৌগোলিকভাবে বিতরণ করা অফিসের জন্য উপযুক্ত নয়
+- setup সপ্তাহ থেকে মাস নেয় (physical infrastructure provisioning)
+- VPN-এর চেয়ে উল্লেখযোগ্যভাবে বেশি cost
+- কোনো built-in redundancy নেই (আপনি নিজে redundant circuit স্থাপন করেন)
+- একাধিক circuit ছাড়া ভৌগোলিকভাবে বিতরণ করা অফিসের জন্য উপযুক্ত নয়
 
-Nimbus-এর জন্য: Direct Connect তাদের বর্তমান আকারের জন্য অতিরিক্ত। কিন্তু উল্লেখযোগ্য ডেটা ট্রান্সফার ভলিউম বা প্রাইভেট নেটওয়ার্ক সংযোগের জন্য সম্মতির প্রয়োজনীয়তা সহ উদ্যোগের জন্য, Direct Connect নিজেই পরিশোধ করে।
+আপনি হয়তো ভাবছেন: Direct Connect একটি physical fiber cable হলে, কেউ দুর্ঘটনাক্রমে এটা কাটলে কী হয়? সেটা একটি single circuit-এর সাথে single-point-of-failure সমস্যা — এই কারণেই production Direct Connect setup ভৌগোলিকভাবে পৃথক path-এ redundant circuit ব্যবহার করে, বা একটি backup হিসেবে একটি VPN বজায় রাখে। Cable কাটা যেতে পারে; ব্যবসা চলতে থাকে।
 
-**হোস্টেড সংযোগ: মধ্যম পথ**
+"এটার মাসে কত খরচ?" Tom জিজ্ঞেস করল। সে ইতিমধ্যে এটা দেখেছিল। "একটি dedicated 1Gbps port $216/মাস," সে বলল। "Plus আমাদের অফিস থেকে circuit, যা একটি telecom $800/মাস quote করেছে।"
 
-প্রতিটি সংস্থা ১০০ Gbps ডেডিকেটেড ফাইবার সার্কিটের প্রতিশ্রুতি দিতে পারে না। **Direct Connect Hosted Connections** AWS Direct Connect Partners (অনুমোদিত টেলিকম) কে সাব-১Gbps সংযোগ প্রভিশন করার অনুমতি দেয় যা আপনি অন্য গ্রাহকদের সাথে ভাগ করেন।
+"তাহলে মোট মাসে প্রায় এক হাজার।"
 
-সেটআপ দ্রুত (দিন থেকে সপ্তাহ, মাস নয়) এবং ডেডিকেটেড সংযোগের চেয়ে কম খরচ। ট্রেড-অফ: ভাগ করা ক্যাপাসিটি মানে কম সামঞ্জস্যপূর্ণ থ্রুপুট।
+Nimbus-এর জন্য: Direct Connect তাদের বর্তমান আকারের জন্য overkill ছিল। কিন্তু উল্লেখযোগ্য data transfer volume বা private network connection-এর জন্য compliance প্রয়োজনীয়তা সহ enterprise-এর জন্য, Direct Connect নিজে খরচ উঠিয়ে আনে।
 
-Nimbus-এর জন্য (তারা বড় হওয়ার সাথে সাথে): একটি পার্টনারের মাধ্যমে একটি হোস্টেড ৫০০ Mbps সংযোগ একটি যুক্তিসঙ্গত মূল্য পয়েন্টে প্রাইভেট সংযোগ প্রদান করবে।
+**Hosted Connection: মধ্যম পথ**
 
-**AWS Transit Gateway: VPC-গুলির জন্য হাব-এন্ড-স্পোক**
+প্রতিটি organization একটি 100 Gbps dedicated fiber circuit-এ প্রতিশ্রুতিবদ্ধ হতে পারে না। **Direct Connect Hosted Connection** AWS Direct Connect Partner (অনুমোদিত telecom)-কে sub-1Gbps connection provision করার অনুমতি দেয় যা আপনি অন্য গ্রাহকদের সাথে শেয়ার করেন।
 
-Nimbus বড় হওয়ার সাথে সাথে, তারা একাধিক VPC জমা করবে: প্রোডাকশন VPC, স্টেজিং VPC, অ্যানালিটিক্স VPC, সিকিউরিটি টুলিং VPC।
+Setup দ্রুত (দিন থেকে সপ্তাহ, মাস নয়) এবং একটি dedicated connection-এর চেয়ে কম খরচ করে। Trade-off: shared capacity মানে কম ধারাবাহিক throughput।
 
-সাবধানতার সাথে পরিকল্পনা না করলে, এই VPC-গুলি সংযুক্ত করতে VPC পিয়ারিং সংযোগের একটি সম্পূর্ণ মেশ প্রয়োজন। ৪টি VPC-এর জন্য: ৬টি পিয়ারিং সংযোগ। ১০টি VPC-এর জন্য: ৪৫টি পিয়ারিং সংযোগ। ২০টি VPC-এর জন্য: ১৯০টি সংযোগ। এটি স্কেল করে না।
+Nimbus-এর জন্য (তারা বাড়ার সাথে): একটি partner-এর মাধ্যমে একটি hosted 500 Mbps connection একটি যুক্তিসঙ্গত মূল্য point-এ private connectivity প্রদান করত।
 
-**AWS Transit Gateway** হলো একটি নেটওয়ার্ক হাব যা একাধিক VPC এবং অন-প্রিমিসেস নেটওয়ার্ক সংযুক্ত করে। পিয়ারিং সংযোগের মেশের পরিবর্তে, প্রতিটি VPC Transit Gateway-এর সাথে সংযুক্ত হয়। Transit Gateway তাদের মধ্যে ট্র্যাফিক রুট করে।
+পরীক্ষার সময় যে ব্যবহারিক পার্থক্য গুরুত্বপূর্ণ: Hosted Connection 50 Mbps থেকে 10 Gbps গতিতে উপলব্ধ (কিছু partner 25 Gbps পর্যন্ত offer করে), একটি AWS Partner দ্বারা provision করা। Dedicated Connection সরাসরি AWS-এ যায় এবং 1 Gbps, 10 Gbps, এবং 100 Gbps-এ উপলব্ধ (plus নির্বাচিত location-এ 400 Gbps)। 1 Gbps-এর নিচে গতির জন্য, একটি Hosted Connection একমাত্র Direct Connect option — Dedicated Connection 1 Gbps minimum-এ শুরু হয়।
+
+**AWS Transit Gateway: VPC-গুলির জন্য Hub-and-Spoke**
+
+Nimbus বাড়ার সাথে, তারা একাধিক VPC জমা করত: production VPC, staging VPC, analytics VPC, security tooling VPC।
+
+সাবধান planning ছাড়া, এই VPC-গুলি সংযুক্ত করতে VPC peering connection-এর একটি full mesh প্রয়োজন। ৪টি VPC-এর জন্য: ৬টি peering connection। ১০টি VPC-এর জন্য: ৪৫টি peering connection। ২০টি VPC-এর জন্য: ১৯০টি connection। এটা scale করে না।
+
+**AWS Transit Gateway** হলো একটি network hub যা একাধিক VPC এবং on-premises network সংযুক্ত করে। peering connection-এর একটি mesh-এর পরিবর্তে, প্রতিটি VPC Transit Gateway-এর সাথে সংযুক্ত হয়। Transit Gateway তাদের মধ্যে traffic route করে।
 
 ```
-অন-প্রিমিসেস ──── Direct Connect ──┐
+On-premises ──── Direct Connect ──┐
                                   │
-প্রোডাকশন VPC ───────────────── Transit Gateway
-স্টেজিং VPC ──────────────────── Transit Gateway
-অ্যানালিটিক্স VPC ────────────── Transit Gateway
-সিকিউরিটি VPC ────────────────── Transit Gateway
+Production VPC ───────────────── Transit Gateway
+Staging VPC ──────────────────── Transit Gateway
+Analytics VPC ────────────────── Transit Gateway
+Security VPC ─────────────────── Transit Gateway
 ```
 
-**ট্রানজিটিভ রাউটিং**: যদি VPC A এবং VPC B উভয়ই Transit Gateway-এর সাথে সংযুক্ত হয়, তারা যোগাযোগ করতে পারে — সরাসরি পিয়ার ছাড়াই। Transit Gateway রাউটিং পরিচালনা করে। VPC পিয়ারিংয়ের বিপরীতে (যা ট্রানজিটিভ নয়), Transit Gateway হাব-এন্ড-স্পোক টপোলজি সক্ষম করে।
+**Transitive routing**: VPC A এবং VPC B উভয়ই Transit Gateway-এর সাথে সংযুক্ত হলে, তারা যোগাযোগ করতে পারে — একটি সরাসরি peer ছাড়াই। Transit Gateway routing handle করে। VPC peering-এর বিপরীতে (যা transitive নয়), Transit Gateway hub-and-spoke topology সক্ষম করে।
 
-**Transit Gateway খরচ**: প্রতি সংযুক্তির জন্য (VPC বা VPN/Direct Connect সংযোগ) এবং প্রক্রিয়া করা ডেটার প্রতি GB চার্জ। স্কেলে, এটি সরলতার মূল্য।
+**Transit Gateway cost**: প্রতি attachment (VPC বা VPN/Direct Connect connection) plus প্রতি GB process করা data চার্জ। scale-এ, এটা সরলতার মূল্যবান।
 
-**VPC Endpoints: AWS সার্ভিসে প্রাইভেট অ্যাক্সেস**
+Nimbus-এর জন্য, Transit Gateway-এর trigger event ছিল একটি চতুর্থ VPC যোগ করা। তাদের ছিল: production, staging, analytics, এবং এখন security tooling (vulnerability scanning এবং SOC2 compliance monitoring-এর জন্য একটি VPC যা production-এর মতো একই network segment-এ থাকা উচিত নয়)।
 
-একটি সূক্ষ্ম খরচ এবং নিরাপত্তা সমস্যা: যখন আপনার EC2 ইনস্ট্যান্স (একটি প্রাইভেট সাবনেটে) S3 API কল করে, সেই ট্র্যাফিক NAT Gateway-এর মাধ্যমে রুট হয় (ইন্টারনেটে পৌঁছাতে, যেখানে S3-এর পাবলিক এন্ডপয়েন্ট রয়েছে)। আপনি NAT Gateway প্রক্রিয়াকরণের জন্য অর্থ দেন।
+Transit Gateway ছাড়া, চারটি VPC সংযুক্ত করতে ছয়টি peering connection প্রয়োজন:
+- Production ↔ Staging
+- Production ↔ Analytics
+- Production ↔ Security
+- Staging ↔ Analytics
+- Staging ↔ Security
+- Analytics ↔ Security
 
-**VPC Endpoints** আপনার VPC-এর রিসোর্সগুলিকে পাবলিক ইন্টারনেটের মাধ্যমে না গিয়ে এবং NAT Gateway ছাড়াই AWS সার্ভিসগুলির সাথে ব্যক্তিগতভাবে যোগাযোগ করতে দেয়।
+ছয়টি peering connection, প্রতি VPC ছয়টি route table entry, পর্যালোচনার জন্য ছয়টি security group rule। এবং VPC peering non-transitive: Production এবং Analytics peered হলে, এবং Analytics এবং Security peered হলে, Production Analytics VPC-এর মাধ্যমে Security-তে পৌঁছাতে পারে না। আপনার Production ↔ Security peering স্পষ্টভাবে দরকার।
 
-দুই প্রকার:
+Transit Gateway সহ:
 
-**Gateway endpoints** (বিনামূল্যে): S3 এবং DynamoDB-এর জন্য। আপনি আপনার রুট টেবিলে একটি রুট যোগ করেন যা S3 বা DynamoDB ট্র্যাফিককে NAT Gateway-এর পরিবর্তে endpoint-এ নির্দেশ করে। তৈরি করতে বিনামূল্যে; ব্যবহার করতে বিনামূল্যে।
+```
+Production VPC  ──┐
+Staging VPC     ──┤──── Transit Gateway ────── On-premises (Direct Connect)
+Analytics VPC   ──┤
+Security VPC    ──┘
+```
 
-**Interface endpoints** (মূল্য নির্ধারিত): অন্যান্য AWS সার্ভিসের জন্য (SQS, SNS, Secrets Manager, SSM, ইত্যাদি)। আপনার সাবনেটে একটি ENI (Elastic Network Interface) তৈরি করে একটি প্রাইভেট IP সহ। সার্ভিসে ট্র্যাফিক এই প্রাইভেট IP ব্যবহার করে। প্রতি AZ-এ ~$০.০১/ঘণ্টা এবং ডেটা প্রক্রিয়াকরণ খরচ।
+চারটি attachment। পরিচালনার জন্য একটি route table। Transitive routing: Production একটি সরাসরি peer ছাড়াই Transit Gateway-এর মাধ্যমে Security-তে পৌঁছাতে পারে।
 
-Tom S3 এবং DynamoDB-এর জন্য বিনামূল্যের Gateway endpoints শেখার পরে তাৎক্ষণিকভাবে তৈরি করলেন। NAT Gateway ডেটা প্রক্রিয়াকরণ ফি ৩০% কমে গেল।
+"এবং কেউ যদি Transit Gateway-এর মাধ্যমে ভাঙার চেষ্টা করে?" Priya জিজ্ঞেস করল। "চারটি VPC একটি Transit Gateway শেয়ার করলে, Staging VPC-তে একটি compromised resource Production-এ পৌঁছাতে পারে।"
 
-**AWS Global Accelerator: এজে রাউটিং**
+Transit Gateway **isolation সহ route table** সমর্থন করে: আপনি সংজ্ঞায়িত করতে পারেন কোন VPC-গুলিকে Transit Gateway-এর মাধ্যমে যোগাযোগ করার অনুমতি দেওয়া হয় এবং কোনগুলি isolated। security tooling VPC সব অন্যগুলিতে পৌঁছাতে পারে (এটাকে সেগুলি scan করতে হবে)। Staging Production-এ পৌঁছাতে পারে না। Production সরাসরি Analytics-এ পৌঁছাতে পারে না (Analytics একটি নির্দিষ্ট read-only endpoint-এর মাধ্যমে data query করে)।
 
-যখন Nimbus us-east-1 (ভার্জিনিয়া) থেকে পশ্চিম উপকূলের ব্যবহারকারীদের পরিবেশন করত, লেটেন্সি ছিল ৮০ms। নিষেধজনকভাবে দূরে থাকার কারণে নয়, বরং সিয়াটল এবং ভার্জিনিয়ার মধ্যে পাবলিক ইন্টারনেট রাউটিং সাবঅপ্টিমাল ছিল, একাধিক ক্যারিয়ার নেটওয়ার্কের মাধ্যমে বাউন্স করছিল।
+"একটি Transit Gateway," Priya বলল, "প্রকৃত access model প্রকাশ করা routing policy সহ। কী কীতে পৌঁছায় তা audit করার কোনো centralized উপায় ছাড়া ছয়টি peering connection-এর বিপরীতে।"
 
-**AWS Global Accelerator** AWS-এর প্রাইভেট ব্যাকবোন নেটওয়ার্ক (CloudFront-কে চালিত একই অবকাঠামো) ব্যবহার করে ব্যবহারকারীদের এবং AWS অ্যাপ্লিকেশনগুলির মধ্যে ট্র্যাফিক রুট করতে। পাবলিক ইন্টারনেট রাউটিংয়ের পরিবর্তে, ট্র্যাফিক নিকটতম এজ লোকেশনে AWS-এর নেটওয়ার্কে প্রবেশ করে এবং আপনার অ্যাপ্লিকেশনে পৌঁছাতে অপ্টিমাইজড প্রাইভেট পথ ভ্রমণ করে।
+**VPC Endpoint: AWS Service-এ Private Access**
 
-Nimbus-এর জন্য, সিয়াটলের একজন ব্যবহারকারী:
+একটি সূক্ষ্ম cost এবং security সমস্যা: আপনার EC2 instance (একটি private subnet-এ) যখন S3 API call করে, সেই traffic NAT Gateway-এর মাধ্যমে route হয় (internet-এ পৌঁছাতে, যেখানে S3-এর public endpoint আছে)। আপনি NAT Gateway processing-এর জন্য পেমেন্ট করেন।
 
-- **Global Accelerator ছাড়া**: পাবলিক ইন্টারনেট ক্যারিয়ারের মাধ্যমে রুট → ~৮০ms
-- **Global Accelerator সহ**: সিয়াটলের নিকটতম AWS এজ → AWS ব্যাকবোন ভ্রমণ করুন → us-east-1-এ পৌঁছান → ~৪৫ms
+**VPC Endpoint** আপনার VPC-এর resource-কে public internet-এর মাধ্যমে না গিয়ে — এবং NAT Gateway ছাড়াই — AWS service-এর সাথে private-ভাবে যোগাযোগ করতে দেয়।
 
-Global Accelerator বিষয়বস্তু ক্যাশ করে না (এটি CloudFront)। এটি গতিশীল অনুরোধের জন্য নেটওয়ার্ক পথ অপ্টিমাইজ করে।
+দুই ধরনের:
 
-**Global Accelerator বনাম CloudFront কখন ব্যবহার করবেন**:
+**Gateway endpoint** (বিনামূল্যে): S3 এবং DynamoDB-এর জন্য। আপনি আপনার route table-এ একটি route যোগ করেন যা S3 বা DynamoDB traffic-কে NAT Gateway-এর পরিবর্তে endpoint-এ নির্দেশ করে। তৈরি করতে বিনামূল্যে; ব্যবহার করতে বিনামূল্যে।
 
-- CloudFront: স্ট্যাটিক এবং ক্যাশযোগ্য বিষয়বস্তু, CDN ব্যবহারের ক্ষেত্র
-- Global Accelerator: গতিশীল বিষয়বস্তু, নন-HTTP প্রোটোকল (UDP, গেমিং, IoT), বা যখন আপনার একটি স্ট্যাটিক Anycast IP ঠিকানা প্রয়োজন
+**Interface endpoint** (মূল্যযুক্ত): অন্যান্য AWS service-এর জন্য (SQS, SNS, Secrets Manager, SSM, ইত্যাদি)। আপনার subnet-এ একটি private IP সহ একটি ENI (Elastic Network Interface) তৈরি করে। Service-এ traffic এই private IP ব্যবহার করে। প্রতি AZ ~$0.01/hour plus data processing খরচ করে।
+
+Leo ইতিমধ্যে আগের সপ্তাহে route table আপডেট না করে Gateway endpoint তৈরি করেছিল। "আমি ইতিমধ্যে এটা deploy করেছি — ওহ," সে configuration check করে বলল। "Route আপডেট হয়নি। আমাকে সেটা ঠিক করতে দাও।"
+
+Tom বিনামূল্যে জানার পর সঙ্গে সঙ্গে S3 এবং DynamoDB-এর জন্য Gateway endpoint তৈরি করল। NAT Gateway data processing fee ৬৫% কমে গেল।
+
+কেন তার হিসাব: private subnet-এ Nimbus-এর Lambda function এবং ECS task S3 (config file পড়া, log export লেখা) এবং DynamoDB (রেস্তোরাঁ data পড়া, order record লেখা)-তে ক্রমাগত request করছিল। প্রতিটি request NAT Gateway-এর মাধ্যমে route হত, যা প্রতি GB process করা data $0.045 চার্জ করত।
+
+Nimbus-এর মাসিক NAT Gateway data processing: 533 GB। Cost: $24/মাস। S3 এবং DynamoDB Gateway Endpoint যোগ করে এবং route table আপডেট করার পরে: S3 এবং DynamoDB traffic সম্পূর্ণভাবে NAT Gateway bypass করল। মাসিক NAT Gateway processing 187 GB-তে নেমে এল — অবশিষ্ট traffic ছিল অন্য service-এ API call (Secrets Manager, SES, external webhook)। Cost: $8.40/মাস।
+
+সাশ্রয়: $15.60/মাস, $187/বছর, দুটি বিনামূল্যের Gateway Endpoint configuration-এর জন্য যা সেট আপ করতে ১০ মিনিট লেগেছিল।
+
+"বিনামূল্যে," Tom তৃতীয়বারের মতো বলল।
+
+"Gateway endpoint তৈরি করতে বিনামূল্যে এবং ব্যবহার করতে বিনামূল্যে," Leo নিশ্চিত করল। "তারা কেবল একটি security উন্নতি নয় — NAT Gateway-এর পরিবর্তে একটি private endpoint-এর মাধ্যমে S3 এবং DynamoDB traffic route করা এটাকে public internet থেকে সম্পূর্ণভাবে সরিয়ে দেয়।"
+
+"এবং কেউ যদি NAT Gateway traffic-এর মাধ্যমে ভাঙার চেষ্টা করে?" Priya জিজ্ঞেস করল। "S3-তে traffic NAT-এর মাধ্যমে গেলে, এটা internet থেকে addressable। Gateway Endpoint-এর মাধ্যমে, এটা private।"
+
+এটাই Gateway Endpoint-এর গৌণ সুবিধা যা cost আলোচনা কখনো কখনো ঢেকে দেয়। একটি VPC Gateway Endpoint-এর মাধ্যমে S3 এবং DynamoDB-তে traffic কখনো AWS network ছাড়ে না, কখনো একটি public IP address অতিক্রম করে না, এবং endpoint policy দ্বারা শাসিত হয় (একটি resource-based policy যা endpoint কোন S3 bucket বা DynamoDB table access করতে পারে তা সীমাবদ্ধ করতে পারে)। customer data store করা একটি bucket-এ একটি Gateway Endpoint একটি অতিরিক্ত layer যোগ করে: এমনকি একটি ভুল configure করা bucket policy সহ, endpoint policy নির্দিষ্ট VPC-এর মধ্যে থেকে উদ্ভূত traffic-এ access সীমাবদ্ধ করতে পারে।
+
+**AWS Global Accelerator: Edge-এ Routing**
+
+Nimbus যখন us-west-2 (Oregon) থেকে East Coast ব্যবহারকারীদের পরিবেশন করত, latency ছিল 80ms। server নিষেধজনকভাবে দূরে বলে নয়, বরং Boston এবং Oregon-এর মধ্যে public internet routing suboptimal ছিল, একাধিক carrier network-এর মাধ্যমে বাউন্স করছিল।
+
+**AWS Global Accelerator** AWS-এর private global backbone ব্যবহার করে — edge location-এর একটি distributed network যা public internet carrier hop-এর পরিবর্তে AWS-নিয়ন্ত্রিত path-এর মাধ্যমে আপনার application-এ traffic route করে। public internet routing-এর পরিবর্তে, traffic নিকটতম edge location-এ AWS-এর network-এ প্রবেশ করে এবং আপনার application-এ পৌঁছাতে optimized private path ভ্রমণ করে।
+
+Nimbus-এর জন্য, Boston-এর একজন ব্যবহারকারী:
+
+- **Global Accelerator ছাড়া**: public internet carrier-এর মাধ্যমে route → ~80ms
+- **Global Accelerator সহ**: Boston-এ নিকটতম AWS edge-এ hit → AWS backbone ভ্রমণ → us-west-2-এ পৌঁছান → ~60ms
+
+Global Accelerator content cache করে না (সেটা CloudFront)। এটা dynamic request-এর জন্য network path optimize করে।
+
+Nimbus API-এর জন্য Global Accelerator সক্ষম করার পরে Leo কয়েকটি শহর জুড়ে একটি latency তুলনা চালাল:
+
+| City | Before | After | Improvement |
+|------|--------|-------|-------------|
+| Seattle, WA | 12ms | 11ms | 8% |
+| Los Angeles, CA | 28ms | 22ms | 21% |
+| Chicago, IL | 55ms | 40ms | 27% |
+| New York, NY | 82ms | 61ms | 26% |
+| London, UK | 145ms | 112ms | 23% |
+| Tokyo, Japan | 180ms | 95ms | 47% |
+| Sydney, Australia | 210ms | 118ms | 44% |
+
+উন্নতি ভৌগোলিকভাবে দূরের ব্যবহারকারীদের জন্য সবচেয়ে নাটকীয় ছিল — Tokyo 180ms থেকে 95ms, Sydney 210ms থেকে 118ms। Seattle-এর জন্য (Oregon-এর us-west-2 data center-এর কাছাকাছি), উন্নতি ছোট ছিল — optimize করার জন্য কম public internet hop ছিল।
+
+"দাঁড়াও — কিন্তু Tokyo কেন একটি ৪৭% উন্নতি পাচ্ছে?" Maya জিজ্ঞেস করল। "Data center এখনও us-west-2-এ থাকলে, আলোর গতি কি প্রকৃত সীমাবদ্ধতা নয়?"
+
+"আলোর গতি হলো মেঝে," Leo বলল। "প্রকৃত সীমাবদ্ধতা হলো public internet routing। Tokyo থেকে us-west-2-তে traffic ডজন ডজন autonomous system অতিক্রম করে — ভিন্ন carrier, ভিন্ন router, ভিন্ন peering agreement। প্রতিটি hop latency যোগ করে। Global Accelerator Tokyo edge location থেকে us-west-2-তে AWS-এর private fiber-এর উপর traffic route করে, যার ছোট path এবং ভালো-টিউন করা routing আছে।"
+
+Tokyo থেকে us-west-2-এর তাত্ত্বিক ন্যূনতম (fiber-এর উপর আলোর গতির উপর ভিত্তি করে, প্রায় 15,500 km round trip): ~77ms। Global Accelerator সহ 95ms সেই তাত্ত্বিক ন্যূনতমের কাছাকাছি পৌঁছাচ্ছে। এটা ছাড়া 180ms public internet routing-এর অদক্ষতা প্রতিফলিত করে, physics-এর নিয়ম নয়।
+
+Global Accelerator দুটি static **anycast IP address** প্রদান করে যা নিকটতম edge location-এ route করে। CloudFront-এর বিপরীতে (যা পরিবর্তিত dynamic IP address ব্যবহার করে), এই IP স্থিতিশীল — firewall allowlisting-এর জন্য এবং যে application-গুলির client সংযোগ করার জন্য একটি fixed IP প্রয়োজন তাদের জন্য উপযোগী।
+
+**কখন Global Accelerator বনাম CloudFront ব্যবহার করবেন**:
+
+- CloudFront: static এবং cacheable content, CDN use case
+- Global Accelerator: dynamic content, non-HTTP protocol (UDP, gaming, IoT), বা যখন আপনার একটি static Anycast IP address প্রয়োজন
+
+## শুধু Traffic নয়, Data সরানো: DataSync এবং Transfer Family
+
+Networking architecture আকার নেওয়ার সময়, Maya-র তিনটি নতুন রেস্তোরাঁ chain onboarding project একসাথে এসে পড়ল। প্রতিটির একটি data migration প্রয়োজনীয়তা ছিল — এবং প্রতিটি প্রয়োজনীয়তা ভিন্ন ছিল।
+
+প্রথম chain, Pacific Table, 40 TB NFS file share S3-তে সরাতে হবে। তাদের বর্তমান file storage on-premises ছিল, তাদের Seattle headquarters-এ চারটি file server জুড়ে ছড়ানো। Leo একটি migration plan লিখতে শুরু করল।
+
+দ্বিতীয় chain, Marisol Group, একটি accounting team ছিল যারা প্রতিদিন একটি local SFTP server-এ invoice upload করত। SFTP workflow ২০১৫ থেকে চলছিল। Accounting staff একটি জিনিস জানত: তারা প্রতি সকাল ৯টায় তাদের SFTP client খুলত, তাদের invoice drop করত, এবং এটা বন্ধ করত। কেউ এটা পরিবর্তন করতে চায়নি। "তাদের accountant-রা WinSCP ব্যবহার করে," Maya বলল। "সেটা আলোচনাযোগ্য নয়।"
+
+"ওগুলো দুটি ভিন্ন tool," Priya বলল।
+
+"হ্যাঁ," Leo বলল। "কিন্তু উভয়ই বিদ্যমান।"
+
+**AWS DataSync: rsync, কিন্তু আরও শক্তিশালী, একটি AWS Console সহ**
+
+Pacific Table-এর 40 TB migration-এর জন্য, চ্যালেঞ্জ bandwidth ছিল না — Seattle অফিসের একটি শক্ত upstream connection ছিল। চ্যালেঞ্জ ছিল orchestration: কোন file বিদ্যমান তা আবিষ্কার করা, নির্ভরযোগ্যভাবে সেগুলি transfer করা, checksum যাচাই করা, business hour-এর সময় অফিস network saturate করা এড়াতে transfer schedule করা, এবং কয়েক দিনের ক্রমাগত operation-এর মধ্যে progress monitor করা।
+
+**AWS DataSync** হলো একটি agent-based data migration এবং replication service। আপনি আপনার on-premises environment-এ একটি lightweight DataSync agent install করেন — একটি virtual machine যা VMware-তে বা একটি EC2 instance হিসেবে চলে। Agent NFS বা SMB-এর উপর আপনার file server-এ সংযোগ করে, আপনার share আবিষ্কার করে, এবং সেগুলি AWS-এর একটি destination-এ synchronize করে: একটি S3 bucket, একটি EFS filesystem, বা একটি FSx filesystem।
+
+এটাকে rsync হিসেবে ভাবুন, কিন্তু আরও শক্তিশালী, একটি AWS console সহ। DataSync handle করে:
+
+- **Discovery**: agent স্বয়ংক্রিয়ভাবে আপনার source share inventory করে
+- **Scheduling**: transfer একটি সংজ্ঞায়িত schedule-এ (business hour-এর বাইরে) বা ক্রমাগত চলতে পারে
+- **Verification**: DataSync উভয় প্রান্তে checksum হিসাব করে এবং যেকোনো অসামঞ্জস্যে আপনাকে alert করে
+- **Monitoring**: transfer progress, file count, error report, এবং bandwidth utilization সবই console-এ দৃশ্যমান
+- **Encryption in transit**: transfer-এর সময় সমস্ত data TLS ব্যবহার করে encrypt করা
+
+Pacific Table-এর জন্য, Leo তাদের Seattle network-এ একটি VM-এ DataSync agent install করল, এটাকে চারটি NFS share-এর দিকে নির্দেশ করল, এবং একটি transfer schedule configure করল: সপ্তাহের দিনে রাত ৮টা থেকে ভোর ৬টা, সপ্তাহান্তে ক্রমাগত। ছয় দিন পরে, সমস্ত 40 TB S3-তে গিয়ে পৌঁছাল। সে DataSync-এর built-in checksum report দিয়ে transfer যাচাই করল। শূন্য অসামঞ্জস্য।
+
+"এবং চলমান replication-এর জন্য?" Maya জিজ্ঞেস করল। "Pacific Table migration-এর পরেও file যোগ করতে থাকবে।"
+
+"DataSync incremental transfer সমর্থন করে," Leo বলল। "প্রাথমিক sync-এর পরে, এটা শুধুমাত্র যা পরিবর্তিত হয়েছে তা copy করে। আমরা এটাকে একটি replication job হিসেবে রাতে চালাতে পারি।"
+
+**AWS Transfer Family: আপনার SFTP Workflow, S3 দ্বারা সমর্থিত**
+
+Marisol Group-এর accounting team-এর জন্য, প্রয়োজনীয়তা ভিন্ন ছিল। কেউ SFTP থেকে সরে যাচ্ছিল না। Accountant-রা WinSCP ব্যবহার করতে থাকবে। প্রশ্ন ছিল: সেই SFTP upload কোথায় গিয়ে পৌঁছায়?
+
+বর্তমানে, সেগুলি Marisol back office-এর একটি local Linux server-এ গিয়ে পৌঁছাত। File-গুলি তারপর ম্যানুয়ালি তাদের accounting system-এ সরানো হত। Local server maintenance, backup, এবং এটা পরিচালনার জন্য SSH access সহ কারো প্রয়োজন ছিল।
+
+**AWS Transfer Family** হলো একটি fully managed SFTP, FTPS, এবং FTP server — storage destination হিসেবে S3 বা EFS দ্বারা সমর্থিত। আপনি একটি Transfer Family endpoint provision করেন (এটা একটি hostname এবং, ঐচ্ছিকভাবে, একটি static IP address পায়)। আপনার client তাদের বিদ্যমান SFTP software ব্যবহার করে এটাতে সংযোগ করে। তারা file upload করলে, সেই file সরাসরি একটি S3 bucket-এ গিয়ে পৌঁছায়।
+
+Accounting team কিছু পরিবর্তন করে না। তারা এখনও প্রতি সকাল ৯টায় WinSCP খোলে। তারা এখনও তাদের বিদ্যমান credential দিয়ে একটি SFTP server-এ সংযোগ করে। তারা এখনও একই folder-এ তাদের invoice drop করে। পার্থক্য তাদের কাছে অদৃশ্য: server side-এ, file এখন একটি local Linux server-এর পরিবর্তে সরাসরি S3-তে যায়।
+
+"এবং S3 থেকে, আমরা বাকি workflow স্বয়ংক্রিয়ভাবে trigger করতে পারি," Priya বলল। "একটি S3 event একটি Lambda function trigger করে যা invoice process করে এবং এটা accounting system-এ insert করে। কোনো ম্যানুয়াল step নেই।"
+
+"তাহলে accountant-দের workflow পরিবর্তন হয় না," Maya বলল, "কিন্তু আমাদের দিকে, পুরো জিনিসটা স্বয়ংক্রিয়।"
+
+"হ্যাঁ। এবং SFTP server নিজেই fully managed — কোনো patching নেই, কোনো backup নেই, পরিচালনার কোনো server নেই।"
+
+Tom ইতিমধ্যে pricing দেখেছিল। Transfer Family endpoint availability-র প্রতি ঘণ্টা plus প্রতি GB transfer চার্জ করে। Marisol Group-এর invoice volume-এর জন্য, মাসিক cost $30-এর অনেক নিচে ছিল। এটা যে local server প্রতিস্থাপন করছিল তার maintenance cost — hardware depreciation, maintenance-এর জন্য engineering time, backup management — যথেষ্ট বেশি ছিল।
+
+---
+
+> **পরীক্ষার টিপস — DataSync এবং Transfer Family**
+>
+> *SAA-C03 ডোমেন: Design High-Performing Architectures (ডোমেন ৩, টাস্ক ৩.১)*
+>
+> - **DataSync** = on-premises থেকে AWS-এ bulk-এ data সরানো (NFS বা SMB file share → S3, EFS, বা FSx)। পরীক্ষার সংকেত: "file share migrate করুন," "NFS data S3-তে replicate করুন," "on-premises থেকে AWS data transfer," "file data-র চলমান replication।" DataSync on-premises install করা একটি agent ব্যবহার করে; agent discovery, scheduling, এবং verification handle করে।
+> - **Transfer Family** = client tool পরিবর্তন না করে SFTP, FTPS, বা FTP protocol ব্যবহার করে চলমান file transfer। পরীক্ষার সংকেত: "বিদ্যমান SFTP workflow," "partner-রা SFTP-এর মাধ্যমে file upload করে," "S3 দ্বারা সমর্থিত SFTP server," "lift-and-shift SFTP," "file transfer process পরিবর্তন করা যাবে না।" প্রয়োজনীয়তা যখন SFTP compatibility, data volume নয়, তখন Transfer Family উত্তর।
+> - **পার্থক্যটি গুরুত্বপূর্ণ**: DataSync bulk migration এবং replication-এর জন্য (agent-based, schedule-driven, network-optimized)। Transfer Family protocol-compatible file transfer service-এর জন্য (endpoint-based, always-on, client-transparent)। তারা ভিন্ন সমস্যা সমাধান করে।
+> - DataSync destination হিসেবে S3, EFS, এবং FSx সমর্থন করে। Transfer Family storage backend হিসেবে S3 এবং EFS সমর্থন করে।
+
+---
+
+**শুধু File নয়, Server Migrate করা: 7 Rs এবং MGN**
+
+Maya-র pipeline-এর তৃতীয় chain-এর শুধু file ছিল না — এর পুরো server ছিল: দুটি on-premises machine-এ চলা একটি custom reservation application যা কেউ move-এর আগে পুনর্লিখন করতে চায়নি। *application* সরানো তার নিজস্ব discipline, এবং AWS **migrate করার সাত উপায়** বর্ণনা করে ("7 Rs") যা আপনার বেশিরভাগ চিনতে হবে:
+
+- **Rehost** ("lift and shift"): server যেমন আছে তেমন সরান। সবচেয়ে দ্রুত, সবচেয়ে কম পরিবর্তন।
+- **Replatform** ("lift, tinker, and shift"): পথে ছোট upgrade — যেমন একটি self-managed database RDS-এ সরানো।
+- **Repurchase**: পুরানো system বাদ দিন, পরিবর্তে SaaS কিনুন।
+- **Refactor**: cloud-native পুনর্নকশা করুন। সবচেয়ে বেশি প্রচেষ্টা, সবচেয়ে বেশি লাভ।
+- **Retire**: দেখা গেল কেউ এটা ব্যবহার করেনি। Delete করুন।
+- **Retain**: আপাতত যেখানে আছে সেখানে রাখুন।
+- **Relocate**: কিছু পরিবর্তন না করে hypervisor স্তরে সরান।
+
+rehost ক্ষেত্রের জন্য, tool হলো **AWS Application Migration Service (MGN)**: একটি agent source server-এর disk block by block AWS-এর একটি low-cost staging area-তে replicate করে; আপনি যখন খুশি test copy launch করেন; cutover-এ, MGN replicate করা server-গুলিকে native EC2 instance-এ রূপান্তর করে। Lift, shift, সম্পন্ন — refactoring পরে আসতে পারে, cloud time-এ। (portfolio planning-এর জন্য এর সঙ্গী, Application Discovery Service এবং Migration Hub, ২০২৫-এর শেষে নতুন গ্রাহকদের জন্য বন্ধ হয়েছিল — পরীক্ষা সেগুলি উল্লেখ করলে "inventory discovery" এবং "central migration tracking" হিসেবে তাদের নাম জানুন।)
+
+---
+
+**AWS Snow Family: Physical বিকল্প**
+
+এখনও 4TB ঐতিহাসিক dataset এবং 17-ঘণ্টার internet অনুমানের বিষয় ছিল। এটা হিসাব করার পরে, Leo Snow Family pricing page দেখেছিল এবং সঙ্গে সঙ্গে সিদ্ধান্ত নিয়েছিল।
+
+কয়েক টেরাবাইটের উপরে migration-এর জন্য যেখানে সময় সরলতার চেয়ে বেশি গুরুত্বপূর্ণ, AWS আপনার location-এ physical storage appliance ship করে। আপনি সেগুলি data দিয়ে ভরেন। আপনি সেগুলি ফেরত ship করেন। AWS data সরাসরি S3-তে ingest করে।
+
+**Snowball Edge Storage Optimized**: 80 TB ব্যবহারযোগ্য capacity, hardened enclosure। আপনার location-এ ২-৫ ব্যবসায়িক দিনে ship করে। আপনি local interface (NFS, S3 interface) ব্যবহার করে data load করেন। আপনি এটা ফেরত ship করেন। AWS receipt-এর প্রায় ১-৩ ব্যবসায়িক দিন পরে data ingest করে।
+
+Nimbus-এর 4TB migration-এর জন্য, process:
+
+1. AWS console-এর মাধ্যমে একটি Snowball Edge **order** করুন (২ মিনিট নেয়, ৩ দিনে ship করে)
+2. appliance-কে Seattle অফিস network-এ **connect** করুন; এটা একটি NFS mount point হিসেবে উপস্থিত হয়
+3. device-এর S3-compatible interface ব্যবহার করে 4TB ঐতিহাসিক order data **copy** করুন: `aws s3 cp /data/orders s3://nimbus-data/ --endpoint-url http://192.168.1.100:8080 --profile snowballEdge`
+4. **Copy সম্পূর্ণ হয়** প্রায় ২ ঘণ্টায় (local network, কোনো internet নেই)
+5. appliance-কে AWS-এ ফেরত **ship** করুন (prepaid label অন্তর্ভুক্ত)
+6. AWS receipt-এর ৭২ ঘণ্টার মধ্যে data S3-তে **ingest** করে
+7. **Verify** — S3 প্রতিটি transfer করা file এবং checksum দেখানো একটি job completion report প্রদান করে
+
+মোট অতিবাহিত সময়: delivery-র জন্য ৩ দিন + copy-র জন্য ২ ঘণ্টা + ১ দিন shipping + ২ দিন ingestion = প্রায় ৭ calendar দিন। ক্রমাগত প্রায় ১৭ ঘণ্টার বিপরীতে — যার একটি স্থিতিশীল, নিরবচ্ছিন্ন internet connection প্রয়োজন হত, রাতভর এবং একটি business day-এর বেশিরভাগ সময় অফিস uplink saturate করে।
+
+Cost: Snowball Edge device ভাড়া ১০ দিনের জন্য $300। Shipping (দুই-পথ): প্রায় $80। S3 data transfer in বিনামূল্যে। মোট migration cost: **$380**।
+
+প্রায় ১৭ ঘণ্টার 875 Mbps টেকসই internet ব্যবহারের সাথে তুলনা করুন: VPN tunnel বিনামূল্যে ছিল ($0.05/hour কিন্তু tunnel ইতিমধ্যে চলছিল); S3 transfer in বিনামূল্যে ছিল। "বিনামূল্যে" internet path-এর engineering time-এ একটি প্রকৃত cost ছিল (একটি ১৭-ঘণ্টার transfer monitor করা), ঝুঁকি (যেকোনো বাধার জন্য restart প্রয়োজন), এবং opportunity cost (transfer window-এর সময় তাদের internet connection saturated ছিল)। Leo order দিল। এটা কীভাবে চলল তা এই অধ্যায়ের post-credits দৃশ্যে আছে।
+
+---
 
 ## শক্তি এবং সীমাবদ্ধতা
 
 **Site-to-Site VPN**:
 
-- দ্রুত সেটআপ, কম খরচ
-- পাবলিক ইন্টারনেট পথ মানে পরিবর্তনশীল লেটেন্সি
-- সীমিত ব্যান্ডউইথ সিলিং
+- দ্রুত setup, কম cost
+- public internet path মানে পরিবর্তনশীল latency
+- সীমিত bandwidth ceiling (প্রতি tunnel 1.25 Gbps)
+- Accelerated VPN option সামান্য বেশি cost-এ latency উন্নত করে
 
 **Direct Connect**:
 
-- সামঞ্জস্যপূর্ণ, প্রাইভেট, হাই-ব্যান্ডউইথ
-- সেটআপ ধীর, উল্লেখযোগ্য পুনরাবৃত্তি খরচ
-- ফিজিক্যাল সার্কিট একটি একক ব্যর্থতার পয়েন্ট (রিডান্ডেন্সি যোগ করুন)
+- ধারাবাহিক, private, high-bandwidth
+- setup করতে ধীর, উল্লেখযোগ্য পুনরাবৃত্ত cost
+- physical circuit একটি single point of failure (redundancy যোগ করুন বা VPN backup বজায় রাখুন)
+- pricing scenario-র উপর নির্ভর করে মোটামুটি 10-15 TB/মাসে egress cost সাশ্রয়ের সাথে break-even
+
+**AWS Snow Family**:
+
+- 1-2 TB-এর উপরে one-time migration-এর জন্য, প্রায়ই network transfer-এর চেয়ে দ্রুত এবং সস্তা
+- migration-এর সময় কোনো internet bandwidth consumption নেই
+- ১০-দিনের device ভাড়া window; prepaid shipping
 
 **Transit Gateway**:
 
-- মাল্টি-VPC সংযোগ নাটকীয়ভাবে সরল করে
-- ট্রানজিটিভ রাউটিং (VPC পিয়ারিংয়ের বিপরীতে)
-- অনেক সংযুক্তির জন্য খরচ যোগ হয়
+- multi-VPC connectivity নাটকীয়ভাবে সরল করে
+- transitive routing (VPC peering-এর বিপরীতে)
+- isolation route table পৃথক peering connection ছাড়াই segmentation অনুমতি দেয়
+- অনেক attachment-এর জন্য cost যোগ হয়
 
-**VPC Endpoints**:
+**VPC Endpoint**:
 
-- S3/DynamoDB-এর জন্য নিরাপত্তা এবং খরচ সুবিধা (বিনামূল্যে gateway endpoints)
-- AWS সার্ভিস ট্র্যাফিকের জন্য NAT Gateway খরচ দূর করে
+- S3/DynamoDB-এর জন্য security এবং cost সুবিধা (বিনামূল্যে gateway endpoint)
+- AWS service traffic-এর জন্য NAT Gateway cost দূর করে
+- endpoint policy IAM এবং bucket policy-র বাইরে একটি অতিরিক্ত access control layer যোগ করে
+- অন্য service-এর জন্য interface endpoint (Secrets Manager, SSM, SES) traffic private রাখে কিন্তু প্রতি AZ ~$0.01/hour খরচ করে
 
 **Global Accelerator**:
 
-- বৈশ্বিক ব্যবহারকারীদের জন্য গতিশীল অ্যাপ্লিকেশন লেটেন্সি উন্নত করে
-- নির্দিষ্ট Anycast IP (CloudFront-এর গতিশীল IP-এর বিপরীতে)
-- অতিরিক্ত খরচ ($০.০২৫/ঘণ্টা প্রতি accelerator + ডেটা ট্রান্সফার)
+- global ব্যবহারকারীদের জন্য dynamic application latency উন্নত করে: দূরের ব্যবহারকারীদের জন্য বাস্তবে 33-47% উন্নতি
+- fixed Anycast IP (CloudFront-এর dynamic IP-এর বিপরীতে) — firewall allowlisting-এর জন্য উপযোগী
+- non-HTTP protocol (UDP, TCP) — CloudFront শুধুমাত্র HTTP/HTTPS
+- অতিরিক্ত cost (প্রতি accelerator $0.025/hour + data transfer)
 
 ## সারসংক্ষেপ
 
-- **Site-to-Site VPN**: অন-প্রিমিসেস এবং VPC-এর মধ্যে পাবলিক ইন্টারনেটের মাধ্যমে এনক্রিপ্টেড টানেল। দ্রুত সেটআপ, কম খরচ, পরিবর্তনশীল লেটেন্সি।
-- **Direct Connect**: AWS-এ প্রাইভেট, ডেডিকেটেড ফাইবার সংযোগ। পূর্বাভাসযোগ্য লেটেন্সি, উচ্চতর ব্যান্ডউইথ, সেটআপ করতে সপ্তাহ, উল্লেখযোগ্য খরচ।
-- **Transit Gateway**: VPC এবং অন-প্রিমিসেস সংযোগের হাব। ট্রানজিটিভ রাউটিং সক্ষম করে। শত শত সংযোগে স্কেল করে।
-- **VPC Endpoints**: NAT Gateway ছাড়াই AWS সার্ভিসে প্রাইভেট অ্যাক্সেস। Gateway endpoints (S3, DynamoDB) বিনামূল্যে।
-- **Global Accelerator**: বিশ্বব্যাপী আরো কম, আরো সামঞ্জস্যপূর্ণ লেটেন্সির জন্য AWS ব্যাকবোনে গতিশীল ট্র্যাফিক রুট করে।
+অধ্যায় ২৪-এর Aurora কাজ Nimbus কীভাবে তার নিজস্ব application-এ data পরিবেশন করে তা optimize করেছিল। এই অধ্যায়টি বাইরের জগৎ এবং AWS-এর মধ্যে data কীভাবে সরে — এবং সেই চলাচলকে কীভাবে আরও নির্ভরযোগ্য, দ্রুত, এবং কম ব্যয়বহুল করা যায় — সে সম্পর্কে।
+
+- **Site-to-Site VPN**: on-premises এবং VPC-এর মধ্যে public internet-এর উপর encrypted tunnel। দ্রুত setup, কম cost, পরিবর্তনশীল latency। redundancy-র জন্য দুটি tunnel। প্রতি tunnel সর্বোচ্চ 1.25 Gbps।
+- **Direct Connect**: AWS-এ private, dedicated fiber connection। পূর্বানুমেয় latency, উচ্চতর bandwidth, setup করতে সপ্তাহ, উল্লেখযোগ্য cost। Nimbus-এর pricing scenario-র জন্য প্রায় 13.5 TB/মাসে VPN-এর egress সাশ্রয়ের সাথে break-even।
+- **AWS Snow Family**: bulk data migration-এর জন্য physical storage appliance। multi-TB migration-এর জন্য internet transfer-এর চেয়ে দ্রুত। Nimbus-এর 4TB migration-এর জন্য মোট $380 বনাম প্রায় ১৭ ঘণ্টার network saturation।
+- **Transit Gateway**: VPC এবং on-premises connectivity-র hub। transitive routing সক্ষম করে (VPC peering-এর বিপরীতে)। কোন VPC কোনটিতে পৌঁছাতে পারে তা নিয়ন্ত্রণ করতে isolation route table সমর্থন করে। শত শত connection-এ scale করে।
+- **VPC Endpoint**: NAT Gateway ছাড়াই AWS service-এ private access। Gateway endpoint (S3, DynamoDB) বিনামূল্যে — S3 বা DynamoDB access করা প্রতিটি VPC-তে সেগুলি যোগ করুন। Nimbus-কে $15.60/মাস বাঁচিয়েছে এবং NAT Gateway থেকে S3/DynamoDB traffic সরিয়েছে।
+- **Global Accelerator**: বিশ্বব্যাপী কম, আরও ধারাবাহিক latency-র জন্য AWS private backbone-এর উপর dynamic traffic route করে। static Anycast IP। দূরের ব্যবহারকারীদের জন্য 33-47% latency উন্নতি (Tokyo: 180ms → 95ms; Sydney: 210ms → 118ms)। একটি CDN নয় — cache করে না।
+- **AWS DataSync**: on-premises NFS/SMB file data S3, EFS, বা FSx-এ migrate এবং replicate করার জন্য agent-based service। scheduling, checksum verification, monitoring handle করে। one-time migration এবং file share-এর চলমান replication-এর জন্য ব্যবহৃত।
+- **AWS Transfer Family**: S3 বা EFS দ্বারা সমর্থিত managed SFTP, FTPS, এবং FTP server। বিদ্যমান SFTP client-কে তাদের workflow পরিবর্তন না করে S3-তে file upload করতে দেয়।
 
 ## পরীক্ষার টিপস
 
-*SAA-C03 ডোমেইন: হাই-পারফর্মিং আর্কিটেকচার ডিজাইন করুন (ডোমেইন ৩, টাস্ক ৩.৪)*
+*SAA-C03 ডোমেন: Design High-Performing Architectures (ডোমেন ৩, টাস্ক ৩.৪)*
 
-- **VPN বনাম Direct Connect সংকেত**: VPN = "VPC-তে ট্র্যাফিক এনক্রিপ্ট করুন," "দ্রুত সেটআপ," "খরচ-সংবেদনশীল।" Direct Connect = "সামঞ্জস্যপূর্ণ কম লেটেন্সি," "বড় ডেটা ট্রান্সফার," "প্রাইভেট সংযোগ," "প্রাইভেট নেটওয়ার্ক প্রয়োজনীয় সম্মতি।"
-- **Transit Gateway বনাম VPC Peering**: Peering নন-ট্রানজিটিভ (A→B→C মানে A→C অনুমতি দেয় না)। Transit Gateway ট্রানজিটিভ। "যোগাযোগ করার প্রয়োজন অনেক VPC" → Transit Gateway।
-- **VPC Gateway Endpoints**: বিনামূল্যে। শুধুমাত্র S3 এবং DynamoDB। রুট টেবিল পরিবর্তন। কোনো অতিরিক্ত খরচ নেই। পরীক্ষার পরিস্থিতি: "প্রাইভেট সাবনেট থেকে S3 অ্যাক্সেসের জন্য ডেটা ট্রান্সফার খরচ কমান" → Gateway Endpoint।
-- **Global Accelerator বনাম CloudFront**: Accelerator = গতিশীল বিষয়বস্তু, নন-HTTP, স্ট্যাটিক IP, নেটওয়ার্ক অপ্টিমাইজেশন। CloudFront = ক্যাশিং, HTTP বিষয়বস্তু, CDN।
-- **Direct Connect + VPN**: আপনি একটি Direct Connect সংযোগের জন্য ব্যাকআপ হিসাবে VPN ব্যবহার করতে পারেন। Direct Connect সার্কিট ব্যর্থ হলে, ট্র্যাফিক VPN-এ ফেলওভার করে। VPN একা থেকে বেশি ব্যয়বহুল, Direct Connect একা থেকে আরো নির্ভরযোগ্য।
-- **Direct Connect Gateway**: একটি Direct Connect সার্কিটকে একাধিক অঞ্চল বা অ্যাকাউন্টের একাধিক VPC-এর সাথে সংযুক্ত করুন। এটি ছাড়া, একটি Direct Connect সার্কিট একটি অঞ্চলে একটি VGW-এর সাথে সংযুক্ত।
+- **VPN বনাম Direct Connect সংকেত**: VPN = "VPC-তে traffic encrypt করুন," "দ্রুত setup," "cost-sensitive।" Direct Connect = "ধারাবাহিক low latency," "বড় data transfer," "private connection," "private network প্রয়োজনীয় compliance।"
+- **Transit Gateway বনাম VPC Peering**: Peering non-transitive (A→B→C, A→C অনুমতি দেয় না)। Transit Gateway transitive। "যোগাযোগ করার প্রয়োজন অনেক VPC" → Transit Gateway।
+- **VPC Gateway Endpoint**: বিনামূল্যে। শুধুমাত্র S3 এবং DynamoDB। route table পরিবর্তন। কোনো অতিরিক্ত cost নেই। পরীক্ষার scenario: "private subnet থেকে S3 access-এর জন্য data transfer cost কমান" → Gateway Endpoint।
+- **Global Accelerator বনাম CloudFront**: Accelerator = dynamic content, non-HTTP, static IP, network optimization। CloudFront = caching, HTTP content, CDN।
+- **Direct Connect + VPN**: আপনি একটি Direct Connect connection-এর জন্য backup হিসেবে একটি VPN ব্যবহার করতে পারেন। Direct Connect circuit ব্যর্থ হলে, traffic VPN-এ failover করে। শুধু VPN-এর চেয়ে বেশি ব্যয়বহুল, শুধু Direct Connect-এর চেয়ে বেশি নির্ভরযোগ্য।
+- **Direct Connect Gateway**: একটি Direct Connect circuit-কে একাধিক region বা account জুড়ে একাধিক VPC-এর সাথে সংযুক্ত করুন। এটা ছাড়া, একটি Direct Connect circuit একটি region-এ একটি VGW-এর সাথে সংযুক্ত হয়।
+- **AWS Snow Family**: "বড় data migration," "transfer speed অনেক ধীর," "petabyte-scale migration" → Snow Family। Snowball Edge = 80TB পর্যন্ত। প্রথমে transfer-এর হিসাব করুন: উপলব্ধ network-এর উপর data সরাতে মোটামুটি এক সপ্তাহ বা তার বেশি লাগলে, উত্তর একটি physical device। *বাস্তবতা যাচাই (২০২৬)*: AWS পরিবারটি অবসর দিচ্ছে — Snowmobile ২০২৪-এ প্রত্যাহার করা হয়েছিল, Snowcone ২০২৪-এর শেষে বন্ধ হয়েছিল, এবং নভেম্বর ২০২৫ অনুযায়ী Snow device আর নতুন গ্রাহকদের offer করা হয় না (AWS এখন দ্রুত link-এর উপর DataSync এবং **Data Transfer Terminals**-এর দিকে নির্দেশ করে, secure location যেখানে আপনি আপনার নিজের drive আনেন)। SAA-C03 question bank এই সবের আগের, তাই পরীক্ষায়, "সপ্তাহের network transfer, সীমিত bandwidth" এখনও Snowball-এর দিকে নির্দেশ করে।
+- **Transit Gateway route table**: Transit Gateway network segmentation-এর জন্য একাধিক route table সমর্থন করে। পরীক্ষার সংকেত: Transit Gateway-এর মাধ্যমে shared connectivity সহ "production VPC-কে staging থেকে isolate করুন" → পৃথক route table।
+- **Global Accelerator fixed IP**: CloudFront-এর বিপরীতে, Global Accelerator দুটি static Anycast IP প্রদান করে। পরীক্ষার সংকেত: "application-এর client allowlist করার জন্য একটি fixed IP address প্রয়োজন" বা "UDP traffic" → Global Accelerator (CloudFront শুধুমাত্র HTTP/HTTPS)।
+- **AWS DataSync সংকেত**: "NFS/SMB file share S3/EFS/FSx-এ migrate করুন," "on-premises file data-র চলমান replication," "agent-based file migration।" DataSync protocol-compatible SFTP transfer-এর জন্য নয় — এটা bulk file share migration এবং replication-এর জন্য।
+- **AWS Transfer Family সংকেত**: "বিদ্যমান SFTP workflow," "partner বা customer SFTP-এর মাধ্যমে file upload করে," "client tool পরিবর্তন না করে SFTP server cloud-এ lift করুন," "S3 দ্বারা সমর্থিত SFTP/FTPS/FTP।" Transfer Family একটি data migration tool নয় — এটা একটি managed protocol endpoint। পার্থক্য: DataSync একটি schedule-এ bulk-এ data সরায়; Transfer Family চলমান file upload-এর জন্য একটি always-on SFTP/FTP endpoint প্রদান করে।
+- **MGN (Application Migration Service)**: "শত শত VM দ্রুত migrate করুন, কোনো কোড পরিবর্তন নেই," "rehost / lift-and-shift server EC2-তে" → MGN (block-level replication, test launch, native EC2 instance-এ cutover)। DataSync *file* সরায়; DMS *database* সরায়; MGN *পুরো server* সরায়।
 
 ## অনুশীলনী
 
-**অনুশীলনী ১ — স্মরণ**
+**অনুশীলন ১ — স্মরণ**
 
-AWS Site-to-Site VPN এবং AWS Direct Connect-এর মধ্যে পার্থক্য ব্যাখ্যা করুন। কোন পরিস্থিতিতে আপনি প্রতিটি বেছে নেবেন?
+AWS Site-to-Site VPN এবং AWS Direct Connect-এর মধ্যে পার্থক্য ব্যাখ্যা করুন। কোন scenario-তে আপনি প্রতিটি বেছে নেবেন?
 
-*(ইঙ্গিত: সেটআপ সময়, খরচ, লেটেন্সি সামঞ্জস্যতা এবং ব্যান্ডউইথ প্রয়োজনীয়তা নিয়ে ভাবুন।)*
+*(ইঙ্গিত: setup time, cost, latency সামঞ্জস্য, এবং bandwidth প্রয়োজনীয়তা নিয়ে ভাবুন।)*
 
-**অনুশীলনী ২ — পরীক্ষার অনুশীলন**
+**অনুশীলন ২ — SAA-C03 দৃশ্যকল্প**
 
-*পরিস্থিতি*: একটি আর্থিক সেবা কোম্পানির তাদের অন-প্রিমিসেস ডেটা সেন্টার থেকে AWS-এ একটি প্রাইভেট, এনক্রিপ্টেড, ডেডিকেটেড নেটওয়ার্ক সংযোগ প্রয়োজন। তারা প্রতিদিন ৫০০GB সংবেদনশীল আর্থিক ডেটা ট্রান্সফার করে। সংযোগের সামঞ্জস্যপূর্ণ, পূর্বাভাসযোগ্য লেটেন্সি থাকতে হবে এবং পাবলিক ইন্টারনেট অতিক্রম করা যাবে না। প্রাইমারি ব্যর্থ হলে তাদের একটি ব্যাকআপ সংযোগও প্রয়োজন।
+*দৃশ্যকল্প*: একটি financial services কোম্পানির তাদের on-premises data center থেকে AWS-এ একটি private, encrypted, dedicated network connection প্রয়োজন। তারা প্রতিদিন 500GB সংবেদনশীল financial data transfer করে। Connection-এর ধারাবাহিক, পূর্বানুমেয় latency থাকতে হবে এবং public internet অতিক্রম করা যাবে না। Primary ব্যর্থ হলে তাদের একটি backup connection-ও প্রয়োজন।
 
-কোন আর্কিটেকচার এই প্রয়োজনীয়তাগুলি সর্বোত্তমভাবে পূরণ করে?
+কোন architecture এই প্রয়োজনীয়তা সর্বোত্তমভাবে পূরণ করে?
 
-A) BGP রাউটিং এবং রিডান্ডেন্সির জন্য দ্বিতীয় VPN সহ একটি Site-to-Site VPN  
-B) ব্যাকআপ হিসাবে Site-to-Site VPN সহ একটি Direct Connect সংযোগ  
-C) বিভিন্ন ইন্টারনেট প্রদানকারীর মাধ্যমে দুটি Site-to-Site VPN সংযোগ  
-D) Direct Connect Gateway সহ একটি Direct Connect Hosted Connection
+A) BGP routing এবং redundancy-র জন্য একটি দ্বিতীয় VPN সহ একটি Site-to-Site VPN  
+B) Direct Connect Gateway সহ একটি Direct Connect Hosted Connection  
+C) ভিন্ন internet provider-এর মাধ্যমে দুটি Site-to-Site VPN connection  
+D) backup হিসেবে একটি Site-to-Site VPN সহ একটি Direct Connect connection
 
-**ইঙ্গিত ১**: "পাবলিক ইন্টারনেট অতিক্রম করা যাবে না" — VPN ট্র্যাফিক পাবলিক ইন্টারনেটের মাধ্যমে যায় (এনক্রিপ্টেড)। শুধুমাত্র Direct Connect প্রাইভেট।
+**ইঙ্গিত ১**: "public internet অতিক্রম করা যাবে না" — VPN traffic public internet-এর উপর যায় (encrypted)। শুধুমাত্র Direct Connect private।
 
-**ইঙ্গিত ২**: "সামঞ্জস্যপূর্ণ, পূর্বাভাসযোগ্য লেটেন্সি" — পাবলিক ইন্টারনেট VPN পারফরম্যান্স পরিবর্তিত হয়। Direct Connect সামঞ্জস্যপূর্ণ।
+**ইঙ্গিত ২**: "ধারাবাহিক, পূর্বানুমেয় latency" — public internet VPN performance পরিবর্তিত হয়। Direct Connect ধারাবাহিক।
 
-**ইঙ্গিত ৩**: "ব্যাকআপ সংযোগ" — Direct Connect প্রাইমারি হলে প্রস্তাবিত পদ্ধতি কী?
+**ইঙ্গিত ৩**: "backup connection" — Direct Connect primary হলে প্রস্তাবিত পদ্ধতি কী?
 
-**উত্তর**: B
+**উত্তর**: D
 
-**ব্যাখ্যা**: Direct Connect একটি প্রাইভেট, ডেডিকেটেড সংযোগ প্রদান করে যা পাবলিক ইন্টারনেট অতিক্রম করে না — গোপনীয়তা এবং লেটেন্সি প্রয়োজনীয়তা পূরণ করে। ব্যাকআপ হিসাবে একটি Site-to-Site VPN রিডান্ডেন্সি প্রদান করে: যদি Direct Connect সার্কিট ব্যর্থ হয়, ট্র্যাফিক এনক্রিপ্টেড VPN-এ ফেলওভার করে। এটি Direct Connect-এর জন্য স্ট্যান্ডার্ড HA প্যাটার্ন।
+**ব্যাখ্যা**: Direct Connect একটি private, dedicated connection প্রদান করে যা public internet অতিক্রম করে না — privacy এবং latency প্রয়োজনীয়তা পূরণ করে। backup হিসেবে একটি Site-to-Site VPN redundancy প্রদান করে: Direct Connect circuit ব্যর্থ হলে, traffic encrypted VPN-এ failover করে। এটা Direct Connect-এর জন্য standard HA pattern।
 
-**কেন A নয়?** Site-to-Site VPN ট্র্যাফিক পাবলিক ইন্টারনেট অতিক্রম করে, যা "পাবলিক ইন্টারনেট অতিক্রম করা যাবে না" প্রয়োজনীয়তা লঙ্ঘন করে।
+**কেন A নয়?** Site-to-Site VPN traffic public internet অতিক্রম করে, যা "public internet অতিক্রম করা যাবে না" প্রয়োজনীয়তা লঙ্ঘন করে।
 
-**কেন C নয়?** বিভিন্ন ISP-এর মাধ্যমে দুটি VPN সংযোগ তখনও পাবলিক ইন্টারনেট অতিক্রম করে, এমনকি এনক্রিপ্টেড হলেও। প্রাইভেট নেটওয়ার্ক প্রয়োজনীয়তা পূরণ করে না।
+**কেন B নয়?** একটি Hosted Connection একটি Direct Connect connection প্রদান করে কিন্তু option B একটি backup অন্তর্ভুক্ত করে না। backup ছাড়া একক Direct Connect একটি single point of failure — physical fiber কাটা যেতে পারে।
 
-**কেন D নয়?** একটি Hosted Connection একটি Direct Connect সংযোগ প্রদান করে কিন্তু অপশন D-তে ব্যাকআপ অন্তর্ভুক্ত নেই। ব্যাকআপ ছাড়া একক Direct Connect একটি একক ব্যর্থতার পয়েন্ট — ফিজিক্যাল ফাইবার কাটা যেতে পারে।
+**কেন C নয়?** ভিন্ন ISP-এর মাধ্যমে দুটি VPN connection এখনও public internet অতিক্রম করে, এমনকি encrypted হলেও। private network প্রয়োজনীয়তা পূরণ করে না।
 
-*SAA-C03 ডোমেইন: হাই-পারফর্মিং আর্কিটেকচার ডিজাইন করুন — টাস্ক ৩.৪*
+*SAA-C03 ডোমেন: Design High-Performing Architectures — টাস্ক ৩.৪*
 
-**অনুশীলনী ৩ — আর্কিটেকচার চ্যালেঞ্জ** *(ঐচ্ছিক)*
+**অনুশীলন ৩ — আর্কিটেকচার চ্যালেঞ্জ** *(ঐচ্ছিক)*
 
-Nimbus সিয়াটল, বার্লিন এবং সিঙ্গাপুরে আঞ্চলিক ইঞ্জিনিয়ারিং দল রাখার জন্য সম্প্রসারিত হচ্ছে। প্রতিটি আঞ্চলিক দলের অ্যাক্সেস প্রয়োজন:
+Nimbus Seattle, Berlin, এবং Singapore-এ regional engineering team রাখতে প্রসারিত হচ্ছে। প্রতিটি regional team-এর access প্রয়োজন:
 
-- প্রোডাকশন VPC (ডিবাগিংয়ের জন্য শুধু পড়া)
-- স্টেজিং VPC (পরীক্ষার জন্য সম্পূর্ণ অ্যাক্সেস)
-- অ্যানালিটিক্স VPC (রিপোর্টিংয়ের জন্য শুধু পড়া)
+- Production VPC (debugging-এর জন্য read-only)
+- Staging VPC (testing-এর জন্য full access)
+- Analytics VPC (reporting-এর জন্য read-only)
 
-নেটওয়ার্ক সংযোগ ডিজাইন করুন। আপনি কি Transit Gateway ব্যবহার করবেন? প্রতিটি অঞ্চলে Direct Connect নাকি Site-to-Site VPN? আপনি প্রোডাকশনের জন্য শুধু-পড়া অ্যাক্সেস কীভাবে প্রয়োগ করবেন? (ইঙ্গিত: এটি উভয় নেটওয়ার্ক এবং IAM প্রশ্ন।)
+Network connectivity design করুন। আপনি কি Transit Gateway ব্যবহার করবেন? প্রতিটি region-এ Direct Connect নাকি Site-to-Site VPN? আপনি production-এর জন্য read-only access কীভাবে প্রয়োগ করবেন? (ইঙ্গিত: এটা একটি network এবং IAM উভয় প্রশ্ন।)
 
-*(কোনো একক সঠিক উত্তর নেই। লক্ষ্য হলো মাল্টি-রিজিয়ন, মাল্টি-টিম নেটওয়ার্ক ডিজাইন অনুশীলন করা।)*
+*(একটি একক সঠিক উত্তর নেই। লক্ষ্য হলো multi-region, multi-team network design অনুশীলন করা।)*
+
+**এক্সটেনশন**: Berlin team রিপোর্ট করে যে production VPC (us-west-2)-তে তাদের VPN latency গড়ে 160ms। কোন data volume-এ Accelerated Site-to-Site VPN বা একটি Direct Connect Hosted Connection ভালো option হবে? একটি European AWS Partner থেকে বর্তমান Direct Connect Hosted Connection pricing research করুন। আপনার অনুমানকৃত data volume-এ শুধু latency উন্নতি কি cost justify করবে?
 
 ## পোস্ট-ক্রেডিটস দৃশ্য
 
-ডেটা মাইগ্রেশন ১৪ ঘণ্টায় সম্পন্ন হলো।
+Data migration ৮ calendar দিনে সম্পূর্ণ হল — Snowball Edge আসতে ৩ দিন, data copy করতে ৯৪ মিনিট, AWS-এর device গ্রহণ এবং data ingest করতে ৪ দিন, তারপর Snowball transit-এ থাকার সময় জমা হওয়া delta-র একটি চূড়ান্ত sync। পুরো জিনিসটির জন্য hands-on সময়: চার ঘণ্টার কম।
 
-ধীর পাবলিক ইন্টারনেট পথের মাধ্যমে নয় — Leo বেশিরভাগ ডেটার জন্য AWS Snow Family (AWS-এ এবং থেকে শিপ করা ফিজিক্যাল স্টোরেজ ডিভাইস) ব্যবহার করেছিলেন, তারপর VPN-এর মাধ্যমে অবশিষ্ট ডেল্টা সিঙ্ক করেছিলেন।
+সেই শেষ step গুরুত্বপূর্ণ ছিল। Snowball Edge 4TB dataset-এর একটি point-in-time snapshot copy করেছিল। এটা transit-এ থাকার সময়, production database চলতে থেকেছিল — নতুন order দেওয়া হচ্ছিল, নতুন record তৈরি হচ্ছিল। VPN-এর উপর delta sync ছিল 12GB, ১৮ মিনিটে সম্পূর্ণ।
 
-"পরের বার," তিনি বললেন, "আমাদের Direct Connect সেটআপ করা উচিত।"
+"Bulk transfer ছিল Snowball," Leo বলল। "Sync ছিল শুধু ৮ দিন লাগার net-new data।"
 
-Tom মূল্য দেখলেন।
+"আমি ইতিমধ্যে এটা deploy করেছি — ওহ," ৯৪ মিনিট পরে Snowball Edge-এ copy সম্পূর্ণ হতে দেখে Leo বলল। "business hour-এর সময় অফিস network saturate করা এড়াতে আমার local copy-তে bandwidth throttle সেট করা উচিত ছিল।"
 
-"একটি ডেডিকেটেড ১Gbps পোর্ট $২১৬/মাস," তিনি বললেন। "এছাড়া আমাদের অফিস থেকে সার্কিট, যা একটি টেলিকম $৮০০/মাস উদ্ধৃত করেছে।"
+সে throttle সেট করেনি। অফিস internet ঠিক ছিল — Snowball একটি local network operation ছিল। কিন্তু copy local throughput 9 Gbps-এর কাছাকাছি যাওয়ার সাথে network switch সংক্ষিপ্তভাবে একটি bottleneck হয়ে গিয়েছিল।
 
-"তাহলে মোট প্রায় এক হাজার মাসিক।"
+"পয়েন্টটা," throttle setting ঠিক করার পরে সে বলল, "হলো একটি নির্দিষ্ট data volume-এর উপরে physical mail internet-এর চেয়ে দ্রুত।"
 
-"এখন আমরা যা করি তার জন্য, সম্ভবত মূল্য নয়। কিন্তু যদি আমরা আমাদের অফিস এবং AWS-এর মধ্যে মাসে ১০TB-এর বেশি সরাতে শুরু করি, Direct Connect-এ ডেটা ট্রান্সফার সাশ্রয় খরচ অফসেট করবে।"
+"সেটা হয় সুস্পষ্ট নয়তো প্রতি-স্বজ্ঞাত," Maya বলল, "আপনি কীভাবে এটা নিয়ে ভাবেন তার উপর নির্ভর করে।"
 
-"তাহলে আমরা ডেটা ট্রান্সফার ভলিউম মনিটর করি," Priya বললেন, "এবং যখন সীমা অতিক্রম করে তখন পুনর্বিবেচনা করি।"
+"পরের বার," Leo বলল, "আমাদের একটি Direct Connect সেট আপ করা উচিত।"
 
-"এটা খরচ-সচেতন আর্কিটেকচার," Tom বললেন।
+Tom calculator-এর দিকে হাত বাড়াল না — সে ইতিমধ্যে আগে হিসাব চালিয়েছিল, যখন Direct Connect প্রথম এসেছিল: মাসে প্রায় এক হাজার, port plus circuit।
 
-"এটা সবসময় পয়েন্ট ছিল," Maya বললেন।
+"আমরা এখন যা করি তার জন্য, সম্ভবত মূল্যবান নয়। কিন্তু আমরা আমাদের অফিস এবং AWS-এর মধ্যে মাসে 10TB-এর বেশি সরাতে শুরু করলে, Direct Connect-এ data transfer সাশ্রয় cost অফসেট করবে।"
 
-পরবর্তী অধ্যায়ে: যখন আপনার কাছে যেকোনো ডেটাবেস যুক্তিসঙ্গতভাবে সংরক্ষণ করতে পারে তার চেয়ে বেশি ডেটা আছে, এবং আপনাকে এটি সব বুঝতে হবে।
+"তাহলে আমরা data transfer volume monitor করি," Priya বলল, "এবং threshold অতিক্রম করলে পুনর্বিবেচনা করি।"
+
+"সেটা cost-aware architecture," Tom বলল।
+
+"সেটা সবসময়ই পয়েন্ট ছিল," Maya বলল।
+
+Priya ঘরের অন্য পাশ থেকে migration দেখেছিল। "পরের বার আমরা এরকম কিছু করলে," সে বলল, "আমরা কি data production-এ যাওয়ার এবং ব্যবসা এর উপর নির্ভর করার আগে করতে পারি? Live data migrate করা সবসময় at-rest data migrate করার চেয়ে ঝুঁকিপূর্ণ।"
+
+"ব্যবসা চললে এটা কখনো at-rest নয়," Leo বলল।
+
+"আমি জানি," সে বলল। "সেটাই পয়েন্ট। প্রয়োজন হওয়ার আগে migration plan করুন। পরে নয়।"
+
+Tom ইতিমধ্যে হিসাব করেছিল us-east-1-এ যেকোনো সময় একটি migration গ্রহণ করতে প্রস্তুত দ্বিতীয় set অবকাঠামো রাখতে কত খরচ হবে। সে আপাতত সংখ্যাটি নিজের কাছে রাখল। বন্ধ করার আরও তাৎক্ষণিক অধ্যায় ছিল।
+
+পরবর্তী অধ্যায়ে: যখন আপনার কাছে যেকোনো database যুক্তিসঙ্গতভাবে store করতে পারে তার চেয়ে বেশি data থাকে, এবং আপনার এটা সব বোঝার প্রয়োজন হয়।

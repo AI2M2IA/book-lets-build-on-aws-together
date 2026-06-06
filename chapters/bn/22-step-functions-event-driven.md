@@ -1,28 +1,56 @@
 # অধ্যায় ২২: ফ্লোচার্ট যা নিজেই চলে
 
-Nimbus-এ একটি অর্ডার নিশ্চিতকরণের জন্য পাঁচটি জিনিস ক্রমানুসারে ঘটতে হতো: কার্ড চার্জ করুন, নিশ্চিতকরণ ইমেইল পাঠান, রেস্তোরাঁকে অবহিত করুন, ইনভেন্টরি আপডেট করুন এবং অ্যাকাউন্টিংয়ের জন্য লেনদেন লগ করুন। যদি ধাপ তিন ব্যর্থ হয় — যদি রেস্তোরাঁ নোটিফিকেশন টাইমআউট হয় — ধাপ এক এবং দুই ইতিমধ্যে ঘটে গেছে। গ্রাহককে চার্জ করা হয়েছে। ইমেইল পাঠানো হয়েছে। কিন্তু রেস্তোরাঁ জানে না অর্ডার বিদ্যমান।
+Leo একই log file-এর দিকে এক ঘণ্টা ধরে তাকিয়ে ছিল। Stack trace-গুলি পৃথকভাবে যথেষ্ট স্পষ্ট ছিল, কিন্তু তাদের জুড়ে pattern — যেভাবে একটি step নীরবে ব্যর্থ হত এবং পরের step তবুও চলত — দেখতে তার কিছুটা সময় লেগেছিল। সে অবশেষে পিছনে হেলান দিল, তার coffee রাখল, এবং তার notepad-এ একটি মাত্র শব্দ লিখল: *coordination*।
 
-Leo এই ধরনের বাগের জন্য একটি নাম রেখেছিলেন: আংশিক সাফল্য। "সব কিছু কাজ করেছে," তিনি বললেন, "গুরুত্বপূর্ণ অংশটি ছাড়া।"
+পরিবেশনার মাঝখানে একজন conductor podium থেকে নেমে যাওয়ার কল্পনা করুন। Orchestra বাজাতে থাকে — কিন্তু bar 47-এ brass আনার কেউ নেই, finale-এর আগে নীরবতার ইঙ্গিত দেওয়ার কেউ নেই। পৃথক সঙ্গীতশিল্পীরা তাদের অংশ সঠিকভাবে বাজায়। পরিবেশনা তবুও ভেঙে পড়ে, কারণ অংশগুলি এমন coordination-এর উপর নির্ভর করে যা কেউ পরিচালনা করছে না।
 
-"এটি কতবার হয়েছে?" Maya জিজ্ঞেস করলেন।
+সেটাই সমস্যা Leo order confirmation কোডে খুঁজে পেয়েছিল। কোনো পৃথক step-এ একটি bug নয়। একটি coordination failure।
 
-"গত দুই সপ্তাহে এগারো বার। আমরা বেশিরভাগ রেস্তোরাঁর রাগান্বিত ফোন কল থেকে ধরেছিলাম। দুটি আমরা লগে খুঁজে পেয়েছিলাম, পরে।"
+---
 
-"তাহলে আমাদের কোনো সমন্বয় নেই," Priya বললেন। "পাঁচটি ধাপ, একটি স্ক্রিপ্ট হিসাবে চলছে, এগুলি সবই সম্পন্ন হয় তার কোনো নিশ্চয়তা ছাড়াই।"
+Container-গুলি সঠিকভাবে চলছিল এবং পরিষ্কারভাবে deploy হচ্ছিল। ECS deployment pipeline মজবুত ছিল। কিন্তু application কোডের ভিতরে, একটি ভিন্ন ধরনের failure সপ্তাহ ধরে জমা হচ্ছিল। Container ঠিক ছিল। তাদের একটির ভিতরের logic ছিল না।
 
-"অথবা তারা সঠিক ক্রমে সম্পন্ন হয়।"
+Leo log-এ pattern ট্র্যাক করছিল কিন্তু ঘটনাগুলি গণনা না করা পর্যন্ত এটা বোঝেনি।
+
+এগারো বার। দুই সপ্তাহে।
+
+---
+
+Nimbus-এ একটি order confirmation-এর জন্য পাঁচটি জিনিস ক্রমানুসারে ঘটতে হত: card charge করা, confirmation email পাঠানো, রেস্তোরাঁকে notify করা, inventory আপডেট করা, এবং accounting-এর জন্য transaction log করা।
+
+Leo যখন মূল order confirmation function লিখেছিল, সে পুরো জিনিসটিকে একটি `try/except` block-এ মুড়ে দিয়েছিল এবং বলেছিল "এটা ঠিক থাকবে — আমরা log-এ error ধরব।" সেটা ছিল আট মাস আগে।
+
+এটা ঠিক ছিল না।
+
+Step তিন ব্যর্থ হলে — রেস্তোরাঁ notification timeout হলে — step এক এবং দুই ইতিমধ্যে ঘটে গিয়েছিল। গ্রাহককে charge করা হয়েছিল। Email পাঠানো হয়েছিল। কিন্তু রেস্তোরাঁ জানত না order বিদ্যমান।
+
+Leo-র এই শ্রেণীর bug-এর জন্য একটি নাম ছিল: partial success। "সব কিছু কাজ করেছে," সে বলল, "যে অংশটি গুরুত্বপূর্ণ ছিল সেটা ছাড়া।"
+
+"এটা কতবার হয়েছে?" Maya জিজ্ঞেস করল।
+
+"গত দুই সপ্তাহে এগারো বার। আমরা বেশিরভাগ রেস্তোরাঁয় রাগান্বিত কল থেকে ধরেছিলাম। দুটি আমরা log-এ পরে খুঁজে পেয়েছিলাম।"
+
+"তাহলে আমাদের কোনো coordination নেই," Priya বলল। "পাঁচটি step, একটি script হিসেবে চলছে, সেগুলি সব সম্পূর্ণ হওয়ার কোনো গ্যারান্টি ছাড়াই। এবং কেউ যদি step দুইয়ের সময় ভাঙার চেষ্টা করে — charge হয়ে যাওয়ার পর কিন্তু রেস্তোরাঁ notify হওয়ার আগে? আমরা ইতিমধ্যে রেস্তোরাঁর কাছে নেই এমন একটি order-এর জন্য গ্রাহককে বিল করেছি।"
+
+"অথবা তারা সঠিক order-এ সম্পূর্ণ হয়।"
 
 "অথবা আমরা জানি কোনটি ব্যর্থ হয়েছে।"
 
-Leo প্রজেক্টরে কোড টেনে আনলেন। এটি ছিল একটি Python ফাংশন: পঞ্চাশটি লাইন, পাঁচটি ক্রমিক API কল, পুরো জিনিসটির চারপাশে একটি একক try/except ব্লক। "এখানে যদি কিছু একটি ব্যতিক্রম উত্থাপন করে, আমরা একটি 500 পাই এবং গ্রাহক একটি ত্রুটি দেখেন। কিন্তু চার্জ এবং ইমেইল রোলব্যাক করে না।"
+Leo projector-এ কোড টেনে আনল। এটা ছিল একটি Python function: পঞ্চাশটি লাইন, পাঁচটি ক্রমিক API call, পুরো জিনিসটির চারপাশে একটি একক try/except block।
 
-"আমাদের একটি ওয়ার্কফ্লো দরকার," Maya বললেন। "এমন কিছু যা প্রতিটি ধাপ ট্র্যাক করে।"
+"আমাদের একটি workflow দরকার," Maya বলল। "এমন কিছু যা প্রতিটি step ট্র্যাক করে। দাঁড়াও — কিন্তু আমরা কেন কেবল বিদ্যমান Python function-এ ভালো error handling যোগ করতে পারি না? আমাদের কেন একটি সম্পূর্ণ নতুন service দরকার?"
 
-**AWS Step Functions: ওয়ার্কফ্লো অর্কেস্ট্রেট করা**
+"কারণ ভালো error handling এখনও একটি single process-এ চলে যা যেকোনো point-এ ব্যর্থ হতে পারে," Leo বলল। "Server execution-এর মাঝখানে restart হলে, error handling এর সাথে restart হয়। Step Functions state বাহ্যিকভাবে persist করে।"
 
-**AWS Step Functions** হলো একটি সার্ভারলেস অর্কেস্ট্রেশন সার্ভিস যা একটি অ্যাপ্লিকেশনের ধাপগুলিকে একটি ভিজ্যুয়াল ওয়ার্কফ্লো হিসাবে সমন্বয় করে। প্রতিটি ধাপ একটি **স্টেট মেশিন**-এ একটি **স্টেট**।
+একটি manufacturing checklist-এর কথা ভাবুন — একটি যেখানে প্রতিটি station পরবর্তীতে যাওয়ার আগে completion নিশ্চিত করে, এবং যেখানে কিছু ব্যর্থ হলে পুরো line তার অবস্থান ধরে রাখে। Line শুরু থেকে restart হয় না। এটা ঠিক যে station ব্যর্থ হয়েছিল সেখান থেকে resume করে। সেই station-এর state রেকর্ড করা। এর আগের step-গুলি সম্পন্ন এবং পুনরাবৃত্তি হয় না। এর পরের step-গুলি সমস্যা সমাধান না হওয়া পর্যন্ত অপেক্ষা করে।
 
-উপরে থেকে নিচে চলা এবং ক্র্যাশ হওয়া Python স্ক্রিপ্টের পরিবর্তে, আপনি ওয়ার্কফ্লোটিকে একটি JSON/YAML স্টেট মেশিন হিসাবে সংজ্ঞায়িত করেন:
+সেটাই order confirmation flow-এর প্রয়োজন ছিল। সমস্যার চারপাশে আরও কোড নয়। সমস্যা পরিচালনার জন্য design করা একটি সিস্টেম।
+
+**AWS Step Functions: Workflow Orchestrate করা**
+
+**AWS Step Functions** হলো একটি serverless orchestration service যা একটি application-এর step-গুলিকে একটি visual workflow হিসেবে সমন্বয় করে। প্রতিটি step একটি **state machine**-এ একটি **state**।
+
+উপরে-থেকে-নিচে চলা এবং crash হওয়া একটি Python script-এর পরিবর্তে, আপনি workflow-টিকে একটি JSON/YAML state machine হিসেবে সংজ্ঞায়িত করেন:
 
 ```json
 {
@@ -30,222 +58,501 @@ Leo প্রজেক্টরে কোড টেনে আনলেন। এ
   "States": {
     "ValidateLicense": {
       "Type": "Task",
-      "Resource": "arn:aws:lambda:us-east-1:123456789012:function:validate-license",
+      "Resource": "arn:aws:lambda:us-west-2:123456789012:function:validate-license",
       "Next": "ImportMenu",
-      "Catch": [{"ErrorEquals": ["*"], "Next": "OnboardingFailed"}]
+      "Catch": [{"ErrorEquals": ["States.ALL"], "Next": "OnboardingFailed"}]
     },
     "ImportMenu": {
       "Type": "Task",
-      "Resource": "arn:aws:lambda:us-east-1:123456789012:function:import-menu",
+      "Resource": "arn:aws:lambda:us-west-2:123456789012:function:import-menu",
       "Next": "SetupPayments",
-      "Retry": [{"ErrorEquals": ["*"], "MaxAttempts": 3, "IntervalSeconds": 5}]
+      "Retry": [{"ErrorEquals": ["States.ALL"], "MaxAttempts": 3, "IntervalSeconds": 5}]
     },
     ...
   }
 }
 ```
 
-প্রতিটি স্টেট পারে:
+প্রতিটি state পারে:
 
-- **একটি Lambda ফাংশন এক্সিকিউট করুন** (সবচেয়ে সাধারণ প্যাটার্ন)
-- **একটি ECS টাস্ক এক্সিকিউট করুন** (দীর্ঘমেয়াদী কাজের জন্য)
-- **একটি নির্দিষ্ট সময়** বা **ইভেন্টের জন্য অপেক্ষা করুন** (কিছু বাহ্যিক ঘটনা না হওয়া পর্যন্ত ওয়ার্কফ্লো বিরাম দিন)
-- **শর্তের উপর ভিত্তি করে একটি পথ বেছে নিন** (if/else যুক্তি)
-- **সমান্তরাল শাখা চালান** একসাথে
-- **ব্যর্থতায় পুনরায় চেষ্টা করুন** কনফিগারযোগ্য ব্যাকঅফ সহ
-- **ত্রুটি ধরুন** এবং ত্রুটি-পরিচালনা স্টেটে রুট করুন
+- **একটি Lambda function execute করা** (সবচেয়ে সাধারণ pattern)
+- **একটি ECS task execute করা** (দীর্ঘ-চলমান কাজের জন্য)
+- **একটি নির্দিষ্ট সময়** বা **event-এর জন্য অপেক্ষা করা** (বাহ্যিক কিছু না ঘটা পর্যন্ত workflow pause করুন)
+- **শর্তের উপর ভিত্তি করে একটি path বেছে নেওয়া** (if/else logic)
+- **সমান্তরাল branch চালানো** একসাথে
+- **failure-এ retry করা** configurable backoff সহ
+- **error catch করা** এবং error-handling state-এ route করা
 
-Step Functions এক্সিকিউশন স্টেট দুর্বলভাবে পরিচালনা করে। যদি ধাপ ৩ ব্যর্থ হয়, এক্সিকিউশন ধাপ ৩-এ বিরাম দেয়। আপনি কনসোলে ব্যর্থ এক্সিকিউশন পরিদর্শন করতে পারেন, সমস্যাটি ঠিক করতে পারেন এবং ধাপ ৩ থেকে পুনরায় শুরু করতে পারেন — ধাপ ১ এবং ২ পুনরাবৃত্তি না করেই।
+Step Functions execution state durably পরিচালনা করে। Step 3 ব্যর্থ হলে, execution step 3-এ pause হয়। আপনি console-এ ব্যর্থ execution পরিদর্শন করতে পারেন, issue ঠিক করতে পারেন, এবং step 3 থেকে restart করতে পারেন — step 1 এবং 2 পুনরাবৃত্তি না করেই।
 
-**স্টেট টাইপ: বিল্ডিং ব্লক**
+আপনি হয়তো ভাবছেন: আপনি কি আপনার Lambda function-এ কেবল retry logic লিখতে পারেন না? হ্যাঁ — কিন্তু তখন আপনি কোডে failure tracking, state persistence, এবং audit logging-ও লিখছেন। এবং 7-এর মধ্যে step 3 ব্যর্থ হলে, আপনার জানা দরকার কোন রেস্তোরাঁ process হচ্ছিল, আগে কী ঘটেছিল, এবং কোথায় resume করতে হবে। Step Functions সেগুলি সব করে।
 
-**Task**: একটি ক্রিয়া সম্পাদন করুন — একটি Lambda ফাংশন কল করুন, একটি ECS টাস্ক শুরু করুন, একটি API কল করুন। এখানেই আসল কাজ হয়।
+**Nimbus Order Flow: টীকাযুক্ত State Machine**
 
-**Choice**: ইনপুট ডেটার শর্তের উপর ভিত্তি করে শাখা। কোডে if/else এর মতো।
+এখানে Nimbus order confirmation-এর জন্য তৈরি করা প্রকৃত Step Functions state machine-এর একটি সরলীকৃত version — টীকাযুক্ত যাতে আপনি দেখতে পারেন প্রতিটি টুকরো কী করে:
 
-**Parallel**: একসাথে একাধিক শাখা চালান এবং সমস্ত সম্পন্ন হওয়ার জন্য অপেক্ষা করুন।
+```json
+{
+  "Comment": "Nimbus order confirmation workflow",
+  "StartAt": "ChargeCard",
+  "States": {
+    "ChargeCard": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-west-2:123456789012:function:charge-card",
+      "Next": "SendConfirmationEmail",
+      "Retry": [
+        {
+          "ErrorEquals": ["PaymentRetryableError"],
+          "MaxAttempts": 2,
+          "IntervalSeconds": 3,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["PaymentDeclinedError"],
+          "Next": "NotifyCustomerOfDecline"
+        },
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "ChargeCardFailed"
+        }
+      ]
+    },
+    "SendConfirmationEmail": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-west-2:123456789012:function:send-confirmation-email",
+      "Next": "NotifyRestaurant",
+      "Retry": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "MaxAttempts": 3,
+          "IntervalSeconds": 5
+        }
+      ]
+    },
+    "NotifyRestaurant": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-west-2:123456789012:function:notify-restaurant",
+      "Next": "UpdateInventory",
+      "Retry": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "MaxAttempts": 3,
+          "IntervalSeconds": 10,
+          "BackoffRate": 2.0
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "RestaurantNotificationFailed"
+        }
+      ]
+    },
+    "UpdateInventory": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-west-2:123456789012:function:update-inventory",
+      "Next": "LogTransaction",
+      "Retry": [{"ErrorEquals": ["States.ALL"], "MaxAttempts": 2}]
+    },
+    "LogTransaction": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-west-2:123456789012:function:log-transaction",
+      "End": true
+    },
+    "NotifyCustomerOfDecline": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-west-2:123456789012:function:notify-decline",
+      "End": true
+    },
+    "ChargeCardFailed": {
+      "Type": "Fail",
+      "Error": "ChargeCardFailed",
+      "Cause": "Card charge failed after retries"
+    },
+    "RestaurantNotificationFailed": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:us-west-2:123456789012:function:alert-support",
+      "Comment": "Alert support team — order charged but restaurant not notified",
+      "End": true
+    }
+  }
+}
+```
 
-**Map**: একটি তালিকার প্রতিটি আইটেমে স্টেটের একটি সেট প্রয়োগ করুন। ৫০টি রেস্তোরাঁ মেনু আইটেম সমান্তরালে প্রক্রিয়া করুন।
+লক্ষ্য করার মতো কয়েকটি জিনিস:
 
-**Wait**: একটি নির্দিষ্ট সময়ের জন্য বা একটি টাইমস্ট্যাম্প পর্যন্ত বিরাম দিন। নির্ধারিত বিলম্বের জন্য উপযোগী।
+**`ChargeCard`-এর দুটি Catch clause আছে।** একটি `PaymentDeclinedError`-এর জন্য (একটি পরিচিত, প্রত্যাশিত failure — card declined হয়েছিল, একটি system error নয়) এবং একটি `States.ALL`-এর জন্য (অন্য যেকোনো কিছু — একটি system outage, একটি timeout, একটি অপ্রত্যাশিত exception)। তারা ভিন্ন state-এ route করে কারণ তারা ভিন্ন জিনিস বোঝায়।
 
-**Pass**: কাজ না করেই ইনপুট থেকে আউটপুটে পাস করুন। ডেটা রূপান্তর এবং পরীক্ষার জন্য ব্যবহৃত।
+**`NotifyRestaurant`-এর একটি Catch আছে যা `RestaurantNotificationFailed`-এ route করে।** এটাই সেই bug যা এগারোটি incident ঘটিয়েছিল। পুরানো Python script-এ, কোনো সমতুল্য ছিল না — notification ব্যর্থ হলে, function হয় নীরবে crash করত বা একটি error log করে চলতে থাকত। Step Functions failure path স্পষ্ট করে: এটা একটি নির্দিষ্ট জায়গায় যায়, এবং সেই জায়গা কাউকে কল করতে হওয়ার আগে support team-কে alert করে।
 
-**Succeed/Fail**: টার্মিনাল স্টেট যা এক্সিকিউশন শেষ করে।
+**প্রতিটি Task-এর Retry আছে।** Email service-এর একটি transient timeout হলে, এটা স্বয়ংক্রিয়ভাবে retry করে, তিনবার, ক্রমবর্ধমান backoff সহ। গ্রাহক এটা কখনো দেখে না। Order হারায় না।
 
-রেস্তোরাঁ অনবোর্ডিংয়ের জন্য, Leo একটি ওয়ার্কফ্লো ডিজাইন করলেন:
+**Flow একটি graph, একটি script নয়।** `NotifyRestaurant` স্থায়ীভাবে ব্যর্থ হলে (retry-এর পরে), execution `UpdateInventory`-তে চলতে থাকে না। Workflow `RestaurantNotificationFailed`-এ থামে। একটি রেস্তোরাঁ যা order সম্পর্কে জানে না তার জন্য inventory আপডেট হয় না। এটা সঠিক আচরণ।
+
+"দাঁড়াও — কিন্তু payment declined বনাম system error-এর জন্য আমাদের কেন পৃথক failure path দরকার?" Maya জিজ্ঞেস করল।
+
+"কারণ তাদের সম্পূর্ণ ভিন্ন response প্রয়োজন," Leo বলল। "একটি declined card মানে আমরা গ্রাহককে email করি এবং তাদের আবার চেষ্টা করতে বলি। charge function-এ একটি system error মানে আমাদের একজন engineer দরকার তদন্ত করতে কেন Lambda function ব্যর্থ হচ্ছে। একই observable outcome — order হয়নি — কিন্তু সম্পূর্ণ ভিন্ন remediation।"
+
+**State Type: বিল্ডিং ব্লক**
+
+**Task**: একটি action execute করুন — একটি Lambda function call করুন, একটি ECS task শুরু করুন, একটি API call করুন। এখানেই আসল কাজ হয়।
+
+**Choice**: input data-র শর্তের উপর ভিত্তি করে branch করুন। কোডে একটি if/else-এর মতো।
+
+**Parallel**: একসাথে একাধিক branch চালান এবং সব সম্পূর্ণ হওয়ার জন্য অপেক্ষা করুন।
+
+**Map**: একটি list-এর প্রতিটি item-এ state-এর একটি set প্রয়োগ করুন। ৫০টি রেস্তোরাঁ menu item সমান্তরালে process করুন।
+
+Nimbus একটি রেস্তোরাঁর menu import করলে, menu-তে ৮ থেকে ২০০টি item থাকতে পারত। প্রতিটি item-এর জন্য, import process-এর প্রয়োজন ছিল: format যাচাই করা, allergen data check করা, ছবি resize করা, এবং record DynamoDB-তে লেখা।
+
+Map state ছাড়া, এটা হত একটি single Lambda item-গুলি ক্রমানুসারে process করছে — ২০০ item × প্রতি item ২০০ms = ৪০ সেকেন্ড processing time। Map state সহ, Step Functions processing state-গুলির concurrent execution launch করে — configured concurrency limit পর্যন্ত — এবং সেগুলি সব সম্পূর্ণ হওয়ার জন্য অপেক্ষা করে। একই ২০০টি item ৫ সেকেন্ডের মধ্যে শেষ হতে পারে।
+
+**Wait**: একটি নির্দিষ্ট সময়ের জন্য বা একটি timestamp পর্যন্ত pause করুন। scheduled delay-এর জন্য উপযোগী।
+
+**Pass**: কাজ না করে input থেকে output-এ pass করুন। data transformation এবং testing-এর জন্য ব্যবহৃত।
+
+**Succeed/Fail**: terminal state যা execution শেষ করে।
+
+রেস্তোরাঁ onboarding-এর জন্য, Leo একটি workflow design করল:
 
 1. ValidateLicense (Task → Lambda)
-2. ImportMenu (Task → Lambda, ৩টি রিট্রাই সহ)
-3. সমান্তরাল শাখা:
+2. ImportMenu (Task → Lambda, ৩টি retry সহ)
+3. সমান্তরাল branch:
    a. SetupPayments (Task → Lambda)
    b. CreateIAMRole (Task → Lambda)
-4. SendWelcomeEmail (Task → Lambda, সমান্তরাল সম্পন্ন হওয়ার জন্য অপেক্ষা করে)
+4. SendWelcomeEmail (Task → Lambda, সমান্তরাল সম্পূর্ণ হওয়ার জন্য অপেক্ষা করে)
 5. NotifySalesTeam (Task → Lambda)
 
-ধাপ ৩a এবং ৩b সমান্তরালে চলে — তারা একে অপরের উপর নির্ভর করে না, এবং সেগুলি একসাথে চালানো সময় বাঁচায়।
+Step 3a এবং 3b সমান্তরালে চলে — তারা একে অপরের উপর নির্ভর করে না, এবং সেগুলি একসাথে চালানো সময় বাঁচায়।
 
-**Standard বনাম Express ওয়ার্কফ্লো**
+প্রথম রেস্তোরাঁ cohort onboarding সম্পূর্ণ করার পরে, একটি compliance প্রয়োজনীয়তা উদ্ভূত হল: একটি রেস্তোরাঁ partner live হওয়ার আগে, একজন Nimbus account manager-কে ম্যানুয়ালি license documentation পর্যালোচনা এবং অনুমোদন করতে হত। এটা এক থেকে তিন ব্যবসায়িক দিন নিতে পারত।
 
-Step Functions দুটি ওয়ার্কফ্লো টাইপ অফার করে:
+"এবং কেউ যদি সেই window-এর সময় ভাঙার চেষ্টা করে?" Priya জিজ্ঞেস করল। "রেস্তোরাঁ আংশিকভাবে configure করা হলে — payment account তৈরি কিন্তু এখনও অনুমোদিত নয় — এবং কেউ pending state আবিষ্কার করলে, তারা half-open configuration exploit করার চেষ্টা করতে পারে।"
 
-**Standard ওয়ার্কফ্লো**:
+আরও ব্যবহারিকভাবে: আপনি একজন মানুষের জন্য অপেক্ষা করে তিন দিনের জন্য একটি Step Functions workflow কীভাবে pause করবেন?
 
-- সর্বোচ্চ সময়: ১ বছর
-- এক্সিকিউশন দুর্বল — স্টেট স্থায়ী, পরিদর্শন ও নিরীক্ষা করা যায়
-- অন্তত-একবার এক্সিকিউশন (প্রতিটি টাস্ক অন্তত একবার চলে)
-- প্রতি স্টেট ট্রানজিশনে মূল্য নির্ধারণ
-- দীর্ঘ-চলমান, গুরুত্বপূর্ণ ওয়ার্কফ্লোর জন্য সর্বোত্তম (অর্ডার প্রক্রিয়াকরণ, অনবোর্ডিং, পেমেন্ট ফ্লো)
+উত্তর হলো একটি **task token সহ callback pattern**।
 
-**Express ওয়ার্কফ্লো**:
+`ValidateLicense` চললে, স্বয়ংক্রিয়ভাবে সম্পূর্ণ হওয়ার পরিবর্তে, এটা একটি Lambda call করে যা তিনটি জিনিস করে:
 
-- সর্বোচ্চ সময়: ৫ মিনিট
-- উচ্চতর থ্রুপুট — প্রতি সেকেন্ডে ১,০০,০০০ পর্যন্ত
-- অন্তত-একবার বা সর্বোচ্চ-একবার (কনফিগারযোগ্য)
-- ডিউরেশন অনুযায়ী মূল্য (Lambda-এর মতো)
-- উচ্চ-ভলিউম, স্বল্প-সময়ের ওয়ার্কফ্লোর জন্য সর্বোত্তম (রিয়েল-টাইম ইভেন্ট প্রক্রিয়াকরণ, IoT ডেটা ইনজেশন)
+1. রেস্তোরাঁর document সহ account manager-কে একটি email পাঠায়
+2. একটি database-এ একটি **task token** (এই নির্দিষ্ট execution এবং state-এর জন্য Step Functions যে একটি unique identifier তৈরি করে) রেকর্ড করে, সেই pending review-এর সাথে যুক্ত করে
+3. `.waitForTaskToken` সহ Step Functions-এ return করে — যা Step Functions-কে এই state-এ অনির্দিষ্টকালের জন্য execution pause করতে বলে
 
-Nimbus-এর রেস্তোরাঁ অনবোর্ডিংয়ের জন্য: Standard (এটি গুরুত্বপূর্ণ, দুর্বল, ম্যানুয়াল ধাপ জড়িত থাকলে ঘণ্টা লাগতে পারে)।
+Step Functions execution park করে। অন্য কিছু block হয় না — কোনো server অপেক্ষা করে বসে থাকে না। State machine কেবল অপেক্ষা করে, কোনো compute resource consume না করে।
 
-Nimbus-এর রিয়েল-টাইম অর্ডার স্ট্যাটাস আপডেটের জন্য: Express (উচ্চ ভলিউম, স্বল্প সময়, কম সমালোচনামূলক)।
+তিন দিন পরে, account manager internal admin tool-এ "Approve" ক্লিক করে। Admin tool database থেকে task token খুঁজে নেয় এবং call করে:
 
-**ইভেন্ট-চালিত আর্কিটেকচার: বড় ছবি**
+```python
+stepfunctions.send_task_success(
+    taskToken=token,
+    output=json.dumps({"approved": True, "reviewedBy": "dana.cole@eatnimbus.com"})
+)
+```
 
-Step Functions একটি বড় প্যাটার্নের একটি টুকরো: **ইভেন্ট-চালিত আর্কিটেকচার**। সার্ভিসগুলি একে অপরকে সরাসরি কল করার (টাইট কাপলিং) পরিবর্তে, সার্ভিসগুলি ইভেন্ট নির্গত করে, এবং অন্য সার্ভিসগুলি সেই ইভেন্টগুলিতে প্রতিক্রিয়া জানায়।
+Step Functions resume করে। Execution step 2 (`ImportMenu`) থেকে চলতে থাকে, workflow state-এ reviewer-এর তথ্য available সহ।
 
-আমরা এটি বই জুড়ে দেখেছি:
+"Execution তিন দিনের জন্য pause ছিল," Leo বলল, "এবং আমি অনুমোদন করার সময় একমাত্র যে জিনিস ঘটল তা ছিল একটি API call।"
 
-- অর্ডার দেওয়া হলো → SNS ইভেন্ট প্রকাশ করে → SQS কিউ গ্রাহকদের কাছে পৌঁছে দেয়
-- S3 ফাইল আপলোড হলো → Lambda প্রক্রিয়া করতে ট্রিগার হয়
-- DynamoDB রেকর্ড পরিবর্তন হলো → DynamoDB Streams → Lambda একটি ক্যাশ আপডেট করে
+"এবং account manager এটা reject করলে?" Maya জিজ্ঞেস করল।
 
-**Amazon EventBridge** (পূর্বে CloudWatch Events) এই প্যাটার্নের জন্য উন্নত ইভেন্ট বাস। এটি AWS সার্ভিস এবং আপনার নিজস্ব অ্যাপ্লিকেশন থেকে ইভেন্টগুলিকে নিয়মের উপর ভিত্তি করে লক্ষ্যমাত্রায় (Lambda, SQS, Step Functions, ইত্যাদি) রুট করে।
+"আমরা পরিবর্তে `send_task_failure` call করি। State machine সেটা catch করে এবং একটি `NotifyRejection` state-এ route করে যা রেস্তোরাঁ partner-কে email করে।"
 
-EventBridge একটি আর্কিটেকচারাল স্তরে আলগা কাপলিং অনুমতি দেয়: অর্ডার সার্ভিস `order.placed` ইভেন্ট প্রকাশ করে কে শুনছে না জেনে। অ্যানালিটিক্স সার্ভিস, নোটিফিকেশন সার্ভিস এবং লয়্যালটি পয়েন্ট সার্ভিস সবাই স্বাধীনভাবে শোনে। একটি নতুন শ্রোতা যোগ করতে অর্ডার সার্ভিস পরিবর্তন করতে হয় না।
+Step Functions poll করে না। এটা retry করে না। এটা timeout হয় না (যদি না আপনি একটি heartbeat timeout সেট করেন)। এটা কেবল callback না আসা পর্যন্ত অপেক্ষা করে, তারপর চলতে থাকে। এটা একটি database বা queue poll করার থেকে মৌলিকভাবে ভিন্ন — এবং এই কারণেই Step Functions স্বয়ংক্রিয় এবং ম্যানুয়াল step মিশ্রিত করা workflow-এর জন্য উপযুক্ত।
 
-**Step Functions কখন সঠিক টুল**
+**Execution Console পড়া: একটি Failure দেখতে কেমন**
 
-Step Functions তখন দুর্দান্ত কাজ করে যখন আপনার থাকে:
+Step Functions-এ Nimbus-এর প্রথম সপ্তাহে রেস্তোরাঁ notification Lambda timeout হলে, Leo Step Functions console খুলল এবং ব্যর্থ execution-এ ক্লিক করল।
 
-**মাল্টি-স্টেপ ওয়ার্কফ্লো** যা ধাপ জুড়ে অগ্রগতি ট্র্যাক করতে হবে
+**Execution Event History** ঠিক কী ঘটেছিল তার একটি timeline দেখাল:
 
-**লুপ-ইন-দ্য-হিউম্যান প্রক্রিয়া** — Step Functions অনির্দিষ্টকালের জন্য একটি বাহ্যিক ইভেন্টের জন্য অপেক্ষা করতে পারে (যেমন একজন মানুষের কিছু অনুমোদন করা) এবং তারপর চালিয়ে যেতে পারে
+```
+14:23:01.442  ExecutionStarted       {"orderId": "ORD-8812", "restaurantId": "94"}
+14:23:01.698  TaskStateEntered       ChargeCard
+14:23:02.104  TaskStateExited        ChargeCard — success
+14:23:02.201  TaskStateEntered       SendConfirmationEmail
+14:23:02.884  TaskStateExited        SendConfirmationEmail — success
+14:23:02.901  TaskStateEntered       NotifyRestaurant
+14:23:12.901  TaskTimedOut           NotifyRestaurant — attempt 1/3 (Lambda timeout: 10s)
+14:23:23.001  TaskTimedOut           NotifyRestaurant — attempt 2/3
+14:23:43.001  TaskTimedOut           NotifyRestaurant — attempt 3/3
+14:23:43.022  CatchStateEntered      RestaurantNotificationFailed
+14:23:43.155  TaskStateEntered       RestaurantNotificationFailed (alert-support Lambda)
+14:23:43.640  TaskStateExited        RestaurantNotificationFailed — success
+14:23:43.642  ExecutionFailed
+```
 
-**স্কেলে ত্রুটি পরিচালনা** — অনেক ধাপ জুড়ে বিল্ট-ইন রিট্রাই, ক্যাচ এবং ফলব্যাক যুক্তি
+৪২ সেকেন্ডে, Step Functions card charge করেছিল, email পাঠিয়েছিল, রেস্তোরাঁ notification তিনবার চেষ্টা করেছিল, failure catch করেছিল, support team-কে alert করেছিল, এবং সম্পূর্ণ history রেকর্ড করেছিল। Step Functions-এর আগে, এই failure অদৃশ্য থাকত — Python function "notification failed" log করত এবং caller-এর কাছে 200 return করত যেন কিছু ভুল ছিল না।
 
-**নিরীক্ষণযোগ্য প্রক্রিয়া** — প্রতিটি এক্সিকিউশন প্রতিটি স্টেট ট্রানজিশন রেকর্ড করে। আপনি ঠিক কী ঘটেছিল এবং কখন দেখতে পারেন।
+"Timeline ঠিক দেখায় কোথায় জিনিস ভুল হয়েছিল এবং কখন," Leo বলল। "এবং প্রতিটি retry attempt timestamp করা। আপনি backoff interval দেখতে পারেন।"
 
-**জটিল সমান্তরাল বা ক্রমিক যুক্তি** — ভিজ্যুয়াল ওয়ার্কফ্লো সমতুল্য কোডের চেয়ে যুক্তি করা সহজ করে
+Priya console-এর দিকে তাকাল। "এবং এই history কতদিন store করা হয়?"
 
-Step Functions সহজ দুই-ধাপ প্রক্রিয়ার জন্য অতিরিক্ত। এটি ব্যবহার করুন যখন সমন্বয় নিজেই মূল্যবান এবং ব্যর্থতার পরিস্থিতি গুরুত্বপূর্ণ।
+Standard workflow execution history ৯০ দিনের জন্য store করা হয়। compliance বা দীর্ঘমেয়াদী auditing-এর জন্য, execution event CloudWatch Logs-এও export করা যায় এবং অনির্দিষ্টকালের জন্য রাখা যায়।
+
+**Standard বনাম Express Workflow**
+
+Step Functions দুটি workflow type offer করে:
+
+**Standard workflow**:
+
+- সর্বোচ্চ সময়কাল: ১ বছর
+- Execution durable — state persist করা, পরিদর্শন এবং audit করা যায়
+- Exactly-once execution (আপনি একটি Retry configure না করলে একটি task কখনো একাধিকবার চলে না)
+- প্রতি state transition-এ মূল্য নির্ধারণ
+- দীর্ঘ-চলমান, গুরুত্বপূর্ণ workflow-এর জন্য সর্বোত্তম (order processing, onboarding, payment flow)
+
+**Express workflow**:
+
+- সর্বোচ্চ সময়কাল: ৫ মিনিট
+- উচ্চতর throughput — প্রতি সেকেন্ডে ১,০০,০০০ পর্যন্ত
+- At-least-once execution (asynchronous) বা at-most-once (synchronous) — task-গুলিকে idempotent হতে design করুন
+- সময়কাল অনুযায়ী মূল্য (Lambda-এর মতো)
+- উচ্চ-volume, স্বল্প-সময়ের workflow-এর জন্য সর্বোত্তম (real-time event processing, IoT data ingestion)
+
+"এটার মাসে কত খরচ?" Tom pricing page টেনে জিজ্ঞেস করল। "Standard-এর জন্য প্রতি state transition — আপনার অনেক step থাকলে এটা যোগ হয়।"
+
+Leo হিসাবটা ব্যাখ্যা করল। রেস্তোরাঁ onboarding workflow-এর জন্য (প্রতি execution ছয়টি task state, মোটামুটি মাসে 12-15টি নতুন রেস্তোরাঁ): একশর কম state transition — এক সেন্টের কম, এবং সম্পূর্ণভাবে 4,000-transition মাসিক free tier-এর মধ্যে, তাই কার্যত $0। পূর্ণ Nimbus traffic-এ order confirmation workflow-এর জন্য: আরও অর্থপূর্ণ, কিন্তু এখনও মাসে এগারোটি partial success ম্যানুয়ালি debug করার cost-এর অনেক নিচে।
+
+"Debugging time হলো লুকানো cost," Leo বলল।
+
+"সেটা সবসময়ই লুকানো cost," Tom বলল।
+
+Tom সংখ্যাগুলি আরও সাবধানে চালাল, কারণ সেটাই Tom।
+
+**Nimbus-এর order confirmation flow-এর জন্য Standard workflow cost**: happy path-এ প্রতি order পাঁচটি state, প্রতি state transition $0.000025-এ। পাঁচটি state transition × $0.000025 × মাসে ১৫,০০০ order = **$1.88/মাস**। order volume-এর দশ গুণে: মাসে প্রায় $19। একটি partial-success incident-এর জন্য debugging cost (২৪ মিনিটের support engineer সময়) মাসিক Step Functions বিলকে বহুগুণ ছাড়িয়ে যেত।
+
+তুলনাটি গুরুত্বপূর্ণ হয়ে ওঠে যদি কেউ high-frequency analytics event-এর জন্য Standard workflow ব্যবহার করার পরামর্শ দেয়। ধরুন Nimbus প্রতিটি raw clickstream event process করতে Step Functions ব্যবহার করতে চাইল — প্রতিটি menu page view, প্রতিটি scroll, প্রতিটি search। সেটা তাদের current scale-এ মোটামুটি প্রতিদিন ৮,০০,০০০ event। প্রতিটি event-এর জন্য একটি পাঁচ-state Standard workflow: ৮,০০,০০০ × ৫ × $0.000025 × ৩০ দিন = **$3,000/মাস**। সেটা একটি analytics pipeline-এর জন্য বাস্তব অর্থ।
+
+সেই একই volume-এর জন্য Express workflow: প্রতি state transition নয়, প্রতি request plus সময়কাল অনুযায়ী মূল্য। ২৪ মিলিয়ন মাসিক execution প্রতি মিলিয়ন request $1.00-এ = $24। সময়কাল: 64MB billing ন্যূনতমে ২৪M × 500ms ≈ ২০৮ GB-hour × $0.06 = $12.50। মোট ≈ **$36.50/মাস** — Standard-এর $3,000-এর চেয়ে প্রায় দুই order of magnitude সস্তা।
+
+"তাহলে workflow-এর type কেবল একটি architectural সিদ্ধান্ত নয়," Tom বলল। "এটা একটি cost সিদ্ধান্ত। আপনি কোন workflow type ব্যবহার করেন তার উপর নির্ভর করে একই সংখ্যক state প্রায় একশ গুণ বেশি খরচ করতে পারে।"
+
+"এবং কোনটি ভালো তা সম্পূর্ণভাবে workflow কী করে তার উপর নির্ভর করে," Leo বলল। "Order confirmation: Standard। এটা গুরুত্বপূর্ণ, এর অর্থপূর্ণ failure path আছে, আমরা audit trail চাই। Analytics event processing: Express। এটা high volume, short duration, এবং আমাদের প্রতিটি page view-এর জন্য ৯০-দিনের execution history দরকার নেই।"
+
+আপনার process-এর দুটি step থাকলে এবং একটি audit trail দরকার না হলে, একটি সহজ Lambda function সস্তা এবং কোনো JSON state machine syntax প্রয়োজন হয় না — কিন্তু কোনো step স্বাধীনভাবে ব্যর্থ হতে পারলে এবং আগের step পুনরাবৃত্তি না করে retry বা restart করতে হলে, Step Functions কমানো debugging এবং ম্যানুয়াল remediation-এ এর খরচ উঠিয়ে আনে।
+
+Nimbus-এর রেস্তোরাঁ onboarding-এর জন্য: Standard (এটা গুরুত্বপূর্ণ, durable, ম্যানুয়াল step জড়িত থাকলে ঘণ্টা নিতে পারে)।
+
+Nimbus-এর real-time order status update-এর জন্য: Express (high volume, short duration, কম critical)।
+
+**Event-Driven Architecture: বৃহত্তর চিত্র**
+
+Step Functions একটি বৃহত্তর pattern-এর একটি অংশ: **event-driven architecture**। service-গুলি একে অপরকে সরাসরি call করার (tight coupling) পরিবর্তে, service-গুলি event নির্গত করে, এবং অন্য service-গুলি সেই event-এ প্রতিক্রিয়া জানায়।
+
+আমরা এটা বই জুড়ে দেখেছি:
+
+- Order placed → SNS event publish করে → SQS queue consumer-দের কাছে deliver করে
+- S3 file uploaded → এটা process করতে Lambda trigger হয়
+- DynamoDB record changed → DynamoDB Streams → Lambda একটি cache আপডেট করে
+
+**Amazon EventBridge** (পূর্বে CloudWatch Events) এই pattern-এর জন্য advanced event bus। এটা AWS service এবং আপনার নিজস্ব application থেকে event-গুলিকে rule-এর উপর ভিত্তি করে target (Lambda, SQS, Step Functions, ইত্যাদি)-এ route করে।
+
+EventBridge একটি architectural স্তরে loose coupling অনুমতি দেয়: order service কে শুনছে তা না জেনে `order.placed` event publish করে। Analytics service, notification service, এবং loyalty points service সবাই স্বাধীনভাবে শোনে। একটি নতুন listener যোগ করতে order service পরিবর্তন করতে হয় না।
+
+EventBridge **event source** হিসেবে ডজন ডজন AWS service-এর সাথে natively integrate-ও করে। একটি CloudTrail API call একটি pattern match করলে, EventBridge একটি rule fire করতে পারে। একটি EC2 instance state পরিবর্তন করলে, EventBridge একটি Lambda trigger করতে পারে। একটি RDS instance failover হলে, EventBridge on-call engineer-কে alert করতে পারে। আপনি পুরো AWS control plane-কে একটি event stream হিসেবে treat করতে পারেন।
+
+Nimbus-এর জন্য, একটি বিশেষভাবে দরকারী EventBridge rule: ECR-এ একটি নতুন image push হলে যখনই একটি Lambda trigger করুন। Lambda image scan result check করে এবং কোনো HIGH বা CRITICAL CVE পাওয়া গেলে engineering Slack channel-এ post করে — কেউ image deploy করার আগে। এটা ECR-এর security scanning (অধ্যায় ২১ থেকে)-কে EventBridge-এর event routing-এর সাথে একটি স্বয়ংক্রিয় security gate-এ সংযুক্ত করে।
+
+Event-driven architecture-এর নীতি Step Functions-এর retry logic-এর মতোই: failure-কে স্পষ্ট এবং routed করুন, নীরব এবং গিলে ফেলা নয়। যে service event-এর মাধ্যমে যোগাযোগ করে তারা gracefully ব্যর্থ হয় — একটি `OrderConfirmed` event fire করার সময় loyalty points Lambda ডাউন থাকলে, EventBridge delivery retry করতে পারে বা একটি dead-letter queue-তে পাঠাতে পারে। Order confirmation নিজেই unaffected। Decoupling-ই হলো resilience।
+
+**EventBridge: Main Flow থেকে Side Effect Decouple করা**
+
+Order confirmation state machine পরিষ্কারভাবে চলার পরে, Maya পরবর্তী architecture review-তে একটি প্রশ্ন তুলল।
+
+"আমরা একটি order confirmed হলে loyalty points যোগ করতে চাই। গ্রাহক প্রতি ডলার খরচে একটি point পায়। সেটা state machine-এ কোথায় যায়?"
+
+Leo-র প্রথম অন্তর্দৃষ্টি: `LogTransaction`-এর পরে একটি `GrantLoyaltyPoints` state যোগ করা।
+
+Priya-র প্রতিক্রিয়া: "এবং তারপর যখন আমরা referral bonus যোগ করি? এবং post-order survey? এবং restaurant rating request? প্রতিটি critical path-এ একটি state যোগ করে। loyalty points Lambda ব্যর্থ হলে, পুরো order confirmation ব্যর্থ হয়।"
+
+"Order confirmation flow-এর একটি জিনিস করা উচিত," সে বলল। "Order confirm করা। বাকি সব একটি side effect।"
+
+এটাই main workflow থেকে side effect loose-coupling করার mechanism হিসেবে **Amazon EventBridge**-এর architectural যুক্তি।
+
+সংশোধিত পদ্ধতি: `LogTransaction` state সফলভাবে সম্পূর্ণ হলে, Lambda EventBridge-এ একটি event publish করে:
+
+```json
+{
+  "source": "nimbus.orders",
+  "detail-type": "OrderConfirmed",
+  "detail": {
+    "orderId": "ORD-8812",
+    "customerId": "CUST-441",
+    "restaurantId": "94",
+    "total": 3200,
+    "timestamp": "2024-03-15T14:23:43Z"
+  }
+}
+```
+
+তারপর EventBridge rule সেই event-কে স্বাধীন target-এ route করে:
+
+- **Rule 1**: `OrderConfirmed` → Loyalty Points Lambda (একটি $32 order-এর জন্য 32 point দেয়)
+- **Rule 2**: `OrderConfirmed` → Post-Order Survey Lambda (delivery-র ২ ঘণ্টা পরে একটি survey queue করে)
+- **Rule 3**: `OrderConfirmed` → Analytics Kinesis Stream (real-time dashboard-এ feed করে)
+
+প্রতিটি rule স্বাধীন। Loyalty Points Lambda survey queue প্রভাবিত না করে ব্যর্থ হতে পারে। Analytics pipeline loyalty system block না করে পিছিয়ে পড়তে পারে। একটি নতুন side effect যোগ করা (একটি restaurant rating request, একটি cashback notification) একটি নতুন EventBridge rule তৈরি করা প্রয়োজন — state machine পরিবর্তন করা নয়।
+
+"এবং কেউ যদি একটি EventBridge rule-এর মাধ্যমে ভাঙার চেষ্টা করে?" Priya জিজ্ঞেস করল। "Event-এ customer PII থাকলে, এটা receive করা প্রতিটি Lambda এখন একটি PII access point।"
+
+Event সাবধানে design করা হয়েছিল: শুধুমাত্র ID, name, address, বা payment detail নয়। customer data প্রয়োজন এমন যেকোনো Lambda customer ID ব্যবহার করে database থেকে এটা খুঁজে নিত — এটা কী access করতে পারে তা নিয়ন্ত্রণ করা নিজস্ব IAM permission সহ।
+
+"Event একটি signal," Priya বলল। "একটি data dump নয়।"
+
+**যখন Step Functions সঠিক Tool**
+
+Step Functions দুর্দান্ত হয় যখন আপনার থাকে:
+
+**Multi-step workflow** যা step জুড়ে progress ট্র্যাক করতে হবে
+
+**Human-in-the-loop process** — Step Functions একটি বাহ্যিক event-এর জন্য (যেমন একজন মানুষের কিছু অনুমোদন করা) অনির্দিষ্টকালের জন্য অপেক্ষা করতে পারে এবং তারপর চলতে পারে
+
+**Scale-এ error handling** — অনেক step জুড়ে বিল্ট-ইন retry, catch, এবং fallback logic
+
+**Auditable process** — প্রতিটি execution প্রতিটি state transition রেকর্ড করে। আপনি ঠিক কী ঘটেছিল এবং কখন দেখতে পারেন।
+
+**জটিল সমান্তরাল বা ক্রমিক logic** — visual workflow সমতুল্য কোডের চেয়ে যুক্তি করা সহজ করে
+
+Step Functions সহজ দুই-step process-এর জন্য overkill। এটা ব্যবহার করুন যখন coordination নিজেই মূল্যবান এবং failure scenario গুরুত্বপূর্ণ।
+
+**যখন Step Functions ভুল Tool**
+
+"দাঁড়াও — কিন্তু আমরা কেন সবকিছুর জন্য Step Functions ব্যবহার করব না?" design session-এর শেষে Maya জিজ্ঞেস করল। "আমরা রেস্তোরাঁ onboarding workflow তৈরি করেছি। আমাদের order confirmation flow আছে। সবকিছু state machine-এ convert করব না কেন?"
+
+সৎ উত্তর: কারণ Step Functions এমন overhead যোগ করে যা প্রতিটি workflow justify করে না।
+
+**সহজ দুই-step process**: আপনার একটি Lambda থাকলে যা একটি দ্বিতীয় Lambda call করে একটি uploaded file process করে, একটি state machine-এর coordination overhead operational benefit-এর মূল্যের নয়। একটি single function-এর মধ্যে ক্রমানুসারে call করা দুটি Lambda সহজ, test করা সহজ, এবং কোনো per-state-transition cost নেই।
+
+**Ultra-high frequency, sub-second workflow**: Standard workflow-এর একটি non-trivial per-state-transition cost আছে যা high volume-এ জমা হয় (উপরের analytics উদাহরণ যেমন দেখিয়েছে)। Express workflow cost সমস্যা সমাধান করে কিন্তু durable state history প্রদান করে না। খুব high frequency-এ খুব short duration সহ, SQS plus Lambda (অধ্যায় ১৯-এর pattern) উভয় Step Functions type-এর চেয়ে সহজ এবং সস্তা।
+
+**Pure fan-out কোনো coordination ছাড়া**: আপনার একই event বিশটি consumer-এ পাঠাতে হলে এবং প্রতিটির outcome নিয়ে চিন্তা না করলে, SNS হলো tool। Step Functions এমন state tracking যোগ করে যা আপনার দরকার নেই এবং অপ্রয়োজনীয়ভাবে এর জন্য পেমেন্ট করবেন।
+
+**Real-time synchronous user interaction**: Step Functions execution asynchronous। একজন ব্যবহারকারী ৫০০ms-এর নিচে একটি synchronous response-এর জন্য একটি checkout screen-এ অপেক্ষা করলে, একটি Step Functions Standard workflow এর জন্য design করা নয় (Express workflow synchronously invoke করা যায়, কিন্তু latency overhead এখনও একটি সরাসরি Lambda call-এর চেয়ে বেশি)। synchronous user-facing flow-এর জন্য, ভালো-design করা error handling সহ Lambda + API Gateway প্রায়ই বেশি উপযুক্ত।
+
+নীতি: Step Functions ব্যবহার করুন যখন step-গুলির *coordination* নিজেই জটিল — যখন step স্বাধীনভাবে ব্যর্থ হতে পারে, যখন আপনার আগের step পুনরাবৃত্তি না করে individual step retry করতে হয়, যখন execution history-র compliance বা debugging মূল্য আছে, বা যখন workflow-এ মানুষের অনুমোদন step জড়িত যা দিন নিতে পারে। সহজ ক্রমিক logic যা একটি single function হিসেবে ভালো কাজ করে তাতে orchestration overhead যোগ করতে এটা ব্যবহার করবেন না।
 
 ## শক্তি এবং সীমাবদ্ধতা
 
 **কেন Step Functions শক্তিশালী**:
 
-- ভিজ্যুয়াল এক্সিকিউশন ইতিহাস — একটি ওয়ার্কফ্লো কোথায় আছে (বা ব্যর্থ হয়েছে) তা দেখুন
-- বিল্ট-ইন রিট্রাই এবং ত্রুটি পরিচালনা — কাস্টম রিট্রাই কোড নেই
-- দুর্বল স্টেট — এক্সিকিউশন সার্ভিস রিস্টার্ট এবং আউটেজ থেকে বেঁচে থাকে
-- ২০০+ AWS সার্ভিসের সাথে সরাসরি ইন্টিগ্রেশন (শুধু Lambda নয়)
-- ভিজ্যুয়াল ওয়ার্কফ্লো স্ব-ডকুমেন্টিং
+- visual execution history — একটি workflow কোথায় আছে (বা ব্যর্থ হয়েছে) ঠিক দেখুন
+- বিল্ট-ইন retry এবং error handling — কোনো custom retry কোড নেই
+- durable state — execution service restart এবং outage থেকে বেঁচে থাকে
+- ২০০+ AWS service-এর সাথে সরাসরি integration (শুধু Lambda নয়)
+- visual workflow self-documenting
+- callback pattern compute consume না করে মানুষের action-এর জন্য অনির্দিষ্ট অপেক্ষা সক্ষম করে
 
 **যেখানে জটিল হয়**:
 
-- Standard ওয়ার্কফ্লো প্রতি স্টেট ট্রানজিশনে মূল্য নির্ধারণ করে — অনেক স্টেট সহ জটিল ওয়ার্কফ্লো স্কেলে ব্যয়বহুল হতে পারে
-- ASL (Amazon States Language) JSON ফর্ম্যাটে একটি শেখার বক্ররেখা রয়েছে
-- সর্বোচ্চ পেলোড সাইজ ২৫৬KB — বড় ডেটা সরাসরি ওয়ার্কফ্লোর মাধ্যমে নয়, S3 রেফারেন্সের মাধ্যমে পাস করতে হবে
-- অনেক ম্যানুয়াল ধাপ সহ দীর্ঘ-চলমান ওয়ার্কফ্লোর সতর্কতার সাথে টাইমআউট কনফিগারেশন প্রয়োজন
+- Standard workflow প্রতি state transition-এ মূল্য নির্ধারণ করে — অনেক state সহ জটিল workflow scale-এ ব্যয়বহুল হতে পারে
+- ASL (Amazon States Language) JSON format-এর একটি learning curve আছে
+- সর্বোচ্চ payload size 256KB — বড় data সরাসরি workflow-এর মাধ্যমে নয়, S3 reference-এর মাধ্যমে pass করতে হবে
+- অনেক ম্যানুয়াল step সহ দীর্ঘ-চলমান workflow-এর সাবধান timeout configuration প্রয়োজন
+- ASL error debug করতে execution চালানো প্রয়োজন; প্রকৃত service-এর মতো সক্ষম কোনো local emulator নেই
+- state machine যে প্রতিটি resource call করে তার জন্য IAM permission আলাদাভাবে দিতে হবে — একটি permission ভুলে গেলে runtime-এ একটি বিভ্রান্তিকর error হয়
 
 ## সারসংক্ষেপ
 
-- **Step Functions** স্টেট মেশিন হিসাবে মাল্টি-স্টেপ ওয়ার্কফ্লো অর্কেস্ট্রেট করে।
-- প্রতিটি **স্টেট** একটি Lambda ফাংশন চালাতে পারে, একটি ECS টাস্ক এক্সিকিউট করতে পারে, অপেক্ষা করতে পারে, শাখা করতে পারে বা সমান্তরাল ধাপ চালাতে পারে।
-- **Retry এবং catch** প্রতিটি স্টেটে বিল্ট-ইন — কোনো কাস্টম রিট্রাই কোড প্রয়োজন নেই।
-- **Standard ওয়ার্কফ্লো**: দীর্ঘ-চলমান (১ বছর পর্যন্ত), দুর্বল, অন্তত-একবার। সমালোচনামূলক ব্যবসায়িক প্রক্রিয়ার জন্য।
-- **Express ওয়ার্কফ্লো**: স্বল্প-সময় (৫ মিনিট পর্যন্ত), উচ্চ-থ্রুপুট। উচ্চ-ভলিউম ইভেন্ট প্রক্রিয়াকরণের জন্য।
-- **ইভেন্ট-চালিত আর্কিটেকচার** SNS, SQS, Lambda এবং EventBridge-এর মতো সার্ভিস ব্যবহার করে সিস্টেমগুলিকে সরাসরি কলের পরিবর্তে ইভেন্টের চারপাশে ডিকাপল করতে।
-- Step Functions ব্যবহার করুন যখন ধাপগুলির সমন্বয় নিজেই জটিল এবং যখন নিরীক্ষণযোগ্যতা গুরুত্বপূর্ণ।
+অধ্যায় ২১-এর container deployment নির্ভরযোগ্য করেছিল। Step Functions multi-step ব্যবসায়িক process নির্ভরযোগ্য করে — "handoff risk দূর করুন" একই নীতি application logic-এ প্রয়োগ করা।
+
+- **Step Functions** state machine হিসেবে multi-step workflow orchestrate করে।
+- প্রতিটি **state** একটি Lambda function চালাতে, একটি ECS task execute করতে, অপেক্ষা করতে, branch করতে, বা সমান্তরাল step চালাতে পারে।
+- **Retry এবং catch** প্রতিটি state-এ বিল্ট-ইন — কোনো custom retry কোড প্রয়োজন নেই।
+- **Standard workflow**: দীর্ঘ-চলমান (১ বছর পর্যন্ত), durable, exactly-once। critical ব্যবসায়িক process-এর জন্য।
+- **Express workflow**: স্বল্প-সময় (৫ মিনিট পর্যন্ত), high-throughput। high-volume event processing-এর জন্য।
+- **task token সহ callback pattern**: একটি বাহ্যিক event বা মানুষের action-এর জন্য অপেক্ষা করে একটি workflow অনির্দিষ্টকালের জন্য pause করুন; একটি single API call দিয়ে resume করুন।
+- **Map state**: একটি item-এর list concurrently process করুন — ক্রমিক loop-কে সমান্তরাল fan-out দিয়ে প্রতিস্থাপন করুন।
+- **Direct SDK integration**: একটি Lambda wrapper ছাড়াই একটি state থেকে সরাসরি DynamoDB, S3, SQS, এবং ২০০+ AWS service call করুন।
+- **EventBridge**: main workflow থেকে side effect decouple করুন — একটি single event publish করুন, core state machine পরিবর্তন না করে স্বাধীন rule-কে এটা loyalty points, analytics, এবং survey service-এ route করতে দিন।
+- **Standard বনাম Express cost**: প্রতি state transition $0.000025-এ Standard low-volume critical workflow-এর জন্য ভালো কাজ করে (Nimbus-এর জন্য মাসে $1.88-এ order confirmation)। per-request-plus-duration মূল্যে Express high-frequency event-এর জন্য উপযুক্ত যেখানে Standard কয়েক ডজন গুণ বেশি খরচ করত (Nimbus-এর clickstream হিসাবে ~80x)।
+- **Event-driven architecture** সরাসরি call-এর পরিবর্তে event-এর চারপাশে সিস্টেম decouple করতে SNS, SQS, Lambda, এবং EventBridge-এর মতো service ব্যবহার করে।
+- Step Functions ব্যবহার করুন যখন step-গুলির coordination নিজেই জটিল এবং যখন auditability গুরুত্বপূর্ণ। সহজ দুই-step sequence, ultra-high-frequency workflow, pure fan-out, বা synchronous user-facing flow-এর জন্য এটা ব্যবহার করবেন না।
 
 ## পরীক্ষার টিপস
 
-*SAA-C03 ডোমেইন: স্থিতিস্থাপক আর্কিটেকচার ডিজাইন করুন (ডোমেইন ২, টাস্ক ২.১)*
+*SAA-C03 ডোমেন: Design Resilient Architectures (ডোমেন ২, টাস্ক ২.১)*
 
-- **Step Functions ব্যবহারের ক্ষেত্রের সংকেত**: "একাধিক Lambda ফাংশন অর্কেস্ট্রেট করুন," "রিট্রাই এবং ত্রুটি পরিচালনা সহ ওয়ার্কফ্লো," "স্বয়ংক্রিয় ওয়ার্কফ্লোতে মানুষের অনুমোদনের ধাপ," "প্রতিটি ওয়ার্কফ্লো ধাপের অডিট ট্রেইল" → Step Functions।
-- **Standard বনাম Express**: দীর্ঘ-চলমান, নিরীক্ষণযোগ্য, ব্যবসায়-সমালোচনামূলক ওয়ার্কফ্লোর জন্য Standard। উচ্চ-থ্রুপুট, স্বল্প-সময়ের ইভেন্ট প্রক্রিয়াকরণের জন্য Express।
-- **SQS বনাম Step Functions**: সহজ টাস্ক কিউ (প্রযোজক/গ্রাহক) এর জন্য SQS। জটিল যুক্তি, রিট্রাই এবং স্টেট ট্র্যাকিং সহ মাল্টি-স্টেপ ওয়ার্কফ্লোর জন্য Step Functions।
-- **EventBridge সংকেত**: "AWS সার্ভিস থেকে লক্ষ্যমাত্রায় ইভেন্ট রাউট করুন," "সার্ভিসগুলির মধ্যে ইভেন্ট-চালিত ইন্টিগ্রেশন," "একটি Lambda ফাংশন নির্ধারণ করুন" → EventBridge (পূর্বে CloudWatch Events)।
-- **কলব্যাক প্যাটার্ন**: Step Functions এক্সিকিউশন বিরাম দিতে এবং একটি বাহ্যিক কলব্যাকের জন্য অপেক্ষা করতে পারে (একটি টাস্ক টোকেন)। সম্পন্ন হলে কর্মী কলব্যাক করে। দীর্ঘ-চলমান ECS টাস্কের জন্য উপযোগী যেখানে আপনি Lambda-এর ১৫-মিনিটের সীমা চান না।
-- **সরাসরি SDK ইন্টিগ্রেশন**: Step Functions Lambda-র মাধ্যমে না গিয়ে সরাসরি AWS সার্ভিস (DynamoDB, S3, SQS, ইত্যাদি) কল করতে পারে। সহজ সার্ভিস কলের জন্য খরচ এবং লেটেন্সি হ্রাস করে।
+- **Step Functions use case সংকেত**: "একাধিক Lambda function orchestrate করুন," "retry এবং error handling সহ workflow," "একটি স্বয়ংক্রিয় workflow-এ মানুষের অনুমোদন step," "প্রতিটি workflow step-এর audit trail" → Step Functions।
+- **Standard বনাম Express**: দীর্ঘ-চলমান, auditable, business-critical workflow-এর জন্য Standard। high-throughput, short-duration event processing-এর জন্য Express।
+- **SQS বনাম Step Functions**: সহজ task queue (producer/consumer)-এর জন্য SQS। জটিল logic, retry, এবং state tracking সহ multi-step workflow-এর জন্য Step Functions।
+- **EventBridge সংকেত**: "AWS service থেকে target-এ event route করুন," "service-গুলির মধ্যে event-driven integration," "একটি Lambda function schedule করুন" → EventBridge (পূর্বে CloudWatch Events)।
+- **Callback pattern**: Step Functions execution pause করতে এবং একটি বাহ্যিক callback-এর জন্য অপেক্ষা করতে পারে (একটি task token)। worker সম্পন্ন হলে callback করে। দীর্ঘ-চলমান ECS task-এর জন্য উপযোগী যেখানে আপনি Lambda-র ১৫-মিনিটের সীমা চান না।
+- **Direct SDK integration**: Step Functions Lambda-র মাধ্যমে না গিয়ে সরাসরি AWS service (DynamoDB, S3, SQS, ইত্যাদি) call করতে পারে। সহজ service call-এর জন্য cost এবং latency কমায়। উদাহরণস্বরূপ, DynamoDB-তে একটি order record লেখা একটি Lambda function ছাড়াই state machine থেকে একটি direct SDK call হতে পারে: `"Resource": "arn:aws:states:::dynamodb:putItem"`। এটা Lambda cold start, Lambda execution cost, এবং যে কোড কেবল `dynamodb.put_item(...)` call করে এবং return করে তা দূর করে।
 
 ## অনুশীলনী
 
-**অনুশীলনী ১ — স্মরণ**
+**অনুশীলন ১ — স্মরণ**
 
-মাল্টি-স্টেপ ওয়ার্কফ্লোর জন্য Step Functions কেন উপযোগী তা ব্যাখ্যা করুন। এটি এমন কী প্রদান করে যা সহজ Lambda ফাংশন অন্য Lambda ফাংশন কল করে দেয় না?
+multi-step workflow-এর জন্য Step Functions কেন উপযোগী তা ব্যাখ্যা করুন। এটা এমন কী প্রদান করে যা অন্য Lambda function call করা একটি সহজ Lambda function করে না?
 
-*(ইঙ্গিত: প্রতিটি পদ্ধতিতে ৫-এর মধ্যে ধাপ ৩ ব্যর্থ হলে কী হয় তা নিয়ে ভাবুন। আপনি কীভাবে জানেন কী হয়েছে? আপনি কীভাবে শুধুমাত্র ধাপ ৩ পুনরায় চেষ্টা করেন?)*
+*(ইঙ্গিত: প্রতিটি পদ্ধতিতে 5-এর মধ্যে step 3 ব্যর্থ হলে কী হয় তা নিয়ে ভাবুন। আপনি কীভাবে জানেন কী হয়েছে? আপনি কীভাবে শুধুমাত্র step 3 retry করেন?)*
 
-**অনুশীলনী ২ — পরীক্ষার অনুশীলন**
+**অনুশীলন ২ — SAA-C03 দৃশ্যকল্প**
 
-*পরিস্থিতি*: একটি আর্থিক সেবা কোম্পানি একাধিক ধাপে ঋণ আবেদন প্রক্রিয়া করে: ক্রেডিট চেক, আয় যাচাই, নথি যাচাইকরণ, আন্ডাররাইটার পর্যালোচনা (ম্যানুয়াল) এবং সিদ্ধান্ত বিজ্ঞপ্তি। প্রতিটি ধাপ সেকেন্ড (ক্রেডিট চেক) থেকে দিন (আন্ডাররাইটার পর্যালোচনা) পর্যন্ত যেকোনো সময় নিতে পারে। কোম্পানিটির সম্মতির জন্য প্রতিটি ধাপের সম্পূর্ণ অডিট ট্রেইল প্রয়োজন। ব্যর্থ স্বয়ংক্রিয় ধাপগুলি স্বয়ংক্রিয়ভাবে পুনরায় চেষ্টা করতে হবে; ম্যানুয়াল ধাপগুলি বিরাম দিতে এবং মানুষের সিদ্ধান্তের জন্য অপেক্ষা করতে হবে।
+*দৃশ্যকল্প*: একটি financial services কোম্পানি একাধিক step-এ loan application process করে: credit check, income verification, document validation, underwriter review (ম্যানুয়াল), এবং decision notification। প্রতিটি step সেকেন্ড (credit check) থেকে দিন (underwriter review) পর্যন্ত যেকোনো সময় নিতে পারে। কোম্পানির compliance-এর জন্য প্রতিটি step-এর একটি সম্পূর্ণ audit trail প্রয়োজন। ব্যর্থ স্বয়ংক্রিয় step অবশ্যই স্বয়ংক্রিয়ভাবে retry করতে হবে; ম্যানুয়াল step অবশ্যই pause করতে এবং একজন মানুষের সিদ্ধান্তের জন্য অপেক্ষা করতে হবে।
 
-কোন সার্ভিস এই প্রয়োজনীয়তাগুলি সর্বোত্তমভাবে পূরণ করে?
+কোন service এই প্রয়োজনীয়তা সর্বোত্তমভাবে পূরণ করে?
 
-A) স্বয়ংক্রিয় ধাপগুলির মধ্যে SQS কিউ সহ AWS Lambda ফাংশন চেইন করা  
-B) আন্ডাররাইটার পর্যালোচনা ধাপের জন্য Wait for callback প্যাটার্ন সহ AWS Step Functions Standard ওয়ার্কফ্লো  
-C) স্বয়ংক্রিয় ধাপগুলির জন্য AWS Step Functions Express ওয়ার্কফ্লো এবং ম্যানুয়াল ধাপের জন্য SQS FIFO  
-D) প্রতিটি ধাপের জন্য Lambda ফাংশনগুলির মধ্যে রাউটিং ইভেন্ট নিয়মের সাথে Amazon EventBridge
+A) প্রতিটি step-এর মধ্যে SQS queue সহ একসাথে chain করা AWS Lambda function  
+B) underwriter review step-এর জন্য Wait for callback pattern সহ AWS Step Functions Standard workflow  
+C) স্বয়ংক্রিয় step-এর জন্য AWS Step Functions Express workflow এবং ম্যানুয়াল step-এর জন্য SQS FIFO  
+D) প্রতিটি step-এর জন্য Lambda function-গুলির মধ্যে event rule routing সহ Amazon EventBridge
 
-**ইঙ্গিত ১**: "দিন পর্যন্ত" সময়কাল — কোন Step Functions টাইপ এটি সমর্থন করে?
+**ইঙ্গিত ১**: "দিন পর্যন্ত" সময়কাল — কোন Step Functions type এটা সমর্থন করে?
 
-**ইঙ্গিত ২**: "মানুষের সিদ্ধান্তের জন্য অপেক্ষা করুন" — কোন Step Functions প্যাটার্ন এর জন্য ডিজাইন করা হয়েছে?
+**ইঙ্গিত ২**: "একজন মানুষের সিদ্ধান্তের জন্য অপেক্ষা করুন" — কোন Step Functions pattern এর জন্য design করা?
 
-**ইঙ্গিত ৩**: "সম্মতির জন্য সম্পূর্ণ অডিট ট্রেইল" — কোন সার্ভিস প্রতি-এক্সিকিউশন স্টেট ইতিহাস প্রদান করে?
+**ইঙ্গিত ৩**: "compliance-এর জন্য সম্পূর্ণ audit trail" — কোন service per-execution state history প্রদান করে?
 
 **উত্তর**: B
 
-**ব্যাখ্যা**: Step Functions Standard ওয়ার্কফ্লো ১ বছর পর্যন্ত চলতে পারে, দিনব্যাপী আন্ডাররাইটার পর্যালোচনা ধাপ সমর্থন করে। Wait for callback প্যাটার্ন একটি টাস্ক টোকেন সহ আন্ডাররাইটার ধাপে এক্সিকিউশন বিরাম দেয়; আন্ডাররাইটার সিদ্ধান্ত নিলে, তারা ওয়ার্কফ্লো চালিয়ে যেতে টোকেন সহ কলব্যাক করে। Standard ওয়ার্কফ্লো প্রতিটি স্টেট ট্রানজিশন রেকর্ড করে — সম্মতির জন্য সম্পূর্ণ অডিট ট্রেইল।
+**ব্যাখ্যা**: Step Functions Standard workflow ১ বছর পর্যন্ত চলতে পারে, দিনব্যাপী underwriter review step সমর্থন করে। Wait for callback pattern একটি task token সহ underwriter step-এ execution pause করে; underwriter একটি সিদ্ধান্ত নিলে, তারা workflow চালিয়ে যেতে token সহ callback করে। Standard workflow প্রতিটি state transition রেকর্ড করে — compliance-এর জন্য সম্পূর্ণ audit trail।
 
-**কেন A নয়?** SQS-এর মাধ্যমে Lambda চেইন করা বিল্ট-ইন স্টেট ট্র্যাকিং বা অডিট ট্রেইল প্রদান করে না। ব্যর্থ ধাপগুলির জন্য কাস্টম রিট্রাই যুক্তি প্রয়োজন। একটি নির্দিষ্ট ব্যর্থ ধাপ থেকে পুনরায় শুরু করতে কাস্টম বাস্তবায়ন প্রয়োজন।
+**কেন A নয়?** SQS-এর মাধ্যমে chain করা Lambda কোনো বিল্ট-ইন state tracking বা audit trail প্রদান করে না। ব্যর্থ step-এর custom retry logic প্রয়োজন। একটি নির্দিষ্ট ব্যর্থ step থেকে restart করতে custom implementation প্রয়োজন।
 
-**কেন C নয়?** Express ওয়ার্কফ্লোর সর্বোচ্চ ৫ মিনিটের সময়কাল — দিন লাগতে পারে এমন একটি ধাপের সাথে অসামঞ্জস্যপূর্ণ।
+**কেন C নয়?** Express workflow-এর সর্বোচ্চ ৫-মিনিটের সময়কাল — দিন নিতে পারে এমন একটি step-এর সাথে অসামঞ্জস্যপূর্ণ।
 
-**কেন D নয়?** EventBridge সার্ভিসগুলির মধ্যে ইভেন্ট রাউট করে কিন্তু ওয়ার্কফ্লো স্টেট রক্ষণাবেক্ষণ করে না বা বিল্ট-ইন রিট্রাই/অডিট প্রদান করে না। শুধুমাত্র EventBridge-এ এটি নির্মাণ করতে কাস্টম স্টেট ম্যানেজমেন্ট প্রয়োজন।
+**কেন D নয়?** EventBridge service-গুলির মধ্যে event route করে কিন্তু workflow state বজায় রাখে না বা বিল্ট-ইন retry/audit প্রদান করে না। শুধুমাত্র EventBridge-এ এটা তৈরি করতে custom state management প্রয়োজন।
 
-*SAA-C03 ডোমেইন: স্থিতিস্থাপক আর্কিটেকচার ডিজাইন করুন — টাস্ক ২.১*
+*SAA-C03 ডোমেন: Design Resilient Architectures — টাস্ক ২.১*
 
-**অনুশীলনী ৩ — আর্কিটেকচার চ্যালেঞ্জ** *(ঐচ্ছিক)*
+**অনুশীলন ৩ — আর্কিটেকচার চ্যালেঞ্জ** *(ঐচ্ছিক)*
 
-Nimbus একটি খাদ্য মান বিরোধ নিষ্পত্তি প্রক্রিয়া তৈরি করছে। যখন একজন গ্রাহক একটি খারাপ অভিজ্ঞতা রিপোর্ট করেন:
+Nimbus একটি food quality dispute resolution process তৈরি করছে। একজন গ্রাহক একটি খারাপ অভিজ্ঞতা রিপোর্ট করলে:
 
-1. রিপোর্টটি স্বয়ংক্রিয়ভাবে যাচাই করা হয় (অর্ডারটি বিদ্যমান কিনা, এটি যথেষ্ট সাম্প্রতিক কিনা পরীক্ষা করে)
-2. রেস্তোরাঁকে স্বয়ংক্রিয়ভাবে অবহিত করা হয়
-3. একজন Nimbus সাপোর্ট এজেন্ট অভিযোগ পর্যালোচনা করেন (ম্যানুয়াল ধাপ — ১-৩ ব্যবসায়িক দিন লাগতে পারে)
-4. এজেন্টের সিদ্ধান্তের উপর ভিত্তি করে: রিফান্ড ইস্যু করুন (Lambda → পেমেন্ট প্রসেসর) অথবা ক্ষমা কুপন পাঠান (Lambda → কুপন সার্ভিস) অথবা ব্যবস্থাপনায় এস্কেলেট করুন (Step Functions সাব-ওয়ার্কফ্লো)
-5. গ্রাহককে ফলাফল সম্পর্কে অবহিত করা হয়
+1. রিপোর্টটি স্বয়ংক্রিয়ভাবে যাচাই করা হয় (order বিদ্যমান কিনা, এটা যথেষ্ট সাম্প্রতিক কিনা check করে)
+2. রেস্তোরাঁকে স্বয়ংক্রিয়ভাবে notify করা হয়
+3. একজন Nimbus support agent অভিযোগ পর্যালোচনা করে (ম্যানুয়াল step — ১-৩ ব্যবসায়িক দিন নিতে পারে)
+4. agent-এর সিদ্ধান্তের উপর ভিত্তি করে: refund issue করুন (Lambda → payment processor) অথবা apology coupon পাঠান (Lambda → coupon service) অথবা management-এ escalate করুন (Step Functions sub-workflow)
+5. গ্রাহককে outcome সম্পর্কে notify করা হয়
 
-এটিকে একটি Step Functions ওয়ার্কফ্লো হিসাবে ডিজাইন করুন। কোন স্টেট টাইপ প্রতিটি ধাপ পরিচালনা করে? ১-৩ দিনের অপেক্ষা কীভাবে পরিচালনা করবেন? ধাপ ৪-এ শাখাটি কীভাবে মডেল করবেন?
+এটাকে একটি Step Functions workflow হিসেবে design করুন। কোন state type প্রতিটি step handle করে? ১-৩ দিনের অপেক্ষা কীভাবে handle করবেন? step 4-এ branch কীভাবে model করবেন?
 
-*(কোনো একক সঠিক উত্তর নেই। লক্ষ্য হলো Step Functions স্টেট ডিজাইন অনুশীলন করা।)*
+*(একটি একক সঠিক উত্তর নেই। লক্ষ্য হলো Step Functions state design অনুশীলন করা।)*
+
+**এক্সটেনশন**: state machine সম্পূর্ণ হওয়ার পরে (যে branch-ই হোক), এটা EventBridge-এ একটি `OrderDisputeResolved` event publish করে। কোন side effect এই event শুনতে পারে? বিবেচনা করুন: রেস্তোরাঁর rating system, গ্রাহকের loyalty points (refund point কেটে নিতে পারে), analytics pipeline (dispute rate একটি মূল রেস্তোরাঁ quality metric), এবং customer support team-এর SLA tracking dashboard। এখানে EventBridge ব্যবহার করা কীভাবে dispute state machine-কে একটি dependency spider হওয়া থেকে রক্ষা করে?
 
 ## পোস্ট-ক্রেডিটস দৃশ্য
 
-রেস্তোরাঁ অনবোর্ডিং ওয়ার্কফ্লো লাইভ ছিল।
+রেস্তোরাঁ onboarding workflow live ছিল।
 
-পরের মাসে, ১২টি নতুন রেস্তোরাঁ পার্টনার অনবোর্ড হলো। দুটিতে পেমেন্ট প্রক্রিয়াকরণ ধাপে (ধাপ ৩) ব্যর্থতা ছিল। উভয় ক্ষেত্রেই, Step Functions সঠিক ত্রুটি ক্যাপচার করল, এক্সিকিউশনের স্টেট সংরক্ষণ করল এবং Nimbus দলকে সতর্কতা পাঠাল।
+পরের মাসে, ১২টি নতুন রেস্তোরাঁ partner onboard হল। দুটিতে payment processing step (step 3)-এ failure ছিল। উভয় ক্ষেত্রে, Step Functions সঠিক error capture করল, execution-এর state সংরক্ষণ করল, এবং Nimbus দলকে একটি alert পাঠাল।
 
-Leo মূল কারণ (পেমেন্ট প্রদানকারীর জন্য একটি ভুল কনফিগার করা API কী) ঠিক করলেন এবং উভয় এক্সিকিউশন ধাপ ৩ থেকে পুনরায় চেষ্টা করলেন। এক্সিকিউশনগুলি ২৩ সেকেন্ড করে, ঠিক যেখানে ব্যর্থ হয়েছিল সেখান থেকে শুরু করে সম্পন্ন হলো।
+Leo root cause ঠিক করল (payment provider-এর জন্য একটি ভুল configure করা API key) এবং উভয় execution step 3 থেকে retry করল। Execution-গুলি প্রতিটি ২৩ সেকেন্ডে সম্পূর্ণ হল, ঠিক যেখানে ব্যর্থ হয়েছিল সেখান থেকে তুলে নিয়ে।
 
-কোনো রেস্তোরাঁকে পুনরায় আমদানি করতে হয়নি। কোনো IAM রোল দ্বিগুণ তৈরি হয়নি। কোনো ডুপ্লিকেট স্বাগত ইমেইল পাঠানো হয়নি।
+কোনো রেস্তোরাঁ পুনরায় import করতে হয়নি। কোনো IAM role দ্বিগুণ তৈরি হয়নি। কোনো duplicate welcome email পাঠানো হয়নি।
 
-"Step Functions-এর আগে," Leo Maya-কে বললেন, "এর জন্য কেউকে প্রতিটি রেস্তোরাঁর জন্য কী হয়েছে এবং হয়নি তা ম্যানুয়ালি ট্র্যাক করতে হতো, এবং ম্যানুয়ালি হারিয়ে যাওয়া ধাপগুলি পুনরায় চালাতে হতো।"
+"Step Functions-এর আগে," Leo Maya-কে বলল, "এর জন্য কাউকে প্রতিটি রেস্তোরাঁর জন্য কী করা হয়েছে এবং হয়নি তা ম্যানুয়ালি ট্র্যাক করতে হত, এবং অনুপস্থিত step-গুলি ম্যানুয়ালি পুনরায় চালাতে হত।"
 
 "এবং এখন?"
 
-"এখন আমি কনসোলে রিট্রাই ক্লিক করি। সিস্টেম জানে কী করা হয়েছে।"
+"এখন আমি console-এ retry ক্লিক করি। সিস্টেম জানে কী করা হয়েছে।"
 
-Maya এটি নিয়ে ভাবলেন।
+Maya এটা নিয়ে ভাবল।
 
-"এটি শুধু একটি প্রযুক্তিগত উন্নতি নয়," তিনি বললেন। "এটি এমন একটি প্রক্রিয়ার মধ্যে পার্থক্য যা স্কেল করে এবং যেটি করে না।"
+"এটা কেবল একটি প্রযুক্তিগত উন্নতি নয়," সে বলল। "এটা এমন একটি process-এর মধ্যে পার্থক্য যা scale করে এবং যেটা করে না।"
 
-পরবর্তী অধ্যায়ে: আপনি এখন অ্যাক্সেস করছেন না কিন্তু অবশ্যই চিরকাল রাখতে চান এমন ডেটা নিয়ে কী করবেন।
+পরবর্তী অধ্যায়ে: আপনি এখন access করছেন না কিন্তু অবশ্যই চিরকাল রাখতে চান এমন data নিয়ে কী করবেন।
