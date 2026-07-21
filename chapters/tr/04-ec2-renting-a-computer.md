@@ -108,8 +108,8 @@ t3.medium 33 dolardı. t3.large yaklaşık 60 dolardı. Yukarı çıktıkça far
 doğrusal değil, her boyut adımıyla kabaca ikiye katlanarak. Tom sayıları yazdı; her boyut
 adımının belleği ikiye katladığını, ama ilginç bir şekilde CPU sayısını katlamadığını fark
 etti. micro'dan large'a kadar her t3'ün aynı 2 vCPU'su vardı; sayı xlarge'a kadar artmıyordu.
-Her adımla büyüyen şey **CPU kredisi taban çizgisiydi** — örneğin, patlama kredilerini
-tüketmeden sürekli kullanabileceği o vCPU'ların payı.
+Her adım belleği ikiye katladı; **CPU kredisi taban çizgisi** — örneğin, patlama kredilerini
+tüketmeden sürekli kullanabileceği o vCPU'ların payı — da büyüdü, ancak her adımda değil.
 
 Tom beyaz tahtaya "t3.micro" yazdı ve yanına üzgün bir surat çizdi.
 
@@ -394,9 +394,8 @@ ele alıyoruz), örnekteki herhangi bir veri kaybolur.
 Bir EC2 örneğinin bulunabileceği dört durum:
 
 **Beklemede (Pending)**: Örnek başlatılıyor. Donanım tahsis edilmiş ama önyükleme bitmemiş.
-UserData betiği çalışıyor.
 
-**Çalışıyor (Running)**: Örnek aktif ve erişilebilir. Onun için ödeme yapıyorsunuz.
+**Çalışıyor (Running)**: Örnek aktif ve erişilebilir. Onun için ödeme yapıyorsunuz. İlk önyüklemede, UserData betiğinin de çalıştığı an budur.
 
 **Durduruluyor/Durduruldu (Stopping/Stopped)**: Örnek kapatılmış. EBS root birimi korunur.
 Hesaplama için ödeme yapmıyorsunuz, ama bağlı EBS depolama için hâlâ ödüyorsunuz.

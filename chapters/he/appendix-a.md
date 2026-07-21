@@ -134,7 +134,7 @@ Kubernetes מנוהל. AWS מריץ את ה-control plane; אתם מריצים �
 
 **מחלקות אחסון S3 ומדיניות מחזור חיים** *(פרק 23)*
 
-S3 Intelligent-Tiering מעביר אוטומטית עצמים בין שכבות גישה על בסיס תדירות גישה. מדיניות מחזור חיים מעבירה עצמים בין מחלקות (Standard → Standard-IA → Glacier) על בסיס כללי גיל. למחלקות האחסון של Glacier יש עיכוב אחזור הנע מדקות (Glacier Instant) עד 12 שעות (Glacier Deep Archive).
+S3 Intelligent-Tiering מעביר אוטומטית עצמים בין שכבות גישה על בסיס תדירות גישה. מדיניות מחזור חיים מעבירה עצמים בין מחלקות (Standard → Standard-IA → Glacier) על בסיס כללי גיל. למחלקות האחסון של Glacier יש עיכוב אחזור הנע ממילישניות (Glacier Instant Retrieval) עד 12 שעות (Glacier Deep Archive).
 
 אות בחינה: "הפחת עלויות אחסון לנתונים שניגשים אליהם לעיתים רחוקות" → מדיניות מחזור חיים, Intelligent-Tiering, או Glacier.
 

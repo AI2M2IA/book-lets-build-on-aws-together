@@ -125,7 +125,7 @@ Preço do Serverless v2: US$ 0,12 por ACU-hora. O cluster deles escalava entre 0
 
 Custo mensal do Serverless v2: 4,2 ACU × US$ 0,12 × 730 horas = US$ 368/mês para o escritor.
 
-Compare: um db.r6g.2xlarge fixo (o equivalente provisionado estimado deles, dimensionado para lidar com a carga de p95) com uma RI de 1 ano: US$ 0,48/hora × 0,60 (desconto de RI) × 730 = US$ 210/mês.
+Compare: um db.r6g.xlarge fixo (o equivalente provisionado estimado deles, dimensionado para lidar com a carga de p95 dos dias úteis) com uma RI de 1 ano: US$ 0,52/hora × 0,60 (desconto de RI) × 730 = US$ 228/mês.
 
 "A RI é mais barata," disse Leo.
 
@@ -143,7 +143,7 @@ Tom mapeou a comparação de um ano explicitamente para que a equipe pudesse aco
 
 **Custo mensal do Aurora mês a mês: Serverless v2 vs RI provisionada**
 
-A opção provisionada: um db.r6g.2xlarge com uma Reserved Instance de 1 ano. Custo: US$ 0,48/hora On-Demand × 0,60 (desconto de RI) × 730 horas = US$ 210/mês. Fixo, independentemente da carga.
+A opção provisionada: um db.r6g.xlarge com uma Reserved Instance de 1 ano. Custo: US$ 0,52/hora On-Demand × 0,60 (desconto de RI) × 730 horas = US$ 228/mês. Fixo, independentemente da carga.
 
 A opção Serverless v2: pague por ACU-hora a US$ 0,12. Variável, acompanhando a carga real.
 
@@ -158,19 +158,19 @@ Tom puxou 30 dias de métricas de ACU do Aurora Serverless v2 do CloudWatch e mo
 
 Média ponderada ao longo do mês inteiro: 4,2 ACU → US$ 0,504/hora → US$ 368/mês.
 
-Em uma RI provisionada: US$ 210/mês. Serverless: US$ 368/mês. A opção provisionada economizava US$ 158/mês.
+Em uma RI provisionada: US$ 228/mês. Serverless: US$ 368/mês. A opção provisionada economizava US$ 140/mês.
 
 "Isso parece óbvio," disse Leo. "Por que estamos em Serverless?"
 
 "Porque US$ 368 é a média," disse Tom. "Olhe as noites de sexta."
 
-Sexta 18h–22h: média de 14,1 ACU. Para essa janela de quatro horas, o Serverless custa US$ 1,692/hora. Um db.r6g.2xlarge provisionado a US$ 210/mês — sua capacidade máxima — era de 8 vCPUs. O cluster Serverless estava rodando o equivalente a cerca de 16 vCPUs durante essa janela.
+Sexta 18h–22h: média de 14,1 ACU. Para essa janela de quatro horas, o Serverless custa US$ 1,692/hora. Um db.r6g.xlarge a US$ 228/mês tem capacidade máxima de 32 GiB de memória — equivalente a cerca de 16 ACUs. O cluster Serverless estava com média de 14,1 ACUs durante essa janela, chegando no limite do xlarge sem margem para picos.
 
-"Uma instância provisionada dimensionada para o nosso pico de sexta seria um db.r6g.4xlarge," disse Tom. "Na tarifa de RI, isso é US$ 0,96/hora × 0,60 = US$ 0,576/hora. Mensal: US$ 420/mês."
+"Uma instância provisionada dimensionada para o nosso pico de sexta com folga real seria um db.r6g.2xlarge," disse Tom. "Na tarifa de RI, isso é US$ 1,04/hora × 0,60 = US$ 0,624/hora. Mensal: US$ 456/mês."
 
 "Isso é mais do que a média Serverless de US$ 368," disse Maya.
 
-"Certo. E se dimensionássemos a instância provisionada para a base dos dias úteis — o db.r6g.2xlarge — as noites de sexta seriam um problema. Na carga de pico, estaríamos empurrando 14 ACU equivalentes em uma instância de 8 vCPUs. Isso é saturação de CPU."
+"Certo. E se dimensionássemos a instância provisionada para a base dos dias úteis — o db.r6g.xlarge — as noites de sexta seriam um problema. Na carga de pico, estaríamos empurrando 14 ACUs em praticamente toda a capacidade do xlarge. Isso é saturação."
 
 "Então você precisaria pré-dimensionar para o pico," disse Priya.
 
@@ -181,10 +181,10 @@ Ele mostrou os números lado a lado:
 | Opção | Mês médio | Noite tranquila (2h) | Rush de sexta (20h) |
 |---|---|---|---|
 | Serverless v2 | US$ 368 | US$ 0,096/h | US$ 1,692/h |
-| RI provisionada (r6g.2xl) | US$ 210 | US$ 210/730h = US$ 0,288/h | limitada — risco de saturação |
-| RI provisionada (r6g.4xl) | US$ 420 | US$ 0,576/h | folga confortável |
+| RI provisionada (r6g.xl) | US$ 228 | US$ 228/730h = US$ 0,312/h | no limite — risco de saturação |
+| RI provisionada (r6g.2xl) | US$ 456 | US$ 0,624/h | folga confortável |
 
-"A opção Serverless é US$ 368," disse Tom. "A opção provisionada dimensionada corretamente é US$ 420 — e isso é antes de contabilizar o custo operacional de monitorar e escalar manualmente a instância provisionada quando nossos padrões de tráfego mudarem no próximo trimestre."
+"A opção Serverless é US$ 368," disse Tom. "A opção provisionada dimensionada corretamente é US$ 456 — e isso é antes de contabilizar o custo operacional de monitorar e escalar manualmente a instância provisionada quando nossos padrões de tráfego mudarem no próximo trimestre."
 
 "E o custo operacional," disse Priya, "não é nada desprezível."
 
@@ -251,13 +251,13 @@ A conta do ElastiCache: US$ 185/mês. Uma instância cache.r6g.large do Redis em
 As métricas do CloudWatch mostravam:
 
 - Utilização média de memória: 34%
-- Pico: 58%
+- Pico: 44%
 
-A instância estava superprovisionada. Um cache.r6g.medium provavelmente lidaria com a carga com folga.
+A instância estava superprovisionada. Um cache.m6g.large — metade da memória do r6g.large — provavelmente lidaria com a carga com alguma folga.
 
 Mas aqui Tom fez uma pausa. Ele lembrou do que havia acontecido em uma empresa anterior quando havia dimensionado um cache de forma agressiva — e contou à equipe a história completa, porque era o tipo de história que precisava ser contada antes de você se ver no meio dela.
 
-Na empresa anterior dele — uma plataforma SaaS para relatórios financeiros — o cluster ElastiCache havia sido um cache.r6g.large. Dois nós, primário e réplica. Utilização média de memória: 31%. Pico observado: 54%. O engenheiro de plantão que o sinalizou havia feito a conta: um cache.r6g.medium lidaria com a carga com 25% de folga acima do pico observado. Economia: US$ 60/mês — preço na região e geração de nó daquela empresa na época, menor do que a diferença equivalente na Nimbus hoje. A mudança foi aprovada em uma terça-feira.
+Na empresa anterior dele — uma plataforma SaaS para relatórios financeiros — o cluster ElastiCache havia sido um cache.r6g.large. Dois nós, primário e réplica. Utilização média de memória: 26%. Pico observado: 37%. O engenheiro de plantão que o sinalizou havia feito a conta: um cache.m6g.large lidaria com a carga com 25% de folga acima do pico observado. Economia: US$ 60/mês — preço na região e geração de nó daquela empresa na época, menor do que a diferença equivalente na Nimbus hoje. A mudança foi aprovada em uma terça-feira.
 
 No mês seguinte, em uma quinta-feira à noite às 23h47, o lote de liquidação de fim de mês começou.
 
@@ -291,17 +291,17 @@ A economia de US$ 60/mês havia custado US$ 40.000 em um único incidente.
 
 "Essa é a resposta," disse Tom. "Se você não consegue encontrar as métricas para um cenário específico de alta carga, a resposta correta é não dimensionar ainda. Espere a próxima ocorrência, instrumente-a fortemente, e depois dimensione com base no que você observou."
 
-O cluster ElastiCache da Nimbus tinha sua própria operação de alto risco: o rush de jantar de sexta. Tom tinha esses dados — três noites de sexta consecutivas haviam atingido 58% de utilização de memória no r6g.large. Se ele mudasse para o r6g.medium e algo no pipeline de processamento de pedidos mudasse para usar mais espaço de cache — um novo recurso, uma estratégia de cache diferente — esses 58% poderiam virar 80%, e 80% em um medium era território de despejo.
+O cluster ElastiCache da Nimbus tinha sua própria operação de alto risco: o rush de jantar de sexta. Tom tinha esses dados — três noites de sexta consecutivas haviam atingido 44% de utilização de memória no r6g.large, cerca de 5,7 GB de dados ativos. No m6g.large com seus 6,38 GB, esse mesmo conjunto de trabalho já ficaria perto de 90% — e se qualquer coisa no pipeline de processamento de pedidos mudasse para usar mais espaço de cache — um novo recurso, uma estratégia de cache diferente — 90% vira território de despejo.
 
-Ele rodou os números mesmo assim. Mudar de r6g.large para r6g.medium: dois nós a US$ 0,127/hora versus dois nós a US$ 0,065/hora, rodando 730 horas por mês. Large: US$ 185/mês. Medium: US$ 95/mês. Economia potencial: US$ 90/mês. Ele testou a instância medium em staging por duas semanas sob carga. A memória atingiu o pico de 71% — perto o suficiente do limite para deixá-lo desconfortável.
+Ele rodou os números mesmo assim. Mudar de r6g.large para m6g.large: dois nós a US$ 0,127/hora versus dois nós a US$ 0,090/hora, rodando 730 horas por mês. Large: US$ 185/mês. O par m6g: US$ 131/mês. Economia potencial: US$ 54/mês. Ele testou a instância m6g.large em staging por duas semanas sob carga. A memória atingiu o pico de 71% — perto o suficiente do limite para deixá-lo desconfortável.
 
 Então ele precificou a alternativa: manter o cache.r6g.large, mas comprar Nós Reservados (compromisso de 1 ano). De On-Demand US$ 185 para Reservado US$ 120/mês. Economia: US$ 65/mês sem mudar o tipo de instância.
 
-"Os US$ 65/mês que eu economizaria em Nós Reservados no mesmo tamanho de instância são uma economia real," disse Tom. "Os US$ 90/mês que eu economizaria indo para o medium são uma economia falsa se arriscarem o rush de jantar de sexta. Às vezes o dimensionamento correto para uma instância menor arrisca um incidente de desempenho — os Nós Reservados nos dão a maior parte das economias sem nenhum risco."
+"Os US$ 65/mês que eu economizaria em Nós Reservados no mesmo tamanho de instância são uma economia real," disse Tom. "Os US$ 54/mês que eu economizaria indo para o m6g.large são uma falsa economia se arriscarem o rush de jantar de sexta — e nem sequer economizam tanto. Às vezes o dimensionamento correto para uma instância menor arrisca um incidente de desempenho — os Nós Reservados nos dão mais economia sem nenhum risco."
 
 Ele comprou os Nós Reservados para o r6g.large.
 
-"A diferença de US$ 25 nas economias mensais," disse Tom, "não vale um incidente de noite de sexta."
+"Quando a opção mais segura também economiza mais," disse Tom, "nem é sequer uma troca."
 
 **Retenção de Backup RDS: A Troca de Armazenamento**
 

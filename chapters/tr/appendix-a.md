@@ -134,7 +134,7 @@ Sınav ipucu: "SMB/Active Directory" → FSx for Windows. "S3 verisi üzerinde H
 
 **S3 Depolama Sınıfları ve Yaşam Döngüsü Politikaları** *(Bölüm 23)*
 
-S3 Intelligent-Tiering, nesneleri erişim sıklığına göre erişim katmanları arasında otomatik olarak taşır. Yaşam döngüsü politikaları, yaş kurallarına göre nesneleri sınıflar arasında geçirir (Standard → Standard-IA → Glacier). Glacier depolama sınıflarının getirme gecikmesi dakikalardan (Glacier Instant) 12 saate (Glacier Deep Archive) kadar değişir.
+S3 Intelligent-Tiering, nesneleri erişim sıklığına göre erişim katmanları arasında otomatik olarak taşır. Yaşam döngüsü politikaları, yaş kurallarına göre nesneleri sınıflar arasında geçirir (Standard → Standard-IA → Glacier). Glacier depolama sınıflarının getirme gecikmesi milisaniyelerden (Glacier Instant Retrieval) 12 saate (Glacier Deep Archive) kadar değişir.
 
 Sınav ipucu: "Seyrek erişilen veriler için depolama maliyetini azalt" → yaşam döngüsü politikaları, Intelligent-Tiering veya Glacier.
 

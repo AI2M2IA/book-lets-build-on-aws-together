@@ -1,8 +1,6 @@
 # บทที่ 29: บิลฐานข้อมูล
 
-Tom พิมพ์ CloudWatch metrics ออกมา สิบสี่หน้า เขากระจายมันทั่วโต๊ะก่อนที่จะเชื่อใจตัวเองให้อ่านตัวเลข ดีกว่าที่จะเห็นทุกอย่างพร้อมกันมากกว่าที่จะเจอความประหลาดใจกลางหน้า
-
-**ย้อนความ: Storage เสร็จแล้ว ฐานข้อมูลเป็นรายการถัดไป**
+Tom พิมพ์กราฟการใช้งานออกมา สิบสี่หน้า เขากระจายมันทั่วโต๊ะก่อนที่จะเชื่อใจตัวเองให้อ่านตัวเลข ดีกว่าที่จะเห็นทุกอย่างพร้อมกันมากกว่าที่จะเจอความประหลาดใจกลางหน้า
 
 การตรวจสอบ storage เปิดเผยการสูญเสียที่สะสม $6,700 — ไม่ใช่จากการตัดสินใจที่แย่ แต่จากความไม่ใส่ใจ Volumes ที่ไม่ได้แนบ snapshots เก่า version histories ที่ไม่มีใครบอก S3 ให้ทำความสะอาด incomplete multipart uploads ที่สะสมเงียบๆ มาหลายเดือน Tom แก้ไขทั้งหมดแล้ว ตั้ง rules ทำความสะอาดอัตโนมัติ และเลื่อนไปยังแท็บถัดไปใน spreadsheet Data tier เป็นสิ่งที่ไม่รู้ที่ใหญ่ที่สุดที่เหลืออยู่: relational databases, NoSQL tables, cache nodes, backup storage และรายการหนึ่งที่กวนใจเขามาหลายสัปดาห์
 
@@ -125,11 +123,11 @@ Serverless v2 pricing: $0.12 ต่อ ACU-ชั่วโมง Cluster ขอ�
 
 ค่า Serverless v2 รายเดือน: 4.2 ACU × $0.12 × 730 ชั่วโมง = $368/เดือนสำหรับ writer
 
-เปรียบเทียบ: fixed db.r6g.2xlarge (เทียบเท่า provisioned ที่ประมาณการ ปรับขนาดเพื่อรองรับ p95 load) พร้อม 1-year RI: $0.48/ชั่วโมง × 0.60 (RI discount) × 730 = $210/เดือน
+เปรียบเทียบ: fixed db.r6g.xlarge (เทียบเท่า provisioned ที่ประมาณการ ปรับขนาดเพื่อรองรับ weekday p95 load) พร้อม 1-year RI: $0.52/ชั่วโมง × 0.60 (RI discount) × 730 = $228/เดือน
 
 "RI ถูกกว่า" Leo พูด
 
-"สำหรับ load ที่ fixed ใช่" Tom พูด "แต่ดูที่ช่วงกระจาย ช่วง traffic ต่ำของเรา — ตี 2 ถึง 7 โมงเช้า วันจันทร์ถึงพฤหัส — เฉลี่ย 0.8 ACU บน fixed provisioned instance เราจะจ่ายสำหรับ 8 เท่าของที่เราใช้ในช่วงเวลาเหล่านั้น แค่ idle อยู่เฉยๆ"
+"สำหรับ load ที่ fixed ใช่" Tom พูด "แต่ดูที่ช่วงกระจาย ช่วง traffic ต่ำของเรา — ตี 2 ถึง 7 โมงเช้า วันจันทร์ถึงพฤหัส — เฉลี่ย 0.8 ACU บน fixed provisioned instance เราจะจ่ายสำหรับมากกว่าที่เราใช้ในช่วงเวลาเหล่านั้น แค่ idle อยู่เฉยๆ"
 
 "และ Serverless v2 ลดขนาดลงให้ตรงกัน?"
 
@@ -143,7 +141,7 @@ Tom แมปการเปรียบเทียบตลอดปีอย�
 
 **ค่า Aurora เดือนต่อเดือน: Serverless v2 vs provisioned RI**
 
-ตัวเลือก provisioned: db.r6g.2xlarge พร้อม 1-year Reserved Instance ค่าใช้จ่าย: $0.48/ชั่วโมง On-Demand × 0.60 (RI discount) × 730 ชั่วโมง = $210/เดือน คงที่ ไม่ว่า load จะเป็นเท่าไหร่
+ตัวเลือก provisioned: db.r6g.xlarge พร้อม 1-year Reserved Instance ค่าใช้จ่าย: $0.52/ชั่วโมง On-Demand × 0.60 (RI discount) × 730 ชั่วโมง = $228/เดือน คงที่ ไม่ว่า load จะเป็นเท่าไหร่
 
 ตัวเลือก Serverless v2: จ่ายต่อ ACU-ชั่วโมงที่ $0.12 ผันแปร ติดตาม load จริง
 
@@ -158,19 +156,19 @@ Tom ดึง 30 วันของ Aurora Serverless v2 ACU metrics จาก C
 
 ค่าเฉลี่ยถ่วงน้ำหนักทั้งเดือน: 4.2 ACU → $0.504/ชั่วโมง → $368/เดือน
 
-บน provisioned RI: $210/เดือน Serverless: $368/เดือน ตัวเลือก provisioned ประหยัด $158/เดือน
+บน provisioned RI: $228/เดือน Serverless: $368/เดือน ตัวเลือก provisioned ประหยัด $140/เดือน
 
 "นั่นดูชัดเจน" Leo พูด "ทำไมเราถึงอยู่บน Serverless?"
 
 "เพราะ $368 คือค่าเฉลี่ย" Tom พูด "ดูที่คืนวันศุกร์"
 
-วันศุกร์ 6 โมงเย็น–4 ทุ่ม: เฉลี่ย 14.1 ACU สำหรับช่วงสี่ชั่วโมงนั้น Serverless มีค่าใช้จ่าย $1.692/ชั่วโมง provisioned db.r6g.2xlarge ที่ $210/เดือน — capacity สูงสุดของมัน — คือ 8 vCPUs Serverless cluster รันเทียบเท่าราว 16 vCPUs ในช่วงนั้น
+วันศุกร์ 6 โมงเย็น–4 ทุ่ม: เฉลี่ย 14.1 ACU สำหรับช่วงสี่ชั่วโมงนั้น Serverless มีค่าใช้จ่าย $1.692/ชั่วโมง provisioned db.r6g.xlarge ที่ $228/เดือนมีหน่วยความจำ 32 GiB — เทียบเท่าประมาณ 16 ACUs Serverless cluster เฉลี่ย 14.1 ACUs ในช่วงนั้น เฉียดเพดานของ xlarge โดยไม่มี headroom สำหรับ spikes
 
-"provisioned instance ที่ปรับขนาดสำหรับ Friday peak ของเราจะเป็น db.r6g.4xlarge" Tom พูด "ที่อัตรา RI นั่นคือ $0.96/ชั่วโมง × 0.60 = $0.576/ชั่วโมง รายเดือน: $420/เดือน"
+"provisioned instance ที่ปรับขนาดสำหรับ Friday peak ของเราพร้อม headroom จริงจะเป็น db.r6g.2xlarge" Tom พูด "ที่อัตรา RI นั่นคือ $1.04/ชั่วโมง × 0.60 = $0.624/ชั่วโมง รายเดือน: $456/เดือน"
 
 "นั่นมากกว่าค่าเฉลี่ย Serverless $368" Maya พูด
 
-"ถูกต้อง และถ้าเราปรับขนาด provisioned instance สำหรับ weekday baseline — db.r6g.2xlarge — คืนวันศุกร์จะเป็นปัญหา ที่ peak load เราจะดัน 14 ACU เทียบเท่าบน instance 8-vCPU นั่นคือ CPU saturation"
+"ถูกต้อง และถ้าเราปรับขนาด provisioned instance สำหรับ weekday baseline — db.r6g.xlarge — คืนวันศุกร์จะเป็นปัญหา ที่ peak load เราจะดัน 14 ACUs ไปชนเพดานความจุของ xlarge นั่นคือ saturation"
 
 "ดังนั้นคุณต้องปรับขนาดล่วงหน้าสำหรับ peak" Priya พูด
 
@@ -181,10 +179,10 @@ Tom ดึง 30 วันของ Aurora Serverless v2 ACU metrics จาก C
 | ตัวเลือก | เดือนเฉลี่ย | คืนเงียบ (ตี 2) | Friday rush (2 ทุ่ม) |
 |---|---|---|---|
 | Serverless v2 | $368 | $0.096/ชม. | $1.692/ชม. |
-| Provisioned RI (r6g.2xl) | $210 | $210/730ชม. = $0.288/ชม. | จำกัด — เสี่ยง saturation |
-| Provisioned RI (r6g.4xl) | $420 | $0.576/ชม. | headroom สบาย |
+| Provisioned RI (r6g.xl) | $228 | $228/730ชม. = $0.312/ชม. | จำกัด — เสี่ยง saturation |
+| Provisioned RI (r6g.2xl) | $456 | $0.624/ชม. | headroom สบาย |
 
-"ตัวเลือก Serverless คือ $368" Tom พูด "ตัวเลือก provisioned ที่ปรับขนาดถูกต้องคือ $420 — และนั่นยังไม่นับต้นทุนการดำเนินงานของการตรวจสอบและการ scale provisioned instance ด้วยมือเมื่อรูปแบบ traffic ของเราเปลี่ยนไตรมาสหน้า"
+"ตัวเลือก Serverless คือ $368" Tom พูด "ตัวเลือก provisioned ที่ปรับขนาดถูกต้องคือ $456 — และนั่นยังไม่นับต้นทุนการดำเนินงานของการตรวจสอบและการ scale provisioned instance ด้วยมือเมื่อรูปแบบ traffic ของเราเปลี่ยนไตรมาสหน้า"
 
 "และต้นทุนการดำเนินงาน" Priya พูด "ไม่ใช่ศูนย์"
 
@@ -251,13 +249,13 @@ Tom คำนวณจุด break-even: provisioned capacity ถูกกว่
 CloudWatch metrics แสดง:
 
 - Memory utilization เฉลี่ย: 34%
-- Peak: 58%
+- Peak: 44%
 
-Instance over-provisioned เกินไป cache.r6g.medium น่าจะรองรับ load ได้พร้อม headroom
+Instance over-provisioned เกินไป cache.m6g.large — หน่วยความจำครึ่งหนึ่งของ r6g.large — น่าจะรองรับ load ได้พร้อม headroom
 
 แต่ตรงนี้ Tom หยุด เขาจำได้ว่าเกิดอะไรขึ้นที่บริษัทก่อนหน้าเมื่อเขา right-size cache อย่างก้าวร้าว — และเขาเล่าเรื่องทั้งหมดให้ทีมฟัง เพราะมันเป็นเรื่องประเภทที่ต้องเล่าก่อนที่คุณจะพบว่าตัวเองอยู่ตรงกลางของมัน
 
-ที่บริษัทก่อนหน้าของเขา — แพลตฟอร์ม SaaS สำหรับ financial reporting — ElastiCache cluster เคยเป็น cache.r6g.large สอง nodes primary และ replica Memory utilization เฉลี่ย: 31% Peak ที่สังเกตได้: 54% วิศวกร on-call ที่ flag มันได้ทำคณิตศาสตร์: cache.r6g.medium จะรองรับ load ได้พร้อม headroom 25% เหนือ peak ที่สังเกตได้ การประหยัด: $60/เดือน — ราคาใน region และ node generation ของบริษัทนั้นในเวลานั้น เล็กกว่าช่องว่างเทียบเท่าที่ Nimbus วันนี้ การเปลี่ยนแปลงถูกอนุมัติในวันอังคาร
+ที่บริษัทก่อนหน้าของเขา — แพลตฟอร์ม SaaS สำหรับ financial reporting — ElastiCache cluster เคยเป็น cache.r6g.large สอง nodes primary และ replica Memory utilization เฉลี่ย: 26% Peak ที่สังเกตได้: 37% วิศวกร on-call ที่ flag มันได้ทำคณิตศาสตร์: cache.m6g.large จะรองรับ load ได้พร้อม headroom 25% เหนือ peak ที่สังเกตได้ การประหยัด: $60/เดือน — ราคาใน region และ node generation ของบริษัทนั้นในเวลานั้น เล็กกว่าช่องว่างเทียบเท่าที่ Nimbus วันนี้ การเปลี่ยนแปลงถูกอนุมัติในวันอังคาร
 
 เดือนถัดมา ในเย็นวันพฤหัสเวลา 23:47 น. month-end settlement batch เริ่มทำงาน
 
@@ -291,17 +289,17 @@ Database connection pool ถูกกำหนดค่าสำหรับ ste
 
 "นั่นคือคำตอบ" Tom พูด "ถ้าคุณหา metrics สำหรับสถานการณ์ high-load เฉพาะไม่ได้ การตอบสนองที่ถูกต้องคืออย่าเพิ่ง right-size รอครั้งถัดไป instrument มันอย่างหนัก แล้วปรับขนาดตามสิ่งที่คุณสังเกต"
 
-ElastiCache cluster ของ Nimbus มี high-stakes operation ของตัวเอง: Friday dinner rush Tom มีข้อมูลนั้น — สามคืนวันศุกร์ติดต่อกันแตะ 58% memory utilization บน r6g.large ถ้าเขาย้ายไป r6g.medium และบางอย่างใน order processing pipeline เปลี่ยนไปใช้ cache space มากขึ้น — ฟีเจอร์ใหม่ caching strategy ที่ต่างออกไป — 58% นั้นอาจกลายเป็น 80% และ 80% บน medium คือเขต eviction
+ElastiCache cluster ของ Nimbus มี high-stakes operation ของตัวเอง: Friday dinner rush Tom มีข้อมูลนั้น — สามคืนวันศุกร์ติดต่อกันแตะ 44% memory utilization บน r6g.large บน m6g.large ขนาด 6.38 GB working set เดิมนั้นจะนั่งอยู่ใกล้ 90% แล้ว — และถ้าบางอย่างใน order processing pipeline เปลี่ยนไปใช้ cache space มากขึ้น — feature ใหม่ caching strategy ที่ต่างออกไป — 90% กลายเป็นเขต eviction
 
-เขารันตัวเลขอยู่ดี การย้ายจาก r6g.large ไป r6g.medium: สอง nodes ที่ $0.127/ชั่วโมงเทียบกับสอง nodes ที่ $0.065/ชั่วโมง รัน 730 ชั่วโมงต่อเดือน Large: $185/เดือน Medium: $95/เดือน การประหยัดที่เป็นไปได้: $90/เดือน เขาทดสอบ medium instance ใน staging สองสัปดาห์ภายใต้โหลด Memory peak ที่ 71% — ใกล้ขีดจำกัดพอที่เขาไม่สบายใจ
+เขารันตัวเลขอยู่ดี การย้ายจาก r6g.large ไป m6g.large: สอง nodes ที่ $0.127/ชั่วโมงเทียบกับสอง nodes ที่ $0.090/ชั่วโมง รัน 730 ชั่วโมงต่อเดือน Large: $185/เดือน m6g pair: $131/เดือน การประหยัดที่เป็นไปได้: $54/เดือน เขาทดสอบ m6g.large instance ใน staging สองสัปดาห์ภายใต้โหลด Memory peak ที่ 71% — ใกล้ขีดจำกัดพอที่เขาไม่สบายใจ
 
 จากนั้นเขาตั้งราคาทางเลือก: เก็บ cache.r6g.large แต่ซื้อ Reserved Nodes (ข้อผูกมัด 1 ปี) จาก On-Demand $185 เป็น Reserved $120/เดือน การประหยัด: $65/เดือนโดยไม่เปลี่ยน instance type
 
-"$65/เดือนที่ผมจะประหยัดบน Reserved Nodes ที่ instance size เดียวกันคือการประหยัดที่แท้จริง" Tom พูด "$90/เดือนที่ผมจะประหยัดโดยไป medium คือการประหยัดจอมปลอมถ้ามันเสี่ยง Friday dinner rush บางครั้ง right-sizing ไปยัง instance ที่เล็กกว่าเสี่ยงต่อเหตุการณ์ performance — Reserved Nodes ให้เราการประหยัดส่วนใหญ่พร้อมความเสี่ยงเป็นศูนย์"
+"$65/เดือนที่ผมจะประหยัดบน Reserved Nodes ที่ instance size เดียวกันคือการประหยัดที่แท้จริง" Tom พูด "$54/เดือนที่ผมจะประหยัดโดยไป m6g.large คือการประหยัดจอมปลอมถ้ามันเสี่ยง Friday dinner rush — และมันไม่ได้ประหยัดมากเท่านั้นด้วย บางครั้ง right-sizing ไปยัง instance ที่เล็กกว่าเสี่ยงต่อเหตุการณ์ performance — Reserved Nodes ให้เราการประหยัดมากกว่าพร้อมความเสี่ยงเป็นศูนย์"
 
 เขาซื้อ Reserved Nodes สำหรับ r6g.large
 
-"ความต่าง $25 ในการประหยัดรายเดือน" Tom พูด "ไม่คุ้มกับ Friday-night incident"
+"เมื่อตัวเลือกที่ปลอดภัยกว่าประหยัดได้มากกว่าด้วย" Tom พูด "มันไม่ใช่แม้แต่การแลกเปลี่ยน"
 
 **RDS Backup Retention: การแลกเปลี่ยน Storage**
 
@@ -327,9 +325,11 @@ Manual snapshots 23 อัน รวม snapshot storage ทั้งหมด 4
 
 **ความผันแปร: เมื่อ Provisioned ย้อนกลับมาทำร้าย**
 
-ถ้ารูปแบบ traffic ของคุณสอดคล้องและคาดเดาได้ provisioned capacity พร้อม Auto Scaling ประหยัด 30% เหนือ on-demand แต่ถ้าฟีเจอร์ใหม่เปิดตัวและ write volume ของคุณพุ่ง 5x ข้ามคืน คุณจะถูก throttle ก่อนที่ Auto Scaling จะตามทัน — Auto Scaling ตอบสนองต่อ traffic ที่สังเกตได้ ซึ่งหมายความว่ามี lag การเก็บ on-demand mode ไว้สำหรับสัปดาห์รอบๆ การเปิดตัวฟีเจอร์สำคัญเป็นการแลกเปลี่ยนที่สมเหตุสมผล: ต้นทุนสูงกว่าเล็กน้อย ไม่มีความเสี่ยง throttling ในช่วงที่คุณกำลังเฝ้าดูรูปแบบ traffic เปลี่ยนแบบ real time
+ถ้ารูปแบบ traffic ของคุณสอดคล้องและคาดเดาได้ provisioned capacity พร้อม Auto Scaling ประหยัด 30% เหนือ on-demand แต่ถ้า feature ใหม่เปิดตัวและ write volume ของคุณพุ่ง 5x ข้ามคืน คุณจะถูก throttle ก่อนที่ Auto Scaling จะตามทัน — Auto Scaling ตอบสนองต่อ traffic ที่สังเกตได้ ซึ่งหมายความว่ามี lag การเก็บ on-demand mode ไว้สำหรับสัปดาห์รอบๆ การเปิดตัว feature สำคัญเป็นการแลกเปลี่ยนที่สมเหตุสมผล: ต้นทุนสูงกว่าเล็กน้อย ไม่มีความเสี่ยง throttling ในช่วงที่คุณกำลังเฝ้าดูรูปแบบ traffic เปลี่ยนแบบ real time
 
 ถ้าคุณกำจัด read replicas ที่ไม่ได้ใช้ (เช่น legacy PostgreSQL replicas ของ Nimbus) การประหยัดเป็นทันทีและชัดเจน — ไม่มีการแลกเปลี่ยน เพราะ replicas ไม่ได้ให้คุณค่าใดๆ แต่ถ้าคุณถูกล่อให้กำจัด read replica ที่จัดการ traffic แค่ 2% ตรวจสอบว่าเกิดอะไรขึ้นกับ primary เมื่อ 2% นั้นไม่มีที่ไปในช่วง peak Read replicas บางตัวมีอยู่เพื่อ headroom ไม่ใช่ load ปัจจุบัน
+
+ในการสอบ ตรรกะเดียวกันใช้: workload ที่มี baseline คงที่ชี้ไปที่ reserved capacity; ที่ spike-and-idle ชี้ไปที่ on-demand หรือ Serverless
 
 **สรุปการ Optimize ฐานข้อมูล**
 
@@ -380,6 +380,8 @@ Tom นำตัวเลขนี้มาวางข้างๆ การท
 
 ## สรุป
 
+การตรวจสอบฐานข้อมูลปิดช่องว่าง $491 ต่อเดือนโดยไม่เคยแตะต้องเครื่องยนต์ — การประหยัดมาจากท้ายรถ: replicas ที่ไม่ได้ใช้ snapshots ที่ถูกลืม และ capacity ที่ตั้งราคาสำหรับรูปแบบ traffic ที่ Nimbus โตพ้นไปแล้ว วินัยของ Tom ยึดถือผ่านทุกรายการ: เข้าใจ workload ก่อน แล้วจึง optimize ค่าใช้จ่ายใหม่หนึ่งรายการ RDS Proxy คือประกันที่ตัวเลข connection คืนวันศุกร์บอกว่าจำเป็น
+
 - **ตรวจสอบก่อน**: ดึง CloudWatch metrics ก่อนทำการเปลี่ยนแปลงฐานข้อมูลใดๆ ใช้ p95 latency และ p95 CPU — ไม่ใช่ค่าเฉลี่ย ตรวจสอบ FreeableMemory และ connection maximums
 - **ลบทรัพยากรที่ไม่ได้ใช้**: Read replicas ฐานข้อมูลที่ไม่ได้ใช้งาน และ test instances ที่ไม่ต้องการอีกต่อไป
 - **เฝ้าดู connection pool ของคุณ**: ตั้งสัญญาณเตือนบน DatabaseConnections ที่ 75% และ 90% ของขีดจำกัด พิจารณา RDS Proxy สำหรับ connection multiplexing
@@ -404,7 +406,7 @@ Tom นำตัวเลขนี้มาวางข้างๆ การท
 
 อธิบายว่าเมื่อไหร่ควรใช้ DynamoDB on-demand capacity เทียบกับ provisioned capacity พร้อม Auto Scaling คุณต้องการข้อมูลอะไรในการตัดสินใจนี้?
 
-*(คำใบ้: ลองคิดว่า "คาดเดาได้" หมายความว่าอะไรในแง่ของข้อมูล traffic และความเสี่ยงใดที่ on-demand ขจัดออกที่ provisioned แนะนำ)*
+*(คำใบ้: ลองคิดถึงเครื่องยนต์ของรถยนต์ — การให้สัญญากับ provisioned capacity โดยไม่มีข้อมูล traffic คือการเปลี่ยนน้ำมันที่คุณข้าม ในขณะที่การอยู่บน on-demand หลังจาก 18 เดือนของรูปแบบที่คาดเดาได้คือการจ่ายค่าปรับแต่งที่คุณไม่ต้องการ)*
 
 **แบบฝึกหัดที่ 2 — สถานการณ์ SAA-C03**
 

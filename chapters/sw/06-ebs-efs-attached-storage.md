@@ -122,9 +122,7 @@ kwa chochote nyeti kwa muda.
 
 "io2 inagharimu zaidi kiasi gani ikilinganishwa na gp3?" Tom aliuliza, akitazama juu kutoka daftari lake.
 
-Leo alifungua ukurasa wa bei. io2 iligharimu takriban mara tatu ya gharama ya kwa-GB ya gp3,
-pamoja na malipo tofauti kwa kila IOPS iliyotolewa. Tom aligundua pengo. "Kwa hivyo tunatumia gp3 hadi
-hifadhidata itakapohitaji kweli dhamana ya utendaji."
+Leo alifungua ukurasa wa bei. io2 iligharimu takriban 50–60% zaidi kwa kila GB kuliko gp3, pamoja na malipo tofauti kwa kila IOPS iliyotolewa — na kwenye sauti ya utendaji wa juu, malipo hayo ya kwa-IOPS ndiyo yanayotawala bili. Tom aligundua pengo. "Kwa hivyo tunatumia gp3 hadi hifadhidata itakapohitaji kweli dhamana ya utendaji."
 
 Mtihani hauhitaji ukariri aina zote. Unajaribu uwezo wako wa
 kulinganisha mahitaji na aina sahihi: mahitaji ya IOPS → io2. Mizigo ya mfululizo nyeti kwa
@@ -549,7 +547,7 @@ Kalamu nyekundu ya Tom ilizungushia tatizo halisi: vingi mno kwenye mashine moja
   inayohitaji IOPS zilizohakikishwa (hifadhidata kubwa, mifumo muhimu sana). Mazingira ya mtihani
   yanayoeleza "mahitaji ya IOPS" au "utendaji thabiti wa hifadhidata wa latensi ya chini"
   huelekeza kwa io2.
-- **gp2 dhidi ya gp3:** IOPS za gp2 zimeunganishwa na ukubwa (IOPS 3/GB, kima cha juu cha IOPS 16,000 kwa GB 5,334); IOPS za gp3 hazitegemei ukubwa (msingi wa 3,000, zinazoweza kusanidiwa hadi 80,000 tangu mwishoni mwa 2025 — maudhui ya zamani, na pengine benki ya maswali ya mtihani, bado yanadhani kikomo cha awali cha 16,000). Muundo wa swali la mtihani: mzigo unahitaji IOPS zaidi bila kuongeza hifadhi — jibu ni gp3 au io2, si gp2.
+- **gp2 dhidi ya gp3:** IOPS za gp2 zimeunganishwa na ukubwa (IOPS 3/GB, kima cha juu cha IOPS 16,000 kwa GB 5,334); IOPS za gp3 hazitegemei ukubwa (msingi wa 3,000, zinazoweza kusanidiwa hadi 80,000 tangu Septemba 2025 — maudhui ya zamani, na pengine benki ya maswali ya mtihani, bado yanadhani kikomo cha awali cha 16,000). Muundo wa swali la mtihani: mzigo unahitaji IOPS zaidi bila kuongeza hifadhi — jibu ni gp3 au io2, si gp2.
 - **Usimbaji wakati umehifadhiwa kwa EBS**: Huwezi kusimba sauti iliyopo isiyosimbwa
   mahali pake — lazima uchukue snapshot, unakili iliyosimbwa, urejeshe. Wezesha chaguomsingi za
   usimbaji za kiwango cha akaunti kuepuka kuunda sauti zisizosimbwa kwa bahati mbaya. Usimbaji ni AES-256

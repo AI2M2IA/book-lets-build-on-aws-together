@@ -134,7 +134,7 @@ Docker コンテナ向けのマネージドバッチコンピューティング�
 
 **S3 ストレージクラスとライフサイクルポリシー** *(第23章)*
 
-S3 Intelligent-Tiering は、アクセス頻度に基づいてオブジェクトをアクセス階層間で自動的に移動します。ライフサイクルポリシーは、経過日数のルールに基づいてオブジェクトをクラス間で移行します（Standard → Standard-IA → Glacier）。Glacier ストレージクラスの取得遅延は、数分（Glacier Instant）から12時間（Glacier Deep Archive）まで幅があります。
+S3 Intelligent-Tiering は、アクセス頻度に基づいてオブジェクトをアクセス階層間で自動的に移動します。ライフサイクルポリシーは、経過日数のルールに基づいてオブジェクトをクラス間で移行します（Standard → Standard-IA → Glacier）。Glacier ストレージクラスの取得遅延は、ミリ秒（Glacier Instant Retrieval）から12時間（Glacier Deep Archive）まで幅があります。
 
 試験のヒント:「アクセス頻度の低いデータのストレージコストを削減する」→ ライフサイクルポリシー、Intelligent-Tiering、または Glacier。
 

@@ -134,7 +134,7 @@ Prüfungssignal: „SMB/Active Directory" → FSx for Windows. „HPC/ML-Trainin
 
 **S3-Speicherklassen und Lebenszyklusrichtlinien** *(Kapitel 23)*
 
-S3 Intelligent-Tiering verschiebt Objekte automatisch zwischen Zugriffsschichten basierend auf der Zugriffshäufigkeit. Lebenszyklusrichtlinien verschieben Objekte basierend auf Altersregeln zwischen Klassen (Standard → Standard-IA → Glacier). Die Glacier-Speicherklassen haben eine Abrufverzögerung von Minuten (Glacier Instant) bis zu 12 Stunden (Glacier Deep Archive).
+S3 Intelligent-Tiering verschiebt Objekte automatisch zwischen Zugriffsschichten basierend auf der Zugriffshäufigkeit. Lebenszyklusrichtlinien verschieben Objekte basierend auf Altersregeln zwischen Klassen (Standard → Standard-IA → Glacier). Die Glacier-Speicherklassen haben eine Abrufverzögerung von Millisekunden (Glacier Instant Retrieval) bis zu 12 Stunden (Glacier Deep Archive).
 
 Prüfungssignal: „Speicherkosten für selten genutzte Daten senken" → Lebenszyklusrichtlinien, Intelligent-Tiering oder Glacier.
 

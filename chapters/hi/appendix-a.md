@@ -134,7 +134,7 @@ Rehost (lift-and-shift) माइग्रेशन सेवा। एक ए�
 
 **S3 Storage Classes और Lifecycle Policies** *(अध्याय 23)*
 
-S3 Intelligent-Tiering एक्सेस आवृत्ति के आधार पर objects को access tiers के बीच स्वचालित रूप से स्थानांतरित करता है। Lifecycle policies आयु नियमों के आधार पर objects को classes के बीच (Standard → Standard-IA → Glacier) स्थानांतरित करती हैं। Glacier storage classes में retrieval विलंब मिनटों (Glacier Instant) से लेकर 12 घंटे (Glacier Deep Archive) तक होता है।
+S3 Intelligent-Tiering एक्सेस आवृत्ति के आधार पर objects को access tiers के बीच स्वचालित रूप से स्थानांतरित करता है। Lifecycle policies आयु नियमों के आधार पर objects को classes के बीच (Standard → Standard-IA → Glacier) स्थानांतरित करती हैं। Glacier storage classes में retrieval विलंब मिलीसेकंड (Glacier Instant Retrieval) से लेकर 12 घंटे (Glacier Deep Archive) तक होता है।
 
 परीक्षा संकेत: "Reduce storage costs for infrequently accessed data" → lifecycle policies, Intelligent-Tiering, या Glacier।
 

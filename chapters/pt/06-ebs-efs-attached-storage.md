@@ -122,8 +122,8 @@ apropriado para nada sensível ao tempo.
 
 "Quanto a mais o io2 custa comparado ao gp3?" perguntou Tom, levantando os olhos do caderno.
 
-Leo abriu a página de preços. O io2 custava cerca de três vezes o custo por GB do gp3,
-mais uma cobrança separada por IOPS provisionado. Tom anotou a diferença. "Então a gente usa gp3 até
+Leo abriu a página de preços. O io2 custava cerca de 50–60% a mais por GB do que o gp3,
+mais uma cobrança separada por IOPS provisionado — e em um volume de alto desempenho, são essas cobranças por IOPS que dominam a conta. Tom anotou a diferença. "Então a gente usa gp3 até
 o banco de dados de fato precisar da garantia de desempenho."
 
 O exame não exige que você memorize todos os tipos. Ele de fato testa sua capacidade de
@@ -549,7 +549,7 @@ A caneta vermelha do Tom circulou o problema real: coisas demais em uma máquina
   precisam de IOPS garantido (grandes bancos de dados, sistemas de missão crítica). Cenários de exame
   descrevendo "requisitos de IOPS" ou "desempenho de banco de dados consistente de baixa latência"
   apontam para io2.
-- **gp2 vs. gp3:** as IOPS do gp2 são acopladas ao tamanho (3 IOPS/GB, máx. 16.000 IOPS a 5.334 GB); as IOPS do gp3 são independentes do tamanho (3.000 de base, configurável até 80.000 desde o fim de 2025 — material mais antigo, e possivelmente o banco de questões do exame, ainda assume o limite anterior de 16.000). Padrão de questão de exame: uma carga de trabalho precisa de mais IOPS sem aumentar o armazenamento — a resposta é gp3 ou io2, não gp2.
+- **gp2 vs. gp3:** as IOPS do gp2 são acopladas ao tamanho (3 IOPS/GB, máx. 16.000 IOPS a 5.334 GB); as IOPS do gp3 são independentes do tamanho (3.000 de base, configurável até 80.000 desde setembro de 2025 — material mais antigo, e possivelmente o banco de questões do exame, ainda assume o limite anterior de 16.000). Padrão de questão de exame: uma carga de trabalho precisa de mais IOPS sem aumentar o armazenamento — a resposta é gp3 ou io2, não gp2.
 - **Criptografia em repouso para EBS**: você não pode criptografar um volume existente não criptografado
   no lugar — você deve fazer snapshot, copiar criptografado, restaurar. Habilite padrões de criptografia
   no nível da conta para evitar criar volumes não criptografados acidentalmente. A criptografia é AES-256

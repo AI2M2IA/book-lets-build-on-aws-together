@@ -134,7 +134,7 @@ Ishara ya mtihani: "SMB/Active Directory" → FSx for Windows. "Mafunzo ya HPC/M
 
 **Madaraja ya Uhifadhi ya S3 na Sera za Mzunguko wa Maisha** *(Sura ya 23)*
 
-S3 Intelligent-Tiering inahamisha vitu kiotomatiki kati ya madaraja ya ufikiaji kulingana na mara ngapi vinafikiwa. Sera za mzunguko wa maisha zinahamisha vitu kati ya madaraja (Standard → Standard-IA → Glacier) kulingana na sheria za umri. Madaraja ya uhifadhi ya Glacier yana ucheleweshaji wa upataji unaoanzia dakika (Glacier Instant) hadi saa 12 (Glacier Deep Archive).
+S3 Intelligent-Tiering inahamisha vitu kiotomatiki kati ya madaraja ya ufikiaji kulingana na mara ngapi vinafikiwa. Sera za mzunguko wa maisha zinahamisha vitu kati ya madaraja (Standard → Standard-IA → Glacier) kulingana na sheria za umri. Madaraja ya uhifadhi ya Glacier yana ucheleweshaji wa upataji unaoanzia milisekunde (Glacier Instant Retrieval) hadi masaa 12 (Glacier Deep Archive).
 
 Ishara ya mtihani: "Punguza gharama za uhifadhi kwa data inayofikiwa mara chache" → sera za mzunguko wa maisha, Intelligent-Tiering, au Glacier.
 

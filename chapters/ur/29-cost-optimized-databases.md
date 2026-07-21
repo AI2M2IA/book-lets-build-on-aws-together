@@ -125,7 +125,7 @@ Serverless v2 pricing: $0.12 فی ACU-hour۔ ان کا cluster 0.5 ACU (بیکا
 
 ماہانہ Serverless v2 لاگت: writer کے لیے 4.2 ACU × $0.12 × 730 گھنٹے = $368/month۔
 
-موازنہ کریں: ایک 1-year RI کے ساتھ ایک fixed db.r6g.2xlarge (ان کا متوقع provisioned مساوی، p95 load سنبھالنے کے لیے sized): $0.48/hour × 0.60 (RI discount) × 730 = $210/month۔
+موازنہ کریں: ایک 1-year RI کے ساتھ ایک fixed db.r6g.xlarge (ان کا متوقع provisioned مساوی، weekday p95 load سنبھالنے کے لیے sized): $0.52/hour × 0.60 (RI discount) × 730 = $228/month۔
 
 "RI سستی ہے،" Leo نے کہا۔
 
@@ -143,7 +143,7 @@ Tom نے سال بھر کا موازنہ واضح طور پر بیان کیا ت
 
 **ماہ بہ ماہ Aurora لاگت: Serverless v2 بمقابلہ provisioned RI**
 
-Provisioned option: ایک 1-year Reserved Instance کے ساتھ ایک db.r6g.2xlarge۔ لاگت: $0.48/hour On-Demand × 0.60 (RI discount) × 730 گھنٹے = $210/month۔ Fixed، load سے قطع نظر۔
+Provisioned option: ایک 1-year Reserved Instance کے ساتھ ایک db.r6g.xlarge۔ لاگت: $0.52/hour On-Demand × 0.60 (RI discount) × 730 گھنٹے = $228/month۔ Fixed، load سے قطع نظر۔
 
 Serverless v2 option: $0.12 پر فی ACU-hour ادا کریں۔ متغیر، اصل load کو ٹریک کرتے ہوئے۔
 
@@ -158,19 +158,19 @@ Tom نے CloudWatch سے 30 دن کی Aurora Serverless v2 ACU metrics کھین�
 
 پورے مہینے پر وزنی اوسط: 4.2 ACU → $0.504/hour → $368/month۔
 
-ایک provisioned RI پر: $210/month۔ Serverless: $368/month۔ Provisioned option نے $158/month بچائے۔
+ایک provisioned RI پر: $228/month۔ Serverless: $368/month۔ Provisioned option نے $140/month بچائے۔
 
 "یہ تو واضح لگتا ہے،" Leo نے کہا۔ "ہم Serverless پر کیوں ہیں؟"
 
 "کیونکہ $368 اوسط ہے،" Tom نے کہا۔ "جمعہ کی شاموں کو دیکھو۔"
 
-جمعہ 6–10 PM: 14.1 ACU اوسط۔ اس چار گھنٹے کی window کے لیے، Serverless کی لاگت $1.692/hour ہے۔ $210/month پر ایک provisioned db.r6g.2xlarge — اس کی زیادہ سے زیادہ capacity — 8 vCPUs تھی۔ Serverless cluster اس window کے دوران تقریباً 16 vCPUs کے مساوی چلا رہا تھا۔
+جمعہ 6–10 PM: 14.1 ACU اوسط۔ اس چار گھنٹے کی window کے لیے، Serverless کی لاگت $1.692/hour ہے۔ ایک db.r6g.xlarge $228/month پر 32 GiB memory کی زیادہ سے زیادہ capacity رکھتا ہے — تقریباً 16 ACUs کے مساوی۔ Serverless cluster اس window کے دوران اوسطاً 14.1 ACUs چلا رہا تھا، xlarge کی حد کے قریب کسی headroom کے بغیر۔
 
-"ہمارے جمعہ کے peak کے لیے sized ایک provisioned instance ایک db.r6g.4xlarge ہوتی،" Tom نے کہا۔ "RI rate پر، یہ $0.96/hour × 0.60 = $0.576/hour ہے۔ ماہانہ: $420/month۔"
+"اصل headroom کے ساتھ ہمارے جمعہ کے peak کے لیے sized ایک provisioned instance ایک db.r6g.2xlarge ہوتی،" Tom نے کہا۔ "RI rate پر، یہ $1.04/hour × 0.60 = $0.624/hour ہے۔ ماہانہ: $456/month۔"
 
 "یہ Serverless اوسط $368 سے زیادہ ہے،" Maya نے کہا۔
 
-"درست۔ اور اگر ہم provisioned instance کو weekday baseline کے لیے sized کرتے — db.r6g.2xlarge — تو جمعہ کی راتیں ایک مسئلہ ہوتیں۔ peak load پر، ہم ایک 8-vCPU instance پر 14 ACU مساوی دھکیل رہے ہوتے۔ یہ CPU saturation ہے۔"
+"درست۔ اور اگر ہم provisioned instance کو weekday baseline کے لیے sized کرتے — db.r6g.xlarge — تو جمعہ کی راتیں ایک مسئلہ ہوتیں۔ peak load پر، ہم xlarge کی تقریباً پوری capacity کے مقابلے میں 14 ACUs دھکیل رہے ہوتے۔ یہ saturation ہے۔"
 
 "تو آپ کو peak کے لیے پہلے سے size کرنا پڑتا،" Priya نے کہا۔
 
@@ -181,10 +181,10 @@ Tom نے CloudWatch سے 30 دن کی Aurora Serverless v2 ACU metrics کھین�
 | Option | اوسط مہینہ | پُرسکون رات (2 AM) | جمعہ rush (8 PM) |
 |---|---|---|---|
 | Serverless v2 | $368 | $0.096/hr | $1.692/hr |
-| Provisioned RI (r6g.2xl) | $210 | $210/730hr = $0.288/hr | محدود — saturation کا خطرہ |
-| Provisioned RI (r6g.4xl) | $420 | $0.576/hr | آرام دہ headroom |
+| Provisioned RI (r6g.xl) | $228 | $228/730hr = $0.312/hr | محدود — saturation کا خطرہ |
+| Provisioned RI (r6g.2xl) | $456 | $0.624/hr | آرام دہ headroom |
 
-"Serverless option $368 ہے،" Tom نے کہا۔ "right-sized provisioned option $420 ہے — اور یہ اس operational لاگت کا حساب کرنے سے پہلے ہے جو provisioned instance کو monitor کرنے اور دستی طور پر scale کرنے میں آتی ہے جب اگلی سہ ماہی ہمارے traffic patterns بدلتے ہیں۔"
+"Serverless option $368 ہے،" Tom نے کہا۔ "right-sized provisioned option $456 ہے — اور یہ اس operational لاگت کا حساب کرنے سے پہلے ہے جو provisioned instance کو monitor کرنے اور دستی طور پر scale کرنے میں آتی ہے جب اگلی سہ ماہی ہمارے traffic patterns بدلتے ہیں۔"
 
 "اور operational لاگت،" Priya نے کہا، "کچھ بھی نہیں ہے یہ نہیں۔"
 
@@ -251,13 +251,13 @@ ElastiCache bill: $185/month۔ ہر AZ میں ایک cache.r6g.large Redis insta
 CloudWatch metrics نے دکھایا:
 
 - اوسط memory utilization: 34%
-- Peak: 58%
+- Peak: 44%
 
-Instance over-provisioned تھی۔ ایک cache.r6g.medium غالباً load کو headroom کے ساتھ سنبھال لیتی۔
+Instance over-provisioned تھی۔ ایک cache.m6g.large — r6g.large کی نصف memory — غالباً load کو کچھ headroom کے ساتھ سنبھال لیتی۔
 
 لیکن یہاں Tom رک گیا۔ اسے یاد آیا کہ ایک پچھلی کمپنی میں کیا ہوا تھا جب اس نے جارحانہ طور پر ایک cache کو right-size کیا تھا — اور اس نے team کو پوری کہانی سنائی، کیونکہ یہ ایسی کہانی تھی جسے بتانے کی ضرورت تھی اس سے پہلے کہ آپ خود کو اس کے بیچ میں پائیں۔
 
-اس کی پچھلی کمپنی میں — financial reporting کے لیے ایک SaaS platform — ElastiCache cluster ایک cache.r6g.large تھی۔ دو nodes، primary اور replica۔ اوسط memory utilization: 31%۔ مشاہدہ شدہ peak: 54%۔ جس on-call engineer نے اسے flag کیا اس نے حساب کیا تھا: ایک cache.r6g.medium مشاہدہ شدہ peak سے 25% headroom کے ساتھ load سنبھال لیتی۔ بچت: $60/month — اس وقت اس کمپنی کے region اور node generation میں pricing، آج Nimbus کے مساوی فرق سے چھوٹی۔ تبدیلی منگل کو منظور ہوئی۔
+اس کی پچھلی کمپنی میں — financial reporting کے لیے ایک SaaS platform — ElastiCache cluster ایک cache.r6g.large تھی۔ دو nodes، primary اور replica۔ اوسط memory utilization: 26%۔ مشاہدہ شدہ peak: 37%۔ جس on-call engineer نے اسے flag کیا اس نے حساب کیا تھا: ایک cache.m6g.large مشاہدہ شدہ peak سے 25% headroom کے ساتھ load سنبھال لیتی۔ بچت: $60/month — اس وقت اس کمپنی کے region اور node generation میں pricing، آج Nimbus کے مساوی فرق سے چھوٹی۔ تبدیلی منگل کو منظور ہوئی۔
 
 اگلے مہینے، ایک جمعرات کی شام 11:47 PM پر، month-end settlement batch شروع ہوا۔
 
@@ -291,17 +291,17 @@ $60/month کی بچت نے ایک ہی incident میں $40,000 کی لاگت آ�
 
 "یہی جواب ہے،" Tom نے کہا۔ "اگر آپ ایک مخصوص high-load منظر نامے کے لیے metrics نہ پا سکیں، تو درست جواب یہ ہے کہ ابھی right-size نہ کریں۔ اگلی بار کا انتظار کریں، اسے بھرپور طریقے سے instrument کریں، پھر جو آپ نے مشاہدہ کیا اس کی بنیاد پر size کریں۔"
 
-Nimbus کے ElastiCache cluster کا اپنا high-stakes operation تھا: جمعہ کی dinner rush۔ Tom کے پاس وہ data تھا — مسلسل تین جمعہ کی راتیں r6g.large پر 58% memory utilization تک پہنچی تھیں۔ اگر وہ r6g.medium پر منتقل ہوتا اور order processing pipeline میں کوئی چیز زیادہ cache space استعمال کرنے کے لیے بدلتی — ایک نئی feature، ایک مختلف caching strategy — تو وہ 58% 80% بن سکتا تھا، اور ایک medium پر 80% eviction کا علاقہ ہے۔
+Nimbus کے ElastiCache cluster کا اپنا high-stakes operation تھا: جمعہ کی dinner rush۔ Tom کے پاس وہ data تھا — مسلسل تین جمعہ کی راتیں r6g.large پر 44% memory utilization تک پہنچی تھیں، تقریباً 5.7 GB live data۔ m6g.large کے 6.38 GB پر، وہی working set پہلے ہی 90% کے قریب بیٹھتا — اور اگر order processing pipeline میں کچھ زیادہ cache space استعمال کرنے کے لیے بدلتا — ایک نئی feature، ایک مختلف caching strategy — تو 90% eviction کا علاقہ بن جاتا۔
 
-اس نے بہرحال اعداد چلائے۔ r6g.large سے r6g.medium پر جانا: $0.127/hour پر دو nodes بمقابلہ $0.065/hour پر دو nodes، فی مہینہ 730 گھنٹے چلتے ہوئے۔ Large: $185/month۔ Medium: $95/month۔ ممکنہ بچت: $90/month۔ اس نے medium instance کو staging میں دو ہفتے load کے تحت test کیا۔ Memory 71% پر peak ہوئی — حد کے اتنے قریب کہ وہ بے چین تھا۔
+اس نے بہرحال اعداد چلائے۔ r6g.large سے m6g.large پر جانا: $0.127/hour پر دو nodes بمقابلہ $0.090/hour پر دو nodes، فی مہینہ 730 گھنٹے چلتے ہوئے۔ Large: $185/month۔ m6g pair: $131/month۔ ممکنہ بچت: $54/month۔ اس نے m6g.large instance کو staging میں دو ہفتے load کے تحت test کیا۔ Memory 71% پر peak ہوئی — حد کے اتنے قریب کہ وہ بے چین تھا۔
 
 پھر اس نے متبادل کی قیمت لگائی: cache.r6g.large رکھیں، لیکن Reserved Nodes خریدیں (1-year commitment)۔ On-Demand $185 سے Reserved $120/month۔ بچت: instance type بدلے بغیر $65/month۔
 
-"وہ $65/month جو میں اسی instance size پر Reserved Nodes پر بچاؤں گا ایک حقیقی بچت ہے،" Tom نے کہا۔ "وہ $90/month جو میں medium پر جا کر بچاؤں گا ایک جھوٹی معیشت ہے اگر یہ جمعہ کی dinner rush کو خطرے میں ڈالے۔ کبھی کبھی ایک چھوٹی instance پر right-sizing ایک performance incident کا خطرہ مول لیتی ہے — Reserved Nodes ہمیں زیادہ تر بچت بغیر کسی خطرے کے دیتے ہیں۔"
+"وہ $65/month جو میں اسی instance size پر Reserved Nodes پر بچاؤں گا ایک حقیقی بچت ہے،" Tom نے کہا۔ "وہ $54/month جو میں m6g.large پر جا کر بچاؤں گا ایک جھوٹی معیشت ہے اگر یہ جمعہ کی dinner rush کو خطرے میں ڈالے — اور اتنی بچت بھی نہیں۔ کبھی کبھی ایک چھوٹی instance پر right-sizing ایک performance incident کا خطرہ مول لیتی ہے — Reserved Nodes ہمیں کسی خطرے کے بغیر زیادہ بچت دیتے ہیں۔"
 
 اس نے r6g.large کے لیے Reserved Nodes خریدیں۔
 
-"ماہانہ بچت میں $25 کا فرق،" Tom نے کہا، "ایک جمعہ کی رات کے incident کے قابل نہیں ہے۔"
+"جب زیادہ محفوظ option بھی زیادہ بچاتا ہے،" Tom نے کہا، "تو یہ کوئی trade-off ہی نہیں ہے۔"
 
 **RDS Backup Retention: Storage کا Trade-Off**
 

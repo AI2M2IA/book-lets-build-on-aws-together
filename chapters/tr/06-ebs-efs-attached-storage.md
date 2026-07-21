@@ -134,9 +134,7 @@ için uygun değil.
 
 "io2, gp3'e kıyasla ne kadar daha pahalı?" diye sordu Tom, defterinden başını kaldırarak.
 
-Leo fiyatlandırma sayfasını açtı. io2, gp3'ün GB başına maliyetinin kabaca üç katı tutuyordu,
-artı tahsis edilen IOPS başına ayrı bir ücret. Tom farkı not etti. "Yani veritabanı performans
-garantisine gerçekten ihtiyaç duyana kadar gp3 kullanırız."
+Leo fiyatlandırma sayfasını açtı. io2, gp3'e kıyasla GB başına yaklaşık %50–60 daha pahalıydı; buna ek olarak tahsis edilen IOPS başına ayrı bir ücret de vardı — ve yüksek performanslı bir birimdeki IOPS başına bu ücretler faturaya hâkim olan kalemdir. Tom farkı not etti. "Yani veritabanı performans garantisine gerçekten ihtiyaç duyana kadar gp3 kullanırız."
 
 Sınav tüm türleri ezberlemenizi gerektirmez. Gereksinimleri doğru türle eşleştirme yeteneğinizi
 test eder: IOPS gereksinimleri → io2. Maliyet duyarlı sıralı iş yükleri → st1. Genel web
@@ -772,7 +770,7 @@ doğru cevaba götürür.
   "tutarlı düşük gecikmeli veritabanı performansı" tarif eden sınav senaryoları io2'ye işaret
   eder.
 - **gp2 ve gp3:** gp2 IOPS boyuta bağlıdır (3 IOPS/GB, 5.334 GB'ta maks 16.000 IOPS); gp3 IOPS
-  boyuttan bağımsızdır (3.000 taban, 2025 sonundan beri 80.000'e kadar yapılandırılabilir —
+  boyuttan bağımsızdır (3.000 taban, Eylül 2025'ten beri 80.000'e kadar yapılandırılabilir —
   eski materyal, ve muhtemelen sınav soru bankası, hâlâ önceki 16.000 sınırını varsayar). Sınav
   soru kalıbı: bir iş yükü, depolamayı artırmadan daha fazla IOPS'a ihtiyaç duyar — cevap gp3
   ya da io2'dir, gp2 değil.

@@ -1,8 +1,6 @@
 # Chapter 29: The Database Bill
 
-Tom printed the CloudWatch metrics. Fourteen pages. He spread them across his desk before he trusted himself to read the numbers. Better to see everything at once than to find surprises mid-page.
-
-**Recap: Storage Done, Databases Next**
+Tom printed the usage graphs. Fourteen pages. He spread them across his desk before he trusted himself to read the numbers. Better to see everything at once than to find surprises mid-page.
 
 The storage audit had turned up $6,700 in accumulated waste — not from bad decisions, but from inattention. Unattached volumes, old snapshots, version histories that nobody had told S3 to clean up, incomplete multipart uploads that had been accumulating silently for months. Tom had fixed it all, implemented automatic cleanup rules, and moved to the next tab in the spreadsheet. The data tier was the largest remaining unknown: relational databases, NoSQL tables, cache nodes, backup storage, and one line item that had been nagging at him for weeks.
 
@@ -125,11 +123,11 @@ Serverless v2 pricing: $0.12 per ACU-hour. Their cluster scaled between 0.5 ACU 
 
 Monthly Serverless v2 cost: 4.2 ACU × $0.12 × 730 hours = $368/month for the writer.
 
-Compare: a fixed db.r6g.2xlarge (their estimated provisioned equivalent, sized to handle p95 load) with a 1-year RI: $0.48/hour × 0.60 (RI discount) × 730 = $210/month.
+Compare: a fixed db.r6g.xlarge (their estimated provisioned equivalent, sized to handle the weekday p95 load) with a 1-year RI: $0.52/hour × 0.60 (RI discount) × 730 = $228/month.
 
 "The RI is cheaper," Leo said.
 
-"For a fixed load, yes," Tom said. "But look at the spread. Our low traffic period — 2 AM to 7 AM, Monday to Thursday — averages 0.8 ACU. On a fixed provisioned instance, we'd be paying for 8x what we're using during those hours, just sitting idle."
+"For a fixed load, yes," Tom said. "But look at the spread. Our low traffic period — 2 AM to 7 AM, Monday to Thursday — averages 0.8 ACU. On a fixed provisioned instance, we'd be paying for many times what we're using during those hours, just sitting idle."
 
 "And Serverless v2 scales down to match?"
 
@@ -143,7 +141,7 @@ Tom mapped out the year-long comparison explicitly so the team could follow the 
 
 **Month-by-month Aurora cost: Serverless v2 vs provisioned RI**
 
-The provisioned option: a db.r6g.2xlarge with a 1-year Reserved Instance. Cost: $0.48/hour On-Demand × 0.60 (RI discount) × 730 hours = $210/month. Fixed, regardless of load.
+The provisioned option: a db.r6g.xlarge with a 1-year Reserved Instance. Cost: $0.52/hour On-Demand × 0.60 (RI discount) × 730 hours = $228/month. Fixed, regardless of load.
 
 The Serverless v2 option: pay per ACU-hour at $0.12. Variable, tracking actual load.
 
@@ -158,19 +156,19 @@ Tom pulled 30 days of Aurora Serverless v2 ACU metrics from CloudWatch and built
 
 Weighted average across the full month: 4.2 ACU → $0.504/hour → $368/month.
 
-On a provisioned RI: $210/month. Serverless: $368/month. The provisioned option saved $158/month.
+On a provisioned RI: $228/month. Serverless: $368/month. The provisioned option saved $140/month.
 
 "That seems obvious," Leo said. "Why are we on Serverless?"
 
 "Because $368 is the average," Tom said. "Look at Friday evenings."
 
-Friday 6–10 PM: 14.1 ACU average. For that four-hour window, Serverless costs $1.692/hour. A provisioned db.r6g.2xlarge at $210/month — its maximum capacity — was 8 vCPUs. The Serverless cluster was running the equivalent of roughly 16 vCPUs during that window.
+Friday 6–10 PM: 14.1 ACU average. For that four-hour window, Serverless costs $1.692/hour. A db.r6g.xlarge at $228/month tops out at 32 GiB of memory — the equivalent of about 16 ACUs. The Serverless cluster was averaging 14.1 ACUs during that window, brushing against the xlarge's ceiling with no headroom for spikes.
 
-"A provisioned instance sized for our Friday peak would be a db.r6g.4xlarge," Tom said. "At the RI rate, that's $0.96/hour × 0.60 = $0.576/hour. Monthly: $420/month."
+"A provisioned instance sized for our Friday peak with real headroom would be a db.r6g.2xlarge," Tom said. "At the RI rate, that's $1.04/hour × 0.60 = $0.624/hour. Monthly: $456/month."
 
 "That's more than the Serverless average of $368," Maya said.
 
-"Right. And if we sized the provisioned instance for the weekday baseline — the db.r6g.2xlarge — Friday nights would be a problem. At peak load, we'd be pushing 14 ACU equivalent on an 8-vCPU instance. That's CPU saturation."
+"Right. And if we sized the provisioned instance for the weekday baseline — the db.r6g.xlarge — Friday nights would be a problem. At peak load, we'd be pushing 14 ACUs against roughly the xlarge's entire capacity. That's saturation."
 
 "So you'd need to pre-size for peak," Priya said.
 
@@ -181,10 +179,10 @@ He showed the numbers side by side:
 | Option | Average month | Quiet night (2 AM) | Friday rush (8 PM) |
 |---|---|---|---|
 | Serverless v2 | $368 | $0.096/hr | $1.692/hr |
-| Provisioned RI (r6g.2xl) | $210 | $210/730hr = $0.288/hr | capped — risk of saturation |
-| Provisioned RI (r6g.4xl) | $420 | $0.576/hr | comfortable headroom |
+| Provisioned RI (r6g.xl) | $228 | $228/730hr = $0.312/hr | capped — risk of saturation |
+| Provisioned RI (r6g.2xl) | $456 | $0.624/hr | comfortable headroom |
 
-"The Serverless option is $368," Tom said. "The right-sized provisioned option is $420 — and that's before accounting for the operational cost of monitoring and manually scaling the provisioned instance when our traffic patterns change next quarter."
+"The Serverless option is $368," Tom said. "The right-sized provisioned option is $456 — and that's before accounting for the operational cost of monitoring and manually scaling the provisioned instance when our traffic patterns change next quarter."
 
 "And the operational cost," Priya said, "is not nothing."
 
@@ -251,19 +249,19 @@ The ElastiCache bill: $185/month. One cache.r6g.large Redis instance in each AZ 
 CloudWatch metrics showed:
 
 - Average memory utilization: 34%
-- Peak: 58%
+- Peak: 44%
 
-The instance was over-provisioned. A cache.r6g.medium would likely handle the load with headroom.
+The instance was over-provisioned. A cache.m6g.large — half the memory of the r6g.large — would likely handle the load with some headroom.
 
 But here Tom paused. He remembered what had happened at a previous company when he'd aggressively right-sized a cache — and he told the team the full story, because it was the kind of story that needed to be told before you found yourself in the middle of it.
 
-At his previous company — a SaaS platform for financial reporting — the ElastiCache cluster had been a cache.r6g.large. Two nodes, primary and replica. Average memory utilization: 31%. Peak observed: 54%. The on-call engineer who flagged it had done the math: a cache.r6g.medium would handle the load with 25% headroom above the observed peak. Saving: $60/month — pricing in that company's region and node generation at the time, smaller than the equivalent gap at Nimbus today. The change was approved on a Tuesday.
+At his previous company — a SaaS platform for financial reporting — the ElastiCache cluster had been a cache.r6g.large. Two nodes, primary and replica. Average memory utilization: 26%. Peak observed: 37%. The on-call engineer who flagged it had done the math: a cache.m6g.large would handle the load with about 25% headroom above the observed peak. Saving: $60/month — pricing in that company's region and node generation at the time, smaller than the equivalent gap at Nimbus today. The change was approved on a Tuesday.
 
 The following month, on a Thursday evening at 11:47 PM, the month-end settlement batch started.
 
 The settlement batch ran quarterly. It pulled every active account's transaction records for the preceding three months, aggregated them, computed taxes, and wrote settlement records. The cache was used to store intermediate aggregation state — each account's running total as the batch progressed. The cache.r6g.large had always handled it. Nobody had looked at the settlement batch metrics specifically when making the right-sizing decision, because the batch was quarterly and the observation window had been four weeks.
 
-On the medium instance, maxMemoryPolicy was set to `allkeys-lru` — when memory was full, Redis would evict the least-recently-used key to make room. That's the correct policy for a general cache. But for the settlement batch, every key in the cache was actively needed. When memory filled at 84% of the medium instance's 6.38 GB, Redis started evicting keys. Each eviction was a cache miss. Each cache miss sent a query to the underlying PostgreSQL database to recompute the evicted value from raw transaction records.
+On the smaller instance, maxMemoryPolicy was set to `allkeys-lru` — when memory was full, Redis would evict the least-recently-used key to make room. That's the correct policy for a general cache. But for the settlement batch, every key in the cache was actively needed. When memory filled at 84% of the m6g.large's 6.38 GB, Redis started evicting keys. Each eviction was a cache miss. Each cache miss sent a query to the underlying PostgreSQL database to recompute the evicted value from raw transaction records.
 
 The database connection pool was configured for steady-state traffic, not settlement batch load. Within four minutes of the evictions beginning, the database had 847 active connections. The connection limit was 1,000. At 9 minutes, the first application threads started seeing "too many connections" errors. At 12 minutes, three services that shared the database connection pool — the settlement batch, the real-time reporting service, and the client-facing API — were all affected.
 
@@ -291,17 +289,17 @@ The $60/month saving had cost $40,000 in a single incident.
 
 "That's the answer," Tom said. "If you can't find the metrics for a specific high-load scenario, the correct response is to not right-size yet. Wait for the next occurrence, instrument it heavily, then size based on what you observed."
 
-The Nimbus ElastiCache cluster had its own high-stakes operation: the Friday dinner rush. Tom had that data — three consecutive Friday nights had hit 58% memory utilization on the r6g.large. If he moved to the r6g.medium and something in the order processing pipeline changed to use more cache space — a new feature, a different caching strategy — that 58% could become 80%, and 80% on a medium was eviction territory.
+The Nimbus ElastiCache cluster had its own high-stakes operation: the Friday dinner rush. Tom had that data — three consecutive Friday nights had hit 44% memory utilization on the r6g.large, about 5.7 GB of live data. On the m6g.large's 6.38 GB, that same working set would already sit near 90% — and if anything in the order processing pipeline changed to use more cache space — a new feature, a different caching strategy — 90% becomes eviction territory.
 
-He ran the numbers anyway. Moving from r6g.large to r6g.medium: two nodes at $0.127/hour versus two nodes at $0.065/hour, running 730 hours per month. Large: $185/month. Medium: $95/month. Potential saving: $90/month. He tested the medium instance in staging for two weeks under load. Memory peaked at 71% — close enough to the limit that he was uncomfortable.
+He ran the numbers anyway. Moving from r6g.large to m6g.large: two nodes at $0.127/hour versus two nodes at $0.090/hour, running 730 hours per month. Large: $185/month. The m6g pair: $131/month. Potential saving: $54/month. He tested the m6g.large in staging for two weeks under load. Memory peaked at 71% — close enough to the limit that he was uncomfortable.
 
 Then he priced the alternative: keep the cache.r6g.large, but buy Reserved Nodes (1-year commitment). From On-Demand $185 to Reserved $120/month. Saving: $65/month without changing the instance type.
 
-"The $65/month I'd save on Reserved Nodes at the same instance size is a real saving," Tom said. "The $90/month I'd save by going to the medium is a false economy if it risks the Friday dinner rush. Sometimes right-sizing to a smaller instance risks a performance incident — Reserved Nodes give us most of the savings with none of the risk."
+"The $65/month I'd save on Reserved Nodes at the same instance size is a real saving," Tom said. "The $54/month I'd save by going to the m6g.large is a false economy if it risks the Friday dinner rush — and it doesn't even save as much. Sometimes right-sizing to a smaller instance risks a performance incident — Reserved Nodes give us more savings with none of the risk."
 
 He purchased the Reserved Nodes for the r6g.large.
 
-"The $25 difference in monthly savings," Tom said, "isn't worth a Friday-night incident."
+"When the safer option also saves more," Tom said, "it isn't even a trade-off."
 
 **RDS Backup Retention: The Storage Trade-Off**
 
@@ -330,6 +328,8 @@ Saving: $64/month.
 If your traffic pattern is consistent and predictable, provisioned capacity with Auto Scaling saves 30% over on-demand. But if a new feature launches and your write volume spikes 5x overnight, you'll be throttled before Auto Scaling catches up — Auto Scaling reacts to observed traffic, which means there's a lag. Keeping the on-demand mode for the weeks surrounding a major feature launch is a reasonable trade-off: slightly higher cost, no risk of throttling during a period when you're watching traffic patterns change in real time.
 
 If you eliminate unused read replicas (like Nimbus's legacy PostgreSQL replicas), the savings are immediate and unambiguous — there's no trade-off, because the replicas were providing no value. But if you're tempted to eliminate a read replica that's handling only 2% of traffic, check what happens to the primary when that 2% has nowhere to go during a peak. Some read replicas exist for headroom, not current load.
+
+On the exam, the same logic applies: a steady-baseline workload points to reserved capacity; spiky-and-idle points to on-demand or Serverless.
 
 **The Database Optimization Summary**
 
@@ -380,6 +380,8 @@ All three were correct.
 
 ## Summary
 
+The database audit closed a $491-a-month gap without ever touching the engine — the savings came from the trunk: idle replicas, forgotten snapshots, and capacity priced for traffic patterns Nimbus had outgrown. Tom's discipline held through every line item: understand the workload first, then optimize. The one new expense, RDS Proxy, was insurance the Friday-night connection numbers said they needed.
+
 - **Audit first**: Pull CloudWatch metrics before making any database changes. Use p95 latency and p95 CPU — not averages. Check FreeableMemory and connection maximums.
 - **Delete unused resources**: Read replicas, idle databases, and test instances that are no longer needed.
 - **Watch your connection pool**: Set alarms on DatabaseConnections at 75% and 90% of limit. Consider RDS Proxy for connection multiplexing.
@@ -404,7 +406,7 @@ All three were correct.
 
 Explain when you should use DynamoDB on-demand capacity versus provisioned capacity with Auto Scaling. What information do you need to make this decision?
 
-*(Hint: Think about what "predictable" means in terms of traffic data, and what risk on-demand removes that provisioned introduces.)*
+*(Hint: Think of the car engine — committing to provisioned capacity without traffic data is the oil change you skip, while staying on on-demand after 18 months of predictable patterns is paying for a tune-up you don't need.)*
 
 **Exercise 2 — SAA-C03 Scenario**
 

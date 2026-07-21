@@ -134,7 +134,7 @@ Exam signal: "SMB/Active Directory" → FSx for Windows. "HPC/ML training on S3 
 
 **S3 Storage Classes and Lifecycle Policies** *(Chapter 23)*
 
-S3 Intelligent-Tiering automatically moves objects between access tiers based on access frequency. Lifecycle policies transition objects between classes (Standard → Standard-IA → Glacier) based on age rules. Glacier storage classes have retrieval delay ranging from minutes (Glacier Instant) to 12 hours (Glacier Deep Archive).
+S3 Intelligent-Tiering automatically moves objects between access tiers based on access frequency. Lifecycle policies transition objects between classes (Standard → Standard-IA → Glacier) based on age rules. Glacier storage classes have retrieval delay ranging from milliseconds (Glacier Instant Retrieval) to 12 hours (Glacier Deep Archive).
 
 Exam signal: "Reduce storage costs for infrequently accessed data" → lifecycle policies, Intelligent-Tiering, or Glacier.
 
@@ -224,7 +224,7 @@ Exam signal: "High-throughput key-based access," "flexible schema," "serverless 
 
 **ElastiCache** *(Chapter 10)*
 
-Managed in-memory caching. Two engines: Redis (persistent, pub/sub, Lua scripting, data structures) and Memcached (pure cache, simpler, multi-threaded). Use to reduce database load and serve frequently-read data in microseconds.
+Managed in-memory caching. Engines: Valkey, Redis OSS (persistent, pub/sub, Lua scripting, data structures), and Memcached (pure cache, simpler, multi-threaded). Valkey is the open-source Redis fork AWS added in October 2024 and now defaults to — API-compatible with Redis but priced lower; everything stated about Redis applies to it. Use to reduce database load and serve frequently-read data in microseconds. (The SAA-C03 exam still phrases this as "Redis and Memcached.")
 
 Key concepts: Cache-aside pattern, write-through pattern, eviction policies, TTL, cluster mode (Redis), Multi-AZ with automatic failover.
 

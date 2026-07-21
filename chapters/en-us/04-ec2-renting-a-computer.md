@@ -90,7 +90,7 @@ running image uploads and database queries."
 
 "How much does that cost per month?" Tom asked, looking at the instance type comparison page.
 
-Leo pulled up the AWS pricing page. The t3.micro ran about $8 per month. The t3.small was $17. The t3.medium was $33. The t3.large was around $60. The gap widened fast as you moved up — not linearly, but roughly doubling with each size step. Tom wrote the numbers down, noting that each size step doubled the memory — but, curiously, not the CPU count. Every t3 from micro through large had the same 2 vCPUs; the count didn't increase until xlarge. What grew with each step was the **CPU credit baseline** — the share of those vCPUs the instance could use continuously without burning through its burst credits.
+Leo pulled up the AWS pricing page. The t3.micro ran about $8 per month. The t3.small was $17. The t3.medium was $33. The t3.large was around $60. The gap widened fast as you moved up — not linearly, but roughly doubling with each size step. Tom wrote the numbers down, noting that each size step doubled the memory — but, curiously, not the CPU count. Every t3 from micro through large had the same 2 vCPUs; the count didn't increase until xlarge. Each step doubled the memory; the **CPU credit baseline** — the share of those vCPUs the instance could use continuously without burning through its burst credits — grew too, though not at every step.
 
 Tom wrote "t3.micro" on the whiteboard and drew a sad face next to it.
 
@@ -313,9 +313,10 @@ When you *terminate* an instance, it's gone. Unless you have separate storage at
 The four states an EC2 instance can be in:
 
 **Pending**: The instance is starting up. It's been allocated hardware but hasn't
-finished booting. The UserData script is running.
+finished booting.
 
-**Running**: The instance is active and accessible. You're paying for it.
+**Running**: The instance is active and accessible. You're paying for it. On the
+first boot, this is also when the UserData script runs.
 
 **Stopping/Stopped**: The instance is shut down. The EBS root volume is preserved.
 You're not paying for compute, but you're still paying for the attached EBS storage.

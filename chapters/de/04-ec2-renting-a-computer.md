@@ -56,7 +56,7 @@ Leo hatte eine `t3.micro` gewählt.
 
 "Wie viel kostet das pro Monat?" fragte Tom und schaute auf die Vergleichsseite der Instanztypen.
 
-Leo rief die AWS-Preisseite auf. Die t3.micro kostete etwa 8 Dollar pro Monat. Die t3.small kostete 17 Dollar. Die t3.medium kostete 33 Dollar. Die t3.large kostete rund 60 Dollar. Die Lücke wurde schnell größer, je weiter man nach oben ging — nicht linear, sondern ungefähr verdoppelnd mit jedem Größenschritt. Tom schrieb die Zahlen auf und stellte fest, dass jeder Größenschritt den Speicher verdoppelte — aber, merkwürdigerweise, nicht die Anzahl der CPUs. Jede t3 von micro bis large hatte dieselben 2 vCPUs; die Anzahl stieg erst bei xlarge. Was mit jedem Schritt wuchs, war die **CPU-Credit-Baseline** — der Anteil dieser vCPUs, den die Instanz kontinuierlich nutzen konnte, ohne ihre Burst-Credits aufzubrauchen.
+Leo rief die AWS-Preisseite auf. Die t3.micro kostete etwa 8 Dollar pro Monat. Die t3.small kostete 17 Dollar. Die t3.medium kostete 33 Dollar. Die t3.large kostete rund 60 Dollar. Die Lücke wurde schnell größer, je weiter man nach oben ging — nicht linear, sondern ungefähr verdoppelnd mit jedem Größenschritt. Tom schrieb die Zahlen auf und stellte fest, dass jeder Größenschritt den Speicher verdoppelte — aber, merkwürdigerweise, nicht die Anzahl der CPUs. Jede t3 von micro bis large hatte dieselben 2 vCPUs; die Anzahl stieg erst bei xlarge. Jeder Schritt verdoppelte den Speicher; die **CPU-Credit-Baseline** — der Anteil dieser vCPUs, den die Instanz kontinuierlich nutzen konnte, ohne ihre Burst-Credits aufzubrauchen — stieg ebenfalls, allerdings nicht bei jedem Schritt.
 
 Tom schrieb "t3.micro" auf das Whiteboard und zeichnete ein trauriges Gesicht daneben.
 
@@ -250,9 +250,9 @@ Wenn Sie eine Instanz *terminieren*, ist sie weg. Sofern Sie keinen separaten Sp
 
 Die vier Zustände, in denen sich eine EC2-Instanz befinden kann:
 
-**Pending**: Die Instanz fährt hoch. Ihr wurde Hardware zugewiesen, aber sie hat das Booten noch nicht abgeschlossen. Das UserData-Skript läuft.
+**Pending**: Die Instanz fährt hoch. Ihr wurde Hardware zugewiesen, aber sie hat das Booten noch nicht abgeschlossen.
 
-**Running**: Die Instanz ist aktiv und zugänglich. Sie zahlen dafür.
+**Running**: Die Instanz ist aktiv und zugänglich. Sie zahlen dafür. Beim ersten Boot ist dies auch der Zeitpunkt, zu dem das UserData-Skript ausgeführt wird.
 
 **Stopping/Stopped**: Die Instanz ist heruntergefahren. Das EBS-Root-Volume bleibt erhalten. Sie zahlen nicht für Compute, aber Sie zahlen weiterhin für den angehängten EBS-Speicher.
 

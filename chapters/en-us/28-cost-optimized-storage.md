@@ -177,7 +177,7 @@ The `--iops 3000` and `--throughput 125` parameters matched gp3's baseline defau
 
 "And gp2 can't be modified in place?"
 
-"gp2 can be modified to gp3 in place. What you can't do is go back from gp3 to gp2 — at least, not easily, and there's no reason to."
+"gp2 can be modified to gp3 in place. And you can go back to gp2 the same way if you ever needed to — but nobody does, because gp3 gives you the same performance for less."
 
 The actual migration took 73 minutes from first command to completion across all 8 volumes. AWS modified each volume while it was mounted and in use. The API servers continued receiving traffic throughout. CloudWatch showed no spikes in I/O latency during the conversion — the transition was completely transparent to the running application.
 

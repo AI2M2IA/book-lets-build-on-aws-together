@@ -134,7 +134,7 @@ Block storage جو ایک واحد EC2 instance سے منسلک ہوتا ہے۔ 
 
 **S3 Storage Classes اور Lifecycle Policies** *(باب 23)*
 
-S3 Intelligent-Tiering objects کو رسائی کی تعدد کی بنیاد پر access tiers کے درمیان خودکار طور پر منتقل کرتا ہے۔ Lifecycle policies عمر کے قواعد کی بنیاد پر objects کو classes (Standard → Standard-IA → Glacier) کے درمیان منتقل کرتی ہیں۔ Glacier storage classes میں بازیافت کی تاخیر منٹوں (Glacier Instant) سے 12 گھنٹوں (Glacier Deep Archive) تک ہوتی ہے۔
+S3 Intelligent-Tiering objects کو رسائی کی تعدد کی بنیاد پر access tiers کے درمیان خودکار طور پر منتقل کرتا ہے۔ Lifecycle policies عمر کے قواعد کی بنیاد پر objects کو classes (Standard → Standard-IA → Glacier) کے درمیان منتقل کرتی ہیں۔ Glacier storage classes میں بازیافت کی تاخیر ملی سیکنڈز (Glacier Instant Retrieval) سے 12 گھنٹوں (Glacier Deep Archive) تک ہوتی ہے۔
 
 امتحانی اشارہ: "کم استعمال ہونے والے ڈیٹا کے لیے اسٹوریج لاگت کم کرنا" → lifecycle policies، Intelligent-Tiering، یا Glacier۔
 

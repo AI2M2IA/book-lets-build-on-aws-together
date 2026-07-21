@@ -78,7 +78,7 @@ Bevor gp3 zur Voreinstellung wurde, gab es **gp2** — und Sie werden ihm in fre
 
 "Wie viel mehr kostet io2 im Vergleich zu gp3?" fragte Tom und blickte von seinem Notizbuch auf.
 
-Leo rief die Preisseite auf. io2 kostete ungefähr das Dreifache der gp3-Kosten pro GB, plus eine separate Gebühr pro provisioniertem IOPS. Tom notierte die Lücke. "Wir verwenden also gp3, bis die Datenbank die Leistungsgarantie tatsächlich braucht."
+Leo rief die Preisseite auf. io2 kostete ungefähr 50–60 % mehr pro GB als gp3, plus eine separate Gebühr pro provisioniertem IOPS — und bei einem hochleistungsfähigen Volume dominieren diese IOPS-Gebühren die Rechnung. Tom notierte die Lücke. "Wir verwenden also gp3, bis die Datenbank die Leistungsgarantie tatsächlich braucht."
 
 Die Prüfung verlangt nicht, dass Sie alle Typen auswendig lernen. Sie testet aber Ihre Fähigkeit, Anforderungen dem richtigen Typ zuzuordnen: IOPS-Anforderungen → io2. Kostensensible sequenzielle Lasten → st1. Allgemeine Webanwendungen → gp3.
 
@@ -463,7 +463,7 @@ Toms roter Stift kreiste das eigentliche Problem ein: zu viel auf einer Maschine
   garantierte IOPS benötigen (große Datenbanken, geschäftskritische Systeme). Prüfungsszenarien,
   die "IOPS-Anforderungen" oder "konsistente Datenbankleistung mit niedriger Latenz" beschreiben,
   weisen auf io2 hin.
-- **gp2 vs. gp3:** gp2-IOPS sind an die Größe gekoppelt (3 IOPS/GB, max. 16.000 IOPS bei 5.334 GB); gp3-IOPS sind unabhängig von der Größe (3.000 Basis, konfigurierbar bis zu 80.000 seit Ende 2025 — ältere Materialien, und möglicherweise der Prüfungs-Fragenpool, gehen noch von der vorherigen Obergrenze von 16.000 aus). Prüfungsfragenmuster: Eine Last braucht mehr IOPS, ohne den Speicher zu erhöhen — die Antwort ist gp3 oder io2, nicht gp2.
+- **gp2 vs. gp3:** gp2-IOPS sind an die Größe gekoppelt (3 IOPS/GB, max. 16.000 IOPS bei 5.334 GB); gp3-IOPS sind unabhängig von der Größe (3.000 Basis, konfigurierbar bis zu 80.000 seit September 2025 — ältere Materialien, und möglicherweise der Prüfungs-Fragenpool, gehen noch von der vorherigen Obergrenze von 16.000 aus). Prüfungsfragenmuster: Eine Last braucht mehr IOPS, ohne den Speicher zu erhöhen — die Antwort ist gp3 oder io2, nicht gp2.
 - **Verschlüsselung im Ruhezustand für EBS**: Sie können ein bestehendes unverschlüsseltes Volume nicht
   an Ort und Stelle verschlüsseln — Sie müssen einen Snapshot machen, verschlüsselt kopieren, wiederherstellen. Aktivieren Sie Verschlüsselungs-
   voreinstellungen auf Kontoebene, um zu vermeiden, versehentlich unverschlüsselte Volumes zu erstellen. Verschlüsselung ist AES-256

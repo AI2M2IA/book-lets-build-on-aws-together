@@ -90,7 +90,7 @@ ejecutando subidas de imágenes y consultas a la base de datos.»
 
 «¿Cuánto cuesta eso al mes?» preguntó Tom, mirando la página de comparación de tipos de instancia.
 
-Leo abrió la página de precios de AWS. El t3.micro costaba unos 8 dólares al mes. El t3.small eran 17. El t3.medium eran 33. El t3.large rondaba los 60. La brecha se ampliaba rápido a medida que subías — no linealmente, sino aproximadamente duplicándose con cada paso de tamaño. Tom anotó los números, notando que cada paso de tamaño duplicaba la memoria — pero, curiosamente, no el número de CPU. Cada t3 de micro a large tenía las mismas 2 vCPUs; el número no aumentaba hasta xlarge. Lo que crecía con cada paso era la **línea base de créditos de CPU** — la parte de esas vCPUs que la instancia podía usar continuamente sin agotar sus créditos de pico.
+Leo abrió la página de precios de AWS. El t3.micro costaba unos 8 dólares al mes. El t3.small eran 17. El t3.medium eran 33. El t3.large rondaba los 60. La brecha se ampliaba rápido a medida que subías — no linealmente, sino aproximadamente duplicándose con cada paso de tamaño. Tom anotó los números, notando que cada paso de tamaño duplicaba la memoria — pero, curiosamente, no el número de CPU. Cada t3 de micro a large tenía las mismas 2 vCPUs; el número no aumentaba hasta xlarge. La **línea base de créditos de CPU** — la parte de esas vCPUs que la instancia podía usar continuamente sin agotar sus créditos de pico — también creció, aunque no en cada paso.
 
 Tom escribió «t3.micro» en la pizarra y dibujó una cara triste al lado.
 
@@ -313,9 +313,9 @@ Cuando *terminas* una instancia, desaparece. A menos que tengas almacenamiento s
 Los cuatro estados en los que puede estar una instancia EC2:
 
 **Pendiente (Pending)**: La instancia se está iniciando. Se le ha asignado hardware pero no ha
-terminado de arrancar. El script de UserData se está ejecutando.
+terminado de arrancar.
 
-**En ejecución (Running)**: La instancia está activa y accesible. Estás pagando por ella.
+**En ejecución (Running)**: La instancia está activa y accesible. Estás pagando por ella. En el primer arranque, también es en este momento cuando se ejecuta el script de UserData.
 
 **Deteniéndose/Detenida (Stopping/Stopped)**: La instancia está apagada. El volumen raíz de EBS se preserva.
 No estás pagando por el cómputo, pero todavía pagas por el almacenamiento EBS adjunto.

@@ -118,8 +118,8 @@ apropiado para nada urgente.
 
 «¿Cuánto más cuesta io2 comparado con gp3?» preguntó Tom, levantando la vista de su cuaderno.
 
-Leo abrió la página de precios. io2 costaba aproximadamente tres veces el coste por GB de gp3,
-más un cargo separado por IOPS aprovisionada. Tom anotó la brecha. «Así que usamos gp3 hasta
+Leo abrió la página de precios. io2 costaba aproximadamente un 50–60% más por GB que gp3,
+más un cargo separado por IOPS aprovisionada — y en un volumen de alto rendimiento, esos cargos por IOPS son los que dominan la factura. Tom anotó la brecha. «Así que usamos gp3 hasta
 que la base de datos realmente necesite la garantía de rendimiento.»
 
 El examen no requiere que memorices todos los tipos. Sí evalúa tu capacidad para
@@ -545,7 +545,7 @@ El bolígrafo rojo de Tom rodeó el problema real: demasiado en una máquina. Mo
   necesitan IOPS garantizadas (grandes bases de datos, sistemas de misión crítica). Los escenarios del examen
   que describen «requisitos de IOPS» o «rendimiento de base de datos consistente de baja latencia»
   apuntan hacia io2.
-- **gp2 vs gp3:** las IOPS de gp2 están acopladas al tamaño (3 IOPS/GB, máx 16.000 IOPS a 5.334 GB); las IOPS de gp3 son independientes del tamaño (3.000 de base, configurables hasta 80.000 desde finales de 2025 — el material más antiguo, y posiblemente el banco de preguntas del examen, todavía asume el límite anterior de 16.000). Patrón de pregunta de examen: una carga de trabajo necesita más IOPS sin aumentar el almacenamiento — la respuesta es gp3 o io2, no gp2.
+- **gp2 vs gp3:** las IOPS de gp2 están acopladas al tamaño (3 IOPS/GB, máx 16.000 IOPS a 5.334 GB); las IOPS de gp3 son independientes del tamaño (3.000 de base, configurables hasta 80.000 desde septiembre de 2025 — el material más antiguo, y posiblemente el banco de preguntas del examen, todavía asume el límite anterior de 16.000). Patrón de pregunta de examen: una carga de trabajo necesita más IOPS sin aumentar el almacenamiento — la respuesta es gp3 o io2, no gp2.
 - **Cifrado en reposo para EBS**: No puedes cifrar un volumen existente no cifrado
   en el lugar — debes hacer una instantánea, copiar cifrada, restaurar. Habilita los valores predeterminados de cifrado
   a nivel de cuenta para evitar crear volúmenes no cifrados accidentalmente. El cifrado es AES-256

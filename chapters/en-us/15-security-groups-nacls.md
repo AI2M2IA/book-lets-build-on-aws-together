@@ -259,7 +259,7 @@ That was the data exfiltration attempt — 2.8 kilobytes sent to the Romanian IP
 She showed the updated security group outbound rules:
 
 ```
-TCP 443 → pl-63a5400a (AWS S3 gateway endpoint prefix list)
+TCP 443 → pl-68a54001 (AWS S3 gateway endpoint prefix list)
 TCP 443 → pl-02cd2c6b (AWS CloudWatch Logs)
 TCP 443 → 54.239.0.0/18 (AWS package repos — narrows over time)
 ```

@@ -122,8 +122,9 @@ appropriate for anything time-sensitive.
 
 "How much more does io2 cost compared to gp3?" Tom asked, looking up from his notebook.
 
-Leo pulled up the pricing page. io2 ran roughly three times the per-GB cost of gp3,
-plus a separate charge per IOPS provisioned. Tom noted the gap. "So we use gp3 until
+Leo pulled up the pricing page. io2 ran roughly 50–60% more per GB than gp3, plus a
+separate charge per IOPS provisioned — and on a high-performance volume, those
+per-IOPS charges are what dominate the bill. Tom noted the gap. "So we use gp3 until
 the database actually needs the performance guarantee."
 
 The exam doesn't require you to memorize all types. It does test your ability to
@@ -502,7 +503,7 @@ Tom looked up the cost of off-site tape storage. He closed that tab without comm
 
 - More expensive than S3 per GB
 - Higher latency than EBS for random I/O
-- Not available in all Regions
+- Linux/NFS only — Windows workloads need FSx for Windows File Server
 
 ## Moving Data In Bulk: DataSync and the Snow Family
 
@@ -549,7 +550,7 @@ Tom's red pen circled the real problem: too much on one machine. Moving storage 
   need guaranteed IOPS (large databases, mission-critical systems). Exam scenarios
   describing "IOPS requirements" or "consistent low-latency database performance"
   point toward io2.
-- **gp2 vs. gp3:** gp2 IOPS are coupled to size (3 IOPS/GB, max 16,000 IOPS at 5,334 GB); gp3 IOPS are independent of size (3,000 base, configurable up to 80,000 since late 2025 — older material, and possibly the exam question bank, still assumes the previous 16,000 cap). Exam question pattern: a workload needs more IOPS without increasing storage — the answer is gp3 or io2, not gp2.
+- **gp2 vs. gp3:** gp2 IOPS are coupled to size (3 IOPS/GB, max 16,000 IOPS at 5,334 GB); gp3 IOPS are independent of size (3,000 base, configurable up to 80,000 since September 2025 — older material, and possibly the exam question bank, still assumes the previous 16,000 cap). Exam question pattern: a workload needs more IOPS without increasing storage — the answer is gp3 or io2, not gp2.
 - **Encryption at rest for EBS**: You cannot encrypt an existing unencrypted volume
   in place — you must snapshot, copy encrypted, restore. Enable account-level encryption
   defaults to avoid creating unencrypted volumes accidentally. Encryption is AES-256

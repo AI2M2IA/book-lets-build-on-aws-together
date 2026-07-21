@@ -1,478 +1,480 @@
 # Chương 29: Hóa Đơn Cơ Sở Dữ Liệu
 
-Tom in các chỉ số CloudWatch. Mười bốn trang. Anh trải chúng ra khắp bàn trước khi tin tưởng bản thân có thể đọc các con số. Tốt hơn là thấy mọi thứ cùng một lúc còn hơn là tìm ra bất ngờ giữa trang.
+Tom in các số liệu CloudWatch ra. Mười bốn trang. Anh trải chúng ra bàn trước khi tự tin đọc các con số. Tốt hơn là thấy tất cả cùng một lúc thay vì gặp bất ngờ ở giữa trang.
 
-**Tóm tắt nhanh: Lưu Trữ Đã Xong, Cơ Sở Dữ Liệu Là Tiếp Theo**
+Kiểm toán lưu trữ đã phát hiện ra 6.700 đô la lãng phí tích lũy — không phải từ các quyết định tồi, mà từ sự bất cẩn. Các volume không gắn kết, snapshot cũ, lịch sử phiên bản mà không ai nói S3 phải dọn dẹp, các multipart upload chưa hoàn tất âm thầm tích lũy trong nhiều tháng. Tom đã sửa tất cả những điều đó, áp dụng các quy tắc dọn dẹp tự động, và chuyển sang tab tiếp theo trong bảng tính. Tầng dữ liệu là ẩn số lớn nhất còn lại: cơ sở dữ liệu quan hệ, bảng NoSQL, nút bộ nhớ đệm, lưu trữ sao lưu, và một khoản mục đã làm anh băn khoăn trong nhiều tuần.
 
-Đợt kiểm toán lưu trữ đã phát hiện $6,700 lãng phí tích lũy — không phải từ những quyết định tồi, mà từ sự thiếu chú ý. Các volume không được gắn, snapshot cũ, lịch sử phiên bản mà không ai bảo S3 dọn dẹp, các tải lên multipart chưa hoàn thành tích lũy lặng lẽ trong nhiều tháng. Tom đã sửa tất cả, triển khai các quy tắc dọn dẹp tự động, và chuyển sang tab tiếp theo trong bảng tính. Tầng dữ liệu là ẩn số lớn nhất còn lại: cơ sở dữ liệu quan hệ, bảng NoSQL, node cache, lưu trữ backup, và một khoản mục đã làm anh bận lòng trong nhiều tuần.
+Các khoản mục tầng dữ liệu đang xem xét:
 
-Các khoản mục tầng dữ liệu đang được xem xét:
+Cụm Aurora: 647 đô la/tháng.
+Các read replica RDS PostgreSQL cũ: 340 đô la/tháng.
+Bảng DynamoDB: 340 đô la/tháng.
+ElastiCache: 185 đô la/tháng.
+Snapshot thủ công Aurora: 87 đô la/tháng.
 
-Cụm Aurora: $647/tháng.
-RDS PostgreSQL read replica cũ: $340/tháng.
-Bảng DynamoDB: $340/tháng.
-ElastiCache: $185/tháng.
-Snapshot thủ công Aurora: $87/tháng.
+Tổng tầng dữ liệu đang xem xét: 1.599 đô la/tháng.
 
-Tổng tầng dữ liệu đang được xem xét: $1,599/tháng.
+"Hãy để tôi hiểu từng cái trước khi quyết định bất cứ điều gì," anh nói. "Vì cơ sở dữ liệu không phải nơi để tiết kiệm tiền bằng cách cắt bỏ góc cạnh."
 
-"Để tôi hiểu từng cái trước khi quyết định bất cứ điều gì," anh nói. "Vì cơ sở dữ liệu không phải nơi tiết kiệm tiền bằng cách cắt góc."
+Điều đó thật sáng suốt. Cấu hình sai cơ sở dữ liệu dẫn đến mất dữ liệu hoặc suy giảm hiệu suất sẽ tốn kém hơn nhiều so với bất kỳ khoản tiết kiệm nào.
 
-Điều này khôn ngoan. Cấu hình cơ sở dữ liệu sai gây ra mất dữ liệu hoặc suy giảm hiệu suất tốn kém hơn nhiều so với khoản tiết kiệm.
+Hãy nghĩ về cơ sở dữ liệu như động cơ của một chiếc xe. Bạn có thể tiết kiệm tiền từ một chiếc xe bằng cách chuyển sang nhiên liệu rẻ hơn, điều chỉnh áp suất lốp, và loại bỏ trọng lượng không cần thiết ra khỏi cốp xe. Nhưng nếu bạn cố tiết kiệm tiền bằng cách bỏ qua thay dầu, bạn có nguy cơ bóp chết động cơ — và một động cơ bị hỏng tốn kém hơn nhiều so với bất kỳ khoản tiết kiệm nhiên liệu nào. Cuộc kiểm toán mà Tom sắp thực hiện tuân theo cùng logic: tìm lãng phí trong cốp xe và bình nhiên liệu, và đừng chạm vào động cơ cho đến khi bạn biết chính xác những gì bạn đang làm.
 
-Hãy nghĩ về cơ sở dữ liệu như động cơ của một chiếc xe. Bạn có thể tiết kiệm tiền cho xe bằng cách chuyển sang nhiên liệu rẻ hơn, điều chỉnh áp suất lốp và loại bỏ trọng lượng không cần thiết khỏi cốp. Nhưng nếu bạn cố tiết kiệm tiền bằng cách bỏ qua thay dầu, bạn có nguy cơ bó động cơ — và một động cơ bị bó tốn kém hơn nhiều so với bất kỳ khoản tiết kiệm nhiên liệu nào. Cuộc kiểm toán mà Tom sắp thực hiện tuân theo cùng logic: tìm lãng phí trong cốp và thùng nhiên liệu, và để yên động cơ cho đến khi bạn biết chính xác bạn đang làm gì.
+**Đầu Tiên Hãy Hiểu Khối Lượng Công Việc Cơ Sở Dữ Liệu**
 
-**Hiểu Khối Lượng Công Việc Cơ Sở Dữ Liệu Của Bạn Trước**
+Tối ưu hóa chi phí trong cơ sở dữ liệu đòi hỏi phải hiểu khối lượng công việc trước khi chạm vào bất cứ điều gì. Tom đã học được điều này từ một lần suýt xảy ra sự cố sáu tháng trước: anh đã bắt đầu giảm kích thước instance cơ sở dữ liệu dựa trên mức sử dụng CPU trung bình — 18% — mà không nhìn vào các con số p95 trước. Một đồng nghiệp đã yêu cầu anh kiểm tra các số liệu CloudWatch cẩn thận hơn. CPU p95 là 61%, và đạt 84% trong một đêm thứ Sáu đặc biệt bận rộn.
 
-Tối ưu hóa chi phí trong cơ sở dữ liệu đòi hỏi hiểu khối lượng công việc trước khi chạm vào bất cứ thứ gì. Tom đã học được điều này từ một lần suýt sai sáu tháng trước: anh đã bắt đầu giảm kích thước instance cơ sở dữ liệu dựa trên mức sử dụng CPU trung bình — 18% — mà không xem các con số p95 trước. Một đồng nghiệp đã yêu cầu anh kiểm tra các chỉ số CloudWatch cẩn thận hơn. CPU p95 là 61%, và trong một đợt cao điểm bữa tối thứ Sáu đặc biệt nặng, nó đã chạm 84%.
+"Trung bình không cho bạn biết những gì xảy ra lúc cao điểm," Tom nói với Priya khi kể lại. "Nếu tôi đã điều chỉnh kích thước dựa trên trung bình, chúng ta sẽ bị throttle vào những tối thứ Sáu."
 
-"Mức trung bình không cho bạn biết điều gì xảy ra ở cao điểm," Tom nói, khi anh kể cho Priya về điều đó. "Nếu tôi đã right-size theo mức trung bình, chúng ta sẽ bị throttle vào các tối thứ Sáu."
+"Đó là lý do tại sao bạn nhìn vào p95, không phải trung bình," Priya nói. "Lúc nào cũng vậy."
 
-"Đó là lý do tại sao bạn nhìn p95, không phải trung bình," Priya nói. "Luôn luôn."
-
-Nguyên tắc đó mở rộng ra ngoài CPU. Tom giờ có một danh sách kiểm tra trước kiểm toán tiêu chuẩn:
+Nguyên tắc đó mở rộng ra ngoài CPU. Tom giờ đây có một danh sách kiểm tra tiêu chuẩn trước khi kiểm toán:
 
 - CPU: p95, không phải trung bình
-- Bộ nhớ: FreeableMemory (tính bằng byte tuyệt đối, không phải phần trăm) — chúng ta gần với giới hạn đến mức nào?
-- Kết nối: DatabaseConnections tối đa trong 30 ngày gần nhất — chúng ta đã đến gần giới hạn kết nối đến mức nào?
-- Tỷ lệ đọc/ghi: Xác định liệu các read replica có xứng đáng với chi phí của chúng không
-- Tốc độ tăng trưởng lưu trữ: Chúng ta đang thêm bao nhiêu GB mỗi tháng?
-- Độ trễ sao chép (cho các replica): Replica có theo kịp không?
+- Bộ nhớ: FreeableMemory (theo byte tuyệt đối, không phải phần trăm) — chúng ta gần giới hạn bao nhiêu?
+- Kết nối: DatabaseConnections tối đa trong 30 ngày qua — chúng ta gần giới hạn kết nối đến đâu?
+- Tỷ lệ đọc/ghi: Xác định liệu các read replica có xứng đáng với chi phí không
+- Tốc độ tăng trưởng lưu trữ: Chúng ta thêm bao nhiêu GB mỗi tháng?
+- Độ trễ nhân bản (đối với replica): Replica có theo kịp không?
 
-Các câu hỏi chính:
+Các câu hỏi cơ bản:
 
 - Mức sử dụng CPU trung bình và cao điểm là bao nhiêu?
 - Tỷ lệ đọc/ghi là bao nhiêu?
 - Lưu trữ đang tăng, ổn định, hay giảm?
 - Các read replica có đang được sử dụng không?
-- Instance có được cấp phát thiếu (gây chậm) hay cấp phát dư (trả tiền cho năng lực nhàn rỗi)?
+- Instance được cấp phép không đủ (gây chậm) hay quá mức (trả tiền cho dung lượng rảnh)?
 
-Tom đã mở các chỉ số CloudWatch cho tất cả ba dịch vụ cơ sở dữ liệu trong 30 ngày trước:
+Tom đã lấy số liệu CloudWatch của ba dịch vụ cơ sở dữ liệu trong 30 ngày trước:
 
 **Cụm Aurora**:
 
-- CPU trung bình: 18% (p95: 61%; cao điểm: 84% vào các tối thứ Sáu)
-- FreeableMemory: luôn trên 4GB trong số 8GB khả dụng. Không phải mối lo.
-- Tỷ lệ đọc/ghi: 14:1 (nặng về đọc)
-- Lưu trữ: 180GB (tăng ~5GB/tháng)
-- DatabaseConnections tối đa: 312 trong số 1,000 khả dụng. Thoải mái.
+- CPU trung bình: 18% (p95: 61%; cao điểm: 84% vào tối thứ Sáu)
+- FreeableMemory: Ổn định trên 4GB trong 8GB khả dụng. Không đáng lo ngại.
+- Tỷ lệ đọc/ghi: 14:1 (thiên về đọc)
+- Lưu trữ: 180GB (~5GB/tháng tăng trưởng)
+- DatabaseConnections tối đa: 312 trong 1.000 khả dụng. Thoải mái.
 
-**Read replicas (RDS PostgreSQL, riêng biệt từ Aurora)**:
+**Read replica (RDS PostgreSQL, tách biệt với Aurora)**:
 
-- Đây là hai RDS read replica cũ được tạo trước khi di chuyển Aurora, vẫn đang chạy.
-- Số kết nối trung bình đến mỗi cái: 2 mỗi ngày. CPU trung bình: 3%.
-- FreeableMemory: 7.2GB trong số 8GB khả dụng. Các instance gần như nhàn rỗi.
+- Đây là hai read replica RDS cũ được tạo trước khi di chuyển sang Aurora, vẫn đang chạy.
+- Kết nối trung bình mỗi cái: 2 mỗi ngày. CPU trung bình: 3%.
+- FreeableMemory: 7,2GB trong 8GB khả dụng. Các instance gần như nhàn rỗi.
 
-"Tại sao những cái này vẫn đang chạy?" Tom hỏi.
+"Tại sao những cái này vẫn chạy?" Tom hỏi.
 
-"Tôi đã triển khai chúng rồi — ồ," Leo nói. Anh nhìn vào ngày tạo instance. "Chúng dành cho dự phòng trong quá trình di chuyển Aurora. Tôi không bao giờ xóa chúng."
+"Tôi đã deploy chúng — ồ," Leo nói. Anh nhìn vào ngày tạo instance. "Chúng dự phòng trong quá trình di chuyển Aurora. Tôi không bao giờ xóa chúng."
 
-Khoảnh khắc đó — khi một thứ tốn kém đã chạy trong nhiều tháng mà không được sử dụng — quen thuộc trong môi trường cloud. Leo đã tạo các replica như một lưới an toàn. Lưới an toàn chưa bao giờ được cần đến. Nhưng không ai đặt câu hỏi cho đến bây giờ.
+Khoảnh khắc đó — khi thứ gì đó tốn kém đang chạy mà không được sử dụng trong nhiều tháng — là khoảnh khắc quen thuộc trong môi trường đám mây. Leo đã tạo các replica như một mạng lưới an toàn. Mạng lưới an toàn không bao giờ cần thiết. Nhưng không ai đặt câu hỏi cho đến bây giờ.
 
-"Tình hình connection pool ra sao?" Priya hỏi, ghé vào. "Trước khi xóa chúng, có bất kỳ thành phần ứng dụng nào vẫn đang định tuyến các lượt đọc đến đó không?"
+"Tình trạng connection pool như thế nào?" Priya hỏi, nghiêng người về phía trước. "Trước khi xóa chúng, có thành phần ứng dụng nào vẫn đang định tuyến reads đến đó không?"
 
-Tom kiểm tra log kết nối. Hai kết nối mỗi ngày đến từ một script giám sát mà Priya đã viết mười bốn tháng trước — nó thăm dò tất cả các endpoint cơ sở dữ liệu đã biết để xác minh chúng đang phản hồi. Các replica chỉ được truy vấn bởi bộ kiểm tra sức khỏe, không phải bởi bất kỳ lưu lượng ứng dụng thực tế nào.
+Tom kiểm tra logs kết nối. Hai kết nối mỗi ngày đến từ một script giám sát mà Priya đã viết mười bốn tháng trước — nó thăm dò tất cả các endpoint cơ sở dữ liệu đã biết để xác minh chúng có phản hồi không. Các replica chỉ được truy vấn bởi health checker, không phải bởi bất kỳ lưu lượng ứng dụng thực sự nào.
 
-"Xóa chúng đi," Maya nói.
+"Xóa chúng," Maya nói.
 
-Các replica đã bị kết thúc. Tiết kiệm hằng tháng: $340.
+Các replica đã bị chấm dứt. Tiết kiệm hàng tháng: 340 đô la.
 
-**Suýt Sai Về Connection Pool**
+**Sự Cố Gần Xảy Ra Về Connection Pool**
 
-Trong khi đang mở các chỉ số kết nối, Tom chạy một đợt kiểm tra rộng hơn trên tất cả các endpoint cơ sở dữ liệu. Điều anh tìm thấy khiến anh dừng lại.
+Khi đang kiểm tra các số liệu kết nối, Tom thực hiện kiểm tra rộng hơn trên tất cả các endpoint cơ sở dữ liệu. Những gì anh tìm thấy đã khiến anh dừng lại.
 
-Endpoint writer của Aurora cho thấy DatabaseConnections tối đa là 312. Thoải mái. Nhưng endpoint reader kể một câu chuyện khác.
+Endpoint writer Aurora hiển thị DatabaseConnections tối đa là 312. Thoải mái. Nhưng endpoint reader kể một câu chuyện khác.
 
-"Endpoint reader chạm 847 kết nối vào ba tối thứ Sáu liên tiếp," Tom nói.
+"Endpoint reader đạt 847 kết nối vào ba tối thứ Sáu liên tiếp," Tom nói.
 
 "Giới hạn là bao nhiêu?" Priya hỏi.
 
-"Giới hạn cho lớp instance hiện tại của chúng ta là 1,000. Chúng ta đến 847. Đó là 85% của giới hạn."
+"Giới hạn cho lớp instance hiện tại của chúng ta là 1.000. Chúng ta đạt 847. Đó là 85% giới hạn."
 
-"Và chúng ta không để ý vì chúng ta không bị báo động cho đến 90%?" Maya hỏi.
+"Và chúng ta không nhận thấy vì cảnh báo không kích hoạt cho đến 90%?" Maya hỏi.
 
-"Chúng ta hoàn toàn không bị báo động," Tom nói. "Không có cảnh báo CloudWatch nào về các kết nối endpoint reader. Tôi chỉ tìm ra điều này vì tôi đang nhìn vào các chỉ số thô."
+"Không có cảnh báo nào cả," Tom nói. "Không có CloudWatch alarm nào trên các kết nối reader endpoint. Tôi chỉ tìm thấy điều này vì tôi đã xem xét các số liệu thô."
 
-Ở 1,000 kết nối, cơ sở dữ liệu từ chối các kết nối mới. Bất kỳ luồng ứng dụng nào cố gắng lấy một kết nối cơ sở dữ liệu vào thời điểm đó sẽ ném ra một ngoại lệ. Nếu ngoại lệ đó không được xử lý một cách linh hoạt, người dùng thấy lỗi 500.
+Ở 1.000 kết nối, cơ sở dữ liệu từ chối kết nối mới. Bất kỳ luồng ứng dụng nào đang cố gắng lấy kết nối cơ sở dữ liệu tại thời điểm đó sẽ ném ra một ngoại lệ. Nếu ngoại lệ đó không được xử lý khéo léo, người dùng sẽ thấy lỗi 500.
 
-"Chúng ta chỉ cách một sự cố tối thứ Sáu ba mươi giây," Leo nói. "Ba lần liên tiếp."
+"Chúng ta cách một sự cố thứ Sáu tối ba mươi giây," Leo nói. "Ba lần liên tiếp."
 
-"Chúng ta đã nghĩ về điều gì xảy ra khi ngưỡng đó bị vượt qua chưa?" Priya hỏi.
+"Chúng ta đã nghĩ đến điều gì sẽ xảy ra khi ngưỡng đó bị vượt qua chưa?" Priya hỏi.
 
-"Các đối tác nhà hàng thấy đơn hàng thất bại trong giờ cao điểm bữa tối," Maya nói. "Đó không phải là một mối lo lý thuyết."
+"Các đối tác nhà hàng thấy đơn hàng thất bại trong giờ cao điểm bữa tối," Maya nói. "Đây không phải là mối lo ngại lý thuyết."
 
-Tom thiết lập một cảnh báo CloudWatch ngay lập tức: cảnh báo ở 750 kết nối (75% giới hạn), nhắn tin khẩn ở 900 (90%). Anh cũng triển khai RDS Proxy cho endpoint reader — RDS Proxy gộp và quản lý các kết nối cơ sở dữ liệu từ tầng ứng dụng, nghĩa là năm mươi luồng ứng dụng có thể chia sẻ mười kết nối cơ sở dữ liệu. Proxy xử lý việc ghép kênh. Cơ sở dữ liệu thấy ít kết nối hơn nhiều ngay cả khi ứng dụng đang chịu tải nặng.
+Tom ngay lập tức thiết lập CloudWatch alarm: cảnh báo ở 750 kết nối (75% giới hạn), gọi pager ở 900 (90%). Anh cũng đã triển khai RDS Proxy cho reader endpoint — RDS Proxy pools và quản lý kết nối cơ sở dữ liệu từ lớp ứng dụng, có nghĩa là năm mươi luồng ứng dụng có thể chia sẻ mười kết nối cơ sở dữ liệu. Proxy xử lý việc ghép kênh. Ngay cả khi ứng dụng đang tải nặng, cơ sở dữ liệu sẽ thấy ít kết nối hơn nhiều.
 
-"Đối với Aurora Serverless v2, RDS Proxy được tính giá $0.015 mỗi ACU mỗi giờ, với mức phí tối thiểu 8 ACU mỗi proxy," Tom nói. "Nhưng nếu một lần vi phạm giới hạn kết nối gây ra dù chỉ một sự cố một phần vào tối thứ Sáu, chi phí danh tiếng cho Nimbus cao hơn nhiều bậc."
+"RDS Proxy cho Aurora Serverless v2 được định giá ở mức 0,015 đô la mỗi giờ mỗi ACU, với mức tối thiểu 8 ACU mỗi proxy," Tom nói. "Nhưng nếu vi phạm giới hạn kết nối gây ra ngay cả một sự cố dừng hoạt động một phần vào một tối thứ Sáu, chi phí danh tiếng cho Nimbus sẽ cao hơn nhiều bậc độ lớn."
 
-"Cái đó tốn bao nhiêu mỗi tháng?" Tom tự hỏi, chạy con số. Reader của họ chạy trên Serverless v2, nên proxy tính phí theo mức tối thiểu 8 ACU: $0.015 × 8 × 730 = $87.60/tháng. Đó là một chi phí anh vui lòng trả.
+"Chi phí mỗi tháng là bao nhiêu?" Tom tự hỏi, tính toán con số. Reader đang chạy trên Serverless v2, vì vậy proxy được tính theo mức tối thiểu 8 ACU: 0,015 × 8 × 730 = 87,60 đô la/tháng. Đó là chi phí mà anh vui lòng trả.
 
-Bạn có thể đang tự hỏi: nếu chúng ta đã tiết kiệm tiền với khả năng tự động mở rộng của Serverless v2, tại sao phải bận tâm với Reserved Instances cho tầng được cấp phát? Câu trả lời là việc mở rộng của Serverless v2 có một chi phí — bạn trả theo ACU-giờ dù bạn có lên kế hoạch cho nó hay không. Đối với các nhóm chạy cấu hình Aurora cố định, cam kết RI chuyển chi phí biến đổi thành chi phí có thể dự đoán. Đối với các nhóm chạy instance được cấp phát (không phải Serverless v2), sự phân biệt đó quan trọng đáng kể.
+Bạn có thể đang thắc mắc: nếu chúng ta đã tiết kiệm tiền với khả năng tự động scaling của Serverless v2, tại sao lại lo lắng về Reserved Instance với lớp provisioned? Câu trả lời là: scaling của Serverless v2 có chi phí — bạn trả theo ACU-giờ dù bạn có lên kế hoạch hay không. Đối với các nhóm chạy cấu hình Aurora cố định, cam kết RI chuyển đổi chi phí biến đổi thành chi phí có thể dự đoán. Đối với các nhóm chạy instance provisioned (không phải Serverless v2), sự phân biệt này quan trọng đáng kể.
 
-**RDS Reserved Instances: Cho Các Tầng Cơ Sở Dữ Liệu Được Cấp Phát**
+**RDS Reserved Instance: Đối Với Các Lớp Cơ Sở Dữ Liệu Được Cấp Phép**
 
-Giống như EC2, RDS cung cấp Reserved Instances cho cam kết sử dụng.
+Giống như EC2, RDS cung cấp Reserved Instance để sử dụng có cam kết.
 
-Đối với các nhóm sử dụng cấu hình Aurora instance cố định (không phải Serverless v2), Reserved Instances có thể tiết kiệm 30-60%. Đây là cách tiếp cận RI được cấp phát hoạt động: bạn cam kết với một loại instance cụ thể trong 1 hoặc 3 năm để đổi lấy mức giảm đáng kể trên mức giá theo giờ.
+Đối với các nhóm sử dụng cấu hình Aurora instance cố định (không phải Serverless v2), Reserved Instance có thể tiết kiệm 30–60%. Cách tiếp cận RI provisioned hoạt động như sau: bạn cam kết một loại instance cụ thể trong 1 hoặc 3 năm để đổi lấy khoản giảm giá đáng kể trên tỷ lệ theo giờ.
 
-Để minh họa: một instance writer db.r6g.large ở $0.26/giờ On-Demand chạy $190/tháng. Một Reserved Instance 1 năm cho cùng cái đó giảm xuống còn khoảng $108/tháng — tiết kiệm $82/tháng mỗi instance, hoặc gần $1,000 mỗi năm mỗi instance cơ sở dữ liệu.
+Ví dụ: một instance writer db.r6g.large theo On-Demand với 0,26 đô la/giờ tốn 190 đô la/tháng. Reserved Instance 1 năm cho cùng loại đó giảm xuống khoảng 108 đô la/tháng — tiết kiệm 82 đô la mỗi tháng mỗi instance, khoảng 1.000 đô la/năm mỗi instance cơ sở dữ liệu.
 
 **Aurora Serverless v2 vs Standard RI — Điểm Hòa Vốn**
 
-Tom chạy các con số cho cấu hình Aurora cụ thể của họ. Câu hỏi: liệu khả năng tự động mở rộng của Aurora Serverless v2 có mang lại đủ lợi ích không, hay một instance được cấp phát cố định với cam kết Reserved Instance sẽ rẻ hơn?
+Tom tính toán con số cho cấu hình Aurora cụ thể của họ. Câu hỏi: liệu khả năng tự động scaling của Aurora Serverless v2 có mang lại đủ lợi ích, hay một instance provisioned cố định với cam kết Reserved Instance sẽ rẻ hơn?
 
-Giá Serverless v2: $0.12 mỗi ACU-giờ. Cụm của họ mở rộng giữa 0.5 ACU (nhàn rỗi) và 16 ACU (tải cao điểm). Trong 30 ngày gần nhất, mức trung bình là 4.2 ACU.
+Định giá Serverless v2: 0,12 đô la mỗi ACU-giờ. Cụm của họ scale từ 0,5 ACU (nhàn rỗi) đến 16 ACU (tải cao điểm). Trung bình trong 30 ngày qua là 4,2 ACU.
 
-Chi phí Serverless v2 hằng tháng: 4.2 ACU × $0.12 × 730 giờ = $368/tháng cho writer.
+Chi phí Serverless v2 hàng tháng: 4,2 ACU × 0,12 đô la × 730 giờ = 368 đô la/tháng.
 
-So sánh: một db.r6g.2xlarge cố định (mức tương đương được cấp phát ước tính của họ, được định cỡ để xử lý tải p95) với một RI 1 năm: $0.48/giờ × 0.60 (giảm giá RI) × 730 = $210/tháng.
+So sánh: một db.r6g.xlarge cố định với RI 1 năm (có kích thước để xử lý tải p95 ngày thường, tương đương provisioned ước tính): 0,52 đô la/giờ × 0,60 (giảm giá RI) × 730 = 228 đô la/tháng.
 
 "RI rẻ hơn," Leo nói.
 
-"Đối với một tải cố định thì đúng," Tom nói. "Nhưng nhìn vào độ chênh. Giai đoạn lưu lượng thấp của chúng ta — 2 giờ sáng đến 7 giờ sáng, thứ Hai đến thứ Năm — trung bình 0.8 ACU. Trên một instance được cấp phát cố định, chúng ta sẽ trả cho gấp 8 lần những gì chúng ta đang dùng trong những giờ đó, chỉ ngồi nhàn rỗi."
+"Đối với tải cố định, có," Tom nói. "Nhưng hãy nhìn vào phân phối. Thời gian lưu lượng thấp của chúng ta — thứ Hai đến thứ Năm, 02:00–07:00 — trung bình 0,8 ACU. Với một instance provisioned cố định, chúng ta sẽ trả gấp nhiều lần những gì chúng ta sử dụng trong những giờ đó, chỉ để nó ngồi nhàn rỗi."
 
-"Và Serverless v2 thu nhỏ xuống để khớp?"
+"Và Serverless v2 scale xuống để phù hợp?"
 
-"Xuống 0.5 ACU. Chi phí nhàn rỗi chỉ là một phần nhỏ của những gì chúng ta sẽ trả cho một instance được cấp phát định cỡ cho cao điểm."
+"Đến 0,5 ACU. Chi phí nhàn rỗi là một phần nhỏ của những gì chúng ta sẽ trả cho một instance provisioned được kích thước cho cao điểm."
 
-Phép tính điểm hòa vốn: Serverless v2 rẻ hơn khi tỷ lệ cao điểm/cơ sở của bạn trên khoảng 4:1. Đối với Nimbus, với cao điểm thứ Sáu ở 16 ACU và mức tối thiểu sáng thứ Hai ở 0.8 ACU — tỷ lệ 20:1 — Serverless v2 là lựa chọn đúng. Nếu lưu lượng của họ nhất quán hơn (chẳng hạn, 8 ACU ± 20%), một RI được cấp phát sẽ rẻ hơn.
+Phép tính hòa vốn: Serverless v2 rẻ hơn khi tỷ lệ cao điểm/nền tảng của bạn vượt quá khoảng 4:1. Đối với Nimbus với cao điểm thứ Sáu là 16 ACU và mức tối thiểu sáng thứ Hai là 0,8 ACU — tỷ lệ 20:1 — Serverless v2 là lựa chọn đúng. Nếu lưu lượng của họ nhất quán hơn (giả sử 8 ACU ± 20%), một RI provisioned sẽ rẻ hơn.
 
-"Nó không chỉ là về con số nào nhỏ hơn tháng này," Tom nói. "Nó là về mô hình nào xử lý sự tăng trưởng của chúng ta đúng cách. Nếu chúng ta tăng 50% quý sau, Serverless v2 chỉ cần mở rộng lên. Một RI được cấp phát sẽ cần định cỡ lại, và chúng ta sẽ trả cho khoảng dự phòng không sử dụng trong giai đoạn chuyển tiếp."
+"Đây không chỉ là về con số nào nhỏ hơn tháng này," Tom nói. "Mà là về mô hình nào xử lý tốt sự tăng trưởng của chúng ta. Nếu chúng ta tăng 50% vào quý tới, Serverless v2 chỉ cần scale lên. Một RI provisioned đòi hỏi phải thay đổi kích thước và chúng ta sẽ trả tiền cho dung lượng chưa sử dụng trong quá trình chuyển đổi."
 
-Tom vạch ra so sánh cả năm một cách rõ ràng để nhóm có thể theo dõi lý luận, không chỉ kết luận.
+Tom đã làm rõ so sánh trong suốt một năm để nhóm có thể theo dõi lý luận, không chỉ kết quả.
 
-**Chi phí Aurora theo từng tháng: Serverless v2 vs RI được cấp phát**
+**Chi phí Aurora theo tháng: Serverless v2 vs provisioned RI**
 
-Lựa chọn được cấp phát: một db.r6g.2xlarge với một Reserved Instance 1 năm. Chi phí: $0.48/giờ On-Demand × 0.60 (giảm giá RI) × 730 giờ = $210/tháng. Cố định, bất kể tải.
+Tùy chọn provisioned: db.r6g.xlarge với Reserved Instance 1 năm. Chi phí: 0,52 đô la/giờ On-Demand × 0,60 (giảm giá RI) × 730 giờ = 228 đô la/tháng. Cố định, bất kể tải.
 
-Lựa chọn Serverless v2: trả theo ACU-giờ ở $0.12. Biến đổi, theo dõi tải thực tế.
+Tùy chọn Serverless v2: Trả 0,12 đô la mỗi ACU-giờ. Biến đổi, theo dõi tải thực tế.
 
-Tom kéo 30 ngày chỉ số ACU của Aurora Serverless v2 từ CloudWatch và xây dựng một phân phối:
+Tom đã lấy 30 ngày số liệu Aurora Serverless v2 ACU từ CloudWatch và xây dựng phân phối:
 
-- 2 giờ sáng–7 giờ sáng, thứ Hai–thứ Năm (lưu lượng thấp): trung bình 0.8 ACU → $0.096/giờ
-- 7 giờ sáng–11 giờ sáng, các ngày trong tuần (vừa phải): trung bình 3.2 ACU → $0.384/giờ  
-- 11 giờ sáng–9 giờ tối, các ngày trong tuần (giờ kinh doanh cao điểm): trung bình 5.8 ACU → $0.696/giờ
-- Thứ Sáu 6 giờ tối–10 giờ tối (cao điểm bữa tối): trung bình 14.1 ACU → $1.692/giờ
-- Thứ Bảy 12 giờ trưa–8 giờ tối (cuối tuần bận rộn): trung bình 9.3 ACU → $1.116/giờ
-- Chủ Nhật (ngày nhẹ nhất): trung bình 2.1 ACU → $0.252/giờ
+- 02:00–07:00, thứ Hai–thứ Năm (lưu lượng thấp): trung bình 0,8 ACU → 0,096 đô la/giờ
+- 07:00–11:00, ngày thường (trung bình): trung bình 3,2 ACU → 0,384 đô la/giờ  
+- 11:00–21:00, ngày thường (cao điểm giờ làm việc): trung bình 5,8 ACU → 0,696 đô la/giờ
+- Thứ Sáu 18:00–22:00 (cao điểm bữa tối): trung bình 14,1 ACU → 1,692 đô la/giờ
+- Thứ Bảy 12:00–20:00 (bận rộn cuối tuần): trung bình 9,3 ACU → 1,116 đô la/giờ
+- Chủ Nhật (ngày nhẹ nhàng nhất): trung bình 2,1 ACU → 0,252 đô la/giờ
 
-Trung bình có trọng số trên toàn bộ tháng: 4.2 ACU → $0.504/giờ → $368/tháng.
+Trung bình có trọng số trong cả tháng: 4,2 ACU → 0,504 đô la/giờ → 368 đô la/tháng.
 
-Trên một RI được cấp phát: $210/tháng. Serverless: $368/tháng. Lựa chọn được cấp phát tiết kiệm $158/tháng.
+Trên provisioned RI: 228 đô la/tháng. Serverless: 368 đô la/tháng. Tùy chọn provisioned tiết kiệm 140 đô la/tháng.
 
-"Cái đó có vẻ hiển nhiên," Leo nói. "Tại sao chúng ta lại dùng Serverless?"
+"Điều đó có vẻ rõ ràng," Leo nói. "Tại sao chúng ta vẫn dùng Serverless?"
 
-"Vì $368 là mức trung bình," Tom nói. "Nhìn vào các tối thứ Sáu."
+"Vì 368 đô la là trung bình," Tom nói. "Hãy nhìn vào tối thứ Sáu."
 
-Thứ Sáu 6–10 giờ tối: trung bình 14.1 ACU. Cho cửa sổ bốn giờ đó, Serverless tốn $1.692/giờ. Một db.r6g.2xlarge được cấp phát ở $210/tháng — năng lực tối đa của nó — là 8 vCPU. Cụm Serverless đang chạy tương đương khoảng 16 vCPU trong cửa sổ đó.
+Thứ Sáu 18:00–22:00: trung bình 14,1 ACU. Trong khoảng thời gian bốn giờ đó, Serverless tốn 1,692 đô la/giờ. Một db.r6g.xlarge provisioned với RI 228 đô la/tháng có 32 GiB RAM — tương đương khoảng 16 ACU. Cụm Serverless đang chạy trung bình 14,1 ACU trong suốt khoảng thời gian đó, áp sát trần của xlarge mà không có headroom.
 
-"Một instance được cấp phát định cỡ cho cao điểm thứ Sáu của chúng ta sẽ là một db.r6g.4xlarge," Tom nói. "Ở mức giá RI, đó là $0.96/giờ × 0.60 = $0.576/giờ. Hằng tháng: $420/tháng."
+"Instance provisioned được kích thước đúng cho cao điểm thứ Sáu của chúng ta sẽ là db.r6g.2xlarge," Tom nói. "Theo tỷ lệ RI, đó là 1,04 đô la/giờ × 0,60 = 0,624 đô la/giờ. Hàng tháng: 456 đô la/tháng."
 
-"Đó là nhiều hơn mức trung bình Serverless $368," Maya nói.
+"Điều đó nhiều hơn trung bình Serverless 368 đô la," Maya nói.
 
-"Đúng. Và nếu chúng ta định cỡ instance được cấp phát cho mức cơ sở ngày thường — db.r6g.2xlarge — các tối thứ Sáu sẽ là một vấn đề. Ở tải cao điểm, chúng ta sẽ đẩy tương đương 14 ACU trên một instance 8 vCPU. Đó là bão hòa CPU."
+"Đúng vậy. Và nếu chúng ta kích thước instance provisioned cho tải nền ngày thường — db.r6g.xlarge — chúng ta sẽ gặp vấn đề vào tối thứ Sáu. Ở tải cao điểm, chúng ta sẽ đạt tương đương 14 ACU so với toàn bộ dung lượng của xlarge. Đó là saturation."
 
-"Vậy bạn sẽ cần định cỡ trước cho cao điểm," Priya nói.
+"Vậy bạn phải kích thước trước cho cao điểm," Priya nói.
 
-"Với cái giá phải trả cho năng lực nhàn rỗi 160 giờ còn lại của tuần," Tom nói. "Phép tính RI được cấp phát ra rẻ hơn chỉ hoạt động khi tỷ lệ cao điểm/cơ sở của bạn thấp. Của chúng ta là 20:1. Đó chính xác là kịch bản mà Serverless v2 được thiết kế cho."
+"Với chi phí trả cho dung lượng nhàn rỗi trong 160 giờ còn lại của tuần," Tom nói. "Phép tính RI provisioned rẻ hơn chỉ hoạt động khi tỷ lệ cao điểm/nền tảng của bạn thấp. Của chúng ta là 20:1. Đó chính xác là kịch bản Serverless v2 được thiết kế cho."
 
-Anh đưa các con số ra cạnh nhau:
+Anh hiển thị các con số cạnh nhau:
 
-| Lựa chọn | Tháng trung bình | Đêm yên tĩnh (2 giờ sáng) | Cao điểm thứ Sáu (8 giờ tối) |
+| Tùy chọn | Trung bình/tháng | Đêm yên tĩnh (02:00) | Cao điểm thứ Sáu (20:00) |
 |---|---|---|---|
-| Serverless v2 | $368 | $0.096/giờ | $1.692/giờ |
-| RI được cấp phát (r6g.2xl) | $210 | $210/730giờ = $0.288/giờ | bị giới hạn — rủi ro bão hòa |
-| RI được cấp phát (r6g.4xl) | $420 | $0.576/giờ | khoảng dự phòng thoải mái |
+| Serverless v2 | 368 $ | 0,096 $/giờ | 1,692 $/giờ |
+| Provisioned RI (r6g.xl) | 228 $ | 228$/730h = 0,312 $/giờ | bị giới hạn — rủi ro saturation |
+| Provisioned RI (r6g.2xl) | 456 $ | 0,624 $/giờ | headroom thoải mái |
 
-"Lựa chọn Serverless là $368," Tom nói. "Lựa chọn được cấp phát đã right-size là $420 — và đó là trước khi tính đến chi phí vận hành của việc giám sát và mở rộng thủ công instance được cấp phát khi các mẫu lưu lượng của chúng ta thay đổi quý sau."
+"Tùy chọn Serverless là 368 đô la," Tom nói. "Tùy chọn provisioned được kích thước đúng là 456 đô la — và đó là trước khi tính chi phí vận hành của việc giám sát và thay đổi kích thước thủ công instance provisioned khi mô hình lưu lượng của chúng ta thay đổi trong quý tới."
 
-"Và chi phí vận hành," Priya nói, "không phải là không có gì."
+"Và chi phí vận hành," Priya nói, "không phải là không đáng kể."
 
-"Không. Với Serverless, chúng ta không phải nghĩ về việc định cỡ instance. Aurora xử lý nó. Với được cấp phát, mỗi quý tôi sẽ cần đánh giá lại liệu lớp instance hiện tại có còn phù hợp với lưu lượng của chúng ta không. Điều đó không tốn kém về thời gian, nhưng nó là thứ có thể xảy ra sai sót nếu chúng ta ngừng chú ý."
+"Không. Với Serverless, chúng ta không cần lo về kích thước instance. Aurora xử lý nó. Với provisioned, tôi cần đánh giá lại liệu lớp instance hiện tại có còn phù hợp với lưu lượng của chúng ta hay không mỗi quý. Điều đó không tốn kém về mặt thời gian nhưng là thứ có thể sai nếu chúng ta ngừng chú ý."
 
-"Sẽ ổn thôi miễn là chúng ta không quên định cỡ lại nó," Leo nói, rồi tự dừng lại. "Mà đó chính xác là khi nó sẽ không ổn."
+"Sẽ ổn thôi miễn là chúng ta không quên thay đổi kích thước nó," Leo nói, rồi tự kiểm tra mình. "Đó chính xác là lúc nó sẽ không ổn."
 
 "Chính xác," Tom nói.
 
-Kết luận giữ vững: Serverless v2 ở $368/tháng là lựa chọn đúng cho tỷ lệ cao điểm/cơ sở 20:1 của Nimbus và sự ưa thích của nhóm về sự đơn giản trong vận hành. RI được cấp phát chỉ hấp dẫn cho các nhóm có lưu lượng không biến đổi đáng kể — một tỷ lệ 2:1 hoặc 3:1 nơi instance được cấp phát hiếm khi nhàn rỗi.
+Phán quyết đứng vững: 368 đô la/tháng Serverless v2 là lựa chọn đúng cho tỷ lệ cao điểm/nền tảng 20:1 của Nimbus và sở thích đơn giản vận hành của nhóm. Provisioned RI chỉ hấp dẫn đối với các nhóm có lưu lượng không biến động đáng kể — tỷ lệ 2:1 hoặc 3:1 nơi instance provisioned hiếm khi nhàn rỗi.
 
-"Điều gì sẽ khiến chúng ta chuyển sang được cấp phát?" Maya hỏi.
+"Điều gì sẽ khiến chúng ta chuyển sang provisioned?" Maya hỏi.
 
-"Nếu mẫu lưu lượng của chúng ta phẳng ra," Tom nói. "Nếu Nimbus phát triển đến mức mà mức cơ sở lưu lượng thấp cũng cao — chẳng hạn, 8 ACU lúc 2 giờ sáng thay vì 0.8 — tỷ lệ sẽ giảm xuống 2:1 và được cấp phát sẽ hợp lý về mặt kinh tế. Đó là một vấn đề kinh doanh khác. Một vấn đề chúng ta muốn có."
+"Nếu mô hình lưu lượng của chúng ta phẳng hơn," Tom nói. "Nếu Nimbus phát triển đến điểm mà ngay cả tải nền lúc 02:00 cũng cao — giả sử 8 ACU thay vì 0,8 — tỷ lệ giảm xuống 2:1 và provisioned trở nên hợp lý về mặt kinh tế. Đó là vấn đề kinh doanh khác nhau. Là vấn đề mà chúng ta muốn có."
 
 
-Đối với Aurora với Serverless v2, Reserved Instances không trực tiếp áp dụng — Serverless v2 mở rộng động và bạn trả theo ACU-giờ. Đây là cấu hình hiện tại của Nimbus: writer và reader Aurora chính đều dùng Serverless v2. Tiết kiệm cho Nimbus đến từ chính bản chất tự động mở rộng của Serverless v2 — bạn không trả cho năng lực không sử dụng khi lưu lượng thấp.
+Reserved Instance cho Aurora Serverless v2 không áp dụng trực tiếp — Serverless v2 tự động scale và bạn trả theo ACU-giờ. Đây là cấu hình hiện tại của Nimbus: cả Aurora writer và reader chính đều sử dụng Serverless v2. Đối với Nimbus, tiết kiệm đến từ bản chất tự động scaling của Serverless v2 — bạn không trả tiền cho dung lượng chưa sử dụng khi lưu lượng thấp.
 
-Các nhóm vẫn chạy instance Aurora cố định nên đánh giá cam kết RI một khi loại instance đã ổn định trong ba tháng trở lên.
+Các nhóm vẫn chạy Aurora instance cố định nên xem xét cam kết RI khi loại instance ổn định trong ba tháng hoặc hơn.
 
-**DynamoDB: On-Demand vs Được Cấp Phát**
+**DynamoDB: On-Demand vs Provisioned**
 
-Trong Chương 9, chúng ta đã giới thiệu hai chế độ năng lực của DynamoDB: on-demand và được cấp phát.
+Trong Chương 9, chúng ta đã giới thiệu hai chế độ dung lượng của DynamoDB: on-demand và provisioned.
 
-Nimbus đã chạy DynamoDB ở chế độ on-demand từ đầu. Ở lưu lượng thấp, điều này là đúng — on-demand đắt hơn mỗi yêu cầu nhưng không có phí tối thiểu.
+Nimbus đã chạy DynamoDB ở chế độ on-demand ngay từ đầu. Ở lưu lượng thấp, điều đó đúng — on-demand đắt hơn mỗi request nhưng không có phí tối thiểu.
 
-Bây giờ, với 18 tháng dữ liệu lưu lượng trong CloudWatch, Tom có thể thấy các mẫu.
+Bây giờ, với 18 tháng dữ liệu lưu lượng trong CloudWatch, Tom có thể thấy các mô hình.
 
-Yêu cầu đọc trung bình: 225 mỗi giây (khoảng 19.4 triệu mỗi ngày)
-Yêu cầu ghi trung bình: 60 mỗi giây (khoảng 5.2 triệu mỗi ngày)
-Ngày cao điểm (thứ Sáu): 180% yêu cầu DynamoDB trung bình (ElastiCache hấp thụ ~95% lượng đọc, vì vậy DynamoDB chỉ thấy một phần nhỏ của đợt tăng 25x tổng lượng đặt hàng)
+Trung bình read request: 225/giây (khoảng 19,4 triệu/ngày)
+Trung bình write request: 60/giây (khoảng 5,2 triệu/ngày)
+Ngày cao điểm (thứ Sáu): khoảng 180% lưu lượng DynamoDB trung bình (ElastiCache hấp thụ ~95% các read, vì vậy DynamoDB chỉ thấy một phần nhỏ của tổng số tăng đột biến đơn hàng gấp 25 lần)
 
-**Giá on-demand**: $1.25 mỗi triệu yêu cầu ghi, $0.25 mỗi triệu yêu cầu đọc.
-**Giá được cấp phát**: $0.00065 mỗi đơn vị ghi năng lực mỗi giờ, $0.00013 mỗi đơn vị đọc năng lực mỗi giờ.
+**Định giá on-demand**: 1,25 đô la mỗi triệu write request, 0,25 đô la mỗi triệu read request.
+**Định giá provisioned**: 0,00065 đô la mỗi write capacity unit mỗi giờ, 0,00013 đô la mỗi read capacity unit mỗi giờ.
 
-Tom tính toán điểm hòa vốn: năng lực được cấp phát trở nên rẻ hơn khi bạn sử dụng nó đủ nhất quán để không trả phí bổ sung on-demand trong các giai đoạn nhàn rỗi.
+Tom tính toán điểm hòa vốn: dung lượng provisioned trở nên rẻ hơn khi bạn sử dụng nó đủ nhất quán để không trả phụ phí on-demand trong các khoảng thời gian nhàn rỗi.
 
-(Một lưu ý về các con số trong phần này: chúng phản ánh hóa đơn của nhóm tại thời điểm đó, và mang tính minh họa. Cuối năm 2024, AWS đã cắt giảm 50% giá on-demand của DynamoDB, điều này đã dịch chuyển điểm hòa vốn đáng kể — ngày nay, năng lực được cấp phát chỉ thắng khi mức sử dụng nhất quán cao. Luôn làm lại phép tính này với giá hiện tại.)
+(Một lưu ý về các con số trong phần này: chúng phản ánh hóa đơn của nhóm vào thời điểm đó và mang tính minh họa. Vào cuối năm 2024, AWS đã giảm giá on-demand DynamoDB 50%, thay đổi đáng kể điểm hòa vốn — ngày nay, provisioned chỉ thắng khi mức sử dụng nhất quán cao. Luôn thực hiện phép tính này với giá hiện hành.)
 
-Với 18 tháng dữ liệu cho thấy các mẫu hằng ngày nhất quán, năng lực được cấp phát với **DynamoDB Auto Scaling** là lựa chọn đúng:
+Với 18 tháng dữ liệu cho thấy các mô hình hàng ngày nhất quán, provisioned capacity với **DynamoDB Auto Scaling** là lựa chọn đúng:
 
-- Đặt năng lực tối thiểu ở 60% tải trung bình
-- Đặt tối đa ở 250% trung bình (xử lý đợt tăng thứ Sáu)
-- Auto Scaling điều chỉnh năng lực được cấp phát giữa các giới hạn này
+- Đặt capacity tối thiểu ở 60% tải trung bình
+- Đặt tối đa ở 250% trung bình (xử lý cao điểm thứ Sáu)
+- Auto Scaling điều chỉnh provisioned capacity trong các giới hạn đó
 
-Chi phí DynamoDB hằng tháng: giảm từ $340 (on-demand) xuống còn $230 (được cấp phát với auto scaling). Giảm 32%.
+Chi phí DynamoDB hàng tháng giảm từ 340 đô la (on-demand) xuống 230 đô la (provisioned với auto scaling). Giảm 32%.
 
-"Khoan — nhưng *tại sao* chúng ta lại làm theo cách đó?" Maya hỏi. "Chúng ta đã dùng on-demand từ đầu vì chúng ta không tin tưởng các mẫu lưu lượng của chính mình. Điều gì đã thay đổi?"
+"Chờ đã — nhưng tại sao chúng ta sẽ làm *điều này*?" Maya hỏi. "Chúng ta đã dùng on-demand từ đầu vì chúng ta không tin tưởng vào các mô hình lưu lượng của mình. Điều gì đã thay đổi?"
 
-"Mười tám tháng dữ liệu," Tom nói. "Bây giờ chúng ta biết các mẫu của mình trông như thế nào — mức cơ sở ngày thường nhất quán, cao điểm thứ Sáu, các giai đoạn yên tĩnh Chủ Nhật. On-demand là quyết định đúng khi chúng ta không biết. Được cấp phát với Auto Scaling là quyết định đúng bây giờ khi chúng ta đã biết."
+"Mười tám tháng dữ liệu," Tom nói. "Bây giờ chúng ta biết các mô hình của mình trông như thế nào — nền tảng ngày thường nhất quán, cao điểm thứ Sáu, giai đoạn chủ nhật yên tĩnh. On-demand là quyết định đúng khi chúng ta không biết. Provisioned với Auto Scaling là quyết định đúng bây giờ chúng ta biết."
 
-"Nhưng nếu chúng ta cấp phát quá mức," Leo hỏi, "chúng ta trả cho năng lực không sử dụng."
+"Nhưng nếu chúng ta cấp phép quá mức," Leo hỏi, "chúng ta trả cho dung lượng chưa sử dụng."
 
-"Đó là rủi ro," Tom nói. "Với Auto Scaling, chúng ta đặt mức tối thiểu đủ cao để tránh bị throttle, và để AWS quản lý trong phạm vi của chúng ta."
+"Đó là rủi ro," Tom nói. "Với Auto Scaling, chúng ta đặt mức tối thiểu đủ cao để tránh throttling và để AWS quản lý trong phạm vi của chúng ta."
 
-"Và nếu mẫu lưu lượng của chúng ta thay đổi đáng kể?"
+"Và nếu mô hình lưu lượng của chúng ta thay đổi đáng kể?"
 
-"Thì chúng ta điều chỉnh các giới hạn. Chúng ta xem xét lại điều này hằng quý."
+"Thì chúng ta điều chỉnh các giới hạn. Chúng ta xem lại điều này mỗi quý."
 
-**ElastiCache: Right-Sizing và Câu Chuyện Cảnh Báo**
+**ElastiCache: Điều Chỉnh Kích Thước Phù Hợp và Bài Học Kinh Nghiệm**
 
-Hóa đơn ElastiCache: $185/tháng. Một instance cache.r6g.large Redis ở mỗi AZ (hai node, primary + replica).
+Hóa đơn ElastiCache: 185 đô la/tháng. Một instance Redis cache.r6g.large ở mỗi AZ (hai node, primary + replica).
 
-Các chỉ số CloudWatch cho thấy:
+Số liệu CloudWatch cho thấy:
 
 - Mức sử dụng bộ nhớ trung bình: 34%
-- Cao điểm: 58%
+- Cao điểm: 44%
 
-Instance được cấp phát dư. Một cache.r6g.medium có thể xử lý tải với khoảng dự phòng.
+Instance được cấp phép quá mức. Một cache.m6g.large — một nửa bộ nhớ của r6g.large — có thể xử lý tải với headroom.
 
-Nhưng đến đây Tom dừng lại. Anh nhớ điều đã xảy ra ở một công ty trước đây khi anh đã right-size một cache một cách hung hăng — và anh kể cho nhóm câu chuyện đầy đủ, vì đó là loại câu chuyện cần được kể trước khi bạn thấy mình đang ở giữa nó.
+Nhưng ở đây Tom dừng lại. Anh nhớ lại điều đã xảy ra tại một công ty trước đây khi anh điều chỉnh cache một cách mạo hiểm — và kể cho nhóm toàn bộ câu chuyện, vì đây là loại câu chuyện cần được kể trước khi bạn thấy mình đang ở giữa nó.
 
-Ở công ty trước của anh — một nền tảng SaaS cho báo cáo tài chính — cụm ElastiCache đã là một cache.r6g.large. Hai node, primary và replica. Mức sử dụng bộ nhớ trung bình: 31%. Cao điểm quan sát được: 54%. Kỹ sư trực đã gắn cờ nó đã làm phép tính: một cache.r6g.medium sẽ xử lý tải với khoảng dự phòng 25% trên mức cao điểm quan sát được. Tiết kiệm: $60/tháng — giá ở region và thế hệ node của công ty đó vào thời điểm đó, nhỏ hơn khoảng chênh tương đương ở Nimbus hôm nay. Thay đổi được phê duyệt vào một ngày thứ Ba.
+Tại công ty trước của anh — một nền tảng SaaS cho báo cáo tài chính — cụm ElastiCache là một cache.r6g.large. Hai node, primary và replica. Mức sử dụng bộ nhớ trung bình: 26%. Cao điểm quan sát được: 37%. Kỹ sư trực đã tính toán: một cache.m6g.large sẽ xử lý tải với headroom 25% trên cao điểm quan sát được. Tiết kiệm: 60 đô la/tháng — định giá trong khu vực của công ty đó và thế hệ node vào thời điểm đó nhỏ hơn chênh lệch tương đương tại Nimbus ngày nay. Thay đổi được phê duyệt vào một ngày thứ Ba.
 
-Tháng tiếp theo, vào một tối thứ Năm lúc 11:47 tối, đợt batch quyết toán cuối tháng bắt đầu.
+Tháng tiếp theo, vào thứ Năm lúc 23:47, công việc batch đối chiếu cuối tháng bắt đầu.
 
-Đợt batch quyết toán chạy hằng quý. Nó kéo các bản ghi giao dịch của mọi tài khoản đang hoạt động trong ba tháng trước, tổng hợp chúng, tính thuế, và ghi các bản ghi quyết toán. Cache được dùng để lưu trữ trạng thái tổng hợp trung gian — tổng đang chạy của mỗi tài khoản khi đợt batch tiến hành. cache.r6g.large luôn xử lý được nó. Không ai đã nhìn vào các chỉ số đợt batch quyết toán cụ thể khi đưa ra quyết định right-sizing, vì đợt batch là hằng quý và cửa sổ quan sát đã là bốn tuần.
+Công việc batch đối chiếu chạy hàng quý. Nó lấy hồ sơ giao dịch của ba tháng trước cho mỗi tài khoản đang hoạt động, tổng hợp chúng, tính thuế, và ghi các bản ghi đối chiếu. Bộ nhớ đệm được sử dụng để lưu trữ trạng thái tổng hợp trung gian — tổng số chạy của mỗi tài khoản khi công việc batch tiến hành. Cache.r6g.large đã luôn xử lý điều này. Không ai đặc biệt nhìn vào số liệu công việc batch khi đưa ra quyết định điều chỉnh kích thước, vì công việc batch là hàng quý và cửa sổ quan sát là bốn tuần.
 
-Trên instance medium, maxMemoryPolicy được đặt thành `allkeys-lru` — khi bộ nhớ đầy, Redis sẽ loại bỏ key ít được dùng gần đây nhất để tạo chỗ. Đó là chính sách đúng cho một cache tổng quát. Nhưng đối với đợt batch quyết toán, mọi key trong cache đều được cần đến tích cực. Khi bộ nhớ đầy ở 84% của 6.38 GB của instance medium, Redis bắt đầu loại bỏ các key. Mỗi lần loại bỏ là một cache miss. Mỗi cache miss gửi một truy vấn đến cơ sở dữ liệu PostgreSQL bên dưới để tính toán lại giá trị bị loại bỏ từ các bản ghi giao dịch thô.
+Trên instance cache.m6g.large, maxMemoryPolicy được đặt là `allkeys-lru` — khi bộ nhớ đầy, Redis sẽ xóa khóa ít được sử dụng gần đây nhất để tạo không gian. Đây là chính sách đúng cho bộ nhớ đệm chung mục đích. Nhưng đối với công việc batch đối chiếu, mọi khóa trong bộ nhớ đệm đều cần thiết đang hoạt động. Khi bộ nhớ đầy đến 84% trong 6,38 GB của instance m6g.large, Redis bắt đầu xóa các khóa. Mỗi lần xóa là một cache miss. Mỗi cache miss gửi một truy vấn đến cơ sở dữ liệu PostgreSQL bên dưới để tính lại giá trị bị xóa từ hồ sơ giao dịch thô.
 
-Connection pool của cơ sở dữ liệu được cấu hình cho lưu lượng trạng thái ổn định, không phải tải đợt batch quyết toán. Trong vòng bốn phút sau khi các lần loại bỏ bắt đầu, cơ sở dữ liệu có 847 kết nối đang hoạt động. Giới hạn kết nối là 1,000. Ở 9 phút, các luồng ứng dụng đầu tiên bắt đầu thấy lỗi "too many connections." Ở 12 phút, ba dịch vụ chia sẻ connection pool của cơ sở dữ liệu — đợt batch quyết toán, dịch vụ báo cáo thời gian thực, và API hướng tới khách hàng — đều bị ảnh hưởng.
+Connection pool cơ sở dữ liệu được cấu hình cho lưu lượng trạng thái ổn định, không phải tải công việc batch đối chiếu. Bốn phút sau khi bắt đầu xóa, cơ sở dữ liệu có 847 kết nối đang hoạt động. Giới hạn kết nối là 1.000. Đến phút thứ 9, các luồng ứng dụng đầu tiên bắt đầu thấy lỗi "too many connections". Đến phút thứ 12, ba dịch vụ chia sẻ connection pool cơ sở dữ liệu — công việc batch đối chiếu, dịch vụ báo cáo thời gian thực, và API hướng đến khách hàng — tất cả đều bị ảnh hưởng.
 
-Kỹ sư trực leo thang vào 11:59 tối. Đợt xem xét sự cố bắt đầu vào 12:08 sáng.
+Kỹ sư trực leo thang lúc 23:59. Điều tra sự cố bắt đầu lúc 00:08.
 
-Phản ứng đầu tiên: tăng thời gian chờ Lambda cho hàm đợt batch quyết toán (đợt batch quyết toán một phần dựa trên Lambda). Điều này sai. Thời gian chờ không phải là vấn đề.
+Phản hồi đầu tiên: tăng Lambda timeout cho chức năng công việc batch đối chiếu (công việc batch đối chiếu một phần dựa trên Lambda). Điều đó sai. Vấn đề không phải là timeout.
 
-Phản ứng thứ hai: thêm một hàm Lambda thứ hai để song song hóa đợt batch quyết toán. Cũng sai. Nhiều song song hơn nghĩa là nhiều truy cập cache đồng thời hơn, nghĩa là loại bỏ nhanh hơn, làm cho tình hình tệ hơn.
+Phản hồi thứ hai: thêm chức năng Lambda thứ hai để song song hóa công việc batch đối chiếu. Cũng sai. Nhiều song song hơn có nghĩa là nhiều truy cập bộ nhớ đệm đồng thời hơn, có nghĩa là xóa nhanh hơn, có nghĩa là làm cho tình trạng tồi tệ hơn.
 
-Phản ứng thứ ba: thu nhỏ đợt batch quyết toán để giảm áp lực cơ sở dữ liệu. Điều này giúp một chút nhưng không giải quyết nguyên nhân gốc.
+Phản hồi thứ ba: thu nhỏ công việc batch đối chiếu để giảm áp lực cơ sở dữ liệu. Điều đó giúp một chút nhưng không giải quyết nguyên nhân gốc rễ.
 
-Phản ứng thứ tư, vào 2:31 sáng: khôi phục cache.r6g.large. Áp lực bộ nhớ giảm ngay lập tức. Việc loại bỏ dừng lại. Connection pool của cơ sở dữ liệu được giải tỏa. Đợt batch quyết toán hoàn thành vào 4:17 sáng, trễ hơn bốn giờ.
+Phản hồi thứ tư, lúc 02:31: khôi phục cache.r6g.large. Áp lực bộ nhớ giảm ngay lập tức. Việc xóa dừng lại. Connection pool cơ sở dữ liệu được xóa sạch. Công việc batch đối chiếu hoàn thành lúc 04:17, trễ hơn bốn giờ.
 
-Tổng sự cố: bốn giờ hiệu suất API suy giảm cho các khách hàng cố gắng truy cập báo cáo. Một đợt batch quyết toán hoàn chỉnh bị trễ. Thời gian kỹ thuật: khoảng 22 giờ trên năm kỹ sư. Chi phí trực tiếp ước tính: $40,000.
+Tổng số sự cố: bốn giờ hiệu suất API thấp cho khách hàng cố gắng truy cập báo cáo. Một công việc batch đối chiếu đầy đủ bị trễ. Thời gian kỹ thuật: khoảng 22 giờ trên năm kỹ sư. Chi phí trực tiếp ước tính: 40.000 đô la.
 
-Khoản tiết kiệm $60/tháng đã tốn $40,000 trong một sự cố duy nhất.
+Tiết kiệm 60 đô la/tháng đã tốn 40.000 đô la trong một sự cố duy nhất.
 
-"Sai lầm không phải là quyết định right-sizing," Tom nói. "Quyết định có thể biện minh được dựa trên dữ liệu sẵn có. Sai lầm là cửa sổ quan sát. Chúng tôi đã đo bốn tuần chỉ số. Đợt batch quyết toán là hằng quý. Chúng tôi đang nhìn vào khung thời gian sai."
+"Lỗi không phải là quyết định điều chỉnh kích thước phù hợp," Tom nói. "Quyết định có thể bào chữa được từ dữ liệu có sẵn. Lỗi là cửa sổ quan sát. Chúng ta đã đo bốn tuần số liệu. Công việc batch đối chiếu là hàng quý. Chúng ta đang nhìn vào khung thời gian sai."
 
-"Vậy làm sao để tránh nó?" Maya hỏi.
+"Vậy làm thế nào để tránh điều đó?" Maya hỏi.
 
-"Bạn hỏi: hoạt động có rủi ro cao nhất mà cache này hỗ trợ là gì? Và bạn tìm các chỉ số cụ thể của hoạt động đó. Không phải tuần trung bình. Tuần cụ thể — hoặc tháng — hoặc quý — khi tải cao nhất. Và bạn định cỡ cho cái đó."
+"Bạn hỏi: giao dịch rủi ro nhất mà bộ nhớ đệm này hỗ trợ là gì? Và bạn tìm số liệu cụ thể cho giao dịch đó. Không phải tuần trung bình. Tuần cụ thể đó — hoặc tháng — hoặc quý — khi tải cao nhất. Và bạn kích thước cho điều đó."
 
-"Và nếu bạn không thể tìm thấy các chỉ số vì hoạt động hiếm khi xảy ra?"
+"Và nếu bạn không thể tìm thấy số liệu vì giao dịch là không thường xuyên?"
 
-"Đó là câu trả lời," Tom nói. "Nếu bạn không thể tìm thấy các chỉ số cho một kịch bản tải cao cụ thể, phản ứng đúng là chưa right-size. Đợi lần xảy ra tiếp theo, đo đạc nó kỹ lưỡng, rồi định cỡ dựa trên những gì bạn quan sát được."
+"Thì đó là câu trả lời," Tom nói. "Nếu bạn không thể tìm thấy số liệu cho một kịch bản tải cao cụ thể, câu trả lời đúng là chưa điều chỉnh kích thước phù hợp. Chờ lần xuất hiện tiếp theo, đo lường kỹ lưỡng, sau đó kích thước dựa trên những gì bạn quan sát."
 
-Cụm ElastiCache của Nimbus có hoạt động rủi ro cao của riêng nó: cao điểm bữa tối thứ Sáu. Tom có dữ liệu đó — ba tối thứ Sáu liên tiếp đã chạm 58% mức sử dụng bộ nhớ trên r6g.large. Nếu anh chuyển sang r6g.medium và một thứ gì đó trong pipeline xử lý đơn hàng thay đổi để dùng nhiều không gian cache hơn — một tính năng mới, một chiến lược cache khác — 58% đó có thể trở thành 80%, và 80% trên một medium là vùng loại bỏ.
+Cụm ElastiCache của Nimbus có giao dịch rủi ro cao nhất của riêng mình: cao điểm bữa tối thứ Sáu. Tom có dữ liệu đó — ba tối thứ Sáu liên tiếp, sử dụng bộ nhớ đạt 44% trên r6g.large; khoảng 5,7 GB dữ liệu đang sống. Trên cache.m6g.large với 6,38 GB, cùng working set sẽ ngồi ở khoảng 90% — và nếu bất cứ điều gì trong pipeline xử lý đơn hàng thay đổi để sử dụng nhiều không gian bộ nhớ đệm hơn — một tính năng mới, chiến lược bộ nhớ đệm khác nhau — thì 90% trở thành vùng xóa.
 
-Anh vẫn chạy các con số. Chuyển từ r6g.large sang r6g.medium: hai node ở $0.127/giờ so với hai node ở $0.065/giờ, chạy 730 giờ mỗi tháng. Large: $185/tháng. Medium: $95/tháng. Tiết kiệm tiềm năng: $90/tháng. Anh đã kiểm thử instance medium trong staging trong hai tuần dưới tải. Bộ nhớ đạt đỉnh ở 71% — đủ gần với giới hạn để anh không thoải mái.
+Vẫn vậy, anh tính toán các con số. Chuyển từ cache.r6g.large sang cache.m6g.large: hai node chạy 730 giờ, 0,090 đô la/giờ so với 0,127 đô la/giờ. Large: 185 đô la/tháng. Cặp m6g: 131 đô la/tháng. Tiết kiệm tiềm năng: 54 đô la/tháng. Anh đã kiểm tra instance cache.m6g.large dưới tải trong staging trong hai tuần. Bộ nhớ đạt đỉnh ở 71% — đủ gần giới hạn để cảm thấy không thoải mái.
 
-Rồi anh định giá phương án thay thế: giữ cache.r6g.large, nhưng mua Reserved Nodes (cam kết 1 năm). Từ On-Demand $185 xuống Reserved $120/tháng. Tiết kiệm: $65/tháng mà không thay đổi loại instance.
+Sau đó anh định giá lựa chọn thay thế: giữ nguyên cache.r6g.large nhưng mua Reserved Node (cam kết 1 năm). Từ 185 đô la On-Demand xuống 120 đô la/tháng cho Reserved. Tiết kiệm: 65 đô la/tháng mà không thay đổi loại instance.
 
-"$65/tháng tôi sẽ tiết kiệm trên Reserved Nodes ở cùng kích thước instance là một khoản tiết kiệm thực," Tom nói. "$90/tháng tôi sẽ tiết kiệm bằng cách chuyển sang medium là một sự tiết kiệm giả nếu nó gây rủi ro cho cao điểm bữa tối thứ Sáu. Đôi khi right-sizing sang một instance nhỏ hơn gây rủi ro xảy ra sự cố hiệu suất — Reserved Nodes cho chúng ta hầu hết khoản tiết kiệm mà không có rủi ro nào."
+"65 đô la/tháng tiết kiệm trên Reserved Node trên cùng kích thước instance là tiết kiệm thực sự," Tom nói. "54 đô la/tháng tiết kiệm bằng cách chuyển sang cache.m6g.large là tiết kiệm sai nếu nó gây rủi ro cho cao điểm bữa tối thứ Sáu — và thậm chí không tiết kiệm được nhiều hơn. Đôi khi điều chỉnh kích thước xuống một instance nhỏ hơn gây rủi ro cho một sự cố hiệu suất — Reserved Node tiết kiệm nhiều hơn mà không có rủi ro nào."
 
-Anh đã mua Reserved Nodes cho r6g.large.
+Anh đã mua Reserved Node cho r6g.large.
 
-"$25 chênh lệch trong tiết kiệm hằng tháng," Tom nói, "không đáng giá một sự cố tối thứ Sáu."
+"Khi tùy chọn an toàn hơn cũng tiết kiệm nhiều hơn," Tom nói, "thì đó thậm chí không phải là sự đánh đổi."
 
-**Lưu Giữ Backup RDS: Đánh Đổi Lưu Trữ**
+**Lưu Giữ Sao Lưu RDS: Đánh Đổi Lưu Trữ**
 
-Backup tự động RDS được lưu trữ trong S3 (không tính phí thêm cho lưu trữ lên đến 100% kích thước cơ sở dữ liệu của bạn). Mặc định lưu giữ là 7 ngày.
+Sao lưu tự động RDS được lưu trữ trong S3 (không tính phí lưu trữ bổ sung lên đến 100% kích thước cơ sở dữ liệu). Mặc định lưu giữ là 7 ngày.
 
-Đối với cơ sở dữ liệu Aurora 180GB của Nimbus, 7 ngày backup là phù hợp — họ đã có thể khôi phục từ backup trong cửa sổ đó khi kiểm thử.
+Đối với cơ sở dữ liệu Aurora 180GB của Nimbus, lưu giữ 7 ngày là phù hợp — họ đã có thể khôi phục từ sao lưu trong khoảng thời gian đó trong các bài kiểm tra.
 
-Nhưng Tom nhận thấy: họ cũng có các snapshot thủ công từ mỗi lần triển khai quan trọng, được giữ vô thời hạn.
+Nhưng Tom nhận thấy: họ cũng giữ các snapshot thủ công từ mỗi lần deploy quan trọng, vô thời hạn.
 
-23 snapshot thủ công, tổng 4.1TB lưu trữ snapshot.
-Chi phí: $0.021/GB/tháng cho lưu trữ backup Aurora = khoảng $87/tháng trong lưu trữ snapshot thủ công.
+23 snapshot thủ công, tổng cộng 4,1TB lưu trữ snapshot.
+Chi phí: 0,021 đô la/GB/tháng cho lưu trữ sao lưu Aurora = khoảng 87 đô la/tháng cho lưu trữ snapshot thủ công.
 
-Họ giữ 3 snapshot thủ công cuối cùng cho mỗi môi trường (production, staging). Xóa phần còn lại — khoảng 1.1TB được giữ lại.
-Tiết kiệm: $64/tháng.
+Họ đã giữ lại 3 snapshot thủ công mới nhất cho mỗi môi trường (production, staging). Xóa phần còn lại — giữ lại khoảng 1,1TB.
+Tiết kiệm: 64 đô la/tháng.
 
-"Chúng ta đang trả $64 một tháng cho bảo hiểm chúng ta chưa bao giờ sử dụng," Leo nói.
+"Chúng ta đang trả 64 đô la/tháng cho bảo hiểm mà chúng ta không bao giờ sử dụng," Leo nói.
 
-"Chúng ta đang trả cho sự yên tâm," Tom sửa lại. "Câu hỏi là: sự yên tâm đáng giá $64 một tháng đến mức nào?"
+"Chúng ta đang trả cho sự an tâm," Tom sửa lại. "Câu hỏi là: bao nhiêu sự an tâm đáng giá 64 đô la/tháng?"
 
-"Với kế hoạch disaster recovery đúng đắn," Priya nói, "bạn có thể có cùng sự yên tâm từ 7 ngày backup tự động và 3 snapshot thủ công."
+"Với một kế hoạch phục hồi thảm họa phù hợp," Priya nói, "bạn có thể có cùng sự an tâm từ sao lưu tự động 7 ngày và 3 snapshot thủ công."
 
 "Đồng ý. Bây giờ."
 
-**Biến Thể: Khi Được Cấp Phát Phản Tác Dụng**
+**Biến Thể: Khi Provisioned Phản Tác Dụng**
 
-Nếu mẫu lưu lượng của bạn nhất quán và có thể dự đoán, năng lực được cấp phát với Auto Scaling tiết kiệm 30% so với on-demand. Nhưng nếu một tính năng mới ra mắt và khối lượng ghi của bạn tăng vọt 5x qua đêm, bạn sẽ bị throttle trước khi Auto Scaling theo kịp — Auto Scaling phản ứng với lưu lượng quan sát được, nghĩa là có một độ trễ. Giữ chế độ on-demand trong các tuần xung quanh một lần ra mắt tính năng lớn là một sự đánh đổi hợp lý: chi phí cao hơn một chút, không có rủi ro bị throttle trong một giai đoạn khi bạn đang theo dõi các mẫu lưu lượng thay đổi theo thời gian thực.
+Nếu mô hình lưu lượng của bạn nhất quán và có thể dự đoán, provisioned capacity với Auto Scaling tiết kiệm khoảng 30% so với on-demand. Nhưng nếu một tính năng mới ra mắt và khối lượng write của bạn tăng đột biến 5 lần trong một đêm, bạn sẽ bị throttle trước khi Auto Scaling theo kịp — Auto Scaling phản ứng với lưu lượng quan sát, có nghĩa là có độ trễ. Giữ chế độ on-demand cho các tuần xung quanh một launch tính năng lớn là sự đánh đổi hợp lý: chi phí cao hơn một chút, không có rủi ro throttling trong giai đoạn mà bạn đang xem các mô hình lưu lượng thay đổi trong thời gian thực.
 
-Nếu bạn loại bỏ các read replica không sử dụng (như các replica PostgreSQL cũ của Nimbus), khoản tiết kiệm là ngay lập tức và rõ ràng — không có sự đánh đổi nào, vì các replica không mang lại giá trị nào. Nhưng nếu bạn bị cám dỗ loại bỏ một read replica chỉ xử lý 2% lưu lượng, hãy kiểm tra điều gì xảy ra với primary khi 2% đó không có chỗ để đi trong một cao điểm. Một số read replica tồn tại để dự phòng, không phải cho tải hiện tại.
+Nếu bạn loại bỏ các read replica chưa sử dụng (như các replica PostgreSQL cũ của Nimbus), tiết kiệm là ngay lập tức và rõ ràng — không có sự đánh đổi, vì các replica không cung cấp giá trị. Nhưng nếu bạn muốn loại bỏ một read replica xử lý 2% lưu lượng, hãy kiểm tra điều gì xảy ra với primary khi 2% đó không có nơi nào để đi trong thời gian cao điểm. Một số read replica tồn tại cho headroom, không phải cho tải hiện tại.
+
+Trong kỳ thi, logic tương tự áp dụng: tải nền trạng thái ổn định chỉ vào reserved capacity; burst và idle chỉ vào on-demand hoặc Serverless.
 
 **Tóm Tắt Tối Ưu Hóa Cơ Sở Dữ Liệu**
 
-| Dịch vụ                                            | Trước      | Sau      | Tiết Kiệm Hằng Tháng |
-|---------------------------------------------------|------------|----------|----------------------|
-| Aurora (giữ Serverless v2 sau phân tích)          | $647       | $647     | $0 (mô hình đúng) |
-| RDS Read Replicas (không sử dụng)                 | $340       | $0       | $340           |
-| DynamoDB (On-Demand -> Được Cấp Phát + Auto Scaling) | $340       | $230     | $110           |
-| ElastiCache (Reserved Nodes)                      | $185       | $120     | $65            |
-| Snapshot thủ công Aurora                          | $87        | $23      | $64            |
-| RDS Proxy (an toàn kết nối)                       | $0         | $88      | -$88           |
-| **Tổng**                                          | **$1,599** | **$1,108** | **$491/tháng** |
+| Dịch vụ | Trước | Sau | Tiết Kiệm/Tháng |
+|---|---|---|---|
+| Aurora (giữ Serverless v2 sau phân tích) | 647 $ | 647 $ | 0 $ (mô hình đúng) |
+| RDS Read Replica (không sử dụng) | 340 $ | 0 $ | 340 $ |
+| DynamoDB (On-Demand → Provisioned + Auto Scaling) | 340 $ | 230 $ | 110 $ |
+| ElastiCache (Reserved Nodes) | 185 $ | 120 $ | 65 $ |
+| Snapshot thủ công Aurora | 87 $ | 23 $ | 64 $ |
+| RDS Proxy (bảo vệ kết nối) | 0 $ | 88 $ | -88 $ |
+| **Tổng cộng** | **1.599 $** | **1.108 $** | **491 $/tháng** |
 
-$491 mỗi tháng trong tiết kiệm cơ sở dữ liệu. $5,892 mỗi năm.
+Tiết kiệm cơ sở dữ liệu 491 đô la/tháng. 5.892 đô la/năm.
 
-Tom đặt con số này bên cạnh đợt dọn dẹp lưu trữ ($6,200/năm), các chính sách lifecycle S3 từ Chương 23 ($7,800/năm), và khoản tiết kiệm Savings Plan ($14,200/năm).
+Tom đặt con số đó bên cạnh việc dọn dẹp lưu trữ (6.200 đô la/năm), chính sách vòng đời S3 từ Chương 23 (7.800 đô la/năm), và tiết kiệm Savings Plan (14.200 đô la/năm).
 
-Tổng tác động tối ưu hóa đến nay: $34,092/năm.
+Tổng tác động tối ưu hóa cho đến nay: 34.092 đô la/năm.
 
 "Đó là đường băng thực sự," Maya nói.
 
-"Hoặc vài thử nghiệm nghiêm túc," Priya nói.
+"Hay một vài thử nghiệm nghiêm túc," Priya nói.
 
-"Hoặc mười hai tháng thử nghiệm," Leo nói.
+"Hay mười hai tháng thử nghiệm," Leo nói.
 
 Cả ba đều đúng.
 
 ## Điểm Mạnh và Hạn Chế
 
-**DynamoDB Được Cấp Phát với Auto Scaling**:
+**DynamoDB Provisioned với Auto Scaling**:
 
-- Rẻ hơn on-demand cho các khối lượng công việc có thể dự đoán, nhất quán
-- Auto Scaling xử lý tính biến đổi mà không cấp phát dư vĩnh viễn
-- Yêu cầu theo dõi để đảm bảo các giới hạn năng lực vẫn phù hợp
+- Rẻ hơn on-demand cho các khối lượng công việc nhất quán, có thể dự đoán
+- Auto Scaling xử lý biến động mà không cần cấp phép quá mức vĩnh viễn
+- Yêu cầu giám sát để đảm bảo giới hạn dung lượng vẫn phù hợp
 
-**RDS Reserved Instances / ElastiCache Reserved Nodes**:
+**RDS Reserved Instance / ElastiCache Reserved Nodes**:
 
 - Tiết kiệm đáng kể cho các khối lượng công việc ổn định, chạy lâu dài
-- Cam kết bị khóa — nếu nhu cầu của bạn thay đổi, bạn đã trả cho năng lực không sử dụng
-- Không giống EC2 Standard RI, RDS RI **không thể** được bán lại trên Thị trường Reserved Instance — Thị trường chỉ dành cho EC2. Một RDS RI không sử dụng là chi phí chìm, điều này làm cho quyết định định cỡ quan trọng hơn
+- Cam kết bị khóa — nếu nhu cầu của bạn thay đổi, bạn đã trả cho dung lượng chưa sử dụng
+- Không giống như EC2 Standard RI, RDS RI không thể bán lại trên Reserved Instance Marketplace — Marketplace chỉ dành cho EC2. RDS RI chưa sử dụng là chi phí chìm, làm cho quyết định kích thước trở nên quan trọng hơn
 
 **Nguyên tắc chung**:
 
-- Luôn hiểu mức sử dụng trước khi tối ưu hóa — dùng p95, không phải trung bình
-- Tài nguyên không sử dụng (như các read replica cũ) là tối ưu hóa lợi nhuận cao nhất
-- Right-sizing đòi hỏi xác thực trong staging trước khi áp dụng vào production, và kiểm tra các mẫu khối lượng công việc theo mùa có thể không xuất hiện trong một cửa sổ quan sát tiêu chuẩn
-- Giá Reserved yêu cầu sự tự tin về tính ổn định khối lượng công việc
+- Luôn luôn hiểu mức sử dụng trước khi tối ưu hóa — sử dụng p95, không phải trung bình
+- Tài nguyên chưa sử dụng (như read replica cũ) là tối ưu hóa có ROI cao nhất
+- Điều chỉnh kích thước phù hợp yêu cầu xác nhận trong staging trước khi áp dụng cho production, và kiểm tra các mô hình khối lượng công việc theo mùa có thể không xuất hiện trong cửa sổ quan sát tiêu chuẩn
+- Định giá reserved đòi hỏi sự tự tin về tính ổn định của khối lượng công việc
 
 ## Tóm Tắt
 
-- **Kiểm toán trước**: Mở các chỉ số CloudWatch trước khi thực hiện bất kỳ thay đổi cơ sở dữ liệu nào. Dùng độ trễ p95 và CPU p95 — không phải mức trung bình. Kiểm tra FreeableMemory và các mức tối đa kết nối.
-- **Xóa tài nguyên không sử dụng**: Read replica, cơ sở dữ liệu nhàn rỗi và các instance kiểm thử không còn cần thiết.
-- **Theo dõi connection pool của bạn**: Đặt cảnh báo về DatabaseConnections ở 75% và 90% của giới hạn. Cân nhắc RDS Proxy để ghép kênh kết nối.
-- **DynamoDB On-Demand vs Được Cấp Phát**: On-Demand cho lưu lượng không thể đoán trước; Được Cấp Phát + Auto Scaling cho các mẫu nhất quán.
-- **ElastiCache right-sizing**: Kiểm thử trong staging dưới các tải cao điểm thực tế, bao gồm cao điểm theo mùa. Reserved Nodes mang lại tiết kiệm ở cùng kích thước instance khi việc thu nhỏ hung hăng mang rủi ro.
-- **Quản lý snapshot RDS**: Chỉ giữ các snapshot bạn cần. Snapshot thủ công được lưu trữ vô thời hạn trừ khi bị xóa.
+Cuộc kiểm toán cơ sở dữ liệu đã đóng 491 đô la thiếu hụt hàng tháng mà không bao giờ chạm vào động cơ — tiết kiệm đến từ cốp xe: replica nhàn rỗi, snapshot bị quên, và dung lượng được định giá cho các mô hình lưu lượng mà Nimbus đã vượt qua. Kỷ luật của Tom đứng vững ở mỗi khoản mục: hiểu khối lượng công việc trước, sau đó tối ưu hóa. Chi phí mới duy nhất, RDS Proxy, là bảo hiểm mà các con số bộ kết nối thứ Sáu tối đã nói rằng họ cần.
 
-## Mẹo Cho Kỳ Thi
+- **Kiểm toán trước**: Trước bất kỳ thay đổi cơ sở dữ liệu nào, hãy lấy số liệu CloudWatch. Sử dụng p95 độ trễ và p95 CPU, không phải trung bình. Kiểm tra FreeableMemory và DatabaseConnections tối đa.
+- **Xóa tài nguyên chưa sử dụng**: Read replica, cơ sở dữ liệu nhàn rỗi, và instance kiểm tra không còn cần thiết.
+- **Theo dõi connection pool của bạn**: Thiết lập alarm ở 75% và 90% giới hạn trên DatabaseConnections. Xem xét RDS Proxy để ghép kênh kết nối.
+- **DynamoDB On-Demand vs Provisioned**: On-Demand cho lưu lượng không thể dự đoán; Provisioned + Auto Scaling cho các mô hình nhất quán.
+- **Điều chỉnh kích thước ElastiCache**: Kiểm tra trong staging dưới tải cao điểm thực tế bao gồm các đỉnh theo mùa. Khi giảm kích thước mạo hiểm gây rủi ro, Reserved Nodes cung cấp tiết kiệm ở cùng kích thước instance.
+- **Quản lý snapshot RDS**: Chỉ giữ các snapshot bạn cần. Snapshot thủ công tồn tại vô thời hạn trừ khi bị xóa.
 
-*SAA-C03 Domain: Thiết Kế Kiến Trúc Tối Ưu Chi Phí (Domain 4, Task 4.3)*
+## Mẹo Thi
 
-- **Các chế độ giá DynamoDB**: On-Demand = trả theo yêu cầu (chi phí cao hơn mỗi đơn vị, không có mức tối thiểu). Được Cấp Phát = trả theo đơn vị năng lực mỗi giờ (chi phí thấp hơn mỗi đơn vị, phải phân bổ năng lực). **DynamoDB Auto Scaling** tự động điều chỉnh năng lực được cấp phát.
-- **RDS Reserved Instances**: Khả dụng cho tất cả các loại engine RDS. Triển khai Multi-AZ có thể sử dụng Reserved Instances (bạn cam kết với Multi-AZ). Thời hạn 1 hoặc 3 năm.
-- **ElastiCache Reserved Nodes**: Cùng mô hình cam kết như EC2 Reserved Instances. Áp dụng cho mỗi node, không phải mỗi cụm.
-- **Lưu trữ snapshot RDS**: Backup tự động miễn phí lên đến 100% kích thước cơ sở dữ liệu. Snapshot thủ công tính phí mỗi GB mỗi tháng trong S3. Kịch bản kỳ thi: "giảm chi phí lưu trữ RDS" → xóa snapshot thủ công cũ.
-- **DynamoDB reserved capacity**: Cũng có sẵn cho DynamoDB (cam kết với năng lực đọc/ghi cụ thể trong 1 hoặc 3 năm với giảm giá). Khác với tiêu chuẩn được cấp phát — bạn trả trước cho năng lực trên tất cả các bảng DynamoDB của bạn trong một region.
-- **Aurora Serverless v2 vs được cấp phát**: Serverless v2 tự động mở rộng, lý tưởng cho các khối lượng công việc biến đổi. Được cấp phát với Reserved Instances rẻ hơn cho các khối lượng công việc ổn định, có thể dự đoán.
+*Lĩnh vực SAA-C03: Thiết kế Kiến trúc Tối ưu hóa Chi phí (Lĩnh vực 4, Nhiệm vụ 4.3)*
+
+- **Chế độ định giá DynamoDB**: On-Demand = trả theo request (chi phí đơn vị cao hơn, không có tối thiểu). Provisioned = trả theo capacity unit mỗi giờ (chi phí đơn vị thấp hơn, bạn phải phân bổ capacity). **DynamoDB Auto Scaling** tự động điều chỉnh provisioned capacity.
+- **RDS Reserved Instance**: Có sẵn cho tất cả loại engine RDS. Triển khai Multi-AZ có thể sử dụng Reserved Instance (bạn cam kết Multi-AZ). Thời hạn 1 hoặc 3 năm.
+- **ElastiCache Reserved Nodes**: Mô hình cam kết tương tự như EC2 Reserved Instance. Áp dụng theo node, không phải theo cluster.
+- **Lưu trữ snapshot RDS**: Sao lưu tự động miễn phí lên đến 100% kích thước cơ sở dữ liệu. Snapshot thủ công được tính phí theo GB mỗi tháng trong S3. Kịch bản thi: "giảm chi phí lưu trữ RDS" → xóa snapshot thủ công cũ.
+- **DynamoDB reserved capacity**: Cũng có sẵn cho DynamoDB (cam kết một lượng nhất định read/write capacity với giảm giá trong 1 hoặc 3 năm). Khác với provisioned tiêu chuẩn — bạn trả trước cho capacity trên tất cả các bảng DynamoDB của bạn trong một vùng.
+- **Aurora Serverless v2 vs provisioned**: Serverless v2 tự động scale, lý tưởng cho các khối lượng công việc biến đổi. Provisioned với Reserved Instance rẻ hơn cho các khối lượng công việc ổn định, có thể dự đoán.
 
 ## Bài Tập
 
-**Bài Tập 1 — Ghi Nhớ**
+**Bài Tập 1 — Nhớ Lại**
 
-Giải thích khi nào bạn nên sử dụng năng lực on-demand của DynamoDB so với năng lực được cấp phát với Auto Scaling. Bạn cần thông tin gì để đưa ra quyết định này?
+Giải thích khi nào bạn nên sử dụng DynamoDB on-demand capacity so với provisioned capacity với Auto Scaling. Bạn cần thông tin gì để đưa ra quyết định đó?
 
-*(Gợi ý: Hãy nghĩ về "có thể đoán trước" có nghĩa gì theo dữ liệu lưu lượng, và rủi ro nào on-demand loại bỏ mà được cấp phát giới thiệu.)*
+*(Gợi ý: Hãy nghĩ về ý nghĩa của "có thể dự đoán" về mặt dữ liệu lưu lượng, và rủi ro nào mà on-demand loại bỏ mà provisioned không loại bỏ.)*
 
-**Bài Tập 2 — Kịch Bản SAA-C03**
+**Bài Tập 2 — Kịch bản SAA-C03**
 
-*Kịch bản*: Một công ty chạy bảng DynamoDB cho bảng xếp hạng của một trò chơi di động. Lưu lượng rất nhất quán quanh năm, ngoại trừ trong một sự kiện theo mùa được lên lịch trước nhiều tháng (một tuần mỗi quý, đạt lưu lượng gấp 10 lần bình thường khi người chơi tham gia trong ngày đầu tiên). Ưu tiên của công ty là giảm thiểu chi phí cơ sở dữ liệu trong các giai đoạn trạng thái ổn định dài, có thể dự đoán trong khi duy trì hiệu suất qua các tuần sự kiện đã biết.
+*Kịch bản*: Một công ty chạy bảng DynamoDB cho bảng xếp hạng trò chơi di động. Lưu lượng rất nhất quán trong suốt năm, ngoại trừ một sự kiện theo mùa được lên kế hoạch trước nhiều tháng (mỗi quý một tuần, khi người chơi tham gia đạt tới gấp 10 lần lưu lượng bình thường trong ngày đầu tiên). Ưu tiên của công ty là giảm thiểu chi phí cơ sở dữ liệu trong các giai đoạn trạng thái ổn định dài và có thể dự đoán trong khi duy trì hiệu suất trong các tuần sự kiện đã biết.
 
-Chiến lược năng lực DynamoDB nào đáp ứng TỐT NHẤT các yêu cầu này?
+Chiến lược dung lượng DynamoDB nào đáp ứng TỐT NHẤT các yêu cầu này?
 
-A) Năng lực on-demand để xử lý các cao điểm theo mùa mà không bị throttle  
-B) Năng lực được cấp phát đặt ở mức cao điểm theo mùa (luôn được cấp phát cho lưu lượng gấp 10 lần)  
-C) Năng lực được cấp phát với DynamoDB Auto Scaling, với năng lực tối đa được đặt cho đỉnh theo mùa  
-D) Đơn vị năng lực DynamoDB reserved trong 3 năm ở mức lưu lượng bình thường
+A) On-demand capacity để xử lý các đỉnh theo mùa mà không bị throttle  
+B) Provisioned capacity được điều chỉnh ở mức đỉnh theo mùa (luôn cấp phép cho lưu lượng gấp 10 lần)  
+C) Provisioned capacity với DynamoDB Auto Scaling, với dung lượng tối đa được điều chỉnh cho đỉnh theo mùa  
+D) DynamoDB reserved capacity units ở mức lưu lượng bình thường trong 3 năm
 
-**Gợi ý 1**: "Lưu lượng rất nhất quán ngoại trừ một cao điểm theo mùa đã lên lịch, đã biết" — chế độ nào xử lý cả hai hiệu quả? (Sức mạnh của on-demand là lưu lượng *không thể đoán trước*; lưu lượng này có thể dự đoán.)
+**Gợi ý 1**: "Lưu lượng rất nhất quán ngoại trừ đỉnh theo mùa đã biết, được lên kế hoạch" — chế độ nào xử lý cả hai một cách hiệu quả? (Sức mạnh của on-demand là lưu lượng *không thể dự đoán*; cái này có thể dự đoán.)
 
-**Gợi ý 2**: "Giảm thiểu chi phí" trong giai đoạn ngoài đỉnh có nghĩa là bạn không thể cấp phát dư cho 10x mọi lúc.
+**Gợi ý 2**: "Giảm thiểu chi phí" khi ngoài đỉnh có nghĩa là bạn không thể luôn cấp phép quá mức cho lưu lượng gấp 10 lần.
 
-**Gợi ý 3**: DynamoDB Auto Scaling có thể mở rộng lên cho sự kiện theo mùa và thu nhỏ lại sau đó.
+**Gợi ý 3**: DynamoDB Auto Scaling có thể scale lên cho sự kiện theo mùa và scale lại xuống sau đó.
 
 **Đáp án**: C
 
-**Giải thích**: Năng lực được cấp phát với Auto Scaling mở rộng bảng dựa trên lưu lượng thực tế. Trong các giai đoạn bình thường, năng lực ở mức bình thường (chi phí thấp). Trong sự kiện theo mùa — mà ngày của nó được biết trước và lưu lượng tăng dần trong ngày đầu tiên — Auto Scaling theo dõi sự tăng lên đến mức tối đa được cấu hình (xử lý đỉnh 10x), và nhóm cũng có thể nâng mức tối thiểu trước khi bắt đầu theo lịch như khoảng dự phòng bổ sung. Sau sự kiện, năng lực thu nhỏ lại. Điều này rẻ hơn on-demand trong trạng thái ổn định chiếm phần lớn năm (on-demand tốn nhiều hơn mỗi yêu cầu) và rẻ hơn việc luôn cấp phát cho 10x.
+**Giải thích**: Provisioned capacity với Auto Scaling scale bảng dựa trên lưu lượng thực tế. Trong các giai đoạn bình thường, capacity ở mức bình thường (chi phí thấp). Trong sự kiện theo mùa mà ngày và lưu lượng được biết trước và tăng dần trong ngày đầu tiên, Auto Scaling theo dõi mức tăng đến mức tối đa được cấu hình (xử lý đỉnh gấp 10 lần) và nhóm cũng có thể nâng mức tối thiểu trước khi bắt đầu theo kế hoạch như headroom thêm. Sau sự kiện, capacity scale lại xuống. Điều này rẻ hơn on-demand cho ~92% năm khi nó chiếm phần lớn trạng thái ổn định (on-demand đắt hơn mỗi request) và rẻ hơn luôn cấp phát gấp 10 lần.
 
-**Tại sao không phải A?** On-demand xử lý các cao điểm mà không bị throttle, nhưng sức mạnh của nó là lưu lượng *không thể đoán trước*. Ở đây lưu lượng rất nhất quán và cao điểm được lên lịch và tăng dần — trả phí bổ sung mỗi yêu cầu của on-demand cho ~92% của năm là trạng thái ổn định mâu thuẫn với ưu tiên đã nêu là giảm thiểu chi phí trong các giai đoạn bình thường.
+**Tại sao không phải A?** On-demand xử lý đỉnh mà không bị throttle, nhưng sức mạnh của nó là lưu lượng *không thể dự đoán*. Ở đây lưu lượng rất nhất quán và đỉnh được lên kế hoạch và tăng dần — trả phụ phí mỗi request on-demand cho ~92% năm khi đó là trạng thái ổn định mâu thuẫn với ưu tiên giảm thiểu chi phí trong các giai đoạn bình thường.
 
-**Tại sao không phải B?** Cấp phát ở mức 10x vĩnh viễn có nghĩa là ~90% năng lực được cấp phát không được sử dụng trong ~92% của năm — trả tiền cho năng lực không bao giờ được dùng.
+**Tại sao không phải B?** Luôn cấp phát gấp 10 lần có nghĩa là ~90% dung lượng được cấp phát không sử dụng cho ~92% năm — trả cho dung lượng không bao giờ được sử dụng.
 
-**Tại sao không phải D?** Đơn vị năng lực reserved khóa bạn ở mức lưu lượng bình thường. Trong sự kiện 10x theo mùa, bạn sẽ bị throttle vượt quá lượng reserved, hoặc bạn sẽ cần thêm on-demand bổ sung.
+**Tại sao không phải D?** Reserved capacity units khóa bạn vào mức lưu lượng bình thường. Trong sự kiện theo mùa, bạn sẽ bị throttle vượt qua lượng reserved, hoặc cần thêm on-demand lên trên đó.
 
-*SAA-C03 Domain: Thiết Kế Kiến Trúc Tối Ưu Chi Phí — Task 4.3*
+*Lĩnh vực SAA-C03: Thiết kế Kiến trúc Tối ưu hóa Chi phí — Nhiệm vụ 4.3*
 
-**Bài Tập 3 — Thử Thách Kiến Trúc** *(Tùy chọn)*
+**Bài Tập 3 — Thách Thức Kiến Trúc** *(Tùy Chọn)*
 
-Nimbus đang đánh giá một tính năng mới: một dashboard analytics nhà hàng hiển thị số lượng đơn hàng thời gian thực, doanh thu mỗi giờ và thông tin nhân khẩu học khách hàng. Dữ liệu này sẽ truy vấn một cơ sở dữ liệu khoảng 200 lần mỗi phút (một truy vấn mỗi nhà phân tích mỗi lần làm mới trang, với 10 nhà phân tích).
+Nimbus đang đánh giá một tính năng mới: bảng điều khiển phân tích nhà hàng hiển thị số đơn hàng theo thời gian thực, doanh thu mỗi giờ, và nhân khẩu học khách hàng. Dữ liệu này sẽ truy vấn cơ sở dữ liệu khoảng 200 lần mỗi phút (một truy vấn cho mỗi lần làm mới trang trên mỗi nhà phân tích, với 10 nhà phân tích).
 
-Hiện tại dữ liệu analytics đang ở trong Athena (S3). Họ có nên xây dựng dashboard trên Athena, hay họ nên tải dữ liệu vào một cơ sở dữ liệu? Nếu là cơ sở dữ liệu, cái nào (Aurora, DynamoDB, Redshift)?
+Hiện tại, dữ liệu phân tích ở trong Athena (trên S3). Họ có nên xây dựng bảng điều khiển trên Athena, hay tải dữ liệu vào một cơ sở dữ liệu? Nếu là cơ sở dữ liệu, loại nào (Aurora, DynamoDB, Redshift)?
 
-Xem xét: tần suất truy vấn, yêu cầu độ mới dữ liệu, độ phức tạp truy vấn (tổng hợp, nối), và chi phí mỗi truy vấn ở khối lượng này.
+Xem xét: tần suất truy vấn, yêu cầu độ tươi mới của dữ liệu, độ phức tạp truy vấn (tổng hợp, kết nối), và chi phí mỗi truy vấn ở khối lượng này.
 
-*(Không có câu trả lời đúng duy nhất. Mục tiêu là thực hành lựa chọn cơ sở dữ liệu cho các khối lượng công việc analytics.)*
+*(Không có một câu trả lời đúng duy nhất. Mục tiêu là thực hành lựa chọn cơ sở dữ liệu cho các khối lượng công việc phân tích.)*
 
-## Cảnh Sau Tín Dụng
+## Cảnh Sau Kết Thúc
 
-Tom đã trình bày tóm tắt tối ưu hóa chi phí đầy đủ cho Maya.
+Tom trình bày tóm tắt tối ưu hóa chi phí đầy đủ cho Maya.
 
-Ba tháng làm việc. $34,092 tiết kiệm hằng năm được xác định, hầu hết đã được thực hiện.
+Ba tháng làm việc. 34.092 đô la tiết kiệm hàng năm đã xác định, hầu hết đã được thực hiện.
 
-"Phần còn lại là gì?" Maya hỏi.
+"Còn lại gì?" Maya hỏi.
 
-"Các tối ưu hóa tôi chưa tự tin," Tom nói. "Cấu hình Aurora có thể được right-size thêm, nhưng tôi muốn thêm một quý dữ liệu trước khi cam kết. Và có một câu hỏi về chuyển dữ liệu tôi chưa phân tích đầy đủ."
+"Các tối ưu hóa tôi chưa chắc chắn," Tom nói. "Cấu hình Aurora có thể điều chỉnh kích thước thêm nhưng tôi muốn thêm một quý dữ liệu trước khi cam kết. Và có một câu hỏi về truyền dữ liệu mà tôi chưa phân tích đầy đủ."
 
 "Chi phí mạng."
 
-"Đúng vậy. Đó là phần tiếp theo."
+"Vâng. Đó là điều tiếp theo."
 
-Maya nhìn vào các con số. "Tom, tôi muốn hiểu điều gì đó. Việc tối ưu hóa này — anh đã làm trong ba tháng. Đó là một phần đáng kể thời gian của anh."
+Maya nhìn vào các con số. "Tom, tôi muốn hiểu một điều. Tối ưu hóa này — bạn đã làm việc với nó trong ba tháng. Đó là phần đáng kể thời gian của bạn."
 
 "Khoảng 30%."
 
-"Và anh tìm thấy khoảng $34,000 mỗi năm. Vậy tối ưu hóa tự bù đắp trong — bao lâu, vài tháng lương của anh?"
+"Và bạn tìm thấy khoảng 34.000 đô la/năm. Vậy tối ưu hóa tự trả lại mình — trong bao lâu, vài tháng lương?"
 
 Tom nhìn cô. "Khoảng vậy."
 
-"Và mỗi năm sau, đó là tiết kiệm thuần túy."
+"Và mỗi năm sau đó, tiết kiệm thuần."
 
-"Hoặc tái đầu tư thuần túy," anh nói. "Cùng hiệu ứng."
+"Hay tái đầu tư thuần," anh nói. "Cùng tác động."
 
-Maya gật đầu. "Đây là điều tôi muốn anh làm. Không chỉ về lưu trữ và cơ sở dữ liệu — về mọi thứ. Biến tối ưu hóa chi phí thành một chức năng liên tục trong vai trò của anh."
+Maya gật đầu. "Đây là điều tôi muốn bạn làm. Không chỉ trong lưu trữ và cơ sở dữ liệu — trong mọi thứ. Biến tối ưu hóa chi phí thành chức năng liên tục trong vai trò của bạn."
 
-Tom chưa bao giờ nghe công việc của mình được mô tả theo cách này. Anh thấy điều đó vừa chính xác vừa thỏa mãn.
+Tom chưa bao giờ nghe công việc của mình được mô tả theo cách đó. Anh thấy điều đó vừa đúng vừa thỏa mãn.
 
-Trong chương tiếp theo: danh mục chi phí còn lại cuối cùng — và cái khiến hầu như mọi người bất ngờ.
+Trong chương tiếp theo: danh mục chi phí còn lại cuối cùng — và danh mục làm hầu hết mọi người ngạc nhiên.

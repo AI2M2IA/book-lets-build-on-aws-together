@@ -289,7 +289,7 @@ You might be wondering: do ADRs need to be formal documents? No. An ADR can be a
 
 "ADRs are for your future self," Carlos said. "In 18 months, you'll look at a piece of architecture and wonder why it was done that way. If you have an ADR, you'll understand the context. If you don't, you'll either leave it alone (because you're afraid to touch it) or change it (because you didn't understand why it was done that way)."
 
-Leo wrote the first ADR that afternoon: the decision to use Kinesis for delivery tracking events, with the context, alternatives considered (SQS, EventBridge, polling), and the trade-offs.
+Leo wrote the first of three ADRs that afternoon: the decision to use Kinesis for delivery tracking events, with the context, alternatives considered (SQS, EventBridge, polling), and the trade-offs.
 
 Carlos looked at the ADR Leo had drafted. He read it in thirty seconds. Then he said: "Show the team what ADR-007 looks like."
 
@@ -518,4 +518,4 @@ Maya looked at the whiteboard. The review notes were still there — constraints
 
 Leo was already typing.
 
-In the final chapter: the one thing no tool or framework can give you — and why "it depends" is the most honest and powerful answer in software architecture.
+In the next chapter: the one thing no tool or framework can give you — and why "it depends" is the most honest and powerful answer in software architecture.

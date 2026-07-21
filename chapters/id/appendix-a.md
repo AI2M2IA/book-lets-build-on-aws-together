@@ -134,7 +134,7 @@ Sinyal ujian: "SMB/Active Directory" → FSx for Windows. "Pelatihan HPC/ML pada
 
 **S3 Storage Class dan Lifecycle Policy** *(Bab 23)*
 
-S3 Intelligent-Tiering secara otomatis memindahkan objek antar tier akses berdasarkan frekuensi akses. Lifecycle policy memindahkan objek antar class (Standard → Standard-IA → Glacier) berdasarkan aturan usia. Storage class Glacier memiliki keterlambatan pengambilan mulai dari hitungan menit (Glacier Instant) hingga 12 jam (Glacier Deep Archive).
+S3 Intelligent-Tiering secara otomatis memindahkan objek antar tier akses berdasarkan frekuensi akses. Lifecycle policy memindahkan objek antar class (Standard → Standard-IA → Glacier) berdasarkan aturan usia. Storage class Glacier memiliki keterlambatan pengambilan mulai dari milidetik (Glacier Instant Retrieval) hingga 12 jam (Glacier Deep Archive).
 
 Sinyal ujian: "Mengurangi biaya penyimpanan untuk data yang jarang diakses" → lifecycle policy, Intelligent-Tiering, atau Glacier.
 

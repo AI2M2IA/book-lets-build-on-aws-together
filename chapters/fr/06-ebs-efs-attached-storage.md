@@ -121,8 +121,8 @@ approprié pour tout ce qui est sensible au temps.
 
 « Combien io2 coûte-t-il de plus comparé à gp3 ? » demanda Tom, levant les yeux de son carnet.
 
-Leo afficha la page de tarification. io2 coûtait grosso modo trois fois le coût par Go de gp3,
-plus un frais séparé par IOPS provisionné. Tom nota l'écart. « Donc on utilise gp3 jusqu'à ce
+Leo afficha la page de tarification. io2 coûtait grosso modo 50 à 60 % de plus par Go que gp3,
+plus un frais séparé par IOPS provisionné — et sur un volume haute performance, ce sont ces frais par IOPS qui dominent la facture. Tom nota l'écart. « Donc on utilise gp3 jusqu'à ce
 que la base de données ait réellement besoin de la garantie de performance. »
 
 L'examen ne vous demande pas de mémoriser tous les types. Il teste votre capacité à
@@ -548,7 +548,7 @@ Le stylo rouge de Tom a cerclé le vrai problème : trop de choses sur une seule
   ont besoin d'IOPS garantis (grandes bases de données, systèmes critiques). Les scénarios d'examen
   décrivant des « exigences IOPS » ou des « performances de base de données cohérentes à faible latence »
   pointent vers io2.
-- **gp2 vs gp3 :** les IOPS de gp2 sont couplés à la taille (3 IOPS/Go, max 16 000 IOPS à 5 334 Go) ; les IOPS de gp3 sont indépendants de la taille (3 000 de base, configurable jusqu'à 80 000 depuis fin 2025 — le matériel plus ancien, et possiblement la banque de questions de l'examen, suppose encore le plafond précédent de 16 000). Schéma de question d'examen : une charge a besoin de plus d'IOPS sans augmenter le stockage — la réponse est gp3 ou io2, pas gp2.
+- **gp2 vs gp3 :** les IOPS de gp2 sont couplés à la taille (3 IOPS/Go, max 16 000 IOPS à 5 334 Go) ; les IOPS de gp3 sont indépendants de la taille (3 000 de base, configurable jusqu'à 80 000 depuis septembre 2025 — le matériel plus ancien, et possiblement la banque de questions de l'examen, suppose encore le plafond précédent de 16 000). Schéma de question d'examen : une charge a besoin de plus d'IOPS sans augmenter le stockage — la réponse est gp3 ou io2, pas gp2.
 - **Chiffrement au repos pour EBS** : Vous ne pouvez pas chiffrer un volume existant non chiffré
   sur place — vous devez snapshotter, copier chiffré, restaurer. Activez les valeurs par défaut de chiffrement
   au niveau du compte pour éviter de créer accidentellement des volumes non chiffrés. Le chiffrement est AES-256

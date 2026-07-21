@@ -134,7 +134,7 @@ Auto Scaling Groups（ASG）根据负载添加和删除 EC2 实例。Application
 
 **S3 存储类和生命周期策略** *（第 23 章）*
 
-S3 Intelligent-Tiering 根据访问频率自动在访问层之间移动对象。生命周期策略根据对象使用时长规则在存储类之间转换对象（Standard → Standard-IA → Glacier）。Glacier 存储类的检索延迟从几分钟（Glacier Instant）到 12 小时（Glacier Deep Archive）不等。
+S3 Intelligent-Tiering 根据访问频率自动在访问层之间移动对象。生命周期策略根据对象使用时长规则在存储类之间转换对象（Standard → Standard-IA → Glacier）。Glacier 存储类的检索延迟从毫秒（Glacier Instant Retrieval）到 12 小时（Glacier Deep Archive）不等。
 
 考试信号："降低不频繁访问数据的存储成本"→ 生命周期策略、Intelligent-Tiering 或 Glacier。
 

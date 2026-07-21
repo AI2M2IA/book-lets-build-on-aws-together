@@ -134,7 +134,7 @@ Signal d'examen : « SMB/Active Directory » → FSx for Windows. « Entraîneme
 
 **Classes de stockage S3 et politiques de cycle de vie** *(Chapitre 23)*
 
-S3 Intelligent-Tiering déplace automatiquement les objets entre les niveaux d'accès en fonction de la fréquence d'accès. Les politiques de cycle de vie font transiter les objets entre les classes (Standard → Standard-IA → Glacier) selon des règles d'ancienneté. Les classes de stockage Glacier ont un délai de récupération allant de quelques minutes (Glacier Instant) à 12 heures (Glacier Deep Archive).
+S3 Intelligent-Tiering déplace automatiquement les objets entre les niveaux d'accès en fonction de la fréquence d'accès. Les politiques de cycle de vie font transiter les objets entre les classes (Standard → Standard-IA → Glacier) selon des règles d'ancienneté. Les classes de stockage Glacier ont un délai de récupération allant de quelques millisecondes (Glacier Instant Retrieval) à 12 heures (Glacier Deep Archive).
 
 Signal d'examen : « Réduire les coûts de stockage des données rarement consultées » → politiques de cycle de vie, Intelligent-Tiering ou Glacier.
 

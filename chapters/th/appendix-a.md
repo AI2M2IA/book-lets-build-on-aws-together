@@ -134,7 +134,7 @@ Block storage ที่แนบกับอินสแตนซ์ EC2 เด�
 
 **คลาสพื้นที่จัดเก็บ S3 และนโยบาย Lifecycle** *(บทที่ 23)*
 
-S3 Intelligent-Tiering ย้าย objects ระหว่างระดับการเข้าถึงโดยอัตโนมัติตามความถี่ในการเข้าถึง นโยบาย Lifecycle เปลี่ยน objects ระหว่างคลาส (Standard → Standard-IA → Glacier) ตามกฎอายุ คลาสพื้นที่จัดเก็บ Glacier มีความล่าช้าในการดึงข้อมูลตั้งแต่ไม่กี่นาที (Glacier Instant) ถึง 12 ชั่วโมง (Glacier Deep Archive)
+S3 Intelligent-Tiering ย้าย objects ระหว่างระดับการเข้าถึงโดยอัตโนมัติตามความถี่ในการเข้าถึง นโยบาย Lifecycle เปลี่ยน objects ระหว่างคลาส (Standard → Standard-IA → Glacier) ตามกฎอายุ คลาสพื้นที่จัดเก็บ Glacier มีความล่าช้าในการดึงข้อมูลตั้งแต่มิลลิวินาที (Glacier Instant Retrieval) ถึง 12 ชั่วโมง (Glacier Deep Archive)
 
 สัญญาณการสอบ: "ลดต้นทุนพื้นที่จัดเก็บสำหรับข้อมูลที่เข้าถึงไม่บ่อย" → นโยบาย lifecycle, Intelligent-Tiering หรือ Glacier
 

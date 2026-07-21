@@ -56,7 +56,7 @@ Leo đã chọn một `t3.micro`.
 
 "Cái đó tốn bao nhiêu mỗi tháng?" Tom hỏi, nhìn vào trang so sánh loại instance.
 
-Leo mở trang giá AWS. t3.micro tốn khoảng 8 đô la mỗi tháng. t3.small là 17 đô la. t3.medium là 33 đô la. t3.large khoảng 60 đô la. Khoảng cách rộng ra nhanh khi bạn đi lên — không tuyến tính, mà gần như gấp đôi với mỗi bước kích cỡ. Tom viết các con số xuống, lưu ý rằng mỗi bước kích cỡ gấp đôi bộ nhớ — nhưng, kỳ lạ thay, không phải số lượng CPU. Mỗi t3 từ micro đến large có cùng 2 vCPU; số lượng không tăng cho đến xlarge. Cái phát triển với mỗi bước là **đường cơ sở CPU credit** — phần của những vCPU đó mà instance có thể sử dụng liên tục mà không đốt hết các burst credit của nó.
+Leo mở trang giá AWS. t3.micro tốn khoảng 8 đô la mỗi tháng. t3.small là 17 đô la. t3.medium là 33 đô la. t3.large khoảng 60 đô la. Khoảng cách rộng ra nhanh khi bạn đi lên — không tuyến tính, mà gần như gấp đôi với mỗi bước kích cỡ. Tom viết các con số xuống, lưu ý rằng mỗi bước kích cỡ gấp đôi bộ nhớ — nhưng, kỳ lạ thay, không phải số lượng CPU. Mỗi t3 từ micro đến large có cùng 2 vCPU; số lượng không tăng cho đến xlarge. Mỗi bước gấp đôi bộ nhớ; **đường cơ sở CPU credit** — phần của những vCPU đó mà instance có thể sử dụng liên tục mà không đốt hết các burst credit của nó — cũng tăng, mặc dù không phải ở mỗi bước.
 
 Tom viết "t3.micro" lên bảng trắng và vẽ một khuôn mặt buồn bên cạnh nó.
 
@@ -250,9 +250,9 @@ Khi bạn *chấm dứt* một instance, nó biến mất. Trừ khi bạn có l
 
 Bốn trạng thái mà một EC2 instance có thể ở trong:
 
-**Pending**: Instance đang khởi động. Nó đã được phân bổ phần cứng nhưng chưa hoàn thành khởi động. Script UserData đang chạy.
+**Pending**: Instance đang khởi động. Nó đã được phân bổ phần cứng nhưng chưa hoàn thành khởi động.
 
-**Running**: Instance đang hoạt động và có thể truy cập. Bạn đang trả tiền cho nó.
+**Running**: Instance đang hoạt động và có thể truy cập. Bạn đang trả tiền cho nó. Trong lần khởi động đầu tiên, đây cũng là lúc script UserData chạy.
 
 **Stopping/Stopped**: Instance bị tắt. Volume EBS root được bảo toàn. Bạn không trả tiền cho tính toán, nhưng bạn vẫn trả tiền cho lưu trữ EBS được gắn.
 

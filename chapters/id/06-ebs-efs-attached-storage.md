@@ -122,8 +122,7 @@ sesuai untuk apa pun yang sensitif waktu.
 
 "Berapa lebih mahalnya io2 dibandingkan gp3?" tanya Tom, mendongak dari buku catatannya.
 
-Leo membuka halaman harga. io2 berharga kira-kira tiga kali biaya per-GB gp3,
-ditambah biaya terpisah per IOPS yang disediakan. Tom mencatat selisihnya. "Jadi kita gunakan gp3 sampai
+Leo membuka halaman harga. io2 berharga sekitar 50–60% lebih mahal per GB dibandingkan gp3, ditambah biaya terpisah per IOPS yang disediakan — dan pada volume berperforma tinggi, biaya per-IOPS itulah yang mendominasi tagihan. Tom mencatat selisihnya. "Jadi kita gunakan gp3 sampai
 basis data benar-benar membutuhkan jaminan performa."
 
 Ujian tidak mensyaratkan Anda menghafal semua tipe. Ia menguji kemampuan Anda untuk
@@ -549,7 +548,7 @@ Pena merah Tom melingkari masalah sebenarnya: terlalu banyak di satu mesin. Memi
   butuh IOPS terjamin (basis data besar, sistem misi-kritis). Skenario ujian
   yang mendeskripsikan "persyaratan IOPS" atau "performa basis data latensi-rendah yang konsisten"
   mengarah ke io2.
-- **gp2 vs. gp3:** IOPS gp2 digabungkan ke ukuran (3 IOPS/GB, maks 16.000 IOPS pada 5.334 GB); IOPS gp3 independen dari ukuran (3.000 dasar, dapat dikonfigurasi hingga 80.000 sejak akhir 2025 — materi lama, dan mungkin bank soal ujian, masih mengasumsikan batas 16.000 sebelumnya). Pola pertanyaan ujian: beban kerja butuh lebih banyak IOPS tanpa menambah penyimpanan — jawabannya adalah gp3 atau io2, bukan gp2.
+- **gp2 vs. gp3:** IOPS gp2 digabungkan ke ukuran (3 IOPS/GB, maks 16.000 IOPS pada 5.334 GB); IOPS gp3 independen dari ukuran (3.000 dasar, dapat dikonfigurasi hingga 80.000 sejak September 2025 — materi lama, dan mungkin bank soal ujian, masih mengasumsikan batas 16.000 sebelumnya). Pola pertanyaan ujian: beban kerja butuh lebih banyak IOPS tanpa menambah penyimpanan — jawabannya adalah gp3 atau io2, bukan gp2.
 - **Enkripsi at rest untuk EBS**: Anda tidak bisa mengenkripsi volume yang ada dan tidak terenkripsi
   di tempat — Anda harus snapshot, salin terenkripsi, pulihkan. Aktifkan default enkripsi tingkat-akun
   untuk menghindari membuat volume tidak terenkripsi secara tidak sengaja. Enkripsi adalah AES-256

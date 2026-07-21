@@ -90,7 +90,7 @@ yang menjalankan unggahan gambar dan kueri basis data."
 
 "Berapa biayanya per bulan?" tanya Tom, melihat halaman perbandingan tipe instance.
 
-Leo membuka halaman harga AWS. T3.micro berharga sekitar $8 per bulan. T3.small adalah $17. T3.medium adalah $33. T3.large sekitar $60. Selisihnya melebar cepat saat Anda naik — tidak secara linear, tetapi kira-kira melipatganda dengan setiap langkah ukuran. Tom menuliskan angka-angkanya, mencatat bahwa setiap langkah ukuran melipatgandakan memori — tetapi, anehnya, bukan jumlah CPU. Setiap t3 dari micro hingga large punya 2 vCPU yang sama; jumlahnya tidak meningkat sampai xlarge. Yang tumbuh dengan setiap langkah adalah **baseline kredit CPU** — bagian dari vCPU itu yang bisa digunakan instance secara terus-menerus tanpa membakar kredit lonjakannya.
+Leo membuka halaman harga AWS. T3.micro berharga sekitar $8 per bulan. T3.small adalah $17. T3.medium adalah $33. T3.large sekitar $60. Selisihnya melebar cepat saat Anda naik — tidak secara linear, tetapi kira-kira melipatganda dengan setiap langkah ukuran. Tom menuliskan angka-angkanya, mencatat bahwa setiap langkah ukuran melipatgandakan memori — tetapi, anehnya, bukan jumlah CPU. Setiap t3 dari micro hingga large punya 2 vCPU yang sama; jumlahnya tidak meningkat sampai xlarge. Setiap langkah melipatgandakan memori; **baseline kredit CPU** — bagian dari vCPU itu yang bisa digunakan instance secara terus-menerus tanpa membakar kredit lonjakannya — tumbuh juga, meski tidak di setiap langkah.
 
 Tom menulis "t3.micro" di papan tulis dan menggambar wajah sedih di sebelahnya.
 
@@ -313,9 +313,9 @@ Ketika Anda *terminate* instance, ia hilang. Kecuali Anda punya penyimpanan terp
 Empat keadaan yang bisa dialami instance EC2:
 
 **Pending**: Instance sedang memulai. Ia telah dialokasikan perangkat keras tetapi belum
-selesai boot. Skrip UserData sedang berjalan.
+selesai boot.
 
-**Running**: Instance aktif dan dapat diakses. Anda membayar untuknya.
+**Running**: Instance aktif dan dapat diakses. Anda membayar untuknya. Pada boot pertama, inilah saat skrip UserData juga dijalankan.
 
 **Stopping/Stopped**: Instance dimatikan. Volume root EBS dipertahankan.
 Anda tidak membayar untuk komputasi, tetapi Anda masih membayar untuk penyimpanan EBS yang terlampir.

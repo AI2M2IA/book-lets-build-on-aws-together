@@ -90,7 +90,7 @@ faisant des téléchargements d'images et des requêtes de base de données. »
 
 « Combien ça coûte par mois ? » demanda Tom en regardant la page de comparaison des types d'instances.
 
-Leo afficha la page de tarification AWS. Le t3.micro coûtait environ 8 $ par mois. Le t3.small 17 $. Le t3.medium 33 $. Le t3.large environ 60 $. L'écart se creusait vite à mesure qu'on montait — pas linéairement, mais grosso modo en doublant à chaque palier de taille. Tom nota les chiffres, remarquant que chaque palier de taille doublait la mémoire — mais, curieusement, pas le nombre de CPU. Chaque t3 du micro au large avait les mêmes 2 vCPU ; le nombre n'augmentait pas avant le xlarge. Ce qui grandissait à chaque palier, c'était la **base de crédits CPU** — la part de ces vCPU que l'instance pouvait utiliser en continu sans épuiser ses crédits de rafale.
+Leo afficha la page de tarification AWS. Le t3.micro coûtait environ 8 $ par mois. Le t3.small 17 $. Le t3.medium 33 $. Le t3.large environ 60 $. L'écart se creusait vite à mesure qu'on montait — pas linéairement, mais grosso modo en doublant à chaque palier de taille. Tom nota les chiffres, remarquant que chaque palier de taille doublait la mémoire — mais, curieusement, pas le nombre de CPU. Chaque t3 du micro au large avait les mêmes 2 vCPU ; le nombre n'augmentait pas avant le xlarge. Chaque palier doublait la mémoire ; la **base de crédits CPU** — la part de ces vCPU que l'instance pouvait utiliser en continu sans épuiser ses crédits de rafale — augmentait aussi, mais pas à chaque palier.
 
 Tom écrivit « t3.micro » sur le tableau blanc et dessina une tête triste à côté.
 
@@ -313,9 +313,9 @@ Quand vous *terminez* une instance, elle disparaît. À moins d'avoir un stockag
 Les quatre états dans lesquels une instance EC2 peut se trouver :
 
 **Pending** (en attente) : L'instance démarre. Du matériel lui a été alloué mais elle n'a pas
-fini de démarrer. Le script UserData s'exécute.
+fini de démarrer.
 
-**Running** (en cours) : L'instance est active et accessible. Vous payez pour elle.
+**Running** (en cours) : L'instance est active et accessible. Vous payez pour elle. Lors du premier démarrage, c'est aussi à ce moment que le script UserData s'exécute.
 
 **Stopping/Stopped** (arrêt/arrêtée) : L'instance est éteinte. Le volume racine EBS est préservé.
 Vous ne payez pas pour le calcul, mais vous payez toujours pour le stockage EBS attaché.

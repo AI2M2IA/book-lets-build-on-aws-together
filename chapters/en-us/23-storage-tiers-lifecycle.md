@@ -36,7 +36,7 @@ Tom did the math.
 
 "We'd need to know what's old," Leo said.
 
-"S3 knows. It tracks last access time."
+"S3 knows. Lifecycle rules go by age — and Storage Class Analysis shows what's actually being read."
 
 **S3 Storage Classes: The Full Spectrum**
 

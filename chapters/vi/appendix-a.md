@@ -134,7 +134,7 @@ Tín hiệu kỳ thi: "SMB/Active Directory" → FSx for Windows. "Huấn luyệ
 
 **Storage Class S3 và Chính Sách Lifecycle** *(Chương 23)*
 
-S3 Intelligent-Tiering tự động di chuyển object giữa các tầng truy cập dựa trên tần suất truy cập. Chính sách lifecycle chuyển object giữa các class (Standard → Standard-IA → Glacier) dựa trên các quy tắc tuổi. Các storage class Glacier có độ trễ truy xuất từ vài phút (Glacier Instant) đến 12 giờ (Glacier Deep Archive).
+S3 Intelligent-Tiering tự động di chuyển object giữa các tầng truy cập dựa trên tần suất truy cập. Chính sách lifecycle chuyển object giữa các class (Standard → Standard-IA → Glacier) dựa trên các quy tắc tuổi. Các storage class Glacier có độ trễ truy xuất từ mili giây (Glacier Instant Retrieval) đến 12 giờ (Glacier Deep Archive).
 
 Tín hiệu kỳ thi: "Giảm chi phí lưu trữ cho dữ liệu truy cập không thường xuyên" → chính sách lifecycle, Intelligent-Tiering, hoặc Glacier.
 

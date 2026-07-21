@@ -90,7 +90,7 @@ rodando uploads de imagem e consultas de banco de dados."
 
 "Quanto isso custa por mês?" perguntou Tom, olhando a página de comparação de tipos de instância.
 
-Leo abriu a página de preços da AWS. A t3.micro custava cerca de US$ 8 por mês. A t3.small era US$ 17. A t3.medium era US$ 33. A t3.large era cerca de US$ 60. A diferença aumentava rápido conforme você subia — não de forma linear, mas dobrando aproximadamente a cada passo de tamanho. Tom anotou os números, notando que cada passo de tamanho dobrava a memória — mas, curiosamente, não a contagem de CPU. Toda t3 de micro até large tinha as mesmas 2 vCPUs; a contagem não aumentava até a xlarge. O que crescia a cada passo era a **linha de base de créditos de CPU** — a fatia dessas vCPUs que a instância podia usar continuamente sem queimar seus créditos de burst.
+Leo abriu a página de preços da AWS. A t3.micro custava cerca de US$ 8 por mês. A t3.small era US$ 17. A t3.medium era US$ 33. A t3.large era cerca de US$ 60. A diferença aumentava rápido conforme você subia — não de forma linear, mas dobrando aproximadamente a cada passo de tamanho. Tom anotou os números, notando que cada passo de tamanho dobrava a memória — mas, curiosamente, não a contagem de CPU. Toda t3 de micro até large tinha as mesmas 2 vCPUs; a contagem não aumentava até a xlarge. A **linha de base de créditos de CPU** — a fatia dessas vCPUs que a instância podia usar continuamente sem queimar seus créditos de burst — também crescia, embora não a cada passo.
 
 Tom escreveu "t3.micro" no quadro branco e desenhou uma carinha triste ao lado.
 
@@ -312,10 +312,9 @@ Quando você *encerra* (terminate) uma instância, ela se foi. A menos que você
 
 Os quatro estados em que uma instância EC2 pode estar:
 
-**Pending**: A instância está iniciando. Ela recebeu hardware mas não
-terminou de inicializar. O script de UserData está rodando.
+**Pending**: A instância está iniciando. Ela recebeu hardware mas não terminou de inicializar.
 
-**Running**: A instância está ativa e acessível. Você está pagando por ela.
+**Running**: A instância está ativa e acessível. Você está pagando por ela. No primeiro boot, é também quando o script de UserData roda.
 
 **Stopping/Stopped**: A instância está desligada. O volume EBS raiz é preservado.
 Você não está pagando por computação, mas ainda está pagando pelo armazenamento EBS anexado.

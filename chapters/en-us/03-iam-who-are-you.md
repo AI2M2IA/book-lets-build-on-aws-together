@@ -55,7 +55,7 @@ characters.
 
 Priya did not describe this in calm, abstract terms. She described it as a story.
 
-**The Breach That Cost $80,000 in Four Hours**
+**The Breach That Cost $80,000**
 
 A developer at a startup pushed a GitHub Actions deployment script to their public repository. The script contained AWS credentials hardcoded as environment variables — a mistake that's common enough to have its own category in cloud security post-mortems. The credentials had full admin access to the company's AWS account, because someone had configured them that way six months earlier to avoid dealing with IAM policies.
 

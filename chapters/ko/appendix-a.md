@@ -134,7 +134,7 @@ Docker 컨테이너를 위한 관리형 배치 컴퓨팅입니다. 작업(Docker
 
 **S3 스토리지 클래스 및 수명 주기 정책** *(23장)*
 
-S3 Intelligent-Tiering은 접근 빈도에 따라 객체를 접근 계층 간에 자동으로 이동합니다. 수명 주기 정책은 수명 규칙에 따라 객체를 클래스 간에 전환합니다(Standard → Standard-IA → Glacier). Glacier 스토리지 클래스는 검색 지연 시간이 몇 분(Glacier Instant)에서 12시간(Glacier Deep Archive)까지 다양합니다.
+S3 Intelligent-Tiering은 접근 빈도에 따라 객체를 접근 계층 간에 자동으로 이동합니다. 수명 주기 정책은 수명 규칙에 따라 객체를 클래스 간에 전환합니다(Standard → Standard-IA → Glacier). Glacier 스토리지 클래스는 검색 지연 시간이 밀리초(Glacier Instant Retrieval)에서 12시간(Glacier Deep Archive)까지 다양합니다.
 
 시험 신호: "자주 접근하지 않는 데이터의 스토리지 비용 절감" → 수명 주기 정책, Intelligent-Tiering, 또는 Glacier.
 

@@ -439,7 +439,7 @@ Priya set up Lake Formation with three permission tiers, with Rafael drafting th
 
 "Correct. The filtering is automatic. The analyst doesn't need to know it's happening — and they can't work around it by querying the raw S3 files directly, because Lake Formation controls access at the catalog level."
 
-"That's not extra work," Priya said. "That's the design."
+"Same principle," Priya said. "The control isn't bolted on — it's the design."
 
 > **Exam Tip — Lake Formation**
 >

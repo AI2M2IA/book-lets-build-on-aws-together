@@ -108,7 +108,7 @@ Secrets Manager charges per secret per month plus per API call. For a small numb
 
 Tom was quiet for a moment. "Including my time, your time, Leo's weekend... couple thousand dollars."
 
-"Secrets Manager would have caught the static key before it was exploited. And it would have rotated it automatically."
+"Secrets Manager wouldn't have detected the exposure — that isn't what it does. But the key would never have been sitting in a file to leak, and rotation would have retired it anyway."
 
 Tom pulled up the pricing page.
 

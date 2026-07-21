@@ -90,7 +90,7 @@ wakiendesha upakiaji wa picha na hoja za hifadhidata."
 
 "Hilo linagharimu kiasi gani kwa mwezi?" Tom aliuliza, akiangalia ukurasa wa ulinganisho wa aina za matukio.
 
-Leo alifungua ukurasa wa bei wa AWS. t3.micro iligharimu takriban dola 8 kwa mwezi. t3.small ilikuwa dola 17. t3.medium ilikuwa dola 33. t3.large ilikuwa karibu dola 60. Pengo lilipanuka kwa haraka kadiri ulivyopanda — si kwa mstari, bali takriban kuongeza maradufu kwa kila hatua ya ukubwa. Tom aliandika nambari, akigundua kwamba kila hatua ya ukubwa iliongeza maradufu kumbukumbu — lakini, kwa kushangaza, si idadi ya CPU. Kila t3 kutoka micro hadi large ilikuwa na vCPU 2 zile zile; idadi haikuongezeka hadi xlarge. Kilichokua kwa kila hatua kilikuwa **msingi wa mkopo wa CPU** — sehemu ya vCPU hizo ambayo tukio lingeweza kutumia kuendelea bila kuchoma mikopo yake ya mlipuko.
+Leo alifungua ukurasa wa bei wa AWS. t3.micro iligharimu takriban dola 8 kwa mwezi. t3.small ilikuwa dola 17. t3.medium ilikuwa dola 33. t3.large ilikuwa karibu dola 60. Pengo lilipanuka kwa haraka kadiri ulivyopanda — si kwa mstari, bali takriban kuongeza maradufu kwa kila hatua ya ukubwa. Tom aliandika nambari, akigundua kwamba kila hatua ya ukubwa iliongeza maradufu kumbukumbu — lakini, kwa kushangaza, si idadi ya CPU. Kila t3 kutoka micro hadi large ilikuwa na vCPU 2 zile zile; idadi haikuongezeka hadi xlarge. Kila hatua iliongeza maradufu kumbukumbu; **msingi wa mkopo wa CPU** — sehemu ya vCPU hizo ambayo tukio lingeweza kutumia kuendelea bila kuchoma mikopo yake ya mlipuko — ulikua pia, ingawa si kwa kila hatua.
 
 Tom aliandika "t3.micro" kwenye ubao mweupe na akachora uso wa huzuni karibu nayo.
 
@@ -312,10 +312,9 @@ Unapo*futa* (terminate) tukio, limekwisha. Isipokuwa una hifadhi tofauti iliyoam
 
 Hali nne ambazo tukio la EC2 linaweza kuwa nazo:
 
-**Pending**: Tukio linaanza. Limepewa maunzi lakini halijamaliza
-kuwasha. Skripti ya UserData inaendesha.
+**Pending**: Tukio linaanza. Limepewa maunzi lakini halijamaliza kuwasha.
 
-**Running**: Tukio liko hai na linaweza kufikiwa. Unalilipia.
+**Running**: Tukio liko hai na linaweza kufikiwa. Unalilipia. Kwenye buti ya kwanza, hii pia ndiyo wakati ambapo skripti ya UserData inaendesha.
 
 **Stopping/Stopped**: Tukio limezimwa. Sauti ya msingi ya EBS imehifadhiwa.
 Hulipi kompyuta, lakini bado unalipia hifadhi ya EBS iliyoambatanishwa.

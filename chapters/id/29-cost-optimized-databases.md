@@ -1,8 +1,6 @@
-# Chapter 29: Tagihan Database
+# Bab 29: Tagihan Database
 
-Tom mencetak metrik CloudWatch. Empat belas halaman. Dia membentangkannya di mejanya sebelum dia percaya dirinya bisa membaca angka-angka itu. Lebih baik melihat semuanya sekaligus daripada menemukan kejutan di tengah halaman.
-
-**Rekap: Penyimpanan Selesai, Database Berikutnya**
+Tom mencetak grafik penggunaan. Empat belas halaman. Dia membentangkannya di mejanya sebelum dia percaya dirinya bisa membaca angka-angka itu. Lebih baik melihat semuanya sekaligus daripada menemukan kejutan di tengah halaman.
 
 Audit penyimpanan telah mengungkap $6.700 dalam pemborosan akumulasi — bukan dari keputusan buruk, tetapi dari ketidakpedulian. Volume yang tidak terpasang, snapshot lama, riwayat versi yang tidak diberitahukan siapa pun ke S3 untuk dibersihkan, unggahan multipart tidak selesai yang telah menumpuk diam-diam selama berbulan-bulan. Tom telah memperbaiki semuanya, mengimplementasikan aturan pembersihan otomatis, dan beralih ke tab berikutnya di spreadsheet. Tingkat data adalah ketidakpastian terbesar yang tersisa: database relasional, tabel NoSQL, node cache, penyimpanan cadangan, dan satu item baris yang telah mengganggunya selama berminggu-minggu.
 
@@ -125,11 +123,11 @@ Harga Serverless v2: $0.12 per ACU-jam. Cluster mereka berskala antara 0,5 ACU (
 
 Biaya bulanan Serverless v2: 4,2 ACU × $0.12 × 730 jam = $368/bulan untuk writer.
 
-Bandingkan: db.r6g.2xlarge tetap (perkiraan setara provisioned mereka, diukur untuk menangani beban p95) dengan RI 1 tahun: $0.48/jam × 0,60 (diskon RI) × 730 = $210/bulan.
+Bandingkan: db.r6g.xlarge tetap (perkiraan setara provisioned mereka, diukur untuk menangani beban p95 hari kerja) dengan RI 1 tahun: $0.52/jam × 0,60 (diskon RI) × 730 = $228/bulan.
 
 "RI lebih murah," kata Leo.
 
-"Untuk beban tetap, ya," kata Tom. "Tetapi lihat sebarannya. Periode lalu lintas rendah kita — pukul 2 pagi hingga 7 pagi, Senin hingga Kamis — rata-rata 0,8 ACU. Pada instance provisioned tetap, kita akan membayar 8x dari yang kita gunakan selama jam-jam itu, hanya menganggur idle."
+"Untuk beban tetap, ya," kata Tom. "Tetapi lihat sebarannya. Periode lalu lintas rendah kita — pukul 2 pagi hingga 7 pagi, Senin hingga Kamis — rata-rata 0,8 ACU. Pada instance provisioned tetap, kita akan membayar berkali-kali lebih dari yang kita gunakan selama jam-jam itu, hanya menganggur idle."
 
 "Dan Serverless v2 berskala turun untuk mencocokkannya?"
 
@@ -143,7 +141,7 @@ Tom memetakan perbandingan setahun penuh secara eksplisit agar tim bisa mengikut
 
 **Biaya Aurora bulan demi bulan: Serverless v2 vs RI provisioned**
 
-Opsi provisioned: db.r6g.2xlarge dengan Reserved Instance 1 tahun. Biaya: $0.48/jam On-Demand × 0,60 (diskon RI) × 730 jam = $210/bulan. Tetap, terlepas dari beban.
+Opsi provisioned: db.r6g.xlarge dengan Reserved Instance 1 tahun. Biaya: $0.52/jam On-Demand × 0,60 (diskon RI) × 730 jam = $228/bulan. Tetap, terlepas dari beban.
 
 Opsi Serverless v2: bayar per ACU-jam pada $0.12. Variabel, mengikuti beban aktual.
 
@@ -158,19 +156,19 @@ Tom menarik 30 hari metrik ACU Aurora Serverless v2 dari CloudWatch dan membangu
 
 Rata-rata tertimbang di seluruh bulan penuh: 4,2 ACU → $0.504/jam → $368/bulan.
 
-Pada RI provisioned: $210/bulan. Serverless: $368/bulan. Opsi provisioned menghemat $158/bulan.
+Pada RI provisioned: $228/bulan. Serverless: $368/bulan. Opsi provisioned menghemat $140/bulan.
 
 "Itu tampak jelas," kata Leo. "Mengapa kita di Serverless?"
 
 "Karena $368 adalah rata-rata," kata Tom. "Lihat malam Jumat."
 
-Jumat pukul 6–10 malam: rata-rata 14,1 ACU. Untuk jendela empat jam itu, Serverless berbiaya $1.692/jam. Sebuah db.r6g.2xlarge provisioned pada $210/bulan — kapasitas maksimumnya — adalah 8 vCPU. Cluster Serverless menjalankan setara dengan kira-kira 16 vCPU selama jendela itu.
+Jumat pukul 6–10 malam: rata-rata 14,1 ACU. Untuk jendela empat jam itu, Serverless berbiaya $1.692/jam. Sebuah db.r6g.xlarge pada $228/bulan memiliki 32 GiB memori — setara dengan sekitar 16 ACU. Cluster Serverless sedang rata-rata 14,1 ACU selama jendela itu, mendekati batas xlarge tanpa headroom untuk lonjakan.
 
-"Instance provisioned yang diukur untuk puncak Jumat kita akan menjadi db.r6g.4xlarge," kata Tom. "Pada tarif RI, itu $0.96/jam × 0,60 = $0.576/jam. Bulanan: $420/bulan."
+"Instance provisioned yang diukur untuk puncak Jumat kita dengan headroom nyata adalah db.r6g.2xlarge," kata Tom. "Pada tarif RI, itu $1.04/jam × 0,60 = $0.624/jam. Bulanan: $456/bulan."
 
 "Itu lebih dari rata-rata Serverless $368," kata Maya.
 
-"Benar. Dan jika kita mengukur instance provisioned untuk baseline hari kerja — db.r6g.2xlarge — malam Jumat akan jadi masalah. Pada beban puncak, kita akan mendorong setara 14 ACU pada instance 8-vCPU. Itu saturasi CPU."
+"Benar. Dan jika kita mengukur instance provisioned untuk baseline hari kerja — db.r6g.xlarge — malam Jumat akan jadi masalah. Pada beban puncak, kita akan mendorong 14 ACU mendekati seluruh kapasitas xlarge. Itu saturasi."
 
 "Jadi Anda perlu mengukur sebelumnya untuk puncak," kata Priya.
 
@@ -181,10 +179,10 @@ Dia menunjukkan angka-angka berdampingan:
 | Opsi | Bulan rata-rata | Malam sepi (2 pagi) | Jam sibuk Jumat (8 malam) |
 |---|---|---|---|
 | Serverless v2 | $368 | $0.096/jam | $1.692/jam |
-| RI provisioned (r6g.2xl) | $210 | $210/730jam = $0.288/jam | terbatas — risiko saturasi |
-| RI provisioned (r6g.4xl) | $420 | $0.576/jam | headroom nyaman |
+| RI provisioned (r6g.xl) | $228 | $228/730jam = $0.312/jam | terbatas — risiko saturasi |
+| RI provisioned (r6g.2xl) | $456 | $0.624/jam | headroom nyaman |
 
-"Opsi Serverless adalah $368," kata Tom. "Opsi provisioned yang diukur tepat adalah $420 — dan itu sebelum memperhitungkan biaya operasional pemantauan dan penskalaan manual instance provisioned ketika pola lalu lintas kita berubah kuartal depan."
+"Opsi Serverless adalah $368," kata Tom. "Opsi provisioned yang diukur tepat adalah $456 — dan itu sebelum memperhitungkan biaya operasional pemantauan dan penskalaan manual instance provisioned ketika pola lalu lintas kita berubah kuartal depan."
 
 "Dan biaya operasional," kata Priya, "bukan tidak ada."
 
@@ -251,19 +249,19 @@ Tagihan ElastiCache: $185/bulan. Satu instance Redis cache.r6g.large di setiap A
 Metrik CloudWatch menunjukkan:
 
 - Penggunaan memori rata-rata: 34%
-- Puncak: 58%
+- Puncak: 44%
 
-Instance tersebut terlalu di-provision. Sebuah cache.r6g.medium kemungkinan akan menangani beban dengan headroom.
+Instance tersebut terlalu di-provision. Sebuah cache.m6g.large — setengah memori dari r6g.large — kemungkinan akan menangani beban dengan headroom.
 
 Tetapi di sini Tom berhenti. Dia ingat apa yang terjadi di perusahaan sebelumnya ketika dia menyesuaikan ukuran cache secara agresif — dan dia menceritakan kisah lengkapnya kepada tim, karena itu adalah jenis kisah yang perlu diceritakan sebelum Anda menemukan diri Anda di tengah-tengahnya.
 
-Di perusahaan sebelumnya — platform SaaS untuk pelaporan keuangan — cluster ElastiCache telah berupa cache.r6g.large. Dua node, primer dan replika. Penggunaan memori rata-rata: 31%. Puncak yang teramati: 54%. Insinyur on-call yang menandainya telah menghitung: cache.r6g.medium akan menangani beban dengan headroom 25% di atas puncak yang teramati. Penghematan: $60/bulan — harga di region dan generasi node perusahaan itu pada saat itu, lebih kecil daripada kesenjangan setara di Nimbus hari ini. Perubahan disetujui pada hari Selasa.
+Di perusahaan sebelumnya — platform SaaS untuk pelaporan keuangan — cluster ElastiCache telah berupa cache.r6g.large. Dua node, primer dan replika. Penggunaan memori rata-rata: 26%. Puncak yang teramati: 37%. Insinyur on-call yang menandainya telah menghitung: cache.m6g.large akan menangani beban dengan headroom di atas puncak yang teramati. Penghematan: $60/bulan — harga di region dan generasi node perusahaan itu pada saat itu, lebih kecil daripada kesenjangan setara di Nimbus hari ini. Perubahan disetujui pada hari Selasa.
 
 Bulan berikutnya, pada Kamis malam pukul 11:47 malam, batch settlement akhir bulan dimulai.
 
-Batch settlement berjalan setiap kuartal. Ia menarik catatan transaksi setiap akun aktif untuk tiga bulan sebelumnya, mengagregasinya, menghitung pajak, dan menulis catatan settlement. Cache digunakan untuk menyimpan status agregasi antara — total berjalan setiap akun seiring batch berlangsung. cache.r6g.large selalu menanganinya. Tidak ada yang melihat metrik batch settlement secara spesifik saat membuat keputusan penyesuaian ukuran, karena batch bersifat kuartalan dan jendela observasi adalah empat minggu.
+Batch settlement berjalan setiap kuartal. Ia menarik catatan transaksi setiap akun aktif untuk tiga bulan sebelumnya, mengagregasinya, menghitung pajak, dan menulis catatan settlement. Cache digunakan untuk menyimpan status agregasi antara — total berjalan setiap akun seiring batch berlangsung. Cache.r6g.large selalu menanganinya. Tidak ada yang melihat metrik batch settlement secara spesifik saat membuat keputusan penyesuaian ukuran, karena batch bersifat kuartalan dan jendela observasi adalah empat minggu.
 
-Pada instance medium, maxMemoryPolicy diatur ke `allkeys-lru` — ketika memori penuh, Redis akan menggusur key yang paling jarang digunakan untuk membuat ruang. Itu kebijakan yang benar untuk cache umum. Tetapi untuk batch settlement, setiap key dalam cache secara aktif dibutuhkan. Ketika memori terisi pada 84% dari 6,38 GB instance medium, Redis mulai menggusur key. Setiap penggusuran adalah cache miss. Setiap cache miss mengirim kueri ke database PostgreSQL yang mendasari untuk menghitung ulang nilai yang digusur dari catatan transaksi mentah.
+Pada instance yang lebih kecil, maxMemoryPolicy diatur ke `allkeys-lru` — ketika memori penuh, Redis akan menggusur key yang paling jarang digunakan untuk membuat ruang. Itu kebijakan yang benar untuk cache umum. Tetapi untuk batch settlement, setiap key dalam cache secara aktif dibutuhkan. Ketika memori terisi pada 84% dari 6,38 GB instance tersebut, Redis mulai menggusur key. Setiap penggusuran adalah cache miss. Setiap cache miss mengirim kueri ke database PostgreSQL yang mendasari untuk menghitung ulang nilai yang digusur dari catatan transaksi mentah.
 
 Connection pool database dikonfigurasi untuk lalu lintas steady-state, bukan beban batch settlement. Dalam empat menit setelah penggusuran dimulai, database memiliki 847 koneksi aktif. Batas koneksi adalah 1.000. Pada 9 menit, thread aplikasi pertama mulai melihat error "too many connections." Pada 12 menit, tiga layanan yang berbagi connection pool database — batch settlement, layanan pelaporan real-time, dan API yang menghadap klien — semuanya terpengaruh.
 
@@ -291,17 +289,17 @@ Penghematan $60/bulan telah menelan biaya $40.000 dalam satu insiden.
 
 "Itu jawabannya," kata Tom. "Jika Anda tidak bisa menemukan metrik untuk skenario beban tinggi yang spesifik, respons yang benar adalah belum menyesuaikan ukuran. Tunggu kejadian berikutnya, instrumentasi secara berat, lalu ukur berdasarkan apa yang Anda amati."
 
-Cluster ElastiCache Nimbus punya operasi taruhan-tinggi sendiri: jam makan malam Jumat. Tom punya data itu — tiga malam Jumat berturut-turut telah mencapai 58% penggunaan memori pada r6g.large. Jika dia pindah ke r6g.medium dan sesuatu dalam pipeline pemrosesan pesanan berubah untuk menggunakan lebih banyak ruang cache — fitur baru, strategi caching berbeda — 58% itu bisa menjadi 80%, dan 80% pada medium adalah wilayah penggusuran.
+Cluster ElastiCache Nimbus punya operasi taruhan-tinggi sendiri: jam makan malam Jumat. Tom punya data itu — tiga malam Jumat berturut-turut telah mencapai 44% penggunaan memori pada r6g.large, sekitar 5,7 GB data hidup. Pada cache.m6g.large dengan 6,38 GB, working set yang sama sudah berada di dekat 90% — dan jika sesuatu dalam pipeline pemrosesan pesanan berubah untuk menggunakan lebih banyak ruang cache — fitur baru, strategi caching berbeda — 90% menjadi wilayah penggusuran.
 
-Dia tetap menghitung angkanya. Pindah dari r6g.large ke r6g.medium: dua node pada $0.127/jam versus dua node pada $0.065/jam, berjalan 730 jam per bulan. Large: $185/bulan. Medium: $95/bulan. Potensi penghematan: $90/bulan. Dia menguji instance medium di staging selama dua minggu di bawah beban. Memori memuncak pada 71% — cukup dekat dengan batas sehingga dia merasa tidak nyaman.
+Dia tetap menghitung angkanya. Pindah dari r6g.large ke m6g.large: dua node pada $0.127/jam versus dua node pada $0.090/jam, berjalan 730 jam per bulan. Large: $185/bulan. Pasangan m6g: $131/bulan. Potensi penghematan: $54/bulan. Dia menguji instance m6g.large di staging selama dua minggu di bawah beban. Memori memuncak pada 71% — cukup dekat dengan batas sehingga dia merasa tidak nyaman.
 
 Kemudian dia menghargai alternatifnya: pertahankan cache.r6g.large, tetapi beli Reserved Nodes (komitmen 1 tahun). Dari On-Demand $185 menjadi Reserved $120/bulan. Penghematan: $65/bulan tanpa mengubah jenis instance.
 
-"$65/bulan yang akan saya hemat pada Reserved Nodes pada ukuran instance yang sama adalah penghematan nyata," kata Tom. "$90/bulan yang akan saya hemat dengan pindah ke medium adalah penghematan semu jika ia membahayakan jam makan malam Jumat. Terkadang menyesuaikan ukuran ke instance yang lebih kecil membahayakan insiden kinerja — Reserved Nodes memberi kita sebagian besar penghematan tanpa risiko apa pun."
+"$65/bulan yang akan saya hemat pada Reserved Nodes pada ukuran instance yang sama adalah penghematan nyata," kata Tom. "$54/bulan yang akan saya hemat dengan pindah ke m6g.large adalah penghematan semu jika ia membahayakan jam makan malam Jumat — dan bahkan tidak menghemat sebanyak itu. Terkadang menyesuaikan ukuran ke instance yang lebih kecil membahayakan insiden kinerja — Reserved Nodes memberi kita lebih banyak penghematan tanpa risiko apa pun."
 
 Dia membeli Reserved Nodes untuk r6g.large.
 
-"Selisih $25 dalam penghematan bulanan," kata Tom, "tidak sebanding dengan insiden malam Jumat."
+"Ketika opsi yang lebih aman juga menghemat lebih banyak," kata Tom, "itu bahkan bukan trade-off."
 
 **Retensi Cadangan RDS: Trade-Off Penyimpanan**
 
@@ -330,6 +328,8 @@ Penghematan: $64/bulan.
 Jika pola lalu lintas Anda konsisten dan dapat diprediksi, kapasitas provisioned dengan Auto Scaling menghemat 30% dibanding on-demand. Tetapi jika fitur baru diluncurkan dan volume tulis Anda melonjak 5x dalam semalam, Anda akan ter-throttle sebelum Auto Scaling mengejar — Auto Scaling bereaksi terhadap lalu lintas yang teramati, yang berarti ada lag. Mempertahankan mode on-demand untuk minggu-minggu sekitar peluncuran fitur besar adalah trade-off yang masuk akal: biaya sedikit lebih tinggi, tidak ada risiko throttling selama periode ketika Anda mengamati pola lalu lintas berubah secara real time.
 
 Jika Anda menghilangkan read replica yang tidak terpakai (seperti replika PostgreSQL lawas Nimbus), penghematannya langsung dan tidak ambigu — tidak ada trade-off, karena replika tidak memberikan nilai. Tetapi jika Anda tergoda untuk menghilangkan read replica yang menangani hanya 2% lalu lintas, periksa apa yang terjadi pada primer ketika 2% itu tidak punya tempat untuk pergi selama puncak. Beberapa read replica ada untuk headroom, bukan beban saat ini.
+
+Pada ujian, logika yang sama berlaku: beban kerja dengan baseline stabil mengarah ke kapasitas reserved; lonjakan-dan-idle mengarah ke on-demand atau Serverless.
 
 **Ringkasan Optimasi Database**
 
@@ -380,6 +380,8 @@ Ketiganya benar.
 
 ## Ringkasan
 
+Audit database menutup kesenjangan $491/bulan tanpa pernah menyentuh mesin — penghematannya datang dari bagasi: replika idle, snapshot yang terlupakan, dan kapasitas yang dihargai untuk pola lalu lintas yang telah dilampaui Nimbus. Disiplin Tom berlaku di setiap item baris: pahami beban kerja terlebih dahulu, lalu optimalkan. Satu pengeluaran baru, RDS Proxy, adalah asuransi yang dikatakan angka koneksi malam Jumat memang mereka butuhkan.
+
 - **Audit dulu**: Tarik metrik CloudWatch sebelum membuat perubahan database apa pun. Gunakan latensi p95 dan CPU p95 — bukan rata-rata. Periksa FreeableMemory dan maksimum koneksi.
 - **Hapus sumber daya yang tidak terpakai**: Read replica, database idle, dan instance pengujian yang tidak lagi dibutuhkan.
 - **Awasi connection pool Anda**: Atur alarm pada DatabaseConnections pada 75% dan 90% dari batas. Pertimbangkan RDS Proxy untuk multiplexing koneksi.
@@ -404,7 +406,7 @@ Ketiganya benar.
 
 Jelaskan kapan Anda harus menggunakan kapasitas on-demand DynamoDB versus kapasitas provisioned dengan Auto Scaling. Informasi apa yang Anda butuhkan untuk membuat keputusan ini?
 
-*(Petunjuk: Pikirkan tentang apa arti "dapat diprediksi" dalam hal data lalu lintas, dan risiko apa yang dihilangkan on-demand yang diperkenalkan provisioned.)*
+*(Petunjuk: Pikirkan tentang mesin mobil — berkomitmen ke kapasitas provisioned tanpa data lalu lintas adalah penggantian oli yang Anda lewatkan, sementara tetap di on-demand setelah 18 bulan pola yang dapat diprediksi adalah membayar tune-up yang tidak Anda butuhkan.)*
 
 **Latihan 2 — Skenario SAA-C03**
 

@@ -134,7 +134,7 @@ Sinal do exame: "SMB/Active Directory" → FSx for Windows. "Treinamento de HPC/
 
 **Classes de Armazenamento e Políticas de Ciclo de Vida do S3** *(Capítulo 23)*
 
-O S3 Intelligent-Tiering move automaticamente os objetos entre camadas de acesso com base na frequência de acesso. As políticas de ciclo de vida fazem a transição dos objetos entre classes (Standard → Standard-IA → Glacier) com base em regras de idade. As classes de armazenamento Glacier têm atraso de recuperação que varia de minutos (Glacier Instant) a 12 horas (Glacier Deep Archive).
+O S3 Intelligent-Tiering move automaticamente os objetos entre camadas de acesso com base na frequência de acesso. As políticas de ciclo de vida fazem a transição dos objetos entre classes (Standard → Standard-IA → Glacier) com base em regras de idade. As classes de armazenamento Glacier têm atraso de recuperação que varia de milissegundos (Glacier Instant Retrieval) a 12 horas (Glacier Deep Archive).
 
 Sinal do exame: "Reduzir custos de armazenamento para dados acessados com pouca frequência" → políticas de ciclo de vida, Intelligent-Tiering ou Glacier.
 

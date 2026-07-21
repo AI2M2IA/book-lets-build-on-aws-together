@@ -2,8 +2,6 @@
 
 Tom alichapisha vipimo vya CloudWatch. Kurasa kumi na nne. Aliyatandaza juu ya dawati lake kabla ya kujiamini kusoma nambari. Bora kuona kila kitu kwa wakati mmoja kuliko kupata mishangao katikati ya ukurasa.
 
-**Muhtasari wa Haraka: Uhifadhi Umekamilika, Hifadhidata Inayofuata**
-
 Ukaguzi wa uhifadhi ulikuwa umetambua $6,700 katika taka iliyosanyika — si kutoka maamuzi mabaya, bali kutoka kukosa uangalifu. Kiasi visivyoambatishwa, picha za zamani, historia za matoleo ambazo hakuna aliyeiambia S3 kuzisafisha, upakiaji wa sehemu nyingi usiokamilika uliokuwa ukisanyika kimya kwa miezi. Tom alikuwa amerekebisha yote, ametekeleza sheria za usafishaji za kiotomatiki, na kuhamia kichupo kinachofuata katika lahajedwali. Tabaka la data lilikuwa kisichojulikana kikubwa zaidi kilichobaki: hifadhidata za uhusiano, jedwali za NoSQL, nodi za kache, uhifadhi wa nakala, na kipengee kimoja cha bili kilichokuwa kikimsumbua kwa wiki.
 
 Vipengee vya bili vya tabaka la data vinavyopitiwa:
@@ -125,11 +123,11 @@ Bei za Serverless v2: $0.12 kwa kila ACU-saa. Nguzo yao ilipanua kati ya ACU 0.5
 
 Gharama ya kila mwezi ya Serverless v2: ACU 4.2 × $0.12 × masaa 730 = $368/mwezi kwa mwandishi.
 
-Linganisha: db.r6g.2xlarge iliyowekwa (sawa wao iliyokadiriwa iliyotolewa, iliyotolewa kushughulikia mzigo wa p95) yenye RI ya mwaka 1: $0.48/saa × 0.60 (punguzo la RI) × 730 = $210/mwezi.
+Linganisha: db.r6g.xlarge iliyowekwa (sawa wao iliyokadiriwa iliyotolewa, iliyotolewa kushughulikia mzigo wa p95 wa siku za wiki) yenye RI ya mwaka 1: $0.52/saa × 0.60 (punguzo la RI) × 730 = $228/mwezi.
 
 "RI ni nafuu zaidi," Leo alisema.
 
-"Kwa mzigo uliowekwa, ndiyo," Tom alisema. "Lakini angalia mtawanyiko. Kipindi chetu cha trafiki ndogo — saa 8 usiku hadi saa 1 asubuhi, Jumatatu hadi Alhamisi — kina wastani wa ACU 0.8. Kwenye kipengele kilichotolewa kilichowekwa, tungekuwa tukilipa kwa mara 8 ya kile tunachotumia wakati wa masaa hayo, kikiwa kimekaa tu bila kufanya kazi."
+"Kwa mzigo uliowekwa, ndiyo," Tom alisema. "Lakini angalia mtawanyiko. Kipindi chetu cha trafiki ndogo — saa 2 usiku hadi saa 7 asubuhi, Jumatatu hadi Alhamisi — kina wastani wa ACU 0.8. Kwenye kipengele kilichotolewa kilichowekwa, tungekuwa tukilipa kwa mara nyingi zaidi ya kile tunachotumia wakati wa masaa hayo, kikiwa kimekaa tu bila kufanya kazi."
 
 "Na Serverless v2 inapungua kulingana?"
 
@@ -143,34 +141,34 @@ Tom alichora ulinganisho wa mwaka mzima kwa uwazi ili timu iweze kufuata hoja, s
 
 **Gharama ya Aurora mwezi-kwa-mwezi: Serverless v2 dhidi ya RI iliyotolewa**
 
-Chaguo lililotolewa: db.r6g.2xlarge yenye Kipengele Kilichohifadhiwa cha mwaka 1. Gharama: $0.48/saa On-Demand × 0.60 (punguzo la RI) × masaa 730 = $210/mwezi. Imewekwa, bila kujali mzigo.
+Chaguo lililotolewa: db.r6g.xlarge yenye Kipengele Kilichohifadhiwa cha mwaka 1. Gharama: $0.52/saa On-Demand × 0.60 (punguzo la RI) × masaa 730 = $228/mwezi. Imewekwa, bila kujali mzigo.
 
 Chaguo la Serverless v2: lipa kwa kila ACU-saa kwa $0.12. Inabadilika, ikifuatilia mzigo halisi.
 
 Tom alivuta siku 30 za vipimo vya ACU vya Aurora Serverless v2 kutoka CloudWatch na akajenga usambazaji:
 
-- Saa 8 usiku–saa 1 asubuhi, Jumatatu–Alhamisi (trafiki ndogo): wastani ACU 0.8 → $0.096/saa
-- Saa 1 asubuhi–saa 5 asubuhi, siku za wiki (wastani): wastani ACU 3.2 → $0.384/saa  
-- Saa 5 asubuhi–saa 3 jioni, siku za wiki (saa za biashara za kilele): wastani ACU 5.8 → $0.696/saa
-- Ijumaa saa 12 jioni–saa 4 usiku (msongamano wa chakula cha jioni): wastani ACU 14.1 → $1.692/saa
-- Jumamosi saa 6 mchana–saa 2 usiku (busy ya wikendi): wastani ACU 9.3 → $1.116/saa
+- Saa 2 usiku–saa 7 asubuhi, Jumatatu–Alhamisi (trafiki ndogo): wastani ACU 0.8 → $0.096/saa
+- Saa 7 asubuhi–saa 11 asubuhi, siku za wiki (wastani): wastani ACU 3.2 → $0.384/saa  
+- Saa 11 asubuhi–saa 9 jioni, siku za wiki (saa za biashara za kilele): wastani ACU 5.8 → $0.696/saa
+- Ijumaa saa 6 jioni–saa 10 jioni (msongamano wa chakula cha jioni): wastani ACU 14.1 → $1.692/saa
+- Jumamosi saa 12 mchana–saa 8 jioni (busy ya wikendi): wastani ACU 9.3 → $1.116/saa
 - Jumapili (siku nyepesi zaidi): wastani ACU 2.1 → $0.252/saa
 
 Wastani uliopimwa katika mwezi mzima: ACU 4.2 → $0.504/saa → $368/mwezi.
 
-Kwa RI iliyotolewa: $210/mwezi. Serverless: $368/mwezi. Chaguo lililotolewa liliokoa $158/mwezi.
+Kwa RI iliyotolewa: $228/mwezi. Serverless: $368/mwezi. Chaguo lililotolewa liliokoa $140/mwezi.
 
 "Hiyo inaonekana dhahiri," Leo alisema. "Kwa nini tuko kwenye Serverless?"
 
 "Kwa sababu $368 ni wastani," Tom alisema. "Angalia jioni za Ijumaa."
 
-Ijumaa saa 12–saa 4 usiku: wastani wa ACU 14.1. Kwa dirisha hilo la masaa manne, Serverless inagharimu $1.692/saa. db.r6g.2xlarge iliyotolewa kwa $210/mwezi — uwezo wake wa juu zaidi — ilikuwa vCPU 8. Nguzo ya Serverless ilikuwa ikiendesha sawa na takriban vCPU 16 wakati wa dirisha hilo.
+Ijumaa saa 6–saa 10 jioni: wastani wa ACU 14.1. Kwa dirisha hilo la masaa manne, Serverless inagharimu $1.692/saa. db.r6g.xlarge iliyotolewa kwa $228/mwezi ina kumbukumbu ya GB 32 — sawa na takriban ACU 16. Nguzo ya Serverless ilikuwa ikiendesha wastani wa ACU 14.1 wakati wa dirisha hilo, ikigonga dari ya juu ya xlarge bila nafasi kwa milipuko.
 
-"Kipengele kilichotolewa kilichotolewa kwa kilele chetu cha Ijumaa kingekuwa db.r6g.4xlarge," Tom alisema. "Kwa kiwango cha RI, hiyo ni $0.96/saa × 0.60 = $0.576/saa. Kwa mwezi: $420/mwezi."
+"Kipengele kilichotolewa kilichotolewa kwa kilele chetu cha Ijumaa na nafasi halisi kingehitaji kuwa db.r6g.2xlarge," Tom alisema. "Kwa kiwango cha RI, hiyo ni $1.04/saa × 0.60 = $0.624/saa. Kwa mwezi: $456/mwezi."
 
 "Hiyo ni zaidi ya wastani wa Serverless wa $368," Maya alisema.
 
-"Sahihi. Na tukitoa kipengele kilichotolewa kwa msingi wa siku ya wiki — db.r6g.2xlarge — usiku wa Ijumaa ungekuwa tatizo. Kwa mzigo wa kilele, tungekuwa tukisukuma sawa na ACU 14 kwenye kipengele cha vCPU 8. Hiyo ni kujaa kwa CPU."
+"Sahihi. Na tukitoa kipengele kilichotolewa kwa msingi wa siku ya wiki — db.r6g.xlarge — usiku wa Ijumaa ungekuwa tatizo. Kwa mzigo wa kilele, tungekuwa tukisukuma ACU 14 kwenye uwezo wote wa xlarge. Hiyo ni kujaa."
 
 "Kwa hivyo ungehitaji kutoa saizi mapema kwa kilele," Priya alisema.
 
@@ -178,13 +176,13 @@ Ijumaa saa 12–saa 4 usiku: wastani wa ACU 14.1. Kwa dirisha hilo la masaa mann
 
 Alionyesha nambari sambamba:
 
-| Chaguo | Mwezi wa wastani | Usiku tulivu (saa 8 usiku) | Msongamano wa Ijumaa (saa 2 usiku) |
+| Chaguo | Mwezi wa wastani | Usiku tulivu (saa 2 usiku) | Msongamano wa Ijumaa (saa 8 jioni) |
 |---|---|---|---|
 | Serverless v2 | $368 | $0.096/saa | $1.692/saa |
-| RI iliyotolewa (r6g.2xl) | $210 | $210/saa730 = $0.288/saa | imefungwa — hatari ya kujaa |
-| RI iliyotolewa (r6g.4xl) | $420 | $0.576/saa | nafasi ya starehe |
+| RI iliyotolewa (r6g.xl) | $228 | $228/saa730 = $0.312/saa | imefungwa — hatari ya kujaa |
+| RI iliyotolewa (r6g.2xl) | $456 | $0.624/saa | nafasi ya starehe |
 
-"Chaguo la Serverless ni $368," Tom alisema. "Chaguo lililotolewa lililopangwa saizi sahihi ni $420 — na hiyo ni kabla ya kuhesabu gharama ya uendeshaji ya kufuatilia na kupanua kwa mkono kipengele kilichotolewa wakati mifumo yetu ya trafiki inabadilika robo ijayo."
+"Chaguo la Serverless ni $368," Tom alisema. "Chaguo lililotolewa lililopangwa saizi sahihi ni $456 — na hiyo ni kabla ya kuhesabu gharama ya uendeshaji ya kufuatilia na kupanua kwa mkono kipengele kilichotolewa wakati mifumo yetu ya trafiki inabadilika robo ijayo."
 
 "Na gharama ya uendeshaji," Priya alisema, "si sifuri."
 
@@ -198,7 +196,7 @@ Hitimisho lilishikilia: Serverless v2 kwa $368/mwezi ulikuwa chaguo sahihi kwa u
 
 "Ni nini kingetufanya tubadilike kwenda iliyotolewa?" Maya aliuliza.
 
-"Ikiwa muundo wetu wa trafiki ungelainika," Tom alisema. "Ikiwa Nimbus ingekua hadi mahali ambapo msingi wa trafiki ndogo pia ulikuwa juu — sema, ACU 8 saa 8 usiku badala ya ACU 0.8 — uwiano ungeshuka hadi 2:1 na iliyotolewa ingeleta maana ya kiuchumi. Hilo ni tatizo tofauti la biashara. Moja ambalo tungependa kuwa nalo."
+"Ikiwa muundo wetu wa trafiki ungelainika," Tom alisema. "Ikiwa Nimbus ingekua hadi mahali ambapo msingi wa trafiki ndogo pia ulikuwa juu — sema, ACU 8 saa 2 usiku badala ya ACU 0.8 — uwiano ungeshuka hadi 2:1 na iliyotolewa ingeleta maana ya kiuchumi. Hilo ni tatizo tofauti la biashara. Moja ambalo tungependa kuwa nalo."
 
 
 Kwa Aurora yenye Serverless v2, Vipengele Vilivyohifadhiwa havitumiki moja kwa moja — Serverless v2 inapanua kwa nguvu na unalipa kwa kila ACU-saa. Huu ndio usanidi wa sasa wa Nimbus: mwandishi wa msingi wa Aurora na msomaji wote wanatumia Serverless v2. Akiba kwa Nimbus inakuja kutoka asili ya kupanua kiotomatiki ya Serverless v2 yenyewe — hulipi kwa uwezo usio na kazi trafiki inapokuwa ndogo.
@@ -251,23 +249,23 @@ Bili ya ElastiCache: $185/mwezi. Kipengele kimoja cha cache.r6g.large cha Redis 
 Vipimo vya CloudWatch vilionyesha:
 
 - Wastani wa matumizi ya kumbukumbu: 34%
-- Kilele: 58%
+- Kilele: 44%
 
-Kipengele kilikuwa kimetolewa kwa kiwango kikubwa zaidi. cache.r6g.medium pengine ingeshughulikia mzigo na nafasi.
+Kipengele kilikuwa kimetolewa kwa kiwango kikubwa zaidi. cache.m6g.large — nusu ya kumbukumbu ya r6g.large — ingeweza kushughulikia mzigo na nafasi.
 
 Lakini hapa Tom alisita. Alikumbuka kilichotokea katika kampuni iliyotangulia alipopanga saizi sahihi kache kwa ukali — na akaiambia timu hadithi kamili, kwa sababu ilikuwa aina ya hadithi inayohitaji kusimuliwa kabla hujajikuta katikati yake.
 
-Katika kampuni yake ya awali — jukwaa la SaaS kwa ripoti za kifedha — nguzo ya ElastiCache ilikuwa cache.r6g.large. Nodi mbili, msingi na nakala. Wastani wa matumizi ya kumbukumbu: 31%. Kilele kilichoonekana: 54%. Mhandisi wa zamu aliyekiweka alama alikuwa amefanya hesabu: cache.r6g.medium ingeshughulikia mzigo na nafasi ya 25% juu ya kilele kilichoonekana. Akiba: $60/mwezi — bei katika mkoa wa kampuni hiyo na kizazi cha nodi wakati huo, ndogo kuliko pengo sawa katika Nimbus leo. Mabadiliko yalipitishwa Jumanne.
+Katika kampuni yake ya awali — jukwaa la SaaS kwa ripoti za kifedha — nguzo ya ElastiCache ilikuwa cache.r6g.large. Nodi mbili, msingi na nakala. Wastani wa matumizi ya kumbukumbu: 26%. Kilele kilichoonekana: 37%. Mhandisi wa zamu aliyekiweka alama alikuwa amefanya hesabu: cache.m6g.large ingeshughulikia mzigo na nafasi ya 25% juu ya kilele kilichoonekana. Akiba: $60/mwezi — bei katika mkoa wa kampuni hiyo na kizazi cha nodi wakati huo, ndogo kuliko pengo sawa katika Nimbus leo. Mabadiliko yalipitishwa Jumanne.
 
-Mwezi uliofuata, Alhamisi jioni saa 5:47 usiku, kundi la utatuzi wa mwisho-wa-mwezi lilianza.
+Mwezi uliofuata, Alhamisi jioni saa 11:47 usiku, kundi la utatuzi wa mwisho-wa-mwezi lilianza.
 
-Kundi la utatuzi liliendesha kila robo. Lilivuta rekodi za miamala za kila akaunti hai kwa miezi mitatu iliyotangulia, likazikusanya, likahesabu kodi, na likaandika rekodi za utatuzi. Kache ilitumika kuhifadhi hali ya makusanyo ya kati — jumla inayoendesha ya kila akaunti kadiri kundi lilivyoendelea. cache.r6g.large daima ilikuwa imeishughulikia. Hakuna aliyekuwa ameangalia vipimo vya kundi la utatuzi mahususi alipofanya uamuzi wa kupanga saizi sahihi, kwa sababu kundi lilikuwa la robo mwaka na dirisha la uchunguzi lilikuwa wiki nne.
+Kundi la utatuzi liliendesha kila robo. Lilivuta rekodi za miamala za kila akaunti hai kwa miezi mitatu iliyotangulia, likazikusanya, likahesabu kodi, na likaandika rekodi za utatuzi. Kache ilitumika kuhifadhi hali ya makusanyo ya kati — jumla inayoendelea ya kila akaunti kadiri kundi lilivyoendelea. cache.r6g.large daima ilikuwa imeishughulikia. Hakuna aliyekuwa ameangalia vipimo vya kundi la utatuzi mahususi alipofanya uamuzi wa kupanga saizi sahihi, kwa sababu kundi lilikuwa la robo mwaka na dirisha la uchunguzi lilikuwa wiki nne.
 
-Kwenye kipengele cha medium, maxMemoryPolicy iliwekwa kwa `allkeys-lru` — kumbukumbu ilipojaa, Redis ingetoa ufunguo uliotumika kwa muda mrefu zaidi ili kutoa nafasi. Hiyo ndiyo sera sahihi kwa kache ya jumla. Lakini kwa kundi la utatuzi, kila ufunguo katika kache ulihitajika kikamilifu. Kumbukumbu ilipojaa kwa 84% ya GB 6.38 za kipengele cha medium, Redis ilianza kutoa funguo. Kila utoaji ulikuwa kukosa kache. Kila kukosa kache kulituma hoji kwa hifadhidata ya msingi ya PostgreSQL kuhesabu upya thamani iliyotolewa kutoka rekodi ghafi za miamala.
+Kwenye kipengele cha m6g.large, maxMemoryPolicy iliwekwa kwa `allkeys-lru` — kumbukumbu ilipojaa, Redis ingetoa ufunguo uliotumika kwa muda mrefu zaidi ili kutoa nafasi. Hiyo ndiyo sera sahihi kwa kache ya jumla. Lakini kwa kundi la utatuzi, kila ufunguo katika kache ulihitajika kikamilifu. Kumbukumbu ilipojaa kwa 84% ya GB 6.38 za m6g.large, Redis ilianza kutoa funguo. Kila utoaji ulikuwa kukosa kache. Kila kukosa kache kulituma hoji kwa hifadhidata ya msingi ya PostgreSQL kuhesabu upya thamani iliyotolewa kutoka rekodi ghafi za miamala.
 
 Dimbwi la miunganisho ya hifadhidata lilisanidiwa kwa trafiki ya hali ya kudumu, si mzigo wa kundi la utatuzi. Ndani ya dakika nne za utoaji kuanza, hifadhidata ilikuwa na miunganisho hai 847. Kikomo cha miunganisho kilikuwa 1,000. Saa dakika 9, nyuzi za kwanza za programu zilianza kuona hitilafu za "miunganisho mingi mno." Saa dakika 12, huduma tatu zilizoshiriki dimbwi la miunganisho ya hifadhidata — kundi la utatuzi, huduma ya ripoti za wakati halisi, na API inayoelekeza wateja — zote ziliathiriwa.
 
-Mhandisi wa zamu aliongeza tatizo saa 5:59 usiku. Mapitio ya tukio yalianza saa 6:08 usiku.
+Mhandisi wa zamu aliongeza tatizo saa 11:59 usiku. Mapitio ya tukio yalianza saa 12:08 usiku.
 
 Jibu la kwanza: ongeza muda wa kuisha wa Lambda kwa kazi ya kundi la utatuzi (kundi la utatuzi lilikuwa kwa sehemu lililotegemea Lambda). Hili lilikuwa kosa. Muda wa kuisha haukuwa tatizo.
 
@@ -275,7 +273,7 @@ Jibu la pili: ongeza kazi ya pili ya Lambda kufananisha kundi la utatuzi. Pia ko
 
 Jibu la tatu: punguza ukubwa wa kundi la utatuzi ili kupunguza shinikizo la hifadhidata. Hili lilisaidia kidogo lakini halikushughulikia chanzo cha tatizo.
 
-Jibu la nne, saa 8:31 usiku: rejesha cache.r6g.large. Shinikizo la kumbukumbu lilishuka mara moja. Utoaji ulisimama. Dimbwi la miunganisho ya hifadhidata lilisafishwa. Kundi la utatuzi lilikamilika saa 10:17 usiku, lilichelewa kwa zaidi ya masaa manne.
+Jibu la nne, saa 2:31 usiku: rejesha cache.r6g.large. Shinikizo la kumbukumbu lilishuka mara moja. Utoaji ulisimama. Dimbwi la miunganisho ya hifadhidata lilisafishwa. Kundi la utatuzi lilikamilika saa 4:17 asubuhi, lilichelewa kwa zaidi ya masaa manne.
 
 Jumla ya tukio: masaa manne ya utendaji wa API uliopungua kwa wateja waliojaribu kufikia ripoti. Kundi moja kamili la utatuzi lilichelewa. Muda wa uhandisi: takriban masaa 22 katika wahandisi watano. Gharama ya moja kwa moja iliyokadiriwa: $40,000.
 
@@ -291,17 +289,17 @@ Akiba ya $60/mwezi ilikuwa imegharimu $40,000 katika tukio moja.
 
 "Hilo ndilo jibu," Tom alisema. "Ikiwa huwezi kupata vipimo kwa hali mahususi ya mzigo wa juu, jibu sahihi ni kutopanga saizi sahihi bado. Subiri tukio linalofuata, liwekee vyombo vya kupima kwa nguvu, kisha utoe saizi kwa kuzingatia kile ulichoona."
 
-Nguzo ya ElastiCache ya Nimbus ilikuwa na operesheni yake ya hatari ya juu: msongamano wa chakula cha jioni cha Ijumaa. Tom alikuwa na data hiyo — usiku tatu mfululizo wa Ijumaa ulikuwa umegonga matumizi ya kumbukumbu ya 58% kwenye r6g.large. Ikiwa angehamia r6g.medium na kitu katika mzunguko wa uchakataji wa maagizo kingebadilika kutumia nafasi zaidi ya kache — kipengele kipya, mkakati tofauti wa kuhifadhi kache — hiyo 58% ingeweza kuwa 80%, na 80% kwenye medium ni eneo la utoaji.
+Nguzo ya ElastiCache ya Nimbus ilikuwa na operesheni yake ya hatari ya juu: msongamano wa chakula cha jioni cha Ijumaa. Tom alikuwa na data hiyo — usiku tatu mfululizo wa Ijumaa ulikuwa umegonga matumizi ya kumbukumbu ya 44% kwenye r6g.large, takriban GB 5.7 za data hai. Kwenye cache.m6g.large ya GB 6.38, seti hiyo ya kufanya kazi ingeikalia karibu 90% — na kitu chochote katika mzunguko wa uchakataji wa maagizo kingebadilika kutumia nafasi zaidi ya kache — kipengele kipya, mkakati tofauti wa kuhifadhi kache — hiyo 90% inakuwa eneo la utoaji.
 
-Aliendesha nambari hata hivyo. Kuhamia kutoka r6g.large hadi r6g.medium: nodi mbili kwa $0.127/saa dhidi ya nodi mbili kwa $0.065/saa, zikiendesha masaa 730 kwa mwezi. Large: $185/mwezi. Medium: $95/mwezi. Akiba inayoweza kupatikana: $90/mwezi. Alijaribu kipengele cha medium katika hatua ya kujaribu kwa wiki mbili chini ya mzigo. Kumbukumbu ilifikia kilele cha 71% — karibu vya kutosha na kikomo kwamba alihisi wasiwasi.
+Aliendesha nambari hata hivyo. Kuhamia kutoka r6g.large hadi cache.m6g.large: nodi mbili kwa $0.127/saa dhidi ya nodi mbili kwa $0.090/saa, zikiendesha masaa 730 kwa mwezi. Large: $185/mwezi. Jozi ya m6g: $131/mwezi. Akiba inayoweza kupatikana: $54/mwezi. Alijaribu cache.m6g.large katika hatua ya kujaribu kwa wiki mbili chini ya mzigo. Kumbukumbu ilifikia kilele cha 71% — karibu vya kutosha na kikomo kwamba alihisi wasiwasi.
 
 Kisha alipanga bei mbadala: hifadhi cache.r6g.large, lakini nunua Nodi Zilizohifadhiwa (kujitolea kwa mwaka 1). Kutoka On-Demand $185 hadi Zilizohifadhiwa $120/mwezi. Akiba: $65/mwezi bila kubadilisha aina ya kipengele.
 
-"$65/mwezi ningeokoa kwa Nodi Zilizohifadhiwa kwa ukubwa ule ule wa kipengele ni akiba halisi," Tom alisema. "$90/mwezi ningeokoa kwa kwenda medium ni uchumi wa uongo ikiwa unahatarisha msongamano wa chakula cha jioni cha Ijumaa. Wakati mwingine kupanga saizi sahihi hadi kipengele kidogo kunahatarisha tukio la utendaji — Nodi Zilizohifadhiwa zinatupa sehemu kubwa ya akiba bila hatari yoyote."
+"$65/mwezi ningeokoa kwa Nodi Zilizohifadhiwa kwa ukubwa ule ule wa kipengele ni akiba halisi," Tom alisema. "$54/mwezi ningeokoa kwa kwenda cache.m6g.large ni uchumi wa uongo ikiwa unahatarisha msongamano wa chakula cha jioni cha Ijumaa — na hata haiokolei zaidi. Wakati mwingine kupanga saizi sahihi hadi kipengele kidogo kunahatarisha tukio la utendaji — Nodi Zilizohifadhiwa zinatupa akiba kubwa zaidi bila hatari yoyote."
 
 Alinunua Nodi Zilizohifadhiwa kwa r6g.large.
 
-"Tofauti ya $25 katika akiba ya kila mwezi," Tom alisema, "haistahili tukio la usiku wa Ijumaa."
+"Wakati chaguo salama pia linaokoa zaidi," Tom alisema, "si hata biashara ya mbadala."
 
 **Uhifadhi wa Nakala za RDS: Biashara ya Mbadala ya Uhifadhi**
 
@@ -330,6 +328,8 @@ Akiba: $64/mwezi.
 Ikiwa muundo wako wa trafiki ni thabiti na unaweza kutabiriwa, uwezo uliotolewa na Auto Scaling unaokoa 30% juu ya on-demand. Lakini ikiwa kipengele kipya kitazinduliwa na kiwango chako cha kuandika kipanda mara 5 usiku kucha, utapunguzwa kwa kasi kabla Auto Scaling haijapata wakati — Auto Scaling huitikia trafiki iliyoonekana, jambo linalomaanisha kuna kuchelewa. Kuweka hali ya on-demand kwa wiki zinazozunguka uzinduzi mkubwa wa kipengele ni biashara ya mbadala inayofaa: gharama ya juu kidogo, hakuna hatari ya kupunguzwa kwa kasi wakati wa kipindi ambapo unaangalia mifumo ya trafiki ikibadilika kwa wakati halisi.
 
 Ikiwa utaondoa nakala za kusomwa zisizotumika (kama nakala za urithi za PostgreSQL za Nimbus), akiba ni za papo hapo na zisizo na utata — hakuna biashara ya mbadala, kwa sababu nakala hazikuwa zikitoa thamani yoyote. Lakini ikiwa unashawishika kuondoa nakala ya kusomwa inayoshughulikia 2% tu ya trafiki, angalia nini hutokea kwa ya msingi wakati hiyo 2% haina pa kwenda wakati wa kilele. Baadhi ya nakala za kusomwa zipo kwa nafasi, si kwa mzigo wa sasa.
+
+Kwenye mtihani, mantiki ile ile inatumika: mzigo wa msingi thabiti unaelekeza kwa uwezo uliohifadhiwa; msongo na kutofanya kazi unaelekeza kwa on-demand au Serverless.
 
 **Muhtasari wa Uimarishaji wa Hifadhidata**
 
@@ -379,6 +379,8 @@ Wote watatu walikuwa sahihi.
 - Bei zilizohifadhiwa zinahitaji imani katika uthabiti wa mzigo wa kazi
 
 ## Muhtasari
+
+Ukaguzi wa hifadhidata ulifunga pengo la $491 kwa mwezi bila kugusa injini — akiba zilitoka kwenye sanduku la nyuma: nakala za kutulia, picha zilizosahauliwa, na uwezo uliowekwa bei kwa mifumo ya trafiki ambayo Nimbus ilikuwa imeshinda. Nidhamu ya Tom ilidumu katika kila kipengele: elewa mzigo wa kazi kwanza, kisha boresha. Gharama moja mpya, RDS Proxy, ilikuwa bima ambayo nambari za miunganisho za usiku wa Ijumaa zilisema wanahitaji.
 
 - **Ukaguzi kwanza**: Vuta vipimo vya CloudWatch kabla ya kufanya mabadiliko yoyote ya hifadhidata. Tumia muda wa kuchelewa wa p95 na CPU ya p95 — si wastani. Angalia FreeableMemory na viwango vya juu vya miunganisho.
 - **Futa rasilimali zisizotumika**: Nakala za kusomwa, hifadhidata zisizofanya kazi, na vipengele vya majaribio ambavyo havihitajiki tena.

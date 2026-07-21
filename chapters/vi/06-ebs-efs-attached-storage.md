@@ -78,7 +78,7 @@ Trước khi gp3 trở thành mặc định, có **gp2** — và bạn vẫn s�
 
 "io2 tốn thêm bao nhiêu so với gp3?" Tom hỏi, ngước nhìn khỏi cuốn sổ tay của mình.
 
-Leo mở trang giá. io2 chạy khoảng gấp ba lần chi phí mỗi GB của gp3, cộng thêm một khoản phí riêng cho mỗi IOPS được cấp phát. Tom lưu ý khoảng cách. "Vậy chúng ta sử dụng gp3 cho đến khi cơ sở dữ liệu thực sự cần đảm bảo hiệu năng."
+Leo mở trang giá. io2 chạy nhiều hơn 50–60% mỗi GB so với gp3, cộng thêm một khoản phí riêng cho mỗi IOPS được cấp phát — và trên một volume hiệu suất cao, các khoản phí theo IOPS đó là những gì chiếm lĩnh hóa đơn. Tom lưu ý khoảng cách. "Vậy chúng ta sử dụng gp3 cho đến khi cơ sở dữ liệu thực sự cần đảm bảo hiệu năng."
 
 Kỳ thi không đòi hỏi bạn ghi nhớ tất cả các loại. Nó kiểm tra khả năng của bạn để khớp các yêu cầu với loại đúng: yêu cầu IOPS → io2. Các khối lượng công việc tuần tự nhạy cảm với chi phí → st1. Các ứng dụng web chung → gp3.
 
@@ -461,7 +461,7 @@ Bút đỏ của Tom khoanh tròn vấn đề thực sự: quá nhiều trên m�
   cần IOPS được đảm bảo (các cơ sở dữ liệu lớn, các hệ thống nhiệm vụ quan trọng). Các tình huống thi
   mô tả "yêu cầu IOPS" hoặc "hiệu năng cơ sở dữ liệu độ trễ thấp nhất quán"
   chỉ ra io2.
-- **gp2 so với gp3:** IOPS gp2 được ghép với kích cỡ (3 IOPS/GB, tối đa 16.000 IOPS ở 5.334 GB); IOPS gp3 độc lập với kích cỡ (3.000 cơ sở, có thể cấu hình lên đến 80.000 kể từ cuối năm 2025 — tài liệu cũ hơn, và có thể ngân hàng câu hỏi thi, vẫn giả định giới hạn 16.000 trước đó). Mẫu câu hỏi thi: một khối lượng công việc cần nhiều IOPS hơn mà không tăng lưu trữ — câu trả lời là gp3 hoặc io2, không phải gp2.
+- **gp2 so với gp3:** IOPS gp2 được ghép với kích cỡ (3 IOPS/GB, tối đa 16.000 IOPS ở 5.334 GB); IOPS gp3 độc lập với kích cỡ (3.000 cơ sở, có thể cấu hình lên đến 80.000 kể từ tháng 9 năm 2025 — tài liệu cũ hơn, và có thể ngân hàng câu hỏi thi, vẫn giả định giới hạn 16.000 trước đó). Mẫu câu hỏi thi: một khối lượng công việc cần nhiều IOPS hơn mà không tăng lưu trữ — câu trả lời là gp3 hoặc io2, không phải gp2.
 - **Mã hóa khi nghỉ cho EBS**: Bạn không thể mã hóa một volume hiện có không được mã hóa
   tại chỗ — bạn phải snapshot, sao chép được mã hóa, khôi phục. Bật mặc định mã hóa cấp tài khoản
   để tránh tạo các volume không được mã hóa một cách vô tình. Mã hóa là AES-256
