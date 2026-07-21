@@ -2,11 +2,15 @@
 
 *Copyright © 2026 AI(2)M(2)IA*
 
-*Todos los derechos reservados. Ninguna parte de esta publicación puede ser reproducida, distribuida
-o transmitida en ninguna forma ni por ningún medio, incluidas fotocopias, grabaciones u
-otros métodos electrónicos o mecánicos, sin el permiso previo por escrito del
-editor, salvo en el caso de citas breves incorporadas en reseñas críticas
-y ciertos otros usos no comerciales permitidos por la ley de derechos de autor.*
+*Este libro es gratuito. Eres libre de leerlo, copiarlo, traducirlo, adaptarlo y compartirlo — en cualquier idioma y en cualquier formato — sin costo, bajo la licencia Creative Commons Atribución-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0).*
+
+*En términos sencillos: no puedes vender este libro ni nada que hagas a partir de él, y no puedes ponerlo tras un muro de pago — el acceso debe permanecer siempre gratuito. Puedes pedir apoyo voluntario por tu trabajo, pero ese apoyo nunca puede ser una condición para leerlo.*
+
+*Por ejemplo: si traduces este libro al esperanto y publicas tu versión, puedes invitar a los lectores a contribuir — pero cualquiera debe poder leer tu traducción sin pagar. Si creas un repositorio desde cero y armas una nueva guía de estudio sobre este contenido, rige la misma regla: donaciones, sí; un precio para el acceso, no.*
+
+*El autor conserva el derecho de vender sus propias ediciones — por ejemplo, la edición Kindle de Amazon, cuya compra ayuda a financiar el próximo libro.*
+
+*Este libro tiene complementos gratuitos. Lee la fuente, tradúcela o ayuda a mejorarla en el repositorio: https://github.com/AI2M2IA/book-lets-build-on-aws-together. Estudia gratis con la app de práctica (un juego): https://ai2m2ia.github.io/book-lets-build-on-aws-together. Mira los videos: https://www.youtube.com/playlist?list=PL9jytbqPPUEgTdZvVIdHxtXahX8922oYN. Términos completos: LICENSE-CONTENT (el texto del libro, CC BY-NC-SA 4.0) y LICENSE (el código, AGPL-3.0).*
 
 *La historia de Nimbus y sus personajes es ficticia. Cualquier parecido con personas
 reales, vivas o fallecidas, o con eventos reales es pura coincidencia.*

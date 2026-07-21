@@ -2,11 +2,29 @@
 
 *Copyright © 2026 AI(2)M(2)IA*
 
-*All rights reserved. No part of this publication may be reproduced, distributed,
-or transmitted in any form or by any means, including photocopying, recording, or
-other electronic or mechanical methods, without the prior written permission of
-the publisher, except in the case of brief quotations embodied in critical reviews
-and certain other noncommercial uses permitted by copyright law.*
+*This book is free. You are free to read, copy, translate, adapt, and share it —
+in any language and in any format — at no cost, under the Creative Commons
+Attribution-NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA 4.0).*
+
+*In plain terms: you may not sell this book or anything you make from it, and you
+may not put it behind a paywall — access must always stay free. You are welcome to
+ask for voluntary support for your work, but that support can never be a condition
+for reading it.*
+
+*For example: if you translate this book into Esperanto and publish your version,
+you may invite readers to chip in — but anyone must be able to read your translation
+without paying. If you start a fresh repository and build a new study guide on top
+of this content, the same rule holds: donations, yes; a price on access, no.*
+
+*The author keeps the right to sell the author's own editions — for instance, the
+Amazon Kindle edition, whose purchase helps fund the next book.*
+
+*This book has free companions. Read the source, translate it, or help improve it
+at the repository: https://github.com/AI2M2IA/book-lets-build-on-aws-together.
+Study for free with the companion practice app (a game): https://ai2m2ia.github.io/book-lets-build-on-aws-together.
+Watch the companion videos: https://www.youtube.com/playlist?list=PL9jytbqPPUEgTdZvVIdHxtXahX8922oYN.
+Full terms: LICENSE-CONTENT (the book text, CC BY-NC-SA 4.0) and LICENSE (the code,
+AGPL-3.0).*
 
 *The story of Nimbus and its characters is fictional. Any resemblance to actual
 persons, living or dead, or actual events is purely coincidental.*
@@ -24,6 +42,8 @@ information at aws.amazon.com before making architectural or financial decisions
 exam. Visit aws.amazon.com/certification to register.*
 
 *First Edition, 2026*
+
+*Last updated: July 7, 2026. What changed in this and previous revisions: https://github.com/AI2M2IA/book-lets-build-on-aws-together/blob/main/CHANGELOG.md*
 
 *Printed and distributed through Amazon KDP*
 

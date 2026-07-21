@@ -2,11 +2,15 @@
 
 *Hakimiliki © 2026 AI(2)M(2)IA*
 
-*Haki zote zimehifadhiwa. Hakuna sehemu ya chapisho hili inayoweza kunakiliwa, kusambazwa,
-au kupitishwa kwa njia yoyote au kwa njia yoyote, ikiwa ni pamoja na upigaji picha, kurekodi, au
-njia nyingine za kielektroniki au za mitambo, bila ruhusa ya maandishi ya awali ya
-mchapishaji, isipokuwa katika kesi ya maandishi mafupi yanayojumuishwa katika mapitio ya kina
-na matumizi mengine fulani yasiyokuwa ya kibiashara yanayoruhusiwa na sheria ya hakimiliki.*
+*Kitabu hiki ni bure. Uko huru kukisoma, kukinakili, kukitafsiri, kukirekebisha na kukishiriki — kwa lugha yoyote na muundo wowote — bila gharama, chini ya leseni ya Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0).*
+
+*Kwa maneno rahisi: huwezi kuuza kitabu hiki au chochote unachotengeneza kutokana nacho, na huwezi kukiweka nyuma ya ukuta wa malipo — ufikiaji lazima ubaki bure daima. Unakaribishwa kuomba msaada wa hiari kwa kazi yako, lakini msaada huo hauwezi kamwe kuwa sharti la kusoma.*
+
+*Kwa mfano: ukitafsiri kitabu hiki kwa Kiesperanto na kuchapisha toleo lako, unaweza kuwaalika wasomaji kuchangia — lakini kila mtu lazima aweze kusoma tafsiri yako bila kulipa. Ukianzisha hazina mpya kutoka mwanzo na kujenga mwongozo mpya wa masomo juu ya maudhui haya, kanuni ile ile inatumika: michango ndiyo; bei kwa ufikiaji hapana.*
+
+*Mwandishi anabaki na haki ya kuuza matoleo yake mwenyewe — kwa mfano toleo la Kindle kwenye Amazon, ambalo ununuzi wake husaidia kufadhili kitabu kijacho.*
+
+*Kitabu hiki kina wenzake wa bure. Soma chanzo, kitafsiri, au saidia kukiboresha kwenye hazina: https://github.com/AI2M2IA/book-lets-build-on-aws-together. Jifunze bure kwa programu ya mazoezi (mchezo): https://ai2m2ia.github.io/book-lets-build-on-aws-together. Tazama video: https://www.youtube.com/playlist?list=PL9jytbqPPUEgTdZvVIdHxtXahX8922oYN. Masharti kamili: LICENSE-CONTENT (maandishi ya kitabu, CC BY-NC-SA 4.0) na LICENSE (msimbo, AGPL-3.0).*
 
 *Hadithi ya Nimbus na wahusika wake ni ya kubuni. Kufanana na watu halisi,
 wanaoishi au waliokufa, au matukio halisi ni bahati tu.*

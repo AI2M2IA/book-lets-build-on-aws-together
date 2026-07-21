@@ -2,7 +2,15 @@
 
 *Copyright © 2026 AI(2)M(2)IA*
 
-*Tutti i diritti riservati. Nessuna parte di questa pubblicazione può essere riprodotta, distribuita o trasmessa in qualsiasi forma o con qualsiasi mezzo, incluse fotocopie, registrazioni o altri metodi elettronici o meccanici, senza il previo consenso scritto dell'editore, eccetto nel caso di brevi citazioni inserite in recensioni critiche e altri usi non commerciali consentiti dalla legge sul diritto d'autore.*
+*Questo libro è gratuito. Sei libero di leggerlo, copiarlo, tradurlo, adattarlo e condividerlo — in qualsiasi lingua e in qualsiasi formato — senza costi, secondo la licenza Creative Commons Attribuzione-NonCommerciale-CondividiAlloStessoModo 4.0 Internazionale (CC BY-NC-SA 4.0).*
+
+*In parole semplici: non puoi vendere questo libro né nulla di ciò che ne ricavi, e non puoi metterlo dietro un paywall — l'accesso deve restare sempre gratuito. Puoi chiedere un sostegno volontario per il tuo lavoro, ma tale sostegno non può mai essere una condizione per la lettura.*
+
+*Ad esempio: se traduci questo libro in esperanto e pubblichi la tua versione, puoi invitare i lettori a contribuire — ma chiunque deve poter leggere la tua traduzione senza pagare. Se crei un nuovo repository e costruisci una nuova guida di studio su questo contenuto, vale la stessa regola: donazioni sì; un prezzo per l'accesso no.*
+
+*L'autore mantiene il diritto di vendere le proprie edizioni — per esempio l'edizione Kindle su Amazon, il cui acquisto aiuta a finanziare il prossimo libro.*
+
+*Questo libro ha compagni gratuiti. Leggi la fonte, traducila o aiuta a migliorarla nel repository: https://github.com/AI2M2IA/book-lets-build-on-aws-together. Studia gratis con l'app di pratica (un gioco): https://ai2m2ia.github.io/book-lets-build-on-aws-together. Guarda i video: https://www.youtube.com/playlist?list=PL9jytbqPPUEgTdZvVIdHxtXahX8922oYN. Termini completi: LICENSE-CONTENT (il testo del libro, CC BY-NC-SA 4.0) e LICENSE (il codice, AGPL-3.0).*
 
 *La storia di Nimbus e i suoi personaggi sono fittizi. Qualsiasi somiglianza con persone reali, vive o morte, o eventi reali è puramente casuale.*
 

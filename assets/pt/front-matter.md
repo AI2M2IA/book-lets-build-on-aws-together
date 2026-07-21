@@ -2,11 +2,15 @@
 
 *Copyright © 2026 AI(2)M(2)IA*
 
-*Todos os direitos reservados. Nenhuma parte desta publicação pode ser reproduzida, distribuída
-ou transmitida sob qualquer forma ou por qualquer meio, incluindo fotocópia, gravação ou
-outros métodos eletrônicos ou mecânicos, sem a autorização prévia e por escrito da
-editora, exceto no caso de citações breves incorporadas em resenhas críticas
-e certos outros usos não comerciais permitidos pela lei de direitos autorais.*
+*Este livro é gratuito. Você é livre para ler, copiar, traduzir, adaptar e compartilhá-lo — em qualquer idioma e em qualquer formato — sem custo, sob a licença Creative Commons Atribuição-NãoComercial-CompartilhaIgual 4.0 Internacional (CC BY-NC-SA 4.0).*
+
+*Em termos simples: você não pode vender este livro nem nada feito a partir dele, e não pode colocá-lo atrás de um paywall — o acesso deve permanecer sempre gratuito. Você pode pedir apoio voluntário pelo seu trabalho, mas esse apoio nunca pode ser condição para a leitura.*
+
+*Por exemplo: se você traduzir este livro para o Esperanto e publicar sua versão, pode convidar os leitores a contribuir — mas qualquer pessoa deve poder ler sua tradução sem pagar. Se você criar um repositório do zero e montar um novo guia de estudos sobre este conteúdo, a mesma regra vale: doações, sim; preço no acesso, não.*
+
+*O autor mantém o direito de vender as próprias edições — por exemplo, a edição Kindle na Amazon, cuja compra ajuda a financiar o próximo livro.*
+
+*Este livro tem companheiros gratuitos. Leia a fonte, traduza-a ou ajude a melhorá-la no repositório: https://github.com/AI2M2IA/book-lets-build-on-aws-together. Estude de graça com o app de prática (um jogo): https://ai2m2ia.github.io/book-lets-build-on-aws-together. Assista aos vídeos: https://www.youtube.com/playlist?list=PL9jytbqPPUEgTdZvVIdHxtXahX8922oYN. Termos completos: LICENSE-CONTENT (o texto do livro, CC BY-NC-SA 4.0) e LICENSE (o código, AGPL-3.0).*
 
 *A história de Nimbus e seus personagens é fictícia. Qualquer semelhança com pessoas
 reais, vivas ou mortas, ou com eventos reais é mera coincidência.*

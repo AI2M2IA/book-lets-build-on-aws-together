@@ -2,11 +2,15 @@
 
 *Copyright © 2026 AI(2)M(2)IA*
 
-*Tous droits réservés. Aucune partie de cette publication ne peut être reproduite, distribuée
-ou transmise sous quelque forme ou par quelque moyen que ce soit, notamment par photocopie,
-enregistrement ou tout autre procédé électronique ou mécanique, sans l'autorisation écrite
-préalable de l'éditeur, sauf dans le cas de courtes citations insérées dans des critiques
-et certains autres usages non commerciaux autorisés par la loi sur le droit d'auteur.*
+*Ce livre est gratuit. Vous êtes libre de le lire, de le copier, de le traduire, de l'adapter et de le partager — dans n'importe quelle langue et n'importe quel format — sans frais, sous la licence Creative Commons Attribution-Pas d'Utilisation Commerciale-Partage dans les Mêmes Conditions 4.0 International (CC BY-NC-SA 4.0).*
+
+*En clair : vous ne pouvez pas vendre ce livre ni rien de ce que vous en tirez, et vous ne pouvez pas le placer derrière un péage — l'accès doit toujours rester gratuit. Vous pouvez demander un soutien financier volontaire pour votre travail, mais ce soutien ne peut jamais être une condition pour lire.*
+
+*Par exemple : si vous traduisez ce livre en espéranto et publiez votre version, vous pouvez inviter les lecteurs à contribuer — mais chacun doit pouvoir lire votre traduction sans payer. Si vous créez un dépôt de zéro et bâtissez un nouveau guide d'étude à partir de ce contenu, la même règle s'applique : les dons, oui ; un prix pour l'accès, non.*
+
+*L'auteur conserve le droit de vendre ses propres éditions — par exemple l'édition Kindle sur Amazon, dont l'achat aide à financer le prochain livre.*
+
+*Ce livre a des compagnons gratuits. Lisez la source, traduisez-la ou aidez à l'améliorer sur le dépôt : https://github.com/AI2M2IA/book-lets-build-on-aws-together. Étudiez gratuitement avec l'application d'entraînement (un jeu) : https://ai2m2ia.github.io/book-lets-build-on-aws-together. Regardez les vidéos : https://www.youtube.com/playlist?list=PL9jytbqPPUEgTdZvVIdHxtXahX8922oYN. Conditions complètes : LICENSE-CONTENT (le texte du livre, CC BY-NC-SA 4.0) et LICENSE (le code, AGPL-3.0).*
 
 *L'histoire de Nimbus et ses personnages sont fictifs. Toute ressemblance avec des personnes
 réelles, vivantes ou décédées, ou avec des événements réels est purement fortuite.*

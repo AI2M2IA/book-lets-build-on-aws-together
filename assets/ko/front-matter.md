@@ -2,11 +2,15 @@
 
 *Copyright © 2026 AI(2)M(2)IA*
 
-*All rights reserved. No part of this publication may be reproduced, distributed,
-or transmitted in any form or by any means, including photocopying, recording, or
-other electronic or mechanical methods, without the prior written permission of
-the publisher, except in the case of brief quotations embodied in critical reviews
-and certain other noncommercial uses permitted by copyright law.*
+*이 책은 무료입니다. 어떤 언어로든, 어떤 형식으로든, 무료로 읽고 복사하고 번역하고 각색하고 공유할 수 있습니다. 라이선스는 크리에이티브 커먼즈 저작자표시-비영리-동일조건변경허락 4.0 국제(CC BY-NC-SA 4.0)입니다.*
+
+*간단히 말해, 이 책이나 이를 바탕으로 만든 것을 판매할 수 없으며, 결제 장벽 뒤에 둘 수 없습니다. 접근은 항상 무료여야 합니다. 자신의 작업에 대해 자발적 후원을 요청하는 것은 환영하지만, 그 후원이 읽기의 조건이 되어서는 절대 안 됩니다.*
+
+*예를 들어, 이 책을 에스페란토로 번역해 자신의 버전을 공개한다면 독자에게 후원을 청할 수 있지만, 누구나 비용 없이 당신의 번역을 읽을 수 있어야 합니다. 새 저장소를 처음부터 만들어 이 내용을 바탕으로 새로운 학습 가이드를 만들어도 같은 규칙이 적용됩니다. 기부는 좋지만, 접근에 가격을 매기는 것은 안 됩니다.*
+
+*저자는 자신의 판본을 판매할 권리를 보유합니다. 예를 들어 Amazon Kindle 판이며, 그 구매는 다음 책의 자금이 됩니다.*
+
+*이 책에는 무료 동반 자료가 있습니다. 저장소에서 소스를 읽고 번역하거나 개선을 도와주세요: https://github.com/AI2M2IA/book-lets-build-on-aws-together. 무료 학습 앱(게임)으로 공부하세요: https://ai2m2ia.github.io/book-lets-build-on-aws-together. 동영상 보기: https://www.youtube.com/playlist?list=PL9jytbqPPUEgTdZvVIdHxtXahX8922oYN. 전체 약관: LICENSE-CONTENT(책 본문, CC BY-NC-SA 4.0) 및 LICENSE(코드, AGPL-3.0).*
 
 *이 책에 등장하는 Nimbus와 그 등장인물들의 이야기는 허구입니다. 실존 인물이나 실제 사건과의 유사성은 순전히 우연입니다.*
 

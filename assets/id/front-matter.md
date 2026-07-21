@@ -2,11 +2,15 @@
 
 *Hak Cipta © 2026 AI(2)M(2)IA*
 
-*Semua hak dilindungi. Tidak ada bagian dari publikasi ini yang boleh direproduksi, didistribusikan,
-atau ditransmisikan dalam bentuk apa pun atau dengan cara apa pun, termasuk fotokopi, perekaman, atau
-metode elektronik maupun mekanis lainnya, tanpa izin tertulis sebelumnya dari penerbit,
-kecuali dalam hal kutipan singkat yang terdapat dalam ulasan kritis
-dan penggunaan nonkomersial tertentu lainnya yang diizinkan oleh hukum hak cipta.*
+*Buku ini gratis. Anda bebas membaca, menyalin, menerjemahkan, mengadaptasi, dan membagikannya — dalam bahasa apa pun dan format apa pun — tanpa biaya, di bawah lisensi Creative Commons Atribusi-NonKomersial-BerbagiSerupa 4.0 Internasional (CC BY-NC-SA 4.0).*
+
+*Sederhananya: Anda tidak boleh menjual buku ini atau apa pun yang Anda buat darinya, dan tidak boleh menaruhnya di balik paywall — akses harus selalu gratis. Anda boleh meminta dukungan sukarela untuk karya Anda, tetapi dukungan itu tidak boleh pernah menjadi syarat untuk membaca.*
+
+*Contoh: jika Anda menerjemahkan buku ini ke bahasa Esperanto dan menerbitkan versi Anda, Anda boleh mengajak pembaca untuk menyumbang — tetapi siapa pun harus bisa membaca terjemahan Anda tanpa membayar. Jika Anda membuat repositori baru dan menyusun panduan belajar baru dari konten ini, aturan yang sama berlaku: donasi, ya; harga untuk akses, tidak.*
+
+*Penulis tetap berhak menjual edisinya sendiri — misalnya edisi Kindle di Amazon, yang pembeliannya membantu mendanai buku berikutnya.*
+
+*Buku ini punya pendamping gratis. Baca sumbernya, terjemahkan, atau bantu memperbaikinya di repositori: https://github.com/AI2M2IA/book-lets-build-on-aws-together. Belajar gratis dengan aplikasi latihan (sebuah permainan): https://ai2m2ia.github.io/book-lets-build-on-aws-together. Tonton videonya: https://www.youtube.com/playlist?list=PL9jytbqPPUEgTdZvVIdHxtXahX8922oYN. Ketentuan lengkap: LICENSE-CONTENT (teks buku, CC BY-NC-SA 4.0) dan LICENSE (kode, AGPL-3.0).*
 
 *Kisah Nimbus dan karakter-karakternya adalah fiktif. Kemiripan apa pun dengan
 orang nyata, yang masih hidup atau sudah meninggal, atau peristiwa nyata adalah semata-mata kebetulan.*

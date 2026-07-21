@@ -10,7 +10,7 @@
 
 This book is free and  open-source — read it here on GitHub,  share it, translate it, adapt it. PDF and ebook are also available.
 
-If it helped you, consider buying it on [Amazon KDP](https://www.amazon.com/stores/AI%282%29M%282%29IA-AI%282%29M%282%29IA/author/B0GYDYRL75). Your purchase keeps this project alive and funds future books.
+If it helped you, consider buying it on [Amazon KDP](https://www.amazon.com/dp/B0H3Q4JL7V). Your purchase keeps this project alive and funds future books.
 
 Translations into the top 10 world languages are available in this repository and more coming soon. Although, no promises.
 

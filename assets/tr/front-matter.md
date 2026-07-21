@@ -2,7 +2,15 @@
 
 *Telif Hakkı © 2026 AI(2)M(2)IA*
 
-*Tüm hakları saklıdır. Bu yayının hiçbir bölümü, telif hakkı yasasının izin verdiği kısa alıntılar ve belirli ticari olmayan kullanımlar dışında, yayıncının önceden yazılı izni olmaksızın herhangi bir biçimde veya herhangi bir yöntemle — fotokopi, kayıt veya diğer elektronik ya da mekanik yöntemler dahil — çoğaltılamaz, dağıtılamaz ya da iletilemez.*
+*Bu kitap ücretsizdir. Onu okumakta, kopyalamakta, çevirmekte, uyarlamakta ve paylaşmakta — herhangi bir dilde ve herhangi bir biçimde — ücretsiz olarak özgürsünüz; Creative Commons Atıf-GayriTicari-AynıLisanslaPaylaş 4.0 Uluslararası (CC BY-NC-SA 4.0) lisansı altında.*
+
+*Açıkça: bu kitabı ya da ondan ürettiğiniz hiçbir şeyi satamazsınız ve ödeme duvarı ardına koyamazsınız — erişim her zaman ücretsiz kalmalıdır. Çalışmanız için gönüllü destek isteyebilirsiniz, ancak bu destek asla okumanın koşulu olamaz.*
+
+*Örneğin: bu kitabı Esperanto'ya çevirip kendi sürümünüzü yayımlarsanız, okurları katkıda bulunmaya davet edebilirsiniz — ama herkes çevirinizi ödeme yapmadan okuyabilmelidir. Sıfırdan bir depo oluşturup bu içerik üzerine yeni bir çalışma kılavuzu kurarsanız, aynı kural geçerlidir: bağışlar evet; erişime fiyat hayır.*
+
+*Yazar, kendi baskılarını satma hakkını saklı tutar — örneğin, satın alınması bir sonraki kitabı finanse etmeye yardımcı olan Amazon Kindle baskısı.*
+
+*Bu kitabın ücretsiz tamamlayıcıları var. Kaynağı okuyun, çevirin veya depoda geliştirmeye yardım edin: https://github.com/AI2M2IA/book-lets-build-on-aws-together. Alıştırma uygulamasıyla (bir oyun) ücretsiz çalışın: https://ai2m2ia.github.io/book-lets-build-on-aws-together. Videoları izleyin: https://www.youtube.com/playlist?list=PL9jytbqPPUEgTdZvVIdHxtXahX8922oYN. Tam koşullar: LICENSE-CONTENT (kitap metni, CC BY-NC-SA 4.0) ve LICENSE (kod, AGPL-3.0).*
 
 *Nimbus'un hikayesi ve karakterleri kurgusaldır. Yaşayan ya da ölü gerçek kişilerle ya da gerçek olaylarla herhangi bir benzerlik tamamen tesadüftür.*
 

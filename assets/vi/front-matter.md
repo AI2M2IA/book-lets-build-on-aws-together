@@ -2,7 +2,15 @@
 
 *Bản quyền © 2026 AI(2)M(2)IA*
 
-*Bảo lưu mọi quyền. Không được sao chép, phân phối hoặc truyền tải bất kỳ phần nào của ấn phẩm này dưới bất kỳ hình thức hoặc phương tiện nào, bao gồm sao chụp, ghi âm hoặc các phương pháp điện tử hay cơ học khác, nếu không có sự cho phép bằng văn bản trước của nhà xuất bản, ngoại trừ trong trường hợp trích dẫn ngắn trong các bài đánh giá và một số mục đích phi thương mại nhất định được pháp luật bản quyền cho phép.*
+*Cuốn sách này miễn phí. Bạn được tự do đọc, sao chép, dịch, chuyển thể và chia sẻ nó — bằng bất kỳ ngôn ngữ nào và ở bất kỳ định dạng nào — miễn phí, theo giấy phép Creative Commons Ghi công-Phi thương mại-Chia sẻ tương tự 4.0 Quốc tế (CC BY-NC-SA 4.0).*
+
+*Nói đơn giản: bạn không được bán cuốn sách này hay bất cứ thứ gì bạn tạo ra từ nó, và không được đặt nó sau tường phí — quyền truy cập phải luôn miễn phí. Bạn được phép kêu gọi hỗ trợ tự nguyện cho công sức của mình, nhưng sự hỗ trợ đó không bao giờ được là điều kiện để đọc.*
+
+*Ví dụ: nếu bạn dịch cuốn sách này sang tiếng Esperanto và xuất bản phiên bản của mình, bạn có thể mời độc giả đóng góp — nhưng bất kỳ ai cũng phải đọc được bản dịch của bạn mà không phải trả tiền. Nếu bạn tạo một kho lưu trữ mới và xây dựng một hướng dẫn học tập mới dựa trên nội dung này, quy tắc vẫn vậy: quyên góp thì được; đặt giá cho quyền truy cập thì không.*
+
+*Tác giả giữ quyền bán các ấn bản của riêng mình — ví dụ ấn bản Kindle trên Amazon, việc mua nó giúp tài trợ cho cuốn sách tiếp theo.*
+
+*Cuốn sách này có những người bạn đồng hành miễn phí. Đọc mã nguồn, dịch hoặc giúp cải thiện tại kho lưu trữ: https://github.com/AI2M2IA/book-lets-build-on-aws-together. Học miễn phí với ứng dụng luyện tập (một trò chơi): https://ai2m2ia.github.io/book-lets-build-on-aws-together. Xem video: https://www.youtube.com/playlist?list=PL9jytbqPPUEgTdZvVIdHxtXahX8922oYN. Điều khoản đầy đủ: LICENSE-CONTENT (văn bản sách, CC BY-NC-SA 4.0) và LICENSE (mã, AGPL-3.0).*
 
 *Câu chuyện về Nimbus và các nhân vật là hư cấu. Bất kỳ sự tương đồng nào với người thật còn sống hoặc đã mất, hay với các sự kiện thật, đều là ngẫu nhiên.*
 
