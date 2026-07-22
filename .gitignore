@@ -40,3 +40,6 @@ line-by-line-*
 exam-guide.pdf
 build/pdf-header-resolved.tex
 .penname
+
+# Internal review artifact — kept out of the public repo
+VALIDATION-REPORT.md
