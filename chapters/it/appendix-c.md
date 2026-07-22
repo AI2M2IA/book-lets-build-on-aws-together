@@ -1,353 +1,416 @@
 # Appendice C: Concept Registry
 
-Ogni concetto chiave introdotto nel libro, mappato al suo capitolo, l'analogia utilizzata e il dominio SAA-C03 in cui compare.
+Ogni concetto chiave introdotto nel libro, mappato al suo capitolo, all'analogia utilizzata e al dominio SAA-C03 in cui compare.
 
-Utilizzate questo come indice di studio: se siete incerti su un concetto prima dell'esame, trovate qui e ritornate al suo capitolo per il contesto.
+Usa questo come indice di studio: se sei incerto su un concetto prima dell'esame, cercalo qui e torna al suo capitolo per il contesto.
 
 ---
 
 ## A
 
-**ACU (Aurora Capacity Unit)** — L'unità di misura per la capacità di Aurora Serverless v2. Si scala automaticamente. Capitolo 24. Dominio 3.
+**ACM (AWS Certificate Manager)** — Certificati TLS pubblici gratuiti per ALB, CloudFront e API Gateway, con rinnovo automatico tramite validazione DNS. I certificati per CloudFront devono risiedere in us-east-1. Capitolo 16. Dominio 1.
 
-**Allarme (CloudWatch)** — Una regola che si attiva quando una metrica supera una soglia, innescando una notifica o un'azione di autoscaling. Capitolo 7. Dominio 2.
+**ACU (Aurora Capacity Unit)** — L'unità di misura per la capacità di Aurora Serverless v2. Si scala automaticamente e, sulle versioni di motore supportate, può auto-sospendersi a 0 ACU quando non ci sono connessioni attive. Capitolo 24. Dominio 3.
 
-**ALB (Application Load Balancer)** — Load balancer di livello 7 che indirizza il traffico HTTP/HTTPS in base a regole di percorso e host. Capitolo 7. Dominio 2.
+**Alarm (CloudWatch)** — Una regola che si attiva quando una metrica supera una soglia, innescando una notifica o un'azione di auto scaling. Capitolo 7. Dominio 2.
 
-**AMI (Amazon Machine Image)** — Un modello contenente il sistema operativo, il software e la configurazione per un'istanza EC2. Capitolo 4. Dominio 3.
+**ALB (Application Load Balancer)** — Load balancer di livello 7 che instrada il traffico HTTP/HTTPS in base a regole di path e host. Capitolo 7. Dominio 2.
 
-**Mentalità Architettonica** — Porre la domanda "cosa si rompe per primo, come lo sappiamo e cosa fa qualcuno alle 3 del mattino?" piuttosto che solo "come funziona questo?". Capitolo 32, Capitolo 34. Dominio trasversale.
+**AMI (Amazon Machine Image)** — Un template contenente il sistema operativo, il software e la configurazione per un'istanza EC2. Capitolo 4. Dominio 3.
 
-**Registro Decisione Architetturale (ADR)** — Un breve documento che cattura una decisione, le sue alternative, la sua motivazione e cosa causerebbe una riesame. Capitolo 32. Dominio trasversale.
+**Architect mindset** — Porsi le domande "cosa si rompe per primo, come lo sappiamo e cosa fa qualcuno alle 3 di notte?" invece di limitarsi a "come funziona questo?". Capitolo 32, Capitolo 34. Trasversale a tutti i domini.
 
-**Revisione Architetturale** — Un processo strutturato che copre: vincoli → incognite → opzioni → modalità di guasto → monitoraggio → manuali operativi. Capitolo 32. Dominio trasversale.
+**Architecture Decision Record (ADR)** — Un breve documento che cattura una decisione, le sue alternative, la sua motivazione e ciò che ne causerebbe il riesame. Capitolo 32. Trasversale a tutti i domini.
 
-**Athena** — Servizio di query SQL serverless per i dati in S3. Pagamento per TB scansionati. Migliore con i formati a colonne Parquet/ORC. Capitolo 26. Dominio 3.
+**Architecture review** — Un processo strutturato che copre: vincoli → incognite → opzioni → modalità di guasto → monitoraggio → runbook. Capitolo 32. Trasversale a tutti i domini.
 
-**Gruppo di Autoscaling (ASG)** — Un gruppo di istanze EC2 gestite insieme, che sostituisce automaticamente le istanze non funzionanti e scala in base al carico. Capitolo 7. Dominio 2, 3.
+**Athena** — Servizio di query SQL serverless per i dati in S3. Si paga per TB scansionato. Funziona meglio con formati colonnari Parquet/ORC. Capitolo 26. Dominio 3.
 
-**Zona di Disponibilità (AZ)** — Un data center fisico o più data center connessi da collegamenti a bassa latenza all'interno di una regione. Capitolo 2. Dominio 2.
+**Auto Scaling Group (ASG)** — Un gruppo di istanze EC2 gestite insieme, che sostituisce automaticamente le istanze non integre e scala in base al carico. Capitolo 7. Dominio 2, 3.
+
+**Availability Zone (AZ)** — Uno o più data center fisicamente separati all'interno di una region, collegati da link a bassa latenza. Capitolo 2. Dominio 2.
 
 ---
 
 ## B
 
-**Bucket (S3)** — Un contenitore per gli oggetti S3. I bucket hanno nomi globali univoci e vivono in una regione specifica. Capitolo 5. Dominio 3.
+**AWS Backup** — Backup centralizzato e basato su policy per EBS, RDS, DynamoDB, EFS e Storage Gateway. Supporta copie cross-region e cross-account. Capitoli 18, 23. Dominio 2.
 
-**Politica del Bucket** — Una politica basata sulle risorse allegata a un bucket S3 che controlla l'accesso per gli IAM principal e gli account esterni. Capitolo 5. Dominio 1.
+**AWS Batch** — Compute batch gestito per container Docker. Composto da una job definition (cosa eseguire), una job queue (dove i job attendono) e un compute environment (EC2 o Fargate, On-Demand o Spot). Per workload che superano il limite di 15 minuti di Lambda. Capitolo 21. Dominio 3.
+
+**Bucket (S3)** — Un contenitore per gli oggetti S3. I bucket hanno nomi globalmente univoci e risiedono in una region specifica. Capitolo 5. Dominio 3.
+
+**Bucket policy** — Una policy resource-based allegata a un bucket S3 che controlla l'accesso per i principal IAM e gli account esterni. Capitolo 5. Dominio 1.
 
 ---
 
 ## C
 
-**Pattern Cache-Aside** — L'applicazione controlla prima la cache; se manca, interroga il database, quindi memorizza il risultato nella cache. Capitolo 10. Dominio 3.
+**Cache-aside pattern** — L'applicazione controlla prima la cache; in caso di miss, interroga il database, poi memorizza il risultato nella cache. Capitolo 10. Dominio 3.
 
-**Tasso di Hit della Cache** — La percentuale di richieste servite dalla cache piuttosto che dall'origine. Più alto è, meglio è. Capitolo 13. Dominio 3.
+**Cache hit rate** — Percentuale di richieste servite dalla cache anziché dall'origine. Più alta è, meglio è. Capitolo 13. Dominio 3.
 
-**CloudFront** — CDN AWS. Memorizza i contenuti in più di 400 posizioni edge in tutto il mondo. Riduce la latenza e i costi di trasferimento dei dati dell'origine. Capitolo 13. Dominio 3, 4.
+**AWS Client VPN** — Endpoint OpenVPN gestito. Connette singoli dispositivi (laptop, workstation) a un VPC tramite internet. Autenticazione tramite Active Directory, federazione SAML 2.0 con un identity provider, o mutual TLS. Supporta modalità split-tunnel e full-tunnel. Da non confondere con Site-to-Site VPN (network-to-network). Capitolo 11. Dominio 1.
 
-**CloudTrail** — Registra ogni chiamata API AWS: chi, cosa, quando, da dove. Memorizzato in S3. Utilizzato per l'audit e l'indagine sugli incidenti. Dominio 1.
+**CloudFront** — CDN di AWS. Memorizza nella cache i contenuti in oltre 750 edge location in tutto il mondo. Riduce la latenza e i costi di trasferimento dati verso l'origine. Capitolo 13. Dominio 3, 4.
 
-**CloudWatch** — Metriche, log, allarmi e dashboard per le risorse AWS e le applicazioni personalizzate. Riferimento in tutto. Tutti i domini.
+**CloudTrail** — Registra ogni chiamata API AWS: chi, cosa, quando, da dove. Archiviato in S3. Usato per audit e indagini sugli incidenti. Dominio 1.
 
-**Cold Start (Lambda)** — Ritardo alla prima invocazione (o dopo l'inattività) mentre Lambda inizializza l'ambiente di esecuzione. Utilizzare la concorrenza provisionata per eliminarlo. Capitolo 20. Dominio 3.
+**CloudWatch** — Metriche, log, allarmi e dashboard per le risorse AWS e le applicazioni personalizzate. Citato in tutto il libro. Tutti i domini.
 
-**Piano di Risparmio Compute** — Un impegno di un importo di ore di spesa per istanze EC2, applicabile a qualsiasi tipo o dimensione di istanza. Capitolo 27. Dominio 4.
+**Amazon Cognito** — Autenticazione per gli utenti finali della tua applicazione: User Pool sono una directory utenti gestita (registrazione, login, MFA, social login, JWT); Identity Pool emettono credenziali AWS temporanee. IAM è per i tuoi sviluppatori; Cognito è per i tuoi clienti. Capitolo 14. Dominio 1.
+
+**Cold start (Lambda)** — Ritardo alla prima invocazione (o dopo inattività) mentre Lambda inizializza l'ambiente di esecuzione. Usa la provisioned concurrency per eliminarlo. Capitolo 20. Dominio 3.
+
+**Compute Savings Plan** — Impegno su un importo di spesa oraria in EC2, applicabile a qualsiasi tipo o dimensione di istanza. Capitolo 27. Dominio 4.
 
 **Config (AWS)** — Traccia le modifiche alla configurazione delle risorse AWS nel tempo e valuta la conformità rispetto alle regole. Capitolo 31. Dominio 1.
 
-**Trasferimento Dati Cross-AZ** — Traffico tra le Zone di Disponibilità all'interno di una regione. Addebitato a $0,01/GB in ogni direzione. Capitolo 30. Dominio 4.
+**AWS Control Tower** — Automatizza la governance multi-account: costruisce una landing zone (account di gestione, log archive e audit) con guardrail in pochi minuti — la versione prefabbricata del collegamento manuale di Organizations, CloudTrail e Config. Capitolo 14. Dominio 1.
 
-**Replicazione Cross-Regione** — Copia dei dati (CRR S3, Aurora Global, DynamoDB Global Tables) in un'altra regione. Incurre costi di trasferimento dati. Capitoli 18, 30. Dominio 2.
+**Cross-AZ data transfer** — Traffico tra Availability Zone all'interno di una region. Addebitato a $0,01/GB per direzione. Capitolo 30. Dominio 4.
+
+**Cross-region replication** — Copia dei dati (S3 CRR, Aurora Global, DynamoDB Global Tables) in una region diversa. Comporta costi di trasferimento dati. Capitoli 18, 23, 30. Dominio 2.
 
 ---
 
 ## D
 
-**DAX (DynamoDB Accelerator)** — Cache in memoria specificamente per DynamoDB. Latenza di lettura microseconda. Capitolo 9. Dominio 3.
+**AWS DataSync** — Migrazione e sincronizzazione basata su agent di file share (NFS/SMB) verso S3, EFS o FSx. "rsync con gli steroidi, con una console AWS." Capitolo 25. Dominio 3.
 
-**Coda di Messaggi Morti (DLQ)** — Una coda in cui i messaggi che falliscono nel processing ripetutamente vengono inviati, prevenendo il blocco della coda. Capitolo 19. Dominio 2.
+**DAX (DynamoDB Accelerator)** — Cache in memoria specificamente per DynamoDB. Latenza di lettura in microsecondi. Capitolo 9. Dominio 3.
 
-**Host Dedicato** — Un server EC2 fisico riservato esclusivamente al tuo utilizzo. Richiesto per determinate licenze software. Capitolo 27. Dominio 4.
+**Dead Letter Queue (DLQ)** — Una coda in cui vengono inviati i messaggi che falliscono ripetutamente l'elaborazione, evitando il blocco della coda. Capitolo 19. Dominio 2.
 
-**Difesa a Strati** — Strati multipli di controlli di sicurezza (IAM + gruppi di sicurezza + ACL + WAF + GuardDuty) in modo che la compromissione di uno strato non esponga il sistema. Capitolo 33. Dominio 1.
+**AWS DMS (Database Migration Service)** — Migra database su AWS con tempi di inattività minimi. Full load (copia iniziale) più CDC (Change Data Capture) mantiene sincronizzati sorgente e destinazione durante la migrazione. Migrazioni omogenee (stesso tipo di motore): usa DMS direttamente. Migrazioni eterogenee (tipi di motore diversi, es. Oracle → Aurora PostgreSQL): usa prima SCT (Schema Conversion Tool), poi DMS. Capitolo 8. Dominio 3.
 
-**Direct Connect** — Una connessione di rete privata dedicata da una posizione on-premises a AWS. Più coerente rispetto a VPN. Capitolo 25. Dominio 3.
+**Dedicated Host** — Un server EC2 fisico riservato esclusivamente al tuo utilizzo. Richiesto per determinate licenze software. Capitolo 27. Dominio 4.
 
-**DLQ** — Vedi Coda di Messaggi Morti.
+**Defense in depth** — Stratificazione di più controlli di sicurezza (IAM + security group + NACL + WAF + GuardDuty) in modo che la compromissione di un livello non esponga il sistema. Capitolo 33. Dominio 1.
 
-**DynamoDB** — Database NoSQL gestito completamente con latenza a singola cifra millisecondi su qualsiasi scala. Modello chiave-valore e documento. Capitolo 9. Dominio 3.
+**Direct Connect** — Una connessione di rete privata dedicata da una sede on-premises ad AWS. Più stabile di una VPN. Capitolo 25. Dominio 3.
 
-**DynamoDB Auto Scaling** — Regola automaticamente la capacità di lettura/scrittura provisionata in base alle metriche CloudWatch. Capitolo 29. Dominio 4.
+**DLQ** — Vedi Dead Letter Queue.
 
-**DynamoDB Streams** — Un log di modifiche temporale di tutti gli elementi in una tabella DynamoDB. Utilizzato con Lambda per l'elaborazione guidata da eventi. Capitolo 9. Dominio 2.
+**DynamoDB** — Database NoSQL completamente gestito con latenza a singola cifra di millisecondi a qualsiasi scala. Modello chiave-valore e documento. Capitolo 9. Dominio 3.
+
+**DynamoDB Auto Scaling** — Regola automaticamente la capacità di lettura/scrittura provisioned in base alle metriche CloudWatch. Capitolo 29. Dominio 4.
+
+**DynamoDB Streams** — Un log ordinato nel tempo di tutte le modifiche agli elementi in una tabella DynamoDB. Usato con Lambda per l'elaborazione event-driven. Capitolo 9. Dominio 2.
 
 ---
 
 ## E
 
-**EBS (Elastic Block Store)** — Archiviazione a blocchi allegata a un'istanza EC2. Persiste in modo indipendente. Tipi: gp3, io2, st1. Capitolo 6. Dominio 3.
+**EBS (Elastic Block Store)** — Block storage collegato a una singola istanza EC2. Persiste in modo indipendente. Tipi: gp3, io2, st1. Capitolo 6. Dominio 3.
 
 **EC2 (Elastic Compute Cloud)** — Macchine virtuali nel cloud. Capitolo 4. Dominio 3.
 
-**ECS (Elastic Container Service)** — Orchestrazione di container gestita. Il tipo di lancio Fargate elimina la gestione dei server. Capitolo 21. Dominio 2, 3.
+**ECS (Elastic Container Service)** — Orchestrazione di container gestita. Il launch type Fargate elimina la gestione dei server. Capitolo 21. Dominio 2, 3.
 
-**EFS (Elastic File System)** — File system NFS condiviso accessibile da più istanze EC2. Si scala automaticamente. Capitolo 6. Dominio 3.
+**EFS (Elastic File System)** — File system NFS condiviso accessibile da più istanze EC2. Si scala automaticamente. Le storage class includono Standard, Infrequent Access e Archive, con Intelligent-Tiering per lo spostamento automatico tra i livelli. Capitolo 6. Dominio 3.
 
-**EKS (Elastic Kubernetes Service)** — Piano di controllo Kubernetes gestito su AWS. Capitolo 21. Dominio 3.
+**EKS (Elastic Kubernetes Service)** — Control plane Kubernetes gestito su AWS. Capitolo 21. Dominio 3.
 
-**ElastiCache** — Cache in-memory gestita. Redis (funzionalità più ricche) o Memcached (più semplice). Capitolo 10. Dominio 3.
+**Elastic Disaster Recovery (DRS)** — Replica a livello di blocco in continuo di server (on-premises o EC2) in un'area di staging a basso costo, con istanze di recovery avviate in pochi minuti — un pilot light gestito. Capitolo 18. Dominio 2.
+
+**ElastiCache** — Caching in memoria gestito. Valkey o Redis OSS (funzionalità più ricche) o Memcached (più semplice). Valkey è il fork open-source di Redis che AWS usa ora come default — compatibile con l'API, a prezzo inferiore; l'esame SAA-C03 dice ancora "Redis e Memcached." Capitolo 10. Dominio 3.
 
 **Elastic IP** — Un indirizzo IP pubblico statico che puoi allocare e riassociare alle istanze EC2. Capitolo 11. Dominio 3.
 
-**Crittografia Envelope** — Un modello in cui i dati sono crittografati con una chiave di dati (DEK) e la DEK è crittografata con una chiave principale (CMK in KMS). Capitolo 16. Dominio 1.
+**Envelope encryption** — Un pattern in cui i dati vengono crittografati con una data key (DEK) e la DEK viene crittografata con una master key (CMK in KMS). Capitolo 16. Dominio 1.
 
-**EventBridge** — Bus di eventi per il routing di eventi da servizi AWS, partner SaaS e fonti personalizzate verso destinazioni. Supporta regole programmate. Capitolo 22. Dominio 2.
+**EventBridge** — Event bus per il routing di eventi da servizi AWS, partner SaaS e sorgenti personalizzate verso target. Supporta regole schedulate. Capitolo 22. Dominio 2.
 
-**Rifiuto Esplicito** — Un'istruzione IAM di rifiuto che non può essere annullata da qualsiasi istruzione di permesso. Ha la precedenza su tutti i permessi. Capitolo 3. Dominio 1.
+**Explicit deny** — Un'istruzione IAM di deny che non può essere annullata da alcun allow. Ha la precedenza su tutti gli allow. Capitolo 3. Dominio 1.
 
 ---
 
 ## F
 
-**Routing di Failover (Route 53)** — Invia il traffico a un endpoint secondario quando l'endpoint primario fallisce i controlli di salute. Capitolo 12. Dominio 2.
+**Failover routing (Route 53)** — Instrada il traffico verso un endpoint secondario quando quello primario non supera i health check. Capitolo 12. Dominio 2.
 
-**Fargate** — Motore di calcolo serverless per ECS e EKS. Nessuna istanza EC2 da gestire. Capitolo 21. Dominio 3.
+**Fargate** — Motore di compute serverless per ECS e EKS. Nessuna istanza EC2 da gestire. Capitolo 21. Dominio 3.
 
-**Pattern di "Fan-out"** — Un argomento SNS singolo consegna lo stesso messaggio a più code SQS simultaneamente. Capitolo 19. Dominio 2.
+**Fan-out pattern** — Un topic SNS consegna lo stesso messaggio a più code SQS simultaneamente. Capitolo 19. Dominio 2.
 
-**FIFO Queue (SQS)** — Elaborazione "exactly-once", ordinamento rigoroso. Minore throughput rispetto alle code standard. Capitolo 19. Dominio 2.
+**FIFO queue (SQS)** — Elaborazione exactly-once, ordinamento rigoroso. Throughput inferiore rispetto alle code standard. Capitolo 19. Dominio 2.
 
-**Modalità di Fallimento** — Un modo specifico in cui un sistema può fallire. L'identificazione delle modalità di fallimento prima della produzione è al centro della revisione dell'architettura. Capitolo 32. Dominio trasversale.
+**Failure mode** — Un modo specifico in cui un sistema può guastarsi. Identificare i failure mode prima della messa in produzione è il nucleo dell'architecture review. Capitolo 32. Trasversale a tutti i domini.
 
 ---
 
 ## G
 
-**Gateway Endpoint** — Tipo di endpoint VPC gratuito per S3 e DynamoDB. Invia il traffico attraverso la rete privata AWS, eliminando le spese per i NAT Gateway. Capitolo 30. Dominio 4.
+**Gateway Endpoint** — Un tipo di VPC endpoint gratuito per S3 e DynamoDB. Instrada il traffico attraverso la rete privata AWS, eliminando i costi del NAT Gateway. Capitolo 30. Dominio 4.
 
-**Routing Geografico (Route 53)** — Invia il traffico in base alla posizione geografica dell'origine della query DNS. Capitolo 12. Dominio 3.
+**Gateway Load Balancer (GWLB)** — Load balancer di livello 3 per inserire inline nel flusso di traffico appliance di rete virtuali di terze parti (firewall, IDS/IPS). Capitolo 7. Dominio 1.
 
-**Global Accelerator** — Invia il traffico al punto di presenza AWS più vicino tramite Anycast, migliorando la latenza per le applicazioni dinamiche. Capitolo 25. Dominio 3.
+**Geolocation routing (Route 53)** — Instrada in base alla posizione geografica dell'origine della query DNS. Capitolo 12. Dominio 3.
 
-**Glue (AWS)** — ETL serverless. I crawler Glue scoprono gli schemi; i job Glue trasformano i dati; il Catalogo Dati memorizza i metadati. Capitolo 26. Dominio 3.
+**Global Accelerator** — Instrada il traffico verso l'edge AWS più vicino tramite Anycast, migliorando la latenza per le applicazioni dinamiche. Capitolo 25. Dominio 3.
 
-**GSI (Global Secondary Index)** — Un indice alternativo su una tabella DynamoDB con una chiave di partizione e una chiave di ordinamento opzionale diverse. Consente modelli di query flessibili. Capitolo 9. Dominio 3.
+**Glue (AWS)** — ETL serverless. I Glue Crawler scoprono lo schema; i Glue Job trasformano i dati; il Data Catalog archivia i metadati. Capitolo 26. Dominio 3.
 
-**GuardDuty** — Servizio di rilevamento delle minacce che utilizza il machine learning su CloudTrail, VPC Flow Logs e log DNS per rilevare attività anomale. Capitolo 17. Dominio 1.
+**GSI (Global Secondary Index)** — Un indice alternativo su una tabella DynamoDB con una partition key diversa e una sort key opzionale. Consente pattern di query flessibili. Capitolo 9. Dominio 3.
+
+**GuardDuty** — Servizio di rilevamento delle minacce che usa il ML su CloudTrail, VPC Flow Log e log DNS per individuare attività anomale. Capitolo 17. Dominio 1.
 
 ---
 
 ## H
 
-**Controllo di Salute (Route 53)** — Monitora la disponibilità dell'endpoint. I controlli di salute falliti innescano il routing di failover. Capitolo 12. Dominio 2.
+**Health check (Route 53)** — Monitora la disponibilità di un endpoint. I health check falliti innescano il failover routing. Capitolo 12. Dominio 2.
 
-**Partizione Calda (DynamoDB)** — Una partizione che riceve un traffico sproporzionato perché molte richieste condividono la stessa chiave di partizione. Capitolo 9. Dominio 3.
+**Hot partition (DynamoDB)** — Una partizione che riceve traffico sproporzionato perché molte richieste condividono la stessa partition key. Capitolo 9. Dominio 3.
 
 ---
 
 ## I
 
-**IAM (Identity and Access Management)** — Controlla l'autenticazione e l'autorizzazione per gli account AWS. Utenti, gruppi, ruoli, politiche. Capitolo 3, 14. Dominio 1.
+**IAM (Identity and Access Management)** — Controlla autenticazione e autorizzazione per gli account AWS. Utenti, gruppi, ruoli, policy. Capitolo 3, 14. Dominio 1.
 
 **IAM role** — Un'identità IAM con credenziali temporanee, assunta da servizi, utenti o altri account. Capitolo 3, 14. Dominio 1.
 
-**Idempotenza** — La proprietà di un'operazione che produce lo stesso risultato indipendentemente dal numero di volte in cui viene chiamata. Critico per i sistemi distribuiti (rimborsi, pagamenti, elaborazione degli ordini). Capitolo 32. Dominio trasversale.
+**Idempotency** — La proprietà di un'operazione che produce lo stesso risultato indipendentemente da quante volte viene chiamata. Critica per i sistemi distribuiti (rimborsi, pagamenti, elaborazione degli ordini). Capitolo 32. Trasversale a tutti i domini.
 
-**Idempotency key** — Un identificatore univoco per un'operazione, controllato prima dell'esecuzione per prevenire l'elaborazione duplicata. Capitolo 32. Dominio trasversale.
+**Idempotency key** — Un identificatore univoco per un'operazione, verificato prima dell'esecuzione per prevenire l'elaborazione duplicata. Capitolo 32. Trasversale a tutti i domini.
 
-**Interface Endpoint (PrivateLink)** — Un endpoint VPC per la maggior parte dei servizi AWS. Prezzato per ora + per GB. Fornisce connettività privata senza internet o NAT. Capitolo 30. Dominio 4.
+**Interface Endpoint (PrivateLink)** — Un VPC endpoint per la maggior parte dei servizi AWS. Tariffato per ora + per GB. Fornisce connettività privata senza internet o NAT. Capitolo 30. Dominio 4.
 
-**Internet Gateway (IGW)** — Consente alle istanze nei subnet pubbliche di comunicare con internet. Richiede che la tabella di routing del sottorete abbia una rotta all'IGW. Capitolo 11. Dominio 3.
+**Internet Gateway (IGW)** — Consente alle istanze nelle subnet pubbliche di comunicare con internet. Richiede che la route table della subnet abbia una route verso l'IGW. Capitolo 11. Dominio 3.
 
-**"It depends"** — La risposta onesta alla maggior parte delle domande di architettura, che deve sempre essere completata: "Dipende dal modello di accesso / scala / conseguenza del fallimento / vincolo di costo." Capitolo 33. Dominio trasversale.
+**"It depends"** — La risposta onesta alla maggior parte delle domande di architettura, che deve sempre essere completata: "Dipende dall'access pattern / dalla scala / dalla conseguenza del guasto / dal vincolo di costo." Capitolo 33. Trasversale a tutti i domini.
 
 ---
 
 ## K
 
-**Kinesis Data Firehose** — Consegna gestita dei dati in streaming a S3, Redshift, OpenSearch. Nessun gestione del consumatore. Capitolo 26. Dominio 3.
+**Kinesis Data Firehose** — Nome precedente di Amazon Data Firehose: consegna gestita di dati in streaming verso S3, Redshift, OpenSearch. Nessuna gestione dei consumer. Le domande d'esame più vecchie potrebbero usare ancora il vecchio nome. Capitolo 26. Dominio 3.
 
-**Kinesis Data Streams** — Flusso di eventi in tempo reale ordinato. Durabile, riproducibile. Misurato in shard. Capitolo 26. Dominio 3.
+**Kinesis Data Streams** — Stream di eventi in tempo reale ordinati. Durabile, riproducibile entro la finestra di retention (24 ore di default, fino a 365 giorni). Misurato in shard. Capitolo 26. Dominio 3.
 
-**KMS (Key Management Service)** — Crea, memorizza e controlla le chiavi crittografiche per la crittografia a riposo. Capitolo 16. Dominio 1.
+**KMS (Key Management Service)** — Crea, archivia e controlla le chiavi crittografiche per la crittografia a riposo. Capitolo 16. Dominio 1.
 
-**Routing basato sul latenza (Route 53)** — Instrada le query DNS alla regione AWS con la latenza misurata più bassa. Capitolo 12. Dominio 3.
+---
 
-**Modello di lancio** — Un modello versionato che specifica la configurazione dell'istanza EC2 per i Gruppi di Autoscaling. Capitolo 7. Dominio 3.
+## L
 
-**Minimo privilegio** — Best practice IAM: concede solo le autorizzazioni necessarie, nessuna di più. Capitolo 3. Dominio 1.
+**Lambda** — Funzioni serverless attivate da eventi. Si paga per invocazione e per ms. Durata massima 15 minuti. Capitolo 20. Dominio 2, 3, 4.
 
-**Politica di ciclo di vita (S3)** — Regole che automatizzano la transizione degli oggetti a classi di storage più economiche o li eliminano in base all'età. Capitolo 23. Dominio 4.
+**Lambda@Edge** — Funzioni Lambda che vengono eseguite nelle edge location di CloudFront, modificando richieste e risposte. Capitolo 13. Dominio 3.
 
-**Indice secondario locale (LSI)** — Un indice alternativo su una tabella DynamoDB utilizzando la stessa chiave di partizione ma una chiave di ordinamento diversa. Deve essere creato alla creazione della tabella. Capitolo 9. Dominio 3.
+**AWS Lake Formation** — Layer centralizzato di controllo degli accessi al data lake su S3 e il Glue Data Catalog. Fornisce permessi granulari a livello di tabella, colonna e riga. Semplifica la configurazione sicura di un data lake. Capitolo 26. Dominio 3.
+
+**Latency-based routing (Route 53)** — Instrada le query DNS alla region AWS con la latenza misurata più bassa. Capitolo 12. Dominio 3.
+
+**Launch template** — Un template versionato che specifica la configurazione delle istanze EC2 per gli Auto Scaling Group. Capitolo 7. Dominio 3.
+
+**Least privilege** — Best practice IAM: concedi solo i permessi necessari, niente di più. Capitolo 3. Dominio 1.
+
+**Lifecycle policy (S3)** — Regole che spostano automaticamente gli oggetti verso storage class più economiche o li eliminano in base all'età. Capitolo 23. Dominio 4.
+
+**LSI (Local Secondary Index)** — Un indice alternativo su una tabella DynamoDB che usa la stessa partition key ma una sort key diversa. Deve essere creato al momento della creazione della tabella. Capitolo 9. Dominio 3.
 
 ---
 
 ## M
 
-**Memcached** — Motore di caching in memoria multi-thread, semplice. Nessuna persistenza, nessuna struttura di dati. Utilizza Redis a meno che tu non abbia bisogno specificamente del multi-threading a costo di funzionalità. Capitolo 10. Dominio 3.
+**Amazon Macie** — Individuazione basata su ML di dati sensibili (PII) in S3 e segnalazione dei rischi di esposizione. GuardDuty osserva i comportamenti; Macie controlla cosa è archiviato. Capitolo 17. Dominio 1.
 
-**Multi-AZ (RDS)** — Replica di standby sincrona in un altro AZ con failover automatico. RPO ~0, RTO ~60 secondi. Per l'alta disponibilità, non per il bilanciamento del carico in lettura. Capitolo 8, 18. Dominio 2.
+**Memcached** — Motore di caching in memoria semplice e multi-thread. Nessuna persistenza, nessuna struttura dati. Usa Redis a meno che tu non abbia specificamente bisogno del multi-threading a scapito delle funzionalità. Capitolo 10. Dominio 3.
 
-**Multi-Regione** — Distribuzione dei componenti dell'applicazione su più regioni AWS per la ridondanza geografica e le prestazioni globali. Maggiore complessità e costo. Capitolo 18. Dominio 2.
+**Amazon MemoryDB for Redis** — Database primario in memoria durevole e compatibile con Redis. A differenza di ElastiCache, MemoryDB scrive su un transaction log Multi-AZ, garantendo la durabilità dei dati. Da usare quando è richiesta la compatibilità con l'API Redis E la perdita di dati non è accettabile. Capitolo 10. Dominio 3.
+
+**MGN (AWS Application Migration Service)** — Rehost/lift-and-shift: replica a livello di blocco di interi server in AWS, avvio di test, poi cutover su istanze EC2 native. DataSync sposta i file; DMS sposta i database; MGN sposta i server. Capitolo 25. Dominio 3.
+
+**Amazon MQ** — Broker ActiveMQ/RabbitMQ gestito che parla protocolli standard (AMQP, MQTT, STOMP). Per il lift-and-shift di workload broker esistenti senza modifiche al codice; per la messaggistica greenfield → SQS/SNS. Capitolo 19. Dominio 2.
+
+**Multi-AZ (RDS)** — Replica standby sincrona in una diversa AZ con failover automatico. RPO ~0, RTO ~60 secondi. Per l'alta disponibilità, non per il read scaling. Capitolo 8, 18. Dominio 2.
+
+**Multi-Region** — Distribuzione dei componenti dell'applicazione su più region AWS per la ridondanza geografica e le prestazioni globali. Maggiore complessità e costo. Capitolo 18. Dominio 2.
 
 ---
 
 ## N
 
-**NACL (Lista di controllo di accesso alla rete)** — Firewall stateless a livello di subnet. Richiede sia regole di ingresso che di uscita. Le regole vengono valutate in ordine numerico. Capitolo 15. Dominio 1.
+**Network Load Balancer (NLB)** — Load balancer di livello 4 (TCP/UDP/TLS): milioni di richieste al secondo, IP statico per AZ, preserva l'IP sorgente. Nessuna consapevolezza HTTP — quello è il lavoro dell'ALB. Capitolo 7. Dominio 3.
 
-**NAT Gateway** — Consente alle istanze nei subnet privati di effettuare connessioni in uscita verso Internet. Costa $0.045/GB elaborato. Capitolo 11, 30. Dominio 4.
+**NACL (Network Access Control List)** — Firewall stateless a livello di subnet. Richiede sia regole in entrata che in uscita. Le regole vengono valutate in ordine numerico. Capitolo 15. Dominio 1.
+
+**NAT Gateway** — Consente alle istanze nelle subnet private di effettuare connessioni in uscita verso internet. Addebita $0,045/GB elaborato. Capitolo 11, 30. Dominio 4.
 
 ---
 
 ## O
 
-**Oggetto (S3)** — Un file memorizzato in S3. Consiste in chiave (nome), valore (dati) e metadati. Dimensione massima 5TB. Capitolo 5. Dominio 3.
+**Object (S3)** — Un file archiviato in S3. È composto da chiave (nome), valore (dati) e metadati. Dimensione massima 5 TB. Capitolo 5. Dominio 3.
 
-**Capacità on-demand (DynamoDB)** — Modalità di pagamento per richiesta. Più costoso per richiesta rispetto alla capacità preallocata, ma non è necessario pianificare la capacità. Capitolo 29. Dominio 4.
+**On-Demand capacity (DynamoDB)** — Modalità di pagamento per richiesta. Più costosa per richiesta rispetto alla modalità provisioned, ma non richiede pianificazione della capacità. Capitolo 29. Dominio 4.
 
-**Istanza on-demand (EC2)** — Pagamento a ore senza impegno. Massima flessibilità, massimo prezzo. Capitolo 27. Dominio 4.
+**On-Demand instances (EC2)** — Pagamento a ore senza impegno. Massima flessibilità, prezzo massimo. Capitolo 27. Dominio 4.
+
+**AWS Outposts** — Un rack di hardware AWS completamente gestito installato nel data center del cliente o in una struttura di co-location. Esegue gli stessi servizi AWS, API e strumenti del cloud pubblico on-premises. AWS gestisce l'installazione e il patching; il cliente fornisce lo spazio nel rack e l'alimentazione. Per la residenza dei dati, workload on-premises a bassa latenza o scenari disconnessi. Capitolo 2. Dominio 4.
 
 ---
 
 ## P
 
-**Chiave di partizione (DynamoDB)** — Il componente chiave primario che determina in quale partizione viene memorizzato un elemento. Scegli una chiave ad alta cardinalità per una distribuzione uniforme. Capitolo 9. Dominio 3.
+**Partition key (DynamoDB)** — Il componente della chiave primaria che determina in quale partizione viene archiviato un elemento. Scegli una chiave ad alta cardinalità per una distribuzione uniforme. Capitolo 9. Dominio 3.
 
-**Confine di autorizzazione** — Una politica IAM che imposta i permessi massimi che un'identità IAM può avere, anche se altre politiche concedono più permessi. Capitolo 14. Dominio 1.
+**Permission boundary** — Una policy IAM che imposta i permessi massimi che un'identità IAM può avere, anche se altre policy ne concedono di più. Capitolo 14. Dominio 1.
 
-**Gruppo di posizionamento** — Controlla il posizionamento fisico delle istanze EC2 per minimizzare la latenza (cluster) o massimizzare la disponibilità (diffusione). Capitolo 4. Dominio 3.
+**Placement group** — Controlla il posizionamento fisico delle istanze EC2 per minimizzare la latenza (cluster) o massimizzare la disponibilità (spread). Capitolo 4. Dominio 3.
 
-**PrivateLink** — Servizio AWS per la creazione di endpoint privati per i servizi ospitati in AWS, accessibili tramite Endpoint Interfaccia. Capitolo 30. Dominio 1.
+**PrivateLink** — Servizio AWS per la creazione di endpoint privati verso servizi ospitati in AWS, accessibili tramite Interface Endpoint. Capitolo 30. Dominio 1.
 
-**Concurrency preallocata (Lambda)** — Ambienti di esecuzione preinizializzati che eliminano i ritardi di avvio a freddo. Capitolo 20. Dominio 3.
+**Provisioned concurrency (Lambda)** — Ambienti di esecuzione pre-inizializzati che eliminano i ritardi di cold start. Capitolo 20. Dominio 3.
 
-**Capacità preallocata (DynamoDB)** — Capacità preassegnate di lettura e scrittura misurate in unità di capacità al secondo. Più economico rispetto al pagamento on-demand per il traffico prevedibile. Capitolo 9, 29. Dominio 4.
+**Provisioned capacity (DynamoDB)** — Throughput di lettura e scrittura pre-allocato, misurato in capacity unit al secondo. Più economico della modalità on-demand per traffico prevedibile. Capitolo 9, 29. Dominio 4.
+
+---
+
+## Q
+
+**Amazon QuickSight** — Servizio di business intelligence e visualizzazione dati gestito. Usa SPICE (Super-fast, Parallel, In-memory Calculation Engine) per mettere in cache i dati e rendere le dashboard veloci. Si connette ad Athena, S3, Redshift, RDS e altre sorgenti dati AWS. Nessun server BI da gestire. Capitolo 26. Dominio 3.
 
 ---
 
 ## R
 
-**RDS (Servizio di database relazionale)** — Database relazionale gestito. Gestisce i backup, i patch, il failover. Capitolo 8. Dominio 3.
+**RDS (Relational Database Service)** — Database relazionale gestito. Gestisce backup, patching e failover. Capitolo 8. Dominio 3.
 
-**RDS Proxy** — Gestisce una pool di connessioni tra Lambda/applicazione e RDS, prevenendo l'esaurimento delle connessioni. Capitolo 8. Dominio 3.
+**RDS Proxy** — Gestisce un connection pool tra Lambda/applicazione e RDS, prevenendo l'esaurimento delle connessioni. Capitolo 8. Dominio 3.
 
-**Replica di lettura (RDS)** — Copia asincrona del database per il bilanciamento del carico in lettura. Non fornisce il failover automatico. Capitolo 8, 24. Dominio 3.
+**Read Replica (RDS)** — Copia asincrona del database per il read scaling. NON fornisce failover automatico. Capitolo 8, 24. Dominio 3.
 
-**Redis** — Memorizzazione dati in memoria utilizzata per la cache, la gestione delle sessioni, i leaderboard in tempo reale, pub/sub. Capitolo 10. Dominio 3.
+**Redis** — Store di strutture dati in memoria usato per caching, gestione delle sessioni, leaderboard in tempo reale, pub/sub. Su AWS, ora offerto come "Redis OSS" insieme a **Valkey**, il fork open-source compatibile con l'API che AWS usa come default. Capitolo 10. Dominio 3.
 
-**Istanza riservata (EC2)** — Un impegno per utilizzare un tipo di istanza specifico in una regione specifica per 1 o 3 anni in cambio di uno sconto. Capitolo 27. Dominio 4.
+**Reserved Instance (EC2)** — Un impegno a usare un tipo di istanza specifico in una region specifica per 1 o 3 anni in cambio di uno sconto. Capitolo 27. Dominio 4.
 
-**Route 53** — Servizio DNS AWS e registrar di dominio. Supporta più politiche di routing. Capitolo 12. Dominio 2, 3.
+**Route 53** — Servizio DNS e domain registrar di AWS. Supporta molteplici routing policy. Capitolo 12. Dominio 2, 3.
 
-**RPO (Obiettivo di ripristino del punto)** — La perdita di dati massima accettabile misurata nel tempo. "Quanto dati possiamo permetterci di perdere?" Capitolo 18. Dominio 2.
+**RPO (Recovery Point Objective)** — La massima perdita di dati accettabile misurata nel tempo. "Quanti dati possiamo permetterci di perdere?" Capitolo 18. Dominio 2.
 
-**RTO (Obiettivo di ripristino del tempo)** — Il tempo massimo accettabile per ripristinare il servizio dopo un guasto. "Quanto tempo possiamo essere inattivi?" Capitolo 18. Dominio 2.
+**RTO (Recovery Time Objective)** — Il tempo massimo accettabile per ripristinare il servizio dopo un guasto. "Per quanto tempo possiamo rimanere offline?" Capitolo 18. Dominio 2.
 
-**Runbook** — Istruzioni passo-passo per l'operazione di un sistema, specificamente per la risposta all'incidente. "Cosa fa qualcuno alle 3 del mattino?" Capitolo 32. Dominio incrociato.
+**Runbook** — Istruzioni passo per passo per l'operazione di un sistema, specificamente per la risposta agli incidenti. "Cosa fa qualcuno alle 3 di notte?" Capitolo 32. Trasversale a tutti i domini.
 
 ---
 
 ## S
 
-**S3 Intelligent-Tiering** — Sposta automaticamente gli oggetti S3 tra i livelli di accesso in base ai modelli di accesso. Nessuna tariffa di recupero. Capitolo 23. Dominio 4.
+**S3 Intelligent-Tiering** — Sposta automaticamente gli oggetti S3 tra i livelli di accesso in base ai pattern di accesso. Nessuna tariffa di recupero. Capitolo 23. Dominio 4.
 
-**S3 Select** — Recupera un sottoinsieme del contenuto dell'oggetto S3 utilizzando espressioni SQL, riducendo il trasferimento dati. Capitolo 30. Dominio 4.
+**S3 Select** — Recupera un sottoinsieme del contenuto di un oggetto S3 usando espressioni SQL, riducendo il trasferimento dati. Legacy: non disponibile per i nuovi clienti dalla metà del 2024 — Athena è ora il percorso principale per filtrare e interrogare i dati in S3. S3 Object Lambda, un tempo l'alternativa suggerita, è anch'essa legacy (chiusa ai nuovi clienti a novembre 2025; i workload esistenti continuano a funzionare). Capitolo 30. Dominio 4.
 
-**Piano di risparmio (Savings Plan)** — Un modello di prezzo flessibile che si impegna a una spesa oraria di dollari in cambio di uno sconto. Più flessibile rispetto alle istanze riservate. Capitolo 27. Dominio 4.
+**Savings Plan** — Un modello di prezzo flessibile che prevede un impegno su un importo di spesa oraria in cambio di uno sconto. Più flessibile delle Reserved Instance. Capitolo 27. Dominio 4.
 
-**SCP (Politica di controllo dei servizi)** — Politica AWS Organizations che limita i permessi massimi disponibili per gli account in un OU. Capitolo 14. Dominio 1.
+**SCP (Service Control Policy)** — Policy di AWS Organizations che limita i permessi massimi disponibili per gli account in una OU. Capitolo 14. Dominio 1.
 
-**Secrets Manager** — Memorizza e ruota automaticamente i segreti (password di database, chiavi API). Capitolo 16. Dominio 1.
+**Secrets Manager** — Archivia e ruota automaticamente i secret (password di database, chiavi API). Capitolo 16. Dominio 1.
 
-**Security group** — Un firewall virtuale a livello di istanza, dello stato. Permettono solo regole di accesso; il traffico di ritorno è automatico. Capitolo 15. Dominio 1.
+**Security group** — Un firewall virtuale stateful a livello di istanza. Solo regole di allow; il traffico di ritorno è automatico. Capitolo 15. Dominio 1.
 
-**Shard (Kinesis)** — L'unità base di throughput in Kinesis Data Streams: 1 MB/s di scrittura, 2 MB/s di lettura. Capitolo 26. Dominio 3.
+**Shard (Kinesis)** — L'unità base di throughput in Kinesis Data Streams: 1 MB/s in scrittura, 2 MB/s in lettura. Capitolo 26. Dominio 3.
 
-**Shared Responsibility Model** — AWS è responsabile della sicurezza *della* nuvola (infrastruttura); tu sei responsabile della sicurezza *nella* nuvola (dati, configurazione, accesso). Capitolo 1. Dominio 1.
+**Shared Responsibility Model** — AWS è responsabile della sicurezza *del* cloud (infrastruttura); tu sei responsabile della sicurezza *nel* cloud (dati, configurazione, accessi). Capitolo 1. Dominio 1.
 
-**Shield** — Protezione DDoS. Standard: gratuito, automatico. Avanzato: a pagamento, con supporto DRT e protezione finanziaria. Capitolo 17. Dominio 1.
+**Shield** — Protezione DDoS. Standard: gratuito, automatico. Advanced: a pagamento, con supporto DRT e protezione finanziaria. Capitolo 17. Dominio 1.
 
-**SNS (Simple Notification Service)** — Pub/sub messaging. Invia messaggi a tutti gli abbonati simultaneamente. Pattern "fan-out". Capitolo 19. Dominio 2.
+**Snow Family** — Dispositivi fisici per il trasferimento bulk di dati offline (Snowball Edge: 80 TB) — come noleggiare un volo cargo invece di guidare in autostrada. Legacy (2026): Snowmobile e Snowcone dismessi; i dispositivi Snow chiusi ai nuovi clienti a novembre 2025 (AWS rimanda a DataSync e Data Transfer Terminal), ma l'esame SAA-C03 si aspetta ancora Snowball per "settimane di trasferimento, larghezza di banda limitata." Capitolo 25. Dominio 3.
+
+**SNS (Simple Notification Service)** — Messaggistica pub/sub. Invia messaggi a tutti i subscriber simultaneamente. Fan-out pattern. Capitolo 19. Dominio 2.
 
 **Sort key (DynamoDB)** — Secondo componente opzionale della chiave primaria. Consente query di intervallo all'interno di una partizione. Capitolo 9. Dominio 3.
 
-**Spot Instances** — Istanze EC2 che utilizzano capacità inutilizzata con uno sconto del 60-90%. Possono essere interrotte con un preavviso di 2 minuti. Solo per carichi di lavoro tolleranti ai guasti. Capitolo 27. Dominio 4.
+**Spot Instances** — Istanze EC2 che sfruttano la capacità inutilizzata con uno sconto del 60-90%. Possono essere interrotte con un preavviso di 2 minuti. Solo per workload fault-tolerant. Capitolo 27. Dominio 4.
 
-**SQS (Simple Queue Service)** — Coda di messaggi gestita. Decoppia i produttori dai consumatori. Code standard (almeno una volta) e FIFO (esattamente una volta). Capitolo 19. Dominio 2.
+**SQS (Simple Queue Service)** — Coda di messaggi gestita. Disaccoppia i producer dai consumer. Code Standard (at-least-once) e FIFO (exactly-once). Capitolo 19. Dominio 2.
 
-**Step Functions** — Servizio di orchestrazione serverless per flussi di lavoro. Macchine a stati per la coordinazione dei servizi AWS. Capitolo 22. Dominio 2.
+**Step Functions** — Servizio di orchestrazione serverless per workflow. State machine per coordinare i servizi AWS. Capitolo 22. Dominio 2.
+
+**AWS Storage Gateway** — Il ponte tra lo storage on-premises e il cloud: presenta interfacce NFS/SMB (File), iSCSI (Volume) o nastro virtuale (Tape) in locale, archiviando i dati in S3, Glacier o snapshot EBS. Capitolo 6. Dominio 3.
 
 ---
 
 ## T
 
-**Target tracking scaling** — Politica di scalabilità automatica che regola la capacità per mantenere un valore di metrica di riferimento (ad esempio, l'utilizzo del 60% della CPU). Capitolo 7. Dominio 2.
+**Target tracking scaling** — Policy di Auto Scaling che regola la capacità per mantenere un valore target di una metrica (es. 60% di utilizzo CPU). Capitolo 7. Dominio 2.
 
-**Transit Gateway** — Topologia di rete hub-and-spoke che collega più VPC e reti on-premises tramite un gateway centrale. Capitolo 25. Dominio 3.
+**AWS Transfer Family** — Endpoint SFTP/FTPS/FTP gestito supportato da S3 o EFS. I partner mantengono i loro client SFTP esistenti; i file atterrano direttamente nel tuo bucket. Capitolo 25. Dominio 3.
 
-**TTL (Time to Live)** — Un timestamp dopo il quale DynamoDB elimina automaticamente un elemento. Utilizzato anche in DNS (per quanto tempo i resolver memorizzano nella cache un record) e nella caching (per quanto tempo un valore memorizzato nella cache è valido). Capitoli 9, 12. Dominio 3.
+**Transit Gateway** — Topologia di rete hub-and-spoke che connette più VPC e reti on-premises attraverso un gateway centrale. Capitolo 25. Dominio 3.
+
+**TTL (Time to Live)** — Un timestamp dopo il quale DynamoDB elimina automaticamente un elemento. Usato anche nel DNS (per quanto tempo i resolver memorizzano nella cache un record) e nel caching (per quanto tempo un valore in cache è valido). Capitoli 9, 12. Dominio 3.
 
 ---
 
 ## V
 
-**VIF (Virtual Interface)** — La connessione logica utilizzata con AWS Direct Connect. VIF pubblico accede agli endpoint pubblici AWS; VIF privato accede alle risorse VPC. Capitolo 25. Dominio 3.
+**VIF (Virtual Interface)** — La connessione logica usata con AWS Direct Connect. La VIF pubblica accede agli endpoint pubblici AWS; la VIF privata accede alle risorse VPC. Capitolo 25. Dominio 3.
 
-**Visibility timeout (SQS)** — Il periodo durante il quale un messaggio ricevuto è nascosto agli altri consumatori. Consente l'elaborazione senza che altri consumatori lo vedano. Capitolo 19. Dominio 2.
+**Visibility timeout (SQS)** — Il periodo durante il quale un messaggio ricevuto è nascosto agli altri consumer. Consente l'elaborazione senza che altri consumer vedano lo stesso messaggio. Capitolo 19. Dominio 2.
 
-**VPC (Virtual Private Cloud)** — Una rete virtuale isolata in AWS. Contiene subnet, tabelle di routing e gateway. Capitolo 11. Dominio 1.
+**VPC (Virtual Private Cloud)** — Una rete virtuale isolata in AWS. Contiene subnet, route table e gateway. Capitolo 11. Dominio 1.
 
-**VPC Endpoint** — Connette le risorse VPC ai servizi AWS tramite la rete privata AWS. Gateway (gratuito, S3/DynamoDB) e Interfaccia (a pagamento, la maggior parte degli altri servizi). Capitolo 30. Dominio 1, 4.
+**VPC Endpoint** — Connette le risorse VPC ai servizi AWS tramite la rete privata AWS. Gateway (gratuito, S3/DynamoDB) e Interface (a pagamento, la maggior parte degli altri servizi). Capitolo 30. Dominio 1, 4.
 
-**VPC Flow Logs** — Cattura informazioni sul traffico IP che va e viene dalle interfacce di rete in una VPC. Utilizzato da GuardDuty e per il troubleshooting di rete. Capitolo 17. Dominio 1.
+**VPC Flow Logs** — Cattura informazioni sul traffico IP in entrata e in uscita dalle interfacce di rete in un VPC. Usato da GuardDuty e per il troubleshooting di rete. Capitolo 17. Dominio 1.
 
-**VPC Peering** — Una connessione di rete tra due VPC che consente il routing del traffico tra di esse utilizzando indirizzi IP privati. Capitolo 11. Dominio 3.
+**VPC Peering** — Una connessione di rete tra due VPC che consente al traffico di instradare tra di essi usando indirizzi IP privati. Capitolo 11. Dominio 3.
 
 ---
 
 ## W
 
-**WAF (Web Application Firewall)** — Filtra il traffico HTTP/HTTPS utilizzando regole (blocchi di IP, SQL injection, limiti di velocità). Si applica a CloudFront, ALB o API Gateway. Capitolo 17. Dominio 1.
+**WAF (Web Application Firewall)** — Filtra il traffico HTTP/HTTPS usando regole (blocchi IP, SQL injection, rate limit). Si collega a CloudFront, ALB o API Gateway. Capitolo 17. Dominio 1.
 
-**Well-Architected Framework** — Il framework di valutazione a sei pilastri di AWS: Eccellenza Operativa, Sicurezza, Affidabilità, Efficienza delle Prestazioni, Ottimizzazione dei Costi, Sostenibilità. Capitolo 31. Dominio incrociato.
+**AWS Wavelength** — Infrastruttura AWS distribuita all'interno delle reti dei provider di telecomunicazioni 5G al radio edge. Consente latenza a singola cifra di millisecondi verso i dispositivi mobili. Per AR/VR mobile, gaming in tempo reale, telemetria dei veicoli autonomi e video live al 5G edge. Le Wavelength Zone sono estensioni delle Region AWS all'interno delle reti telecom. Capitolo 2. Dominio 3.
 
-**Weighted routing (Route 53)** — Distribuisce le query DNS agli endpoint in base al peso. Utilizzato per i deployment blue-green e A/B testing. Capitolo 12. Dominio 3.
+**Well-Architected Framework** — Il framework di valutazione a sei pilastri di AWS: Operational Excellence, Security, Reliability, Performance Efficiency, Cost Optimization, Sustainability. Capitolo 31. Trasversale a tutti i domini.
 
-**Write-through caching** — Aggiorna la cache ogni volta che il database viene aggiornato. I dati sono sempre coerenti, ma la cache può contenere molti elementi che non vengono mai riletti. Capitolo 10. Dominio 3.
+**Weighted routing (Route 53)** — Distribuisce le query DNS tra gli endpoint in base al peso. Usato per i deployment blue-green e per i test A/B. Capitolo 12. Dominio 3.
+
+**Write-through caching** — Aggiorna la cache ogni volta che il database viene aggiornato. I dati sono sempre consistenti, ma la cache può contenere molti elementi che non verranno mai riletti. Capitolo 10. Dominio 3.
 
 ---
 
 ## SAA-C03 Quick Pattern Reference
 
-| Se l'esame dice...                           | Pensa...                                     |
-|-----------------------------------------------|----------------------------------------------|
-| "Decouple services"                           | SQS, SNS, EventBridge                        |
-| "Fan-out to multiple consumers"               | SNS + Sottoscrizioni SQS                      |
-| "Real-time ordered events"                    | Kinesis Data Streams                         |
-| "Serverless"                                  | Lambda, DynamoDB, Aurora Serverless, Fargate |
-| "Global low latency (dynamic)"                | Global Accelerator                           |
-| "Global low latency (static/cached)"          | CloudFront                                   |
-| "DDoS protection"                             | Shield (Standard: gratuito; Advanced: a pagamento)      |
-| "Block SQL injection at edge"                 | WAF                                          |
-| "Detect compromised credentials"              | GuardDuty                                    |
-| "Audit API activity"                          | CloudTrail                                   |
-| "Rotate database credentials"                 | Secrets Manager                              |
-| "Encrypt data at rest, customer-managed keys" | KMS con CMK                                 |
-| "Store configuration values"                  | SSM Parameter Store                          |
-| "High IOPS database storage"                  | io2 EBS                                      |
-| "Shared file system for EC2"                  | EFS                                          |
-| "Query S3 data with SQL"                      | Athena                                       |
-| "ETL pipeline for analytics"                  | AWS Glue                                     |
-| "Deliver streaming data to S3"                | Kinesis Firehose                             |
-| "Fault-tolerant batch jobs, minimize cost"    | Spot Instances                               |
-| "Committed, stable production workload"       | Savings Plans                                |
-| "Private subnet → S3 without NAT"             | S3 Gateway Endpoint                          |
-| "Private subnet → SQS without NAT"            | SQS Interface Endpoint                       |
-| "Multi-AZ for RDS"                            | Failover automatico (non scalabilità in lettura)        |
-| "Read Replica for RDS"                        | Scalabilità in lettura (non failover automatico)        |
-| "Recovery time < 1 minute, cross-AZ"          | Multi-AZ                                     |
-| "Recovery across regions, minutes RTO"        | Pilot Light o Standby Tiepido                  |
-| "Active-Active, zero RTO"                     | Multi-Regione Active-Active (più complesso)    |
+| Se l'esame dice...                                     | Pensa...                                             |
+|--------------------------------------------------------|------------------------------------------------------|
+| "Decouple services"                                    | SQS, SNS, EventBridge                                |
+| "Fan-out to multiple consumers"                        | SNS + sottoscrizioni SQS                             |
+| "Real-time ordered events"                             | Kinesis Data Streams                                 |
+| "Serverless"                                           | Lambda, DynamoDB, Aurora Serverless, Fargate         |
+| "Global low latency (dynamic)"                         | Global Accelerator                                   |
+| "Global low latency (static/cached)"                   | CloudFront                                           |
+| "DDoS protection"                                      | Shield (Standard: gratuito; Advanced: a pagamento)   |
+| "Block SQL injection at edge"                          | WAF                                                  |
+| "Detect compromised credentials"                       | GuardDuty                                            |
+| "Audit API activity"                                   | CloudTrail                                           |
+| "Rotate database credentials"                          | Secrets Manager                                      |
+| "Encrypt data at rest, customer-managed keys"          | KMS con CMK                                          |
+| "Store configuration values"                           | SSM Parameter Store                                  |
+| "High IOPS database storage"                           | io2 EBS                                              |
+| "Shared file system for EC2"                           | EFS                                                  |
+| "Query S3 data with SQL"                               | Athena                                               |
+| "ETL pipeline for analytics"                           | AWS Glue                                             |
+| "Deliver streaming data to S3"                         | Amazon Data Firehose                                 |
+| "Fault-tolerant batch jobs, minimize cost"             | Spot Instances                                       |
+| "Committed, stable production workload"                | Savings Plans                                        |
+| "Private subnet → S3 without NAT"                      | S3 Gateway Endpoint                                  |
+| "Private subnet → SQS without NAT"                     | SQS Interface Endpoint                               |
+| "Multi-AZ for RDS"                                     | Failover automatico (non read scaling)               |
+| "Read Replica for RDS"                                 | Read scaling (non failover automatico)               |
+| "Recovery time of 1–2 minutes, cross-AZ"               | Multi-AZ (RDS failover: 60–120 secondi)              |
+| "Recovery across regions, minutes RTO"                 | Pilot Light o Warm Standby                           |
+| "Active-Active, zero RTO"                              | Multi-Region Active-Active (la più complessa)        |
+| "Batch processing beyond Lambda timeout"               | AWS Batch                                            |
+| "Redis-compatible AND durable"                         | MemoryDB for Redis                                   |
+| "Remote engineers access VPC from home"                | Client VPN                                           |
+| "Migrate database with minimal downtime"               | DMS (+ SCT per le migrazioni eterogenee)             |
+| "BI dashboard on AWS"                                  | QuickSight                                           |
+| "Run AWS in your own data center"                      | Outposts                                             |
+| "5G mobile edge compute"                               | Wavelength                                           |
